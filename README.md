@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node 12
+-   Node 12
 
 ## Building
 
