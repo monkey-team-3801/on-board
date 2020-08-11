@@ -60,7 +60,7 @@
         "prettier": "prettier --write .",
         "prettier-check": "prettier --check .",
         "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
-        "eslint-check": "eslint --ext .tsx,ts,jsx,js src/"
+        "eslint-check": "eslint --ext .tsx,ts,jsx,js src/ --max-warnings=0"
     },
     "browserslist": {
         "production": [
