@@ -54,6 +54,7 @@
         "workbox-webpack-plugin": "4.3.1"
     },
     "scripts": {
+        "start": "npm run start-server",
         "start-client-dev": "node scripts/start.js",
         "start-client": "node scripts/start.js",
         "start-server-dev": "ts-node-dev src/server/server.ts",
