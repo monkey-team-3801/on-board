@@ -53,10 +53,14 @@
         "workbox-webpack-plugin": "4.3.1"
     },
     "scripts": {
+        "start-dev": "node scripts/start.js",
         "start": "node scripts/start.js",
         "build": "node scripts/build.js",
         "test": "node scripts/test.js",
-        "format": "prettier --write ."
+        "prettier": "prettier --write .",
+        "prettier-check": "prettier --check .",
+        "eslint": "eslint --fix --ext .tsx,ts,jsx,js src/",
+        "eslint-check": "eslint --ext .tsx,ts,jsx,js src/"
     },
     "browserslist": {
         "production": [
