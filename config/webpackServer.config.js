@@ -1,4 +1,4 @@
-const paths = require('./paths');
+const paths = require("./paths");
 
 process.env.BABEL_ENV = "production";
 
@@ -16,7 +16,7 @@ module.exports = function (webpackEnv) {
             // We placed these paths second because we want `node_modules` to "win"
             // if there are any conflicts. This matches Node resolution mechanism.
             // https://github.com/facebook/create-react-app/issues/253
-            modules: ["node_modules", paths.appNodeModules]
+            modules: ["node_modules", paths.appNodeModules],
         },
         target: "node",
         module: {
@@ -38,7 +38,7 @@ module.exports = function (webpackEnv) {
                         compact: true,
                     },
                 },
-            ]
-        }
-    }
-}
+            ],
+        },
+    };
+};
