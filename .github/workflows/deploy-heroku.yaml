@@ -1,17 +1,17 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "on-board-prod" # Must be unique in Heroku
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
+              with:
+                  heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+                  heroku_app_name: "on-board-prod" # Must be unique in Heroku
+                  heroku_email: ${{secrets.HEROKU_EMAIL}}
