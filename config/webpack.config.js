@@ -652,7 +652,8 @@ module.exports = function (webpackEnv) {
                     ],
                 }),
             // TypeScript type checking
-            isEnvDevelopment && useTypeScript &&
+            isEnvDevelopment &&
+                useTypeScript &&
                 new ForkTsCheckerWebpackPlugin({
                     typescript: resolve.sync("typescript", {
                         basedir: paths.appNodeModules,
