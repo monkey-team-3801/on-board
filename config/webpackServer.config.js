@@ -17,6 +17,7 @@ module.exports = function (webpackEnv) {
             // if there are any conflicts. This matches Node resolution mechanism.
             // https://github.com/facebook/create-react-app/issues/253
             modules: ["node_modules", paths.appNodeModules],
+            extensions: [".ts", ".js"],
         },
         target: "node",
         module: {
