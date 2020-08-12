@@ -1,13 +1,33 @@
 import express, { Express } from "express";
-import { router as HealthCheckRoute } from "./routes/health-check";
 import path from "path";
+
+import { router as HealthCheckRoute } from "./routes/health-check";
 
 const app: Express = express();
 
 app.use(express.static("build"));
 
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With,content-type, Authorization"
+    );
+    next();
+});
+
+// Base route.
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "build/index.html"));
-}).use(HealthCheckRoute);
+});
 
-app.listen(process.env.PORT || 5000);
+// Health check route.
+app.use("/health", HealthCheckRoute);
+
+// TODO API Routes
+app.use("/api", () => {});
+
+app.listen(process.env.PORT || 5000, () => {
+    console.log("Server is listening on", process.env.PORT || 5000);
+});
