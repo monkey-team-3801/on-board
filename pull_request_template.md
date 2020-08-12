@@ -1,4 +1,4 @@
-### Team Monkey pull request checklist (Jungle edition).
+### Team Monkey pull request checklist (Jungle edition)
 
 -   [ ] Remember to format your code!
 -   [ ] Remember to run the tests!

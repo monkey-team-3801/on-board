@@ -13,31 +13,31 @@ DECO3801 Project: **On Board**.
 
 Online collaboration and learning environment powered by SocketIO.
 
-# Contributing
+## Contributing
 
-## Requirements
+### Requirements
 
 -   Node 12
 -   NPM 6 or Yarn
 
-## Developing
+### Developing
 
 1. Run `npm install`
 2. Run `npm run start-client-dev` to initialise the client or `npm run start-server-dev` to initialise the server.
 
-## Building
+### Building
 
 1. Run `npm build`
 
 Your output will be in the `/build` folder.
 
-## Deploying
+### Deploying
 
 The latest commit in `master` is always deployed to https://on-board-prod.herokuapp.com/.
 
 For manual deployment setup your container to run `npm start`.
 
-# The Team
+## The Team
 
 🔴 [aXises](https://github.com/aXises) 🔴
 
