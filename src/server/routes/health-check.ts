@@ -1,9 +1,7 @@
-import express, { Router } from "express";
+import express from "express";
 
-const router: Router = express.Router();
+export const router = express.Router();
 
 router.get("/health", (req, res) => {
     res.status(200);
 });
-
-export = router;
