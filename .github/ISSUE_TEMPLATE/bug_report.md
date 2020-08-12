@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug, untriaged
-assignees: ''
-
+assignees: ""
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behaviour:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -24,7 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Browser (please complete the following information):**
- - Browser [e.g. chrome, safari]
+
+-   Browser [e.g. chrome, safari]
 
 **Additional context**
 Add any other context about the problem here.

@@ -1,10 +1,9 @@
 ---
 name: Feature
 about: Required Feature
-title: ''
+title: ""
 labels: enhancement, untriaged
-assignees: ''
-
+assignees: ""
 ---
 
 **Specifications**
