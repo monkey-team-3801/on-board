@@ -15,3 +15,6 @@ jobs:
                   heroku_api_key: ${{secrets.HEROKU_API_KEY}}
                   heroku_app_name: "on-board-prod" # Must be unique in Heroku
                   heroku_email: ${{secrets.HEROKU_EMAIL}}
+                  healthcheck: "https://on-board-prod.herokuapp.com/health"
+                  checkstring: "ok"
+                  delay: 300
