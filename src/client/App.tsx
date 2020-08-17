@@ -1,7 +1,8 @@
 import React from "react";
 // import logo from "./logo.svg";
 import "./styles/App.less";
+import { AppRouter } from "./AppRouter";
 
 export const App: React.FunctionComponent<{}> = () => {
-    return <div className="app">Project Root is here</div>;
+    return <AppRouter></AppRouter>;
 };
