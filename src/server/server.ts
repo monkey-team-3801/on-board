@@ -32,7 +32,7 @@ app.use("/health", HealthCheckRoute);
 // TODO API Routes
 app.use("/api", () => {});
 
-const database: Database = new Database(process.env.MONGODB_URI || "");
+const database: Database = new Database(process.env.MONGODB_URI);
 database.connect().then(() => {
     app.listen(process.env.PORT || 5000, async () => {
         console.log("Server is listening on", process.env.PORT || 5000);
