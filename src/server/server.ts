@@ -1,7 +1,12 @@
 import express, { Express } from "express";
+import path from "path";
+import dotenv from "dotenv";
 
 import { router as HealthCheckRoute } from "./routes/health-check";
 import { asyncHandler } from "./utils";
+import { Database } from "./database";
+
+dotenv.config();
 
 const app: Express = express();
 
@@ -42,6 +47,9 @@ app.use(
     asyncHandler(async (req, res, next) => {})
 );
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log("Server is listening on", process.env.PORT || 5000);
+const database: Database = new Database(process.env.MONGODB_URI);
+database.connect().then(() => {
+    app.listen(process.env.PORT || 5000, async () => {
+        console.log("Server is listening on", process.env.PORT || 5000);
+    });
 });
