@@ -1,5 +1,4 @@
 import express, { Express } from "express";
-import path from "path";
 import dotenv from "dotenv";
 
 import { router as HealthCheckRoute } from "./routes/health-check";
