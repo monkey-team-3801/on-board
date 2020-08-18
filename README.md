@@ -10,12 +10,15 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://on-board-prod.herokuapp.com/)
 [![made-for-VSCode](https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg)](https://code.visualstudio.com/)
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://github.com/monkey-team-3801/on-board/wiki)
-[![ForTheBadge built-by-developers](http://ForTheBadge.com/images/badges/built-by-developers.svg)](https://github.com/monkey-team-3801)
-[![ForTheBadge built-with-swag](http://ForTheBadge.com/images/badges/built-with-swag.svg)](https://github.com/monkey-team-3801)
-[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/monkey-team-3801/on-board)
-[![ForTheBadge makes-people-smile](http://ForTheBadge.com/images/badges/makes-people-smile.svg)](http://ForTheBadge.com)
-[![ForTheBadge powered-by-electricity](http://ForTheBadge.com/images/badges/powered-by-electricity.svg)](http://ForTheBadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+[![made-with-react](https://img.shields.io/badge/Made%20With-React-blue)]()
+[![made-with-typescript](https://img.shields.io/badge/Made%20With-TypeScript-blue)]()
+[![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-electricity.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/monkey-team-3801)
+[![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://github.com/monkey-team-3801)
 
 ## About
 
