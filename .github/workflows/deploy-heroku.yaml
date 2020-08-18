@@ -17,4 +17,4 @@ jobs:
                   heroku_email: ${{secrets.HEROKU_EMAIL}}
                   healthcheck: "https://on-board-prod.herokuapp.com/health"
                   checkstring: "ok"
-                  delay: 300
+                  delay: 60
