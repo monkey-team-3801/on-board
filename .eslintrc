@@ -20,7 +20,6 @@
     },
     "rules": {
         "semi": ["warn", "always"],
-        "quotes": ["warn", "double"],
-        "indent": ["error", 4]
+        "quotes": ["warn", "double"]
     }
 }
