@@ -1,55 +1,42 @@
 import React from "react";
-import axios from "axios";
 
-import { RequestState, BaseResponseType } from "../types";
+import { BaseResponseType } from "../types";
+import { useDynamicFetch } from "./useDynamicFetch";
+import { AnyObjectMap } from "../../server/types";
 
 /**
  * Custom hook to fetch data from some api endpoint.
  * @param apiEndpoint API endpoint
  * @param apiRequestData Data to send
+ * @param invokeImmediately Fetches on first render if true
+ * @param T: Response data type
+ * @param S: Request data type
  */
-export const useFetch = <T, S = {}>(
+export const useFetch = <
+    T,
+    S extends AnyObjectMap<any> | undefined = undefined
+>(
     apiEndpoint: string,
-    apiRequestData: S,
+    apiRequestData?: S,
+    invokeImmediately: boolean = true,
     onFetchSuccess?: () => void,
     onFetchError?: () => void
-): [BaseResponseType<T>, () => void] => {
-    const [responseType, setResponseType] = React.useState<BaseResponseType<T>>(
-        {
-            state: RequestState.LOADING,
-            data: undefined,
-        }
+): [BaseResponseType<T>, () => Promise<void>] => {
+    const [responseType, refresh]: [
+        BaseResponseType<T>,
+        (newRequestData?: S) => Promise<void>
+    ] = useDynamicFetch<T, AnyObjectMap<any>>(
+        apiEndpoint,
+        apiRequestData,
+        invokeImmediately,
+        onFetchSuccess,
+        onFetchError
     );
 
-    const fetchData = React.useCallback(
-        async (endpoint: string, requestData: S) => {
-            try {
-                const response = await axios.post<T>(endpoint, requestData);
-                setResponseType({
-                    state: RequestState.LOADED,
-                    data: response.data,
-                });
-                onFetchSuccess?.();
-            } catch (e) {
-                setResponseType({
-                    state: RequestState.ERROR,
-                    data: undefined,
-                });
-                onFetchError?.();
-            }
-        },
-        [onFetchSuccess, onFetchError]
-    );
-
-    const refresh = React.useCallback(() => {
-        fetchData(apiEndpoint, apiRequestData);
+    const staticRefresh = React.useCallback(async () => {
+        await refresh(apiRequestData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchData, apiEndpoint]);
+    }, [apiEndpoint, apiRequestData]);
 
-    React.useEffect(() => {
-        fetchData(apiEndpoint, apiRequestData);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchData, apiEndpoint]);
-
-    return [responseType, refresh];
+    return [responseType, staticRefresh];
 };
