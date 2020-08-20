@@ -19,6 +19,9 @@ module.exports = function (webpackEnv) {
             modules: ["node_modules", paths.appNodeModules],
             extensions: [".ts", ".js"],
         },
+        node: {
+            __dirname: false,
+        },
         target: "node",
         module: {
             rules: [
