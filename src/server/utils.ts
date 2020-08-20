@@ -13,19 +13,19 @@ import { AnyObjectMap } from "./types";
  * })
  */
 export const asyncHandler = <
-    T extends AnyObjectMap<any> | string = {},
+    T extends AnyObjectMap<any> | string | undefined = undefined,
     S extends ParamsDictionary = {},
     V extends AnyObjectMap<any> = {}
 >(
     handler: (
-        req: Request<S, T, V>,
-        res: Response<T>,
+        req: Request<S, T | undefined, V>,
+        res: Response<T | undefined>,
         next: NextFunction
     ) => Promise<void> | void
-): RequestHandler<S, T, V> => {
+): RequestHandler<S, T | undefined, V> => {
     return (
-        req: Request<S, T, V>,
-        res: Response<T>,
+        req: Request<S, T | undefined, V>,
+        res: Response<T | undefined>,
         next: NextFunction
     ): Promise<void> | void => {
         return Promise.resolve(handler(req, res, next));

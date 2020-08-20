@@ -1,13 +1,22 @@
 import express, { Express } from "express";
+import { createServer, Server } from "http";
+import socketIO from "socket.io";
 import dotenv from "dotenv";
+import bodyParser from "body-parser";
 
-import { router as HealthCheckRoute } from "./routes/health-check";
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
+
+import { healthCheckRoute, chatRoute } from "./routes";
+import { sessionRoute } from "./routes";
 
 dotenv.config();
 
 const app: Express = express();
+const server: Server = createServer(app);
+export const io: socketIO.Server = socketIO(server, { serveClient: false });
+
+app.use(bodyParser.json());
 
 // Request initialiser
 app.use((req, res, next) => {
@@ -32,7 +41,13 @@ app.get(
 app.use("/", express.static("build"));
 
 // Health check route.
-app.use("/health", HealthCheckRoute);
+app.use("/health", healthCheckRoute);
+
+// Session routes.
+app.use("/session", sessionRoute);
+
+// Session routes.
+app.use("/chat", chatRoute);
 
 // TODO API Routes
 app.use(
@@ -41,14 +56,15 @@ app.use(
 );
 
 // Catch-all route
-app.use(
-    "*",
-    asyncHandler(async (req, res, next) => {})
-);
+app.use("*", (req, res, next) => {
+    res.sendFile("index.html", {
+        root: "build",
+    });
+});
 
 const database: Database = new Database(process.env.MONGODB_URI);
 database.connect().then(() => {
-    app.listen(process.env.PORT || 5000, async () => {
+    server.listen(process.env.PORT || 5000, async () => {
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });
