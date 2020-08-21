@@ -6,8 +6,18 @@ export class loginContainer extends React.Component<{}, {}> {
             <div>
                 <h1>login test</h1>
                 <form>
-                    <input type="text" placeholder="username" />
-                    <input type="text" placeholder="password" />
+                    <label htmlFor="username">Enter Username</label>
+                    <br></br>
+
+                    <input name="username" type="text" placeholder="username" />
+                    <br></br>
+
+                    <label htmlFor="password">Enter Password</label>
+                    <br></br>
+
+                    <input name="password" type="text" placeholder="password" />
+                    <br></br>
+
                     <button type="submit">login</button>
                 </form>
             </div>
