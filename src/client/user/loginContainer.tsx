@@ -1,6 +1,14 @@
 import React from "react";
 
 export class loginContainer extends React.Component<{}, {}> {
+    handleUsernameChange(event: any) {
+        console.log("handle username change", event.target.value);
+    }
+
+    handlePasswordChange(event: any) {
+        console.log("handle password change", event.target.value);
+    }
+
     handleSubmit(event: any) {
         event.preventDefault();
     }
@@ -13,13 +21,25 @@ export class loginContainer extends React.Component<{}, {}> {
                     <label htmlFor="username">Enter Username</label>
                     <br></br>
 
-                    <input name="username" type="text" placeholder="username" />
+                    <input
+                        name="username"
+                        type="text"
+                        placeholder="username"
+                        onChange={this.handleUsernameChange}
+                        required
+                    />
                     <br></br>
 
                     <label htmlFor="password">Enter Password</label>
                     <br></br>
 
-                    <input name="password" type="text" placeholder="password" />
+                    <input
+                        name="password"
+                        type="password"
+                        placeholder="password"
+                        onChange={this.handlePasswordChange}
+                        required
+                    />
                     <br></br>
 
                     <button type="submit">login</button>
