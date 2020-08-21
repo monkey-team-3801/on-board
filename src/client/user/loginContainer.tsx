@@ -1,11 +1,15 @@
 import React from "react";
 
 export class loginContainer extends React.Component<{}, {}> {
+    handleSubmit(event: any) {
+        event.preventDefault();
+    }
+
     render() {
         return (
             <div>
                 <h1>login test</h1>
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     <label htmlFor="username">Enter Username</label>
                     <br></br>
 
