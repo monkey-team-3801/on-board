@@ -9,6 +9,7 @@ import { Database } from "./database";
 
 import { healthCheckRoute, chatRoute } from "./routes";
 import { sessionRoute } from "./routes";
+import { authentication } from "./routes";
 
 dotenv.config();
 
@@ -48,6 +49,8 @@ app.use("/session", sessionRoute);
 
 // Session routes.
 app.use("/chat", chatRoute);
+
+app.use("/login", authentication);
 
 // TODO API Routes
 app.use(
