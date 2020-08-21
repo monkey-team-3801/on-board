@@ -70,11 +70,12 @@
         "workbox-webpack-plugin": "4.3.1"
     },
     "scripts": {
-        "start": "npm run build-client && npm run build-server && npm run start-server",
+        "start": "npm run start-server",
         "start-client-dev": "node scripts/start.js",
         "start-client": "node scripts/start.js",
         "start-server-dev": "ts-node-dev src/server/server.ts",
         "start-server": "node build/server.js",
+        "build": "npm run build-client && npm run build-server",
         "build-client": "node scripts/build.js",
         "build-server": "webpack --config ./config/webpackServer.config.js",
         "test": "node scripts/test.js",
