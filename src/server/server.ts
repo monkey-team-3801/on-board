@@ -9,7 +9,7 @@ import { Database } from "./database";
 
 import { healthCheckRoute, chatRoute } from "./routes";
 import { sessionRoute } from "./routes";
-import { authentication } from "./routes";
+import { userRoute } from "./routes";
 
 dotenv.config();
 
@@ -50,7 +50,7 @@ app.use("/session", sessionRoute);
 // Session routes.
 app.use("/chat", chatRoute);
 
-app.use("/login", authentication);
+app.use("/login", userRoute);
 
 // TODO API Routes
 app.use(
