@@ -11,6 +11,7 @@ export const router = express.Router();
 router.post(
     "/newMessage",
     asyncHandler<undefined, {}, MessageData>(async (req, res, next) => {
+        io.emit(ChatEvent.ON_NEW_MESASGE, req.body);
         const session = await Session.findById(req.body.sessionId);
         session?.messages?.push({
             sendUser: req.body.sendUser,
@@ -18,7 +19,6 @@ router.post(
             sentTime: req.body.sentTime,
         });
         await session?.save();
-        io.emit(ChatEvent.ON_NEW_MESASGE, req.body);
         res.end();
     })
 );
