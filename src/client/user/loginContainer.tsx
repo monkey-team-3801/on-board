@@ -1,4 +1,6 @@
 import React from "react";
+import { useDynamicFetch } from "../hooks";
+import { createUserRequestType, loginUserRequestType } from "../../types";
 
 export class loginContainer extends React.Component<{}, {}> {
     constructor(props: {}) {
@@ -13,6 +15,11 @@ export class loginContainer extends React.Component<{}, {}> {
     handleSubmit(event: any) {
         event.preventDefault();
         console.log(this.state);
+
+        const [data, loginUser] = useDynamicFetch<
+            undefined,
+            loginUserRequestType
+        >("user/login", undefined, false);
     }
 
     render() {

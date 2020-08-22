@@ -6,6 +6,4 @@ router.get("/", (req, res) => {
     //TODO
 });
 
-router.post("/", (req, res) => {
-    //TODO
-});
+router.post("/login", (req, res) => {});
