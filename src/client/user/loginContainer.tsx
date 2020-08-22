@@ -1,23 +1,25 @@
 import React from "react";
 
 export class loginContainer extends React.Component<{}, {}> {
-    handleUsernameChange(event: any) {
-        console.log("handle username change", event.target.value);
-    }
+    constructor(props: {}) {
+        super(props);
 
-    handlePasswordChange(event: any) {
-        console.log("handle password change", event.target.value);
+        this.state = {
+            username: "",
+            password: "",
+        };
     }
 
     handleSubmit(event: any) {
         event.preventDefault();
+        console.log(this.state);
     }
 
     render() {
         return (
             <div>
                 <h1>login test</h1>
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={(e) => this.handleSubmit(e)}>
                     <label htmlFor="username">Enter Username</label>
                     <br></br>
 
@@ -25,7 +27,9 @@ export class loginContainer extends React.Component<{}, {}> {
                         name="username"
                         type="text"
                         placeholder="username"
-                        onChange={this.handleUsernameChange}
+                        onChange={(e) =>
+                            this.setState({ username: e.target.value })
+                        }
                         required
                     />
                     <br></br>
@@ -37,7 +41,9 @@ export class loginContainer extends React.Component<{}, {}> {
                         name="password"
                         type="password"
                         placeholder="password"
-                        onChange={this.handlePasswordChange}
+                        onChange={(e) =>
+                            this.setState({ password: e.target.value })
+                        }
                         required
                     />
                     <br></br>
