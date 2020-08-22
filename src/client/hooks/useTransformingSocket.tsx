@@ -9,29 +9,22 @@ import socketIOClient from "socket.io-client";
  */
 export const useTransformingSocket = <T extends any, S extends any = any>(
     event: string,
-    transformSocketData: (prev: T, data: S) => T | undefined,
+    transformSocketData: (prev: T | undefined, data: S) => T | undefined,
     initialValue?: T
 ) => {
     const [data, setData] = React.useState<T | undefined>(initialValue);
-
-    const transformData = React.useCallback(
-        (prev, data) => {
-            return transformSocketData(prev, data);
-        },
-        [transformSocketData]
-    );
 
     React.useEffect(() => {
         const socket: SocketIOClient.Socket = socketIOClient("/");
         socket.on(event, (data: S) => {
             setData((prev: T | undefined) => {
-                return transformData(prev, data);
+                return transformSocketData(prev, data);
             });
         });
         return () => {
             socket.disconnect();
         };
-    }, [event, setData, transformData]);
+    }, [event, setData, transformSocketData]);
 
     return [data];
 };
