@@ -21,3 +21,20 @@ export type MessageData = {
     sessionId: string;
     sentTime: string;
 };
+
+enum UserType {
+    STUDENT,
+    TUTOR,
+    INSTRUCTOR,
+}
+
+export type loginUserRequestType = {
+    username: string;
+    password: string;
+};
+
+export type createUserRequestType = {
+    username: string;
+    password: string;
+    userType: UserType;
+};
