@@ -50,7 +50,7 @@ app.use("/session", sessionRoute);
 // Session routes.
 app.use("/chat", chatRoute);
 
-app.use("/login", userRoute);
+app.use("/user", userRoute);
 
 // TODO API Routes
 app.use(

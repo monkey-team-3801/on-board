@@ -28,12 +28,12 @@ enum UserType {
     INSTRUCTOR,
 }
 
-export type loginUserRequestType = {
+export type LoginUserRequestType = {
     username: string;
     password: string;
 };
 
-export type createUserRequestType = {
+export type CreateUserRequestType = {
     username: string;
     password: string;
     userType: UserType;

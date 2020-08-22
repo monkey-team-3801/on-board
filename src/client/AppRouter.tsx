@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, Link, Redirect } from "react-router-dom";
 import { HomePageContainer } from "./containers/HomePageContainer";
 import { ClassroomPageContainer } from "./containers/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./containers/PrivateRoomContainer";
-import { loginContainer } from "./user/loginContainer";
+import { LoginContainer } from "./user/LoginContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -16,7 +16,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     component={ClassroomPageContainer}
                 />
                 <Route path="/room/:roomId" component={PrivateRoomContainer} />
-                <Route path="/login" component={loginContainer} />
+                <Route path="/login" component={LoginContainer} />
                 <Route>
                     <Redirect to="/home" />
                 </Route>
