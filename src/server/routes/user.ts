@@ -2,9 +2,9 @@ import express from "express";
 import { User } from "../database/schema";
 import { asyncHandler } from "../utils";
 import {
-    LoginUserRequestType,
     CreateUserRequestType,
     UserType,
+    LoginUserResponseType,
 } from "../../types";
 
 export const router = express.Router();
@@ -16,13 +16,22 @@ router.get("/", (req, res) => {
 router.post(
     "/login",
     asyncHandler<
-        LoginUserRequestType,
+        LoginUserResponseType,
         {},
-        { username: string; password: string }
+        { username: string; password: string; id: string }
     >(async (req, res) => {
-        //TODO
-        // const query = await User.find().select({ username: req.body.username });
-        // console.log(query[0].username);
+        const usernameQuery = await User.findOne({
+            username: req.body.username,
+        });
+        if (usernameQuery !== null) {
+            if (req.body.password === usernameQuery.password) {
+                res.json({
+                    id: usernameQuery._id,
+                });
+            }
+            res.status(500).end();
+        }
+        res.status(500).end();
     })
 );
 

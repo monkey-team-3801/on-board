@@ -1,22 +1,26 @@
 import React from "react";
 import { useDynamicFetch } from "../hooks";
-import { CreateUserRequestType, LoginUserRequestType } from "../../types";
+import {
+    CreateUserRequestType,
+    LoginUserRequestType,
+    LoginUserResponseType,
+} from "../../types";
 
 export const LoginContainer = () => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
-    const [data, loginUser] = useDynamicFetch<undefined, LoginUserRequestType>(
-        "user/login",
-        undefined,
-        false
-    );
+    const [userID, loginUser] = useDynamicFetch<
+        LoginUserResponseType,
+        LoginUserRequestType
+    >("user/login", undefined, false);
 
     let handleSubmit = function (event: any) {
         event.preventDefault();
         //console.log(username, password);
 
         loginUser({ username: username, password: password });
+        console.log(userID.data?.id);
     };
 
     return (

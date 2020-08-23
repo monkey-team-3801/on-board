@@ -33,6 +33,10 @@ export type LoginUserRequestType = {
     password: string;
 };
 
+export type LoginUserResponseType = {
+    id: string;
+};
+
 export type CreateUserRequestType = {
     username: string;
     password: string;
