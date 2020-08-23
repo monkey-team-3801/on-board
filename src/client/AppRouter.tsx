@@ -10,6 +10,11 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
         <BrowserRouter>
             <Link to="/home">home</Link>
+            <br></br>
+            <Link to="/login">login</Link>
+            <br></br>
+            <Link to="/Register">register</Link>
+            <br></br>
             <Switch>
                 <Route path="/home" component={HomePageContainer} />
                 <Route
