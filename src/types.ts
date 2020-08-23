@@ -21,3 +21,9 @@ export type MessageData = {
     sessionId: string;
     sentTime: string;
 };
+
+export interface TimetableSession {
+    name: string;
+    startTime: Date;
+    duration: Number;
+}
