@@ -2,25 +2,27 @@ import React from "react";
 import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginUserResponseType } from "../../types";
 import { Redirect } from "react-router-dom";
+import { RequestState } from "../types";
 
 export const LoginContainer = () => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
+    // UserID can be found through userID.data.id on login success.
     const [userID, loginUser] = useDynamicFetch<
         LoginUserResponseType,
         LoginUserRequestType
     >("user/login", undefined, false);
 
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         event.preventDefault();
 
-        await loginUser({ username: username, password: password });
-        // This is the user ID:
-        console.log(userID.data?.id);
+        await loginUser({ username, password });
     };
 
-    if (userID.data?.id !== undefined) {
+    if (userID.state === RequestState.LOADED) {
         return <Redirect to={"/home"} />;
     }
 

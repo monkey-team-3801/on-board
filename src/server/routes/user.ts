@@ -9,10 +9,6 @@ import {
 
 export const router = express.Router();
 
-router.get("/", (req, res) => {
-    //TODO
-});
-
 // Route to handle login requests.
 router.post(
     "/login",
@@ -24,7 +20,7 @@ router.post(
         const usernameQuery = await User.findOne({
             username: req.body.username,
         });
-        if (usernameQuery !== null) {
+        if (usernameQuery) {
             if (req.body.password === usernameQuery.password) {
                 res.json({
                     id: usernameQuery._id,

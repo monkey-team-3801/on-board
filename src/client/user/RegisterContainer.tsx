@@ -29,13 +29,15 @@ export const RegisterContainer = () => {
         }
     };
 
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         event.preventDefault();
 
         await registerUser({
-            username: username,
-            password: password,
-            userType: userType,
+            username,
+            password,
+            userType,
         });
     };
 
