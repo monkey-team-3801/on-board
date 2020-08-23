@@ -25,7 +25,7 @@ export type MessageData = {
 export enum UserType {
     STUDENT,
     TUTOR,
-    INSTRUCTOR,
+    COORDINATOR,
 }
 
 export type LoginUserRequestType = {

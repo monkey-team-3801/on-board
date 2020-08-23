@@ -1,28 +1,44 @@
 import React from "react";
 import { useDynamicFetch } from "../hooks";
-import { LoginUserRequestType, LoginUserResponseType } from "../../types";
+import { UserType } from "../../types";
 
-export const LoginContainer = () => {
+export const RegisterContainer = () => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+    const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
 
-    const [userID, loginUser] = useDynamicFetch<
-        LoginUserResponseType,
-        LoginUserRequestType
-    >("user/login", undefined, false);
+    const changeUserType = (type: string): void => {
+        switch (type) {
+            case "student":
+                setUserType(UserType.STUDENT);
+                break;
+            case "tutor":
+                setUserType(UserType.TUTOR);
+                break;
+            case "coordinator":
+                setUserType(UserType.COORDINATOR);
+                break;
+        }
+    };
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-
-        await loginUser({ username: username, password: password });
-        // This is the user ID:
-        console.log(userID.data?.id);
     };
 
     return (
         <div>
-            <h1>login test</h1>
+            <h1>registration test</h1>
             <form onSubmit={(e) => handleSubmit(e)}>
+                <label htmlFor="Account Type">Select Account Type</label>
+                <br></br>
+
+                <select onChange={(e) => changeUserType(e.target.value)}>
+                    <option value={"student"}>Student</option>
+                    <option value={"tutor"}>Tutor</option>
+                    <option value={"coordinator"}>Coordinator</option>
+                </select>
+                <br></br>
+
                 <label htmlFor="username">Enter Username</label>
                 <br></br>
 
@@ -47,7 +63,7 @@ export const LoginContainer = () => {
                 />
                 <br></br>
 
-                <button type="submit">login</button>
+                <button type="submit">Register Account</button>
             </form>
         </div>
     );

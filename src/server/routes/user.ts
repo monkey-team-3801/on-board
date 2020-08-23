@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
     //TODO
 });
 
+// Route to handle login requests.
 router.post(
     "/login",
     asyncHandler<
@@ -35,6 +36,7 @@ router.post(
     })
 );
 
+// Route to handle registration requests.
 router.post(
     "/register",
     asyncHandler<

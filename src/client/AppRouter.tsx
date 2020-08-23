@@ -4,6 +4,7 @@ import { HomePageContainer } from "./containers/HomePageContainer";
 import { ClassroomPageContainer } from "./containers/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./containers/PrivateRoomContainer";
 import { LoginContainer } from "./user/LoginContainer";
+import { RegisterContainer } from "./user/RegisterContainer";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -17,6 +18,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 />
                 <Route path="/room/:roomId" component={PrivateRoomContainer} />
                 <Route path="/login" component={LoginContainer} />
+                <Route path="/register" component={RegisterContainer} />
                 <Route>
                     <Redirect to="/home" />
                 </Route>
