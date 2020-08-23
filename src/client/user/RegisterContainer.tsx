@@ -1,11 +1,19 @@
 import React from "react";
 import { useDynamicFetch } from "../hooks";
-import { UserType } from "../../types";
+import { UserType, CreateUserRequestType } from "../../types";
+import { RequestState } from "../types";
+import { Redirect } from "react-router-dom";
 
 export const RegisterContainer = () => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
+
+    const [data, registerUser] = useDynamicFetch<any, CreateUserRequestType>(
+        "user/register",
+        undefined,
+        false
+    );
 
     const changeUserType = (type: string): void => {
         switch (type) {
@@ -23,7 +31,18 @@ export const RegisterContainer = () => {
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
+
+        registerUser({
+            username: username,
+            password: password,
+            userType: userType,
+        });
+        console.log(data.state);
     };
+
+    if (data.state === RequestState.LOADED) {
+        return <Redirect to={"/home"} />;
+    }
 
     return (
         <div>

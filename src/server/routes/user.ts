@@ -44,6 +44,11 @@ router.post(
         {},
         { username: string; password: string; userType: UserType }
     >(async (req, res) => {
-        //TODO
+        await User.create({
+            username: req.body.username,
+            password: req.body.password,
+            userType: req.body.userType,
+        });
+        res.status(200).end();
     })
 );
