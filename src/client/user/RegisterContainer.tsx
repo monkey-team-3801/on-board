@@ -32,12 +32,11 @@ export const RegisterContainer = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
 
-        registerUser({
+        await registerUser({
             username: username,
             password: password,
             userType: userType,
         });
-        console.log(data.state);
     };
 
     if (data.state === RequestState.LOADED) {

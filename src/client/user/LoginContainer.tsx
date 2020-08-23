@@ -1,6 +1,7 @@
 import React from "react";
 import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginUserResponseType } from "../../types";
+import { Redirect } from "react-router-dom";
 
 export const LoginContainer = () => {
     const [username, setUsername] = React.useState<string>("");
@@ -18,6 +19,10 @@ export const LoginContainer = () => {
         // This is the user ID:
         console.log(userID.data?.id);
     };
+
+    if (userID.data?.id !== undefined) {
+        return <Redirect to={"/home"} />;
+    }
 
     return (
         <div>
