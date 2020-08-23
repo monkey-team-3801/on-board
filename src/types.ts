@@ -22,7 +22,7 @@ export type MessageData = {
     sentTime: string;
 };
 
-enum UserType {
+export enum UserType {
     STUDENT,
     TUTOR,
     INSTRUCTOR,
