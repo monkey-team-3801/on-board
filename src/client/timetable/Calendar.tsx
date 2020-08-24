@@ -5,18 +5,18 @@ import {
     endOfMonth,
     endOfISOWeek,
     eachDayOfInterval,
-    format,
     startOfDay,
 } from "date-fns";
 import { CourseActivityResponseType } from "../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
+import { CalendarHeading } from "./CalendarHeading";
 
 interface Props {
     sessions: Array<CourseActivityResponseType>;
 }
 
-interface State {
+export interface State {
     chosenMonth: number;
     chosenYear: number;
 }
@@ -44,52 +44,9 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
         start: lastDayOfMonth,
         end: lastDayShown,
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
-    const monthHeading: string = format(firstDayOfMonth, "MMMM, yyyy");
     return (
         <>
-            <div className="month-heading">
-                <div
-                    className="left-chevron"
-                    onClick={() =>
-                        setTimeFrame((prevState) => {
-                            const newChosenMonth: number =
-                                prevState.chosenMonth - 1;
-                            const newChosenYear: number =
-                                newChosenMonth === -1
-                                    ? prevState.chosenYear - 1
-                                    : prevState.chosenYear;
-                            return {
-                                chosenMonth:
-                                    newChosenMonth === -1 ? 11 : newChosenMonth,
-                                chosenYear: newChosenYear,
-                            };
-                        })
-                    }
-                >
-                    &lt;
-                </div>
-                <div>{monthHeading}</div>
-                <div
-                    className="right-chevron"
-                    onClick={() =>
-                        setTimeFrame((prevState) => {
-                            const newChosenMonth =
-                                (prevState.chosenMonth + 1) % 12;
-                            const newChosenYear =
-                                newChosenMonth === 0
-                                    ? prevState.chosenYear + 1
-                                    : prevState.chosenYear;
-                            return {
-                                chosenMonth: newChosenMonth,
-                                chosenYear: newChosenYear,
-                            };
-                        })
-                    }
-                >
-                    &gt;
-                </div>
-            </div>
-
+            <CalendarHeading month={chosenMonth} year={chosenYear} setTimeFrame={setTimeFrame}/>
             <div className="calendar-container">
                 {[
                     "Monday",

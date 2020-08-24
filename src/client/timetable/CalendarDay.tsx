@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
-    const { sessionsInDay, date, chosenMonth, chosenYear } = props;
+    const { date, chosenMonth, chosenYear } = props;
     const dateInChosenRange: boolean =
         date.getMonth() === chosenMonth && date.getFullYear() === chosenYear;
     return (
