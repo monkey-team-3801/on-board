@@ -8,8 +8,8 @@ import { asyncHandler } from "./utils";
 import { Database } from "./database";
 
 import { healthCheckRoute, chatRoute } from "./routes";
-import { sessionRoute } from "./routes";
 import { userRoute } from "./routes";
+import { sessionRoute, courseRoute } from "./routes";
 
 dotenv.config();
 
@@ -47,10 +47,12 @@ app.use("/health", healthCheckRoute);
 // Session routes.
 app.use("/session", sessionRoute);
 
-// Session routes.
+// Chat routes.
 app.use("/chat", chatRoute);
 
 app.use("/user", userRoute);
+// Course routes.
+app.use("/courses", courseRoute);
 
 // TODO API Routes
 app.use(

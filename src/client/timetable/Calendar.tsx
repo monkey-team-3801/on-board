@@ -8,12 +8,12 @@ import {
     format,
     startOfDay,
 } from "date-fns";
-import { TimetableSession } from "../../types";
+import { CourseActivityResponseType } from "../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 
 interface Props {
-    sessions: Array<TimetableSession>;
+    sessions: Array<CourseActivityResponseType>;
 }
 
 interface State {
@@ -22,7 +22,7 @@ interface State {
 }
 
 export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
-    const [{ chosenMonth, chosenYear }, setState] = React.useState<State>({
+    const [{ chosenMonth, chosenYear }, setTimeFrame] = React.useState<State>({
         chosenMonth: new Date().getMonth(),
         chosenYear: new Date().getFullYear(),
     });
@@ -51,15 +51,16 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
                 <div
                     className="left-chevron"
                     onClick={() =>
-                        setState((prevState) => {
-                            const newChosenMonth =
-                                (prevState.chosenMonth - 1) % 12;
-                            const newChosenYear =
-                                newChosenMonth === 11
+                        setTimeFrame((prevState) => {
+                            const newChosenMonth: number =
+                                prevState.chosenMonth - 1;
+                            const newChosenYear: number =
+                                newChosenMonth === -1
                                     ? prevState.chosenYear - 1
                                     : prevState.chosenYear;
                             return {
-                                chosenMonth: newChosenMonth,
+                                chosenMonth:
+                                    newChosenMonth === -1 ? 11 : newChosenMonth,
                                 chosenYear: newChosenYear,
                             };
                         })
@@ -71,7 +72,7 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
                 <div
                     className="right-chevron"
                     onClick={() =>
-                        setState((prevState) => {
+                        setTimeFrame((prevState) => {
                             const newChosenMonth =
                                 (prevState.chosenMonth + 1) % 12;
                             const newChosenYear =

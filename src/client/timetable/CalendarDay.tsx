@@ -1,9 +1,10 @@
 import React from "react";
-import { TimetableSession } from "../../types";
+import { CourseActivityResponseType } from "../../types";
 import "./CalendarDay.less";
+import { startOfDay } from "date-fns";
 
 interface Props {
-    sessionsInDay: Array<TimetableSession>;
+    sessionsInDay: Array<CourseActivityResponseType>;
     date: Date;
     chosenMonth: number;
     chosenYear: number;
@@ -15,8 +16,12 @@ export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
         date.getMonth() === chosenMonth && date.getFullYear() === chosenYear;
     return (
         <div
-            className={`calendar-date ${
-                !dateInChosenRange ? "outside-range" : ""
+            className={`calendar-date 
+            ${!dateInChosenRange ? "outside-range" : ""}
+            ${
+                startOfDay(date).getTime() === startOfDay(new Date()).getTime()
+                    ? "today"
+                    : ""
             }`}
         >
             {date.getDate()}

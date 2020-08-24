@@ -22,11 +22,43 @@ export type MessageData = {
     sentTime: string;
 };
 
-export interface TimetableSession {
-    name: string;
-    startTime: Date;
-    duration: Number;
-}
+export type CourseActivityUnique = {
+    code: string;
+    type: string;
+};
+
+export type CourseActivityRequestFilterType = Partial<CourseActivityUnique> & {
+    filter: {
+        chosenYear?: number;
+        chosenMonth?: number;
+    };
+};
+
+export type CourseActivityResponseType = CourseActivityUnique & {
+    time: string;
+    startDate: Date;
+    duration: number;
+    day_of_week:
+        | "Monday"
+        | "Tuesday"
+        | "Wednesday"
+        | "Thursday"
+        | "Friday"
+        | "Saturday"
+        | "Sunday";
+    weeks: Array<1 | 0>;
+};
+
+export type CourseDataUnique = {
+    code: string;
+    description: string;
+};
+
+export type CourseResponseType = CourseDataUnique & {
+    activities: Array<CourseActivityResponseType>;
+};
+
+export type CoursesResponseType = Array<CourseResponseType>;
 
 export enum UserType {
     STUDENT,
