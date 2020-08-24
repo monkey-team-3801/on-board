@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:origin/timetable" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fb117e28-7d1e-48f4-be77-ea04bdfa4a14" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/server/database/schema/Course.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/server/routes/course.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/timetable/Calendar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/timetable/Calendar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/timetable/CalendarDay.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/timetable/CalendarDay.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/database/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/database/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/database/schema/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/database/schema/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/routes/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/routes/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript JSX File" />
+        <option value="Less File" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="ProjectId" id="1gF6B2a1P81YsoIIcTPKAFfCY37" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="list.type.of.created.stylesheet" value="Less" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RunManager" selected="npm.start-client-dev">
+    <configuration name="eslint" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="eslint" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="prettier" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="prettier" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start-client-dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start-client-dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start-server-dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start-server-dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start-server-dev" />
+        <item itemvalue="npm.start-client-dev" />
+        <item itemvalue="npm.eslint" />
+        <item itemvalue="npm.prettier" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fb117e28-7d1e-48f4-be77-ea04bdfa4a14" name="Default Changelist" comment="" />
+      <created>1597697855306</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1597697855306</updated>
+      <workItem from="1597697857004" duration="896000" />
+      <workItem from="1597699404480" duration="3755000" />
+      <workItem from="1597975572135" duration="7890000" />
+      <workItem from="1598138682667" duration="2345000" />
+      <workItem from="1598173049853" duration="9967000" />
+      <workItem from="1598215203278" duration="10928000" />
+    </task>
+    <task id="LOCAL-00001" summary="Implements calendar component">
+      <created>1598190317858</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1598190317858</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/timetable" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implements calendar component" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implements calendar component" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="575" y="334" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1597987971826">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="575" y="334" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1597987971826" />
+    <state x="394" y="196" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog" timestamp="1598186436814">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="394" y="196" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1598186436814" />
+    <state x="417" y="100" key="CommitChangelistDialog2" timestamp="1598190317556">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="417" y="100" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1598190317556" />
+    <state width="1659" height="295" key="GridCell.Tab.0.bottom" timestamp="1598253544319">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1659" height="295" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1598253544319" />
+    <state width="1659" height="295" key="GridCell.Tab.0.bottom/0.23.1680.943@0.23.1680.943" timestamp="1598190983513" />
+    <state width="1659" height="295" key="GridCell.Tab.0.center" timestamp="1598253544318">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1659" height="295" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1598253544318" />
+    <state width="1659" height="295" key="GridCell.Tab.0.center/0.23.1680.943@0.23.1680.943" timestamp="1598190983512" />
+    <state width="1659" height="295" key="GridCell.Tab.0.left" timestamp="1598253544317">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1659" height="295" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1598253544317" />
+    <state width="1659" height="295" key="GridCell.Tab.0.left/0.23.1680.943@0.23.1680.943" timestamp="1598190983511" />
+    <state width="1659" height="295" key="GridCell.Tab.0.right" timestamp="1598253544318">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1659" height="295" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1598253544318" />
+    <state width="1659" height="295" key="GridCell.Tab.0.right/0.23.1680.943@0.23.1680.943" timestamp="1598190983512" />
+    <state x="341" y="164" key="SettingsEditor" timestamp="1597996435593">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="341" y="164" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1597996435593" />
+    <state x="440" y="252" key="Vcs.Push.Dialog.v2" timestamp="1598190322111">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="440" y="252" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1598190322111" />
+    <state x="505" y="233" key="search.everywhere.popup" timestamp="1598184001578">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="505" y="233" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1598184001578" />
+  </component>
+</project>

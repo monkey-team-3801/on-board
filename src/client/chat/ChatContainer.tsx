@@ -14,20 +14,21 @@ type Props = {
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     const [text, setText] = React.useState<string>("");
 
-    const [messageArray] = useTransformingSocket<
-        Array<MessageData>,
-        MessageData
-    >(
-        ChatEvent.ON_NEW_MESASGE,
-        (prev: Array<MessageData>, data: MessageData) => {
+    const transformData = React.useCallback(
+        (prev: Array<MessageData> | undefined, data: MessageData) => {
             if (prev && data) {
                 return prev.concat([data]);
             } else {
                 return [];
             }
         },
-        props.initialChatLog
+        []
     );
+
+    const [messageArray] = useTransformingSocket<
+        Array<MessageData>,
+        MessageData
+    >(ChatEvent.ON_NEW_MESASGE, transformData, props.initialChatLog);
 
     const [response, updateChat] = useDynamicFetch<undefined, MessageData>(
         "/chat/newMessage",
