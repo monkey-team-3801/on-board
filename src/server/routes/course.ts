@@ -10,7 +10,7 @@ import {
     CoursesResponseType,
     CourseActivityRequestFilterType,
 } from "../../types";
-import { addWeeks } from "date-fns";
+import { addWeeks, setISODay } from "date-fns";
 
 export const router = express.Router();
 
@@ -168,25 +168,17 @@ router.get(
                 const codeFilter = req.body.code || activity.code;
                 const typeFilter = req.body.type || activity.type;
                 const { chosenYear, chosenMonth } = req.body.filter;
-                let timeFilter = false;
-                // @ts-ignore
-                // TODO: type fix?
-                for (const [i, weekOn] of activity.weeks.entries()) {
-                    if (weekOn === 0) continue;
-                    const sessionDate: Date = addWeeks(activity.startDate, i);
-                    if (
+
+                return activity.weeks.some((weekOn, i) => {
+                    if (weekOn === 0) return false;
+                    const sessionDate: Date = setISODay(addWeeks(activity.startDate, i), activity.day_of_week);
+                    return (
+                        activity.code === codeFilter &&
+                        activity.type === typeFilter &&
                         sessionDate.getFullYear() === chosenYear &&
                         sessionDate.getMonth() === chosenMonth
-                    ) {
-                        timeFilter = true;
-                        break;
-                    }
-                }
-                return (
-                    activity.code === codeFilter &&
-                    activity.type === typeFilter &&
-                    timeFilter
-                );
+                    );
+                });
             })
         );
     })
