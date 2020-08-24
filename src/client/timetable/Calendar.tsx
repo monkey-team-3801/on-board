@@ -46,7 +46,11 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
     return (
         <>
-            <CalendarHeading month={chosenMonth} year={chosenYear} setTimeFrame={setTimeFrame}/>
+            <CalendarHeading
+                month={chosenMonth}
+                year={chosenYear}
+                setTimeFrame={setTimeFrame}
+            />
             <div className="calendar-container">
                 {[
                     "Monday",

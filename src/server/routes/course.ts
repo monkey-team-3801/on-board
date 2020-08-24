@@ -171,7 +171,10 @@ router.get(
 
                 return activity.weeks.some((weekOn, i) => {
                     if (weekOn === 0) return false;
-                    const sessionDate: Date = setISODay(addWeeks(activity.startDate, i), activity.day_of_week);
+                    const sessionDate: Date = setISODay(
+                        addWeeks(activity.startDate, i),
+                        activity.day_of_week
+                    );
                     return (
                         activity.code === codeFilter &&
                         activity.type === typeFilter &&
