@@ -25,7 +25,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 <Route path="/room/:roomId" component={PrivateRoomContainer} />
                 <Route path="/calendar-test" component={Calendar} />
                 <Route path="/login" component={LoginContainer} />
-                <Route path="/register" component={RegisterContainer} />]{" "}
+                <Route path="/register" component={RegisterContainer} />
                 <Route>
                     <Redirect to="/home" />
                 </Route>
