@@ -22,7 +22,7 @@ router.get(
                 const course = await Course.findOne({
                     code: req.params.course_code,
                 });
-                if (course === null) {
+                if (!course) {
                     res.status(404).end();
                     return;
                 }
@@ -80,7 +80,7 @@ router.delete(
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
         async (req, res) => {
             const course = await Course.findOneAndDelete(req.params);
-            if (course === null) {
+            if (!course) {
                 res.status(404).end();
                 return;
             }
@@ -97,7 +97,7 @@ router.patch(
         { code?: string; description?: string }
     >(async (req, res) => {
         const course = await Course.findOneAndUpdate(req.params, req.body);
-        if (course === null) {
+        if (!course) {
             res.status(404).end();
             return;
         }
@@ -114,7 +114,7 @@ router.post(
         CourseActivityResponseType
     >(async (req, res) => {
         const course = await Course.findOne(req.params);
-        if (course === null) {
+        if (!course) {
             res.status(404).end();
             return;
         }
@@ -132,7 +132,7 @@ router.delete(
         CourseActivityUnique
     >(async (req, res) => {
         const course = await Course.findOne(req.params);
-        if (course === null) {
+        if (!course) {
             res.status(404).end();
             return;
         }
@@ -159,7 +159,7 @@ router.get(
         CourseActivityRequestFilterType
     >(async (req, res) => {
         const course = await Course.findOne(req.params);
-        if (course === null) {
+        if (!course) {
             res.status(404).end();
             return;
         }
