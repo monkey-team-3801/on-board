@@ -50,7 +50,9 @@ app.use("/session", sessionRoute);
 // Chat routes.
 app.use("/chat", chatRoute);
 
+// Login and Registration routes.
 app.use("/user", userRoute);
+
 // Course routes.
 app.use("/courses", courseRoute);
 
