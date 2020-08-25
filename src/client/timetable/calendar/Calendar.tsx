@@ -7,19 +7,19 @@ import {
     eachDayOfInterval,
     startOfDay,
 } from "date-fns";
-import { CourseActivityResponseType } from "../../types";
+import { CourseActivityResponseType } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
 
-interface Props {
+type Props = {
     sessions: Array<CourseActivityResponseType>;
-}
+};
 
-export interface State {
+export type State = {
     chosenMonth: number;
     chosenYear: number;
-}
+};
 
 export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
     const [{ chosenMonth, chosenYear }, setTimeFrame] = React.useState<State>({

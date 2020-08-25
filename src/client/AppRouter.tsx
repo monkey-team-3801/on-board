@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, Link, Redirect } from "react-router-dom";
 import { HomePageContainer } from "./containers/HomePageContainer";
 import { ClassroomPageContainer } from "./containers/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./containers/PrivateRoomContainer";
-import { Calendar } from "./timetable/Calendar";
+import { Calendar } from "./timetable/calendar/Calendar";
 import { LoginContainer } from "./user/LoginContainer";
 import { RegisterContainer } from "./user/RegisterContainer";
 

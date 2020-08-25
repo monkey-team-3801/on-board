@@ -1,5 +1,5 @@
 import React from "react";
-import { CourseActivityResponseType } from "../../types";
+import { CourseActivityResponseType } from "../../../types";
 import "./CalendarDay.less";
 import { startOfDay } from "date-fns";
 
