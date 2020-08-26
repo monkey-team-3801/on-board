@@ -31,7 +31,7 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <div className="login-page-container">
-            {data.state === RequestState.LOADED && <Redirect to="/home" />}
+            { data.state === RequestState.LOADED && <Redirect to="/home" />}
             <Container>
                 <Row>
                     <Container>
