@@ -64,12 +64,19 @@ export type LoginUserRequestType = {
     password: string;
 };
 
-export type LoginUserResponseType = {
+export type LoginSuccessResponseType = {
     id: string;
+    jwtToken: string;
 };
 
 export type CreateUserRequestType = {
     username: string;
     password: string;
+    userType: UserType;
+};
+
+export type UserDataResponseType = {
+    id: string;
+    username: string;
     userType: UserType;
 };
