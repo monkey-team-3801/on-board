@@ -1,19 +1,28 @@
 import React from "react";
 import { useDynamicFetch } from "../hooks";
-import { UserType, CreateUserRequestType } from "../../types";
+import {
+    UserType,
+    CreateUserRequestType,
+    LoginSuccessResponseType,
+} from "../../types";
 import { RequestState } from "../types";
 import { Redirect } from "react-router-dom";
 
-export const RegisterContainer = () => {
+type Props = {
+    onFetchSuccess: (response: LoginSuccessResponseType) => void;
+};
+
+export const RegisterContainer: React.FunctionComponent<Props> = (
+    props: Props
+) => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
 
-    const [data, registerUser] = useDynamicFetch<any, CreateUserRequestType>(
-        "user/register",
-        undefined,
-        false
-    );
+    const [data, registerUser] = useDynamicFetch<
+        LoginSuccessResponseType,
+        CreateUserRequestType
+    >("user/register", undefined, false, props.onFetchSuccess);
 
     const changeUserType = (type: string): void => {
         switch (type) {
@@ -47,7 +56,6 @@ export const RegisterContainer = () => {
 
     return (
         <div>
-            <h1>registration test</h1>
             <form onSubmit={(e) => handleSubmit(e)}>
                 <label htmlFor="Account Type">Select Account Type</label>
                 <br></br>
