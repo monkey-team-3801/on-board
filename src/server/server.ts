@@ -7,9 +7,14 @@ import bodyParser from "body-parser";
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
 
-import { healthCheckRoute, chatRoute } from "./routes";
+import {
+    healthCheckRoute,
+    chatRoute,
+    sessionRoute,
+    courseRoute,
+    authRoute,
+} from "./routes";
 import { userRoute } from "./routes";
-import { sessionRoute, courseRoute } from "./routes";
 
 dotenv.config();
 
@@ -55,6 +60,9 @@ app.use("/user", userRoute);
 
 // Course routes.
 app.use("/courses", courseRoute);
+
+// Authorisation routes.
+app.use("/auth", authRoute);
 
 // TODO API Routes
 app.use(
