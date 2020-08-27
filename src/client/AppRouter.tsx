@@ -23,7 +23,6 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 <SecuredRoute path="/calendar-test" component={Calendar} />
                 <Route path="/" component={LoginPage} />
             </Switch>
-            <br></br>
         </BrowserRouter>
     );
 };

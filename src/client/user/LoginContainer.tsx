@@ -1,4 +1,6 @@
 import React from "react";
+import { Form, Button } from "react-bootstrap";
+
 import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
 import { Redirect } from "react-router-dom";
@@ -7,6 +9,7 @@ import "../styles/Login.less";
 
 type Props = {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
+    toggleRegisterForm: (value: boolean) => void;
 };
 
 export const LoginContainer: React.FunctionComponent<Props> = (
@@ -22,7 +25,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
     >("user/login", undefined, false, props.onFetchSuccess);
 
     const handleSubmit = async (
-        event: React.FormEvent<HTMLFormElement>
+        event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
 
@@ -35,33 +38,42 @@ export const LoginContainer: React.FunctionComponent<Props> = (
 
     return (
         <div>
-            <form onSubmit={(e) => handleSubmit(e)}>
-                <label htmlFor="username">Enter Username</label>
-                <br></br>
-
-                <input
-                    name="username"
-                    type="text"
-                    placeholder="username"
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <br></br>
-
-                <label htmlFor="password">Enter Password</label>
-                <br></br>
-
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <br></br>
-
-                <button type="submit">login</button>
-            </form>
+            <Form onSubmit={(e) => handleSubmit(e)}>
+                <Form.Group>
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                    Login
+                </Button>
+            </Form>
+            <Button
+                variant="light"
+                type="submit"
+                size="sm"
+                className="toggle-button"
+                onClick={() => {
+                    props.toggleRegisterForm(true);
+                }}
+            >
+                Register
+            </Button>
         </div>
     );
 };

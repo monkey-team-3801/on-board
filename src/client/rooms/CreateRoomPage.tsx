@@ -1,85 +1,44 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Container, Form, Col, Button } from "react-bootstrap";
 
-import { useFetch, useDynamicFetch } from "../hooks";
-import { SessionResponseType } from "../../types";
-import { requestIsLoaded } from "../utils";
-import { RequestState } from "../types";
-
-type Props = {};
+type Props = {
+    createRoom: (roomName: string) => Promise<void>;
+};
 
 export const CreateRoomPage: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [roomName, setRoomName] = React.useState<string>("");
 
-    const [sessionResponse, refresh] = useFetch<SessionResponseType>(
-        "session/sessions"
-    );
-
-    const [createRoomResponse, createRoom] = useDynamicFetch<
-        undefined,
-        { name: string }
-    >("session/create", undefined, false);
-
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
-        undefined,
-        { id: string }
-    >("session/delete", undefined, false);
-
-    if (createRoomResponse.state === RequestState.ERROR) {
-        return <div>Error while creating room</div>;
-    }
-
-    if (deleteRoomResponse.state === RequestState.ERROR) {
-        return <div>Error while deleting room</div>;
-    }
-
     return (
-        <div>
-            <input
-                type="text"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setRoomName(e.target.value);
-                }}
-            />
-            <button
-                onClick={async () => {
-                    if (roomName !== "") {
-                        await createRoom({
-                            name: roomName,
-                        });
-                        await refresh();
-                    }
+        <Container>
+            <Form
+                onSubmit={async (e: React.FormEvent<HTMLDivElement>) => {
+                    e.preventDefault();
+                    setRoomName("");
+                    await props.createRoom(roomName);
                 }}
             >
-                Create room
-            </button>
-            <div>
-                <p>Active sessions: </p>
-                {requestIsLoaded(sessionResponse) &&
-                    sessionResponse.data.sessions.map((session, i) => {
-                        return (
-                            <div key={session.id}>
-                                {`${i + 1}. `}
-                                <Link
-                                    to={`/room/${session.id}`}
-                                >{`${session.name}`}</Link>
-                                <button
-                                    style={{ marginLeft: 10 }}
-                                    onClick={async () => {
-                                        await deleteRoom({
-                                            id: session.id,
-                                        });
-                                        await refresh();
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        );
-                    })}
-            </div>
-        </div>
+                <Form.Row>
+                    <Col xs="auto">
+                        <Form.Label srOnly>Room Name</Form.Label>
+                        <Form.Control
+                            className="mb-2"
+                            id="inlineFormInput"
+                            placeholder="Room name"
+                            value={roomName}
+                            onChange={(e) => {
+                                setRoomName(e.target.value);
+                            }}
+                        />
+                    </Col>
+                    <Col xs="auto">
+                        <Button type="submit" className="mb-2">
+                            Create Room
+                        </Button>
+                    </Col>
+                </Form.Row>
+            </Form>
+        </Container>
     );
 };

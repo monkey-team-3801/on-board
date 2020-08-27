@@ -1,4 +1,5 @@
 import React from "react";
+import { Container, Row } from "react-bootstrap";
 
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
@@ -20,22 +21,39 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         []
     );
 
+    const toggleRegisterForm = React.useCallback((value: boolean) => {
+        setShowRegister(value);
+    }, []);
+
     if (data.state === RequestState.LOADING) {
         return <div>Loading</div>;
     }
 
     return (
-        <div>
-            <h1>{showRegister ? "Register" : "Login"}</h1>
+        <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
-            {showRegister ? (
-                <RegisterContainer onFetchSuccess={onFetchSuccess} />
-            ) : (
-                <LoginContainer onFetchSuccess={onFetchSuccess} />
-            )}
-            <button onClick={() => setShowRegister(!showRegister)}>
-                {showRegister ? "Login" : "Register"}
-            </button>
+            <Container>
+                <Row>
+                    <Container>
+                        <h1>On Board 2020</h1>
+                    </Container>
+                    <Container className="form-container">
+                        <Row>
+                            {showRegister ? (
+                                <RegisterContainer
+                                    onFetchSuccess={onFetchSuccess}
+                                    toggleRegisterForm={toggleRegisterForm}
+                                />
+                            ) : (
+                                <LoginContainer
+                                    onFetchSuccess={onFetchSuccess}
+                                    toggleRegisterForm={toggleRegisterForm}
+                                />
+                            )}
+                        </Row>
+                    </Container>
+                </Row>
+            </Container>
         </div>
     );
 };

@@ -1,9 +1,12 @@
 import React from "react";
+import { Container, Row, Button, Col, Form } from "react-bootstrap";
+
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
 import { MessageData } from "../../types";
 import { ChatEvent } from "../../events";
 import { RequestState } from "../types";
+import { ChatLog } from "./ChatLog";
 
 type Props = {
     username: string;
@@ -41,47 +44,41 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     }
 
     return (
-        <div
-            onKeyDown={async (e) => {
-                if (e.key === "Enter" && text !== "" && props.username !== "") {
-                    await updateChat({
-                        sendUser: props.username,
-                        content: text,
-                        sessionId: props.roomId,
-                        sentTime: new Date().toISOString(),
-                    });
-                }
-            }}
-        >
-            <p>Chat container:</p>
-            message:{" "}
-            <input
-                type="text"
-                value={text}
-                onChange={(e) => {
-                    setText(e.target.value);
-                }}
-            />
-            <button
-                onClick={async () => {
-                    await updateChat({
-                        sendUser: props.username,
-                        content: text,
-                        sessionId: props.roomId,
-                        sentTime: new Date().toISOString(),
-                    });
-                }}
-            >
-                Send
-            </button>
-            <div>Chat log: </div>
-            {messageArray?.map((m, i) => {
-                return (
-                    <div key={i}>{`${new Date(m.sentTime).toLocaleString()} ${
-                        m.sendUser === "" ? "Anon" : m.sendUser
-                    }: ${m.content}`}</div>
-                );
-            })}
-        </div>
+        <Container>
+            <Row>
+                <ChatLog messages={messageArray || []} />
+            </Row>
+            <Row>
+                <Form
+                    onSubmit={async (e: React.FormEvent<HTMLDivElement>) => {
+                        e.preventDefault();
+                        await updateChat({
+                            sendUser: props.username,
+                            content: text,
+                            sessionId: props.roomId,
+                            sentTime: new Date().toISOString(),
+                        });
+                    }}
+                >
+                    <Form.Row>
+                        <Col xs="auto">
+                            <Form.Control
+                                className="mb-2"
+                                id="inlineFormInput"
+                                value={text}
+                                onChange={(e) => {
+                                    setText(e.target.value);
+                                }}
+                            />
+                        </Col>
+                        <Col xs="auto">
+                            <Button type="submit" className="mb-2">
+                                Send
+                            </Button>
+                        </Col>
+                    </Form.Row>
+                </Form>
+            </Row>
+        </Container>
     );
 };
