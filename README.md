@@ -21,6 +21,8 @@
 [![made-with-react](https://img.shields.io/badge/Made%20With-React-blue)]()
 [![made-with-typescript](https://img.shields.io/badge/Made%20With-TypeScript-blue)]()
 
+## https://on-board.xyz
+
 ## About
 
 DECO3801 Project: **On Board**.
@@ -47,7 +49,7 @@ Your output(s) will be in the `/build` folder.
 
 ### Deploying
 
-Latest `master` is always deployed to https://on-board-prod.herokuapp.com/ -> https://on-board.xyz
+Latest `master` is always deployed to https://on-board-prod.herokuapp.com/
 
 For manual deployment setup your container to run `npm start` (after building).
 
