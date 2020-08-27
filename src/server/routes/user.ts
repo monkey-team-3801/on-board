@@ -1,50 +1,74 @@
 import express from "express";
+
 import { User } from "../database/schema";
 import { asyncHandler } from "../utils";
 import {
     CreateUserRequestType,
-    UserType,
-    LoginUserResponseType,
+    LoginSuccessResponseType,
+    LoginUserRequestType,
+    UserDataResponseType,
 } from "../../types";
+import { hashPassword, generateJWT, getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
 // Route to handle login requests.
 router.post(
     "/login",
-    asyncHandler<
-        LoginUserResponseType,
-        {},
-        { username: string; password: string; id: string }
-    >(async (req, res) => {
-        const usernameQuery = await User.findOne({
-            username: req.body.username,
-        });
-        if (usernameQuery) {
-            if (req.body.password === usernameQuery.password) {
-                res.json({
-                    id: usernameQuery._id,
-                });
+    asyncHandler<LoginSuccessResponseType, {}, LoginUserRequestType>(
+        async (req, res) => {
+            const userQuery = await User.findOne({
+                username: req.body.username,
+            });
+            if (userQuery) {
+                if (hashPassword(req.body.password) === userQuery.password) {
+                    res.json({
+                        id: userQuery._id.toHexString(),
+                        jwtToken: generateJWT(userQuery._id.toHexString()),
+                    });
+                }
+                res.status(500).end();
             }
             res.status(500).end();
         }
-        res.status(500).end();
-    })
+    )
 );
 
 // Route to handle registration requests.
 router.post(
     "/register",
-    asyncHandler<
-        CreateUserRequestType,
-        {},
-        { username: string; password: string; userType: UserType }
-    >(async (req, res) => {
-        await User.create({
-            username: req.body.username,
-            password: req.body.password,
-            userType: req.body.userType,
-        });
-        res.status(200).end();
+    asyncHandler<LoginSuccessResponseType, {}, CreateUserRequestType>(
+        async (req, res) => {
+            try {
+                const user = await User.create({
+                    username: req.body.username,
+                    password: hashPassword(req.body.password),
+                    userType: req.body.userType,
+                });
+                res.status(200).json({
+                    id: user._id.toHexString(),
+                    jwtToken: generateJWT(user._id.toHexString()),
+                });
+            } catch (e) {
+                res.status(500).end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/data",
+    asyncHandler<UserDataResponseType | undefined>(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            if (user) {
+                res.json({
+                    id: user._id.toHexString(),
+                    username: user.username,
+                    userType: user.userType,
+                });
+            }
+        }
+        res.end();
     })
 );

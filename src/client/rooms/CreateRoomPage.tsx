@@ -8,7 +8,7 @@ import { RequestState } from "../types";
 
 type Props = {};
 
-export const HomePageContainer: React.FunctionComponent<Props> = (
+export const CreateRoomPage: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [roomName, setRoomName] = React.useState<string>("");

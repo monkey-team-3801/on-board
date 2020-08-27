@@ -1,8 +1,9 @@
-import React, { MutableRefObject } from "react";
+import React from "react";
 import axios from "axios";
 
-import { RequestState, BaseResponseType } from "../types";
+import { RequestState, BaseResponseType, LocalStorageKey } from "../types";
 import { AnyObjectMap } from "../../server/types";
+import { HTTPStatusCodeToResponseState } from "./utils";
 
 /**
  * Custom hook to fetch data from some api endpoint, but allows new request data to be
@@ -20,12 +21,12 @@ export const useDynamicFetch = <
     apiEndpoint: string,
     apiRequestData?: S,
     invokeImmediately: boolean | undefined = true,
-    onFetchSuccess?: () => void,
+    onFetchSuccess?: (response: T) => void,
     onFetchError?: () => void
 ): [BaseResponseType<T>, (newRequestData: S | undefined) => Promise<void>] => {
-    const componentMounted: MutableRefObject<boolean> = React.useRef<boolean>(
-        false
-    );
+    const componentMounted: React.MutableRefObject<boolean> = React.useRef<
+        boolean
+    >(false);
 
     const [responseType, setResponseType] = React.useState<BaseResponseType<T>>(
         {
@@ -37,15 +38,21 @@ export const useDynamicFetch = <
     const fetchData = React.useCallback(
         async (endpoint: string, requestData?: AnyObjectMap<any>) => {
             try {
-                const response = await axios.post<T>(endpoint, requestData);
+                const response = await axios.post<T>(endpoint, requestData, {
+                    headers: {
+                        Authorization:
+                            localStorage.getItem(LocalStorageKey.JWT_TOKEN) ||
+                            "",
+                    },
+                });
                 setResponseType({
-                    state: RequestState.LOADED,
+                    state: HTTPStatusCodeToResponseState(response.status),
                     data: response.data,
                 });
-                onFetchSuccess?.();
+                onFetchSuccess?.(response.data);
             } catch (e) {
                 setResponseType({
-                    state: RequestState.ERROR,
+                    state: HTTPStatusCodeToResponseState(e.response.status),
                     data: undefined,
                 });
                 onFetchError?.();
