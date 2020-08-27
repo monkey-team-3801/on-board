@@ -22,3 +22,7 @@ export const hashPassword = (password: string): string => {
     hash.update(password);
     return hash.digest("hex");
 };
+
+export const broardcastPublicEvent = () => {
+    
+}
