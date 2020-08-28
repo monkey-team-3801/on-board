@@ -6,6 +6,12 @@ import bodyParser from "body-parser";
 
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
+import {
+    RoomEvent,
+    PrivateRoomJoinData,
+    ChatEvent,
+    ChatMessageSendType,
+} from "../events";
 
 import {
     healthCheckRoute,
@@ -21,6 +27,16 @@ dotenv.config();
 const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
+
+io.on("connect", (socket: SocketIO.Socket) => {
+    socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
+        socket.join(data.sessionId);
+    });
+    socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
+        // Emit ONLY to others
+        socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+    });
+});
 
 app.use(bodyParser.json());
 

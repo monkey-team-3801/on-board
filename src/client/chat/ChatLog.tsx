@@ -1,26 +1,33 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { MessageData } from "../../types";
+import { Log } from "./Log";
 
 type Props = {
     messages: Array<MessageData>;
+    currentUser: string;
 };
 
 export const ChatLog: React.FunctionComponent<Props> = (props: Props) => {
+    const { messages } = props;
+    const scrollAnchorRef = React.useRef<HTMLDivElement | null>(null);
+
+    React.useEffect(() => {
+        scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
     return (
         <Container className="chat-log-container">
-            {props.messages?.map((m, i) => {
+            {messages?.map((messageData, i) => {
                 return (
-                    <Row key={i}>
-                        <Col>
-                            <p>
-                                ({new Date(m.sentTime).toLocaleString()}){" "}
-                                {m.sendUser}: {m.content}
-                            </p>
-                        </Col>
-                    </Row>
+                    <Log
+                        key={i}
+                        data={messageData}
+                        currentUser={props.currentUser}
+                    />
                 );
             })}
+            <div ref={scrollAnchorRef} />
         </Container>
     );
 };
