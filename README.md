@@ -21,6 +21,8 @@
 [![made-with-react](https://img.shields.io/badge/Made%20With-React-blue)]()
 [![made-with-typescript](https://img.shields.io/badge/Made%20With-TypeScript-blue)]()
 
+## https://on-board.xyz
+
 ## About
 
 DECO3801 Project: **On Board**.
@@ -43,13 +45,13 @@ Online collaboration and learning environment powered by SocketIO.
 
 1. Run `npm build`
 
-Your output will be in the `/build` folder.
+Your output(s) will be in the `/build` folder.
 
 ### Deploying
 
-The latest commit in `master` is always deployed to https://on-board-prod.herokuapp.com/.
+Latest `master` is always deployed to https://on-board-prod.herokuapp.com/
 
-For manual deployment setup your container to run `npm start`.
+For manual deployment setup your container to run `npm start` (after building).
 
 ## The Team
 
