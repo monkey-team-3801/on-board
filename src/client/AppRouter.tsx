@@ -6,6 +6,7 @@ import { PrivateRoomContainer } from "./containers/PrivateRoomContainer";
 import { Calendar } from "./timetable/calendar/Calendar";
 import { LoginContainer } from "./user/LoginContainer";
 import { RegisterContainer } from "./user/RegisterContainer";
+import { Timetable } from "./timetable/timetable/Timetable";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -24,6 +25,7 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 />
                 <Route path="/room/:roomId" component={PrivateRoomContainer} />
                 <Route path="/calendar-test" component={Calendar} />
+                <Route path="/calendar-test" component={Timetable} />
                 <Route path="/login" component={LoginContainer} />
                 <Route path="/register" component={RegisterContainer} />
                 <Route>

@@ -1,10 +1,7 @@
 import { MARGIN, TIME_SLOT_HEIGHT } from "./constants";
-import { ClashedInfo, TimeRange } from "./types";
+import { TimeRange, ClashedResult } from "./types";
 
 
-type ClashedResult = {
-    [key: number]: ClashedInfo;
-};
 /**
  * Convert session properties to CSS properties in an object that's suitable for react styling
  * @param startTime: Session start time, in hours
@@ -53,7 +50,7 @@ export const sessionStyleFromProps = (
  *            stackIndex represents the index of this range relative to its clashing range.
  */
 export const getClashedRanges = (
-    ranges: [TimeRange, TimeRange]
+    ranges: TimeRange[]
 ): ClashedResult => {
     ranges.sort(([id1, start1, end1], [id2, start2, end2]) =>
         start1 - start2 !== 0 ? start1 - start2 : end1 - end2
