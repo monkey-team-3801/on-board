@@ -20,8 +20,10 @@ export class ScheduleHandler {
     public async queueExistingJobs(): Promise<void> {
         (await Job.find()).forEach((job: IJob) => {
             if (new Date(job.jobDate).getTime() < new Date().getTime()) {
+                // Discard old jobs.
                 this.removeJobReference(job._id);
             } else {
+                // Queue new jobs for exexution.
                 this.queueNewJob(job);
             }
         });
@@ -35,7 +37,7 @@ export class ScheduleHandler {
         this.jobMap.set(
             job._id.toHexString(),
             schedule.scheduleJob(new Date(job.jobDate), () => {
-                // TODO execute job
+                // TODO job execution goes here.
                 this.removeQueuedJob(job._id);
             })
         );

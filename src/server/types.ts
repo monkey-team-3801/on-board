@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-
 export type AnyObjectMap<S> = { [key: string]: S };
 
 export enum ExecutingEvent {
@@ -8,7 +6,6 @@ export enum ExecutingEvent {
 }
 
 export interface BaseJob<T = string> {
-    // _id?: ObjectId
     jobDate: string;
     executingEvent: ExecutingEvent;
     data: T;

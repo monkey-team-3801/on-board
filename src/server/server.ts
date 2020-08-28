@@ -82,6 +82,7 @@ const database: Database = new Database(process.env.MONGODB_URI);
 database.connect().then(() => {
     server.listen(process.env.PORT || 5000, async () => {
         const scheduleHandler = new ScheduleHandler();
+        // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
         console.log("Server is listening on", process.env.PORT || 5000);
     });
