@@ -30,7 +30,7 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
     }, [sendUser, currentUser, sentTime, content]);
 
     return (
-        <Row className={`log ${currentUser === sendUser || "self"}`}>
+        <Row className={`log ${currentUser === sendUser && "self"}`}>
             <Col>{messageType}</Col>
         </Row>
     );
