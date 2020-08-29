@@ -1,6 +1,12 @@
 import { ParamsDictionary } from "express-serve-static-core";
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import { AnyObjectMap } from "./types";
+import {
+    AnyObjectMap,
+    BaseJob,
+    AnnouncementJob,
+    ExecutingEvent,
+    ClassOpenJob,
+} from "./types";
 
 /**
  * T: Response data type.
@@ -30,4 +36,12 @@ export const asyncHandler = <
     ): Promise<void> | void => {
         return Promise.resolve(handler(req, res, next));
     };
+};
+
+export const isAnnouncementJob = (job: BaseJob): job is AnnouncementJob => {
+    return job.executingEvent === ExecutingEvent.ANNOUNCEMENT;
+};
+
+export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
+    return job.executingEvent === ExecutingEvent.CLASS_OPEN;
 };
