@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { NavbarData } from "./NavbarData";
 import "./Navbar.less";
 function Navbar() {
-
     return (
         <div>
             <nav className="nav-menu active nav-menu">
