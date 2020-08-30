@@ -67,15 +67,13 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <>
-            <Nav>
-                <Router>
-                    <Navbar />
-                    <Switch>
-                        <Route path="/" />
-                    </Switch>
-                </Router>
-            </Nav>
+        <>           
+            <Router>
+                <Navbar />
+                <Switch>
+                    <Route path="/" />
+                </Switch>
+            </Router>            
             <Container>
                 <Container>
                     <Row>
