@@ -52,19 +52,13 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
                 setTimeFrame={setTimeFrame}
             />
             <div className="calendar-container">
-                {[
-                    "MON",
-                    "TUE",
-                    "Wed",
-                    "THU",
-                    "FRI",
-                    "SAT",
-                    "SUN",
-                ].map((dayName: string) => (
-                    <div key={dayName} className="day-headings">
-                        {dayName}
-                    </div>
-                ))}
+                {["MON", "TUE", "Wed", "THU", "FRI", "SAT", "SUN"].map(
+                    (dayName: string) => (
+                        <div key={dayName} className="day-headings">
+                            {dayName}
+                        </div>
+                    )
+                )}
                 {/* TODO: fetch session data from server */}
                 {lastMonthRange.map((date: Date, index: number) => (
                     <CalendarDay
