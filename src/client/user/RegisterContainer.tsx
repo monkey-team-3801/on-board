@@ -59,10 +59,13 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
 
     return (
         <div>
+            
             <Form onSubmit={(e) => handleSubmit(e)}>
+                <div className="formcontent">
                 <Form.Group>
                     <Form.Label>Account type</Form.Label>
                     <Form.Control
+                        className="dropdownbar"
                         as="select"
                         onChange={(e) => {
                             changeUserType(e.target.value);
@@ -76,6 +79,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                 <Form.Group>
                     <Form.Label>Username</Form.Label>
                     <Form.Control
+                        className="inputbar"
                         type="text"
                         placeholder="Username"
                         value={username}
@@ -86,6 +90,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                 <Form.Group>
                     <Form.Label>Password</Form.Label>
                     <Form.Control
+                        className="inputbar"
                         type="password"
                         placeholder="Password"
                         value={password}
@@ -93,9 +98,10 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                         required
                     />
                 </Form.Group>
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" className="registerbtn">
                     Register
                 </Button>
+                </div>
             </Form>
             <Button
                 variant="light"
@@ -108,6 +114,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
             >
                 Login
             </Button>
+            
         </div>
     );
 };

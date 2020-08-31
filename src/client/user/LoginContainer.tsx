@@ -38,10 +38,13 @@ export const LoginContainer: React.FunctionComponent<Props> = (
 
     return (
         <div>
-            <Form onSubmit={(e) => handleSubmit(e)}>
+            
+            <Form onSubmit={(e) => handleSubmit(e)} className="login">
+                <div className="formcontent">
                 <Form.Group>
                     <Form.Label>Username</Form.Label>
                     <Form.Control
+                        className="inputbar"
                         type="text"
                         placeholder="Username"
                         value={username}
@@ -52,6 +55,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                 <Form.Group>
                     <Form.Label>Password</Form.Label>
                     <Form.Control
+                        className="inputbar"
                         type="password"
                         placeholder="Password"
                         value={password}
@@ -59,10 +63,12 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                         required
                     />
                 </Form.Group>
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" className="loginbtn">
                     Login
                 </Button>
+                </div>
             </Form>
+            
             <Button
                 variant="light"
                 type="submit"
