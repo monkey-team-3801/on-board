@@ -61,6 +61,12 @@ export enum UserType {
     COORDINATOR,
 }
 
+export type CourseParticipantsResponseType = {
+    code: String;
+    StudentsList: Array<UserDataResponseType>;
+    TutorsList: Array<UserDataResponseType>;
+}
+
 export type LoginUserRequestType = {
     username: string;
     password: string;
