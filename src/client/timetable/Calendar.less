@@ -1,16 +1,61 @@
+
+.calender{
+    margin-left: 10%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
 .calendar-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    width: 700px;
+    margin: auto;
+    font-size: 1em;
+    padding-top: 0.5%;
+    text-align: center;
+    
+    
 }
+
+
 
 .month-heading {
-    width: 100%;
+    width: 40%;
     display: flex;
+    margin-left: auto;
+    margin-right: auto;
+
+    justify-content: center;
+    font-size: 2em;
+    font-weight: normal;
 
     .left-chevron {
-        margin-right: auto;
+        margin-right: 20%;
+        font-size: 1em;
+        color: #C38699;
     }
     .right-chevron {
-        margin-left: auto;
+        margin-left: 20%;
+        font-size: 1em;
+        color: #C38699;
     }
 }
+.calendar-date{
+    margin: 10px;
+    padding: 5%;
+}
+.calendar-date.today{
+    background-color: #5C4E8E;
+    color: #fff;
+    padding: 5%;
+    margin: auto;
+    line-height: 33px;
+    border-radius: 60%;
+    width: 50px;
+    height: 50px;
+    font-weight: bold;
+
+}
+
+
+

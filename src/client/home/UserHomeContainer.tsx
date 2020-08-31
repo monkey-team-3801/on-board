@@ -11,6 +11,9 @@ import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import { fromUnixTime } from "date-fns/esm";
 import Navbar from "../navbar/Navbar";
+import { Calendar } from "../timetable/Calendar";
+import { SecuredRoute } from "../auth/SecuredRoute";
+import { getUnixTime } from "date-fns";
 
 type Props = RouteComponentProps & {};
 
@@ -73,20 +76,26 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 <Switch>
                     <Route path="/" />
                 </Switch>
-            </Router>            
-            <Container>
-                <Container>
-                    <Row>
-                        <h1>User Homepage</h1>
+            </Router>
+            <Container className="calender">
+                    <Calendar sessions={[]} />
+                </Container>                                          
+                <Container fluid >                    
+                    <Row >
+                        <Col xs lg="4" className="open-rooms">
+                            <h1>Open Rooms</h1>
+                        </Col>
+                        <Col md="auto" ></Col>
+                        <Col xs lg="4" className="classes">
+                            <h1>Upcomming Classes</h1>
+                        </Col>
                     </Row>
                     <Row>
-                        <Col>
+                        <Col className="open-rooms" >
                             <p>
                                 Logged in as {userDataResponse.data.username}:{" "}
                                 {userDataResponse.data.id}
                             </p>
-                        </Col>
-                        <Col>
                             <Button
                                 variant="light"
                                 size="sm"
@@ -100,14 +109,36 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             >
                                 Logout
                             </Button>
-                        </Col>
+                        </Col>                        
+                        <Col className="class-1">
+                        <Container>
+                            <div className="class-1-background" >
+                                <h3>CSSE1001</h3>     
+                                <Button>
+                                    Connect
+                                </Button> 
+                            </div>                          
+                        </Container>       
+                        </Col>                        
                     </Row>
                     <Row>
-                        <RoomDisplayContainer
-                            data={sessionResponse.data.sessions}
-                            onDeleteClick={onDeleteClick}
-                            onJoinClick={onJoinClick}
-                        />
+                        <Col className="open-rooms">
+                            <RoomDisplayContainer
+                                data={sessionResponse.data.sessions}
+                                onDeleteClick={onDeleteClick}
+                                onJoinClick={onJoinClick}
+                            />
+                        </Col>
+                        <Col className="class-2">
+                        <Container>
+                            <div className="class-2-background" >
+                                <h3>DECO3801</h3>     
+                                <Button>
+                                    Connect
+                                </Button> 
+                            </div>                          
+                        </Container>       
+                        </Col>
                     </Row>
                     <Row>
                         <CreateRoomPage
@@ -116,9 +147,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 await refresh();
                             }}
                         />
+                        
                     </Row>
                 </Container>
-            </Container>
         </>
     );
 };

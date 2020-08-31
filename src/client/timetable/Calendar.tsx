@@ -53,13 +53,13 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
             />
             <div className="calendar-container">
                 {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
+                    "MON",
+                    "TUE",
+                    "Wed",
+                    "THU",
+                    "FRI",
+                    "SAT",
+                    "SUN",
                 ].map((dayName: string) => (
                     <div key={dayName} className="day-headings">
                         {dayName}
