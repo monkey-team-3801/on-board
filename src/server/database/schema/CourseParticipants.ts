@@ -7,12 +7,13 @@ interface ICourseParticipants extends mongoose.Document {
     TutorsList: Array<UserDataResponseType>;
 }
 
-const ParticipantsSchema = new mongoose.Schema<ICourseParticipants>({
-    
+const CourseParticipantsSchema = new mongoose.Schema<ICourseParticipants>({
     code: { type: String, required: true, unique: true },
-    participantsList: {type: Array, default: []},
-    TutorsList:  {type: Array, default: []},
-
+    StudentsList: { type: Array, default: [] },
+    TutorsList: { type: Array, default: [] },
 });
 
-export const CourseParticipants = mongoose.model<ICourseParticipants>("Course Participants", ParticipantsSchema);
+export const CourseParticipants = mongoose.model<ICourseParticipants>(
+    "CourseParticipants",
+    CourseParticipantsSchema
+);
