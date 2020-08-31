@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { UserType } from "../../../types";
+import { UserType, UserStatus } from "../../../types";
 import { ObjectId } from "mongodb";
 
 export interface IUser extends mongoose.Document {
@@ -8,6 +8,7 @@ export interface IUser extends mongoose.Document {
     password: string;
     userType: UserType;
     courseList: Array<String>;
+    userStatus: UserStatus;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -15,6 +16,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     password: { type: String, required: true },
     userType: { type: UserType, required: true },
     courseList: { type: Array, default: [] },
+    userStatus: { type: UserStatus },
 });
 
 export const User = mongoose.model<IUser>("User", UserSchema);

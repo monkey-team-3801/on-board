@@ -65,7 +65,7 @@ export type CourseParticipantsResponseType = {
     code: String;
     StudentsList: Array<UserDataResponseType>;
     TutorsList: Array<UserDataResponseType>;
-}
+};
 
 export type LoginUserRequestType = {
     username: string;
@@ -88,3 +88,8 @@ export type UserDataResponseType = {
     username: string;
     userType: UserType;
 };
+
+export enum UserStatus {
+    ONLINE,
+    OFFLINE,
+}
