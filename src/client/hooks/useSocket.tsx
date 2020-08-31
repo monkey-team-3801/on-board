@@ -8,14 +8,16 @@ import { useTransformingSocket } from "./useTransformingSocket";
  */
 export const useSocket = <T extends any>(
     event: string,
+    componentDidMount: (socket: SocketIOClient.Socket) => SocketIOClient.Socket,
     initialValue?: T
-): [T | undefined] => {
-    const [data] = useTransformingSocket<T>(
+): [T | undefined, SocketIOClient.Socket] => {
+    const { data, socket } = useTransformingSocket<T>(
         event,
+        componentDidMount,
         (prev: T | undefined) => {
             return prev;
         },
         initialValue
     );
-    return [data];
+    return [data, socket];
 };

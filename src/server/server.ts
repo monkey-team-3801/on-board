@@ -6,6 +6,12 @@ import bodyParser from "body-parser";
 
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
+import {
+    RoomEvent,
+    PrivateRoomJoinData,
+    ChatEvent,
+    ChatMessageSendType,
+} from "../events";
 
 import {
     healthCheckRoute,
@@ -15,12 +21,23 @@ import {
     authRoute,
 } from "./routes";
 import { userRoute } from "./routes";
+import { ScheduleHandler } from "./jobs";
 
 dotenv.config();
 
 const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
+
+io.on("connect", (socket: SocketIO.Socket) => {
+    socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
+        socket.join(data.sessionId);
+    });
+    socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
+        // Emit ONLY to others
+        socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+    });
+});
 
 app.use(bodyParser.json());
 
@@ -80,6 +97,9 @@ app.use("*", (req, res, next) => {
 const database: Database = new Database(process.env.MONGODB_URI);
 database.connect().then(() => {
     server.listen(process.env.PORT || 5000, async () => {
+        const scheduleHandler = new ScheduleHandler();
+        // Queue all existing jobs.
+        await scheduleHandler.queueExistingJobs();
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });

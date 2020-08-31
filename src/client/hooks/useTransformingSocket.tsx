@@ -1,5 +1,5 @@
 import React from "react";
-import socketIOClient from "socket.io-client";
+import { socket } from "../io";
 
 /**
  * Custom hook to listen on a socket event, with a optional argument which transforms the data.
@@ -9,14 +9,18 @@ import socketIOClient from "socket.io-client";
  */
 export const useTransformingSocket = <T extends any, S extends any = any>(
     event: string,
+    componentDidMount: (socket: SocketIOClient.Socket) => SocketIOClient.Socket,
     transformSocketData: (prev: T | undefined, data: S) => T | undefined,
     initialValue?: T
-) => {
+): {
+    data: T | undefined;
+    setData: React.Dispatch<React.SetStateAction<T | undefined>>;
+    socket: SocketIOClient.Socket;
+} => {
     const [data, setData] = React.useState<T | undefined>(initialValue);
 
     React.useEffect(() => {
-        const socket: SocketIOClient.Socket = socketIOClient("/");
-        socket.on(event, (data: S) => {
+        componentDidMount(socket.connect()).on(event, (data: S) => {
             setData((prev: T | undefined) => {
                 return transformSocketData(prev, data);
             });
@@ -24,7 +28,7 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
         return () => {
             socket.disconnect();
         };
-    }, [event, setData, transformSocketData]);
+    }, [event, setData, transformSocketData, componentDidMount]);
 
-    return [data];
+    return { data, setData, socket };
 };

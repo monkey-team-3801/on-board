@@ -52,5 +52,20 @@ code {
 
 .chat-log-container {
     height: 600px;
+    padding: 20px;
     overflow: auto;
+    .log {
+        border-bottom: 1px solid lightgray;
+        padding: 10px;
+        p {
+            margin: 0;
+        }
+        &.self {
+            background-color: #3277f5;
+            color: white;
+            p {
+                text-align: right;
+            }
+        }
+    }
 }

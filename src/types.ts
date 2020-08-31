@@ -22,6 +22,8 @@ export type MessageData = {
     sentTime: string;
 };
 
+export type NewMessageRequestType = Omit<MessageData, "sentTime">;
+
 export type CourseActivityUnique = {
     code: string;
     type: string;
