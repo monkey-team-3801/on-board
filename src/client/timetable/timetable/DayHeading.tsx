@@ -1,7 +1,7 @@
 import React from "react";
 
 type Props = {
-    selectedWeek: number
+    selectedWeek: number;
 };
 
 // TODO: Hard-coded days
@@ -16,9 +16,9 @@ export const DayHeading: React.FunctionComponent<Props> = (props) => {
                 "Friday",
                 "Saturday",
                 "Sunday",
-            ].map((day: string) => <div>
-                {day}
-            </div>)}
+            ].map((day: string) => (
+                <div>{day}</div>
+            ))}
         </div>
     );
 };

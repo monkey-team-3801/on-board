@@ -11,17 +11,24 @@ type Props = {
 };
 
 export const WeekDay: React.FunctionComponent<Props> = ({
-                                                            dayStartTime,
-                                                            dayEndTime,
-    activities
+    dayStartTime,
+    dayEndTime,
+    activities,
 }) => {
-
-    return <div className="week-day">
-        {range(dayStartTime, dayEndTime).map(hour => (
-            <TimeSlot key={hour}/>
-        ))}
-        {activities.map(activity => (
-            <Activity details={activity} dayStartTime={dayStartTime} dayEndTime={dayEndTime} stacked={} stackIndex={}/>
-        ))}
-    </div>;
+    return (
+        <div className="week-day">
+            {range(dayStartTime, dayEndTime).map((hour) => (
+                <TimeSlot key={hour} />
+            ))}
+            {activities.map((activity) => (
+                <Activity
+                    details={activity}
+                    dayStartTime={dayStartTime}
+                    dayEndTime={dayEndTime}
+                    stacked={}
+                    stackIndex={}
+                />
+            ))}
+        </div>
+    );
 };

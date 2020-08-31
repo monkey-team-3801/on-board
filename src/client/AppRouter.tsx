@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Calendar } from "./timetable/calendar/Calendar";
-import { Timetable } from "./timetable/timetable/Timetable"
+import { Timetable } from "./timetable/timetable/Timetable";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { LoginPage } from "./user/LoginPage";
 import { UserHomeContainer } from "./home/UserHomeContainer";

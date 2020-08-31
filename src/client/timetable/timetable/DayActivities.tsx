@@ -6,9 +6,5 @@ type Props = {
 };
 
 export const DayActivities: React.FunctionComponent<Props> = (props: Props) => {
-    return (
-        <div className="day-activities">
-
-        </div>
-    );
+    return <div className="day-activities"></div>;
 };
