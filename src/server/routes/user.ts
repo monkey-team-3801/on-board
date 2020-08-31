@@ -44,6 +44,7 @@ router.post(
                     username: req.body.username,
                     password: hashPassword(req.body.password),
                     userType: req.body.userType,
+                    courseList: [],
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),
