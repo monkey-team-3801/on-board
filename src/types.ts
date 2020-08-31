@@ -87,6 +87,7 @@ export type UserDataResponseType = {
     id: string;
     username: string;
     userType: UserType;
+    userStatus: UserStatus;
 };
 
 export enum UserStatus {
