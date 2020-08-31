@@ -7,6 +7,7 @@ import { RegisterContainer } from "../user/RegisterContainer";
 import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
+import "../styles/Login.less";
 
 type Props = RouteComponentProps;
 
@@ -32,7 +33,7 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
             <Container>
                 <Row>
-                    <Container>
+                    <Container className="login-container">
                         <h1>On Board 2020</h1>
                     </Container>
                     <Container className="form-container">
