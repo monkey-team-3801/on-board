@@ -97,10 +97,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 </Row>
             <Container fluid>
                 <Row>
-                    <Col xs lg="4" className="open-rooms">
+                    <Col  lg="4" className="open-rooms">
                         <h1>Open Rooms</h1>
                     </Col>
-                    <Col md="auto"></Col>
+                    
                     <Col xs lg="4" className="classes">
                         <h1>Upcoming Classes</h1>
                     </Col>
