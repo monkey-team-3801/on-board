@@ -30,6 +30,8 @@ router.get(
                     code: course.code,
                     description: course.description,
                     activities: course.activities,
+                    StudentsList: course.StudentsList,
+                    TutorsList: course.TutorsList,
                 });
             } catch (e) {
                 console.log("error", e);
@@ -48,6 +50,8 @@ router.get(
                 code: course.code,
                 description: course?.description,
                 activities: course?.activities,
+                StudentsList: course?.StudentsList,
+                TutorsList: course?.StudentsList,
             }));
             res.json(courses);
         } catch (e) {
@@ -66,6 +70,8 @@ router.post(
                 code,
                 description,
                 activities: [],
+                StudentsList: [],
+                TutorsList: [],
             });
             res.status(200).json(course);
         } catch (e) {

@@ -49,9 +49,12 @@ export type CourseDataUnique = {
     description: string;
 };
 
-export type CourseResponseType = CourseDataUnique & {
-    activities: Array<CourseActivityResponseType>;
-};
+export type CourseResponseType = CourseDataUnique &
+      {
+        activities: Array<CourseActivityResponseType>;
+        StudentsList: Array<UserDataResponseType>;
+        TutorsList: Array<UserDataResponseType>;
+    };
 
 export type CoursesResponseType = Array<CourseResponseType>;
 
