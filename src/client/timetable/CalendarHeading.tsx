@@ -14,6 +14,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
     setTimeFrame,
 }) => {
     const monthHeading: string = format(new Date(year, month), "MMMM, yyyy");
+    const x = monthHeading.split(",")
     return (
         <div className="month-heading">
             <div
@@ -36,7 +37,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
             >
                 &lt;
             </div>
-            <div>{monthHeading}</div>
+            <div>{`${x[0]} ${x[1]}`}</div>
             <div
                 className="right-chevron"
                 onClick={() =>

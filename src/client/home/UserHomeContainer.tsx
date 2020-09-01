@@ -67,23 +67,34 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <>
-            <Router>
-                <Navbar />
-                <Switch>
-                    <Route path="/" />
-                </Switch>
-            </Router>
-            <Row>
-                <Col xs lg="6">
-                    <Container className="calender">
-                        <Calendar sessions={[]} />
+        <Container fluid className="no-padding">
+            <Row className="no-padding" >
+                <Col lg="1" className="no-padding">
+                    <Container fluid className="no-padding">
+                        <Col>
+                            <Navbar />
+                        </Col>
                     </Container>
                 </Col>
-                <Col xs lg="4" className="announcements">
-                    <h1>Announcements</h1>
-                </Col>
-            </Row>
+            <Col lg="11" >
+            <Container fluid>    
+                <Row className="no-padding">                
+                    <Col lg="6">
+                        <Container className="calender">
+                            <Row>
+                                <Calendar sessions={[]} />
+                            </Row>
+                        </Container>
+                    </Col>
+                    <Col xs lg="4" className="announcements">
+                        <Container>
+                            <Row>
+                                <h1>Announcements</h1>
+                            </Row>
+                        </Container>
+                    </Col>
+               
+                </Row>
             <Container fluid>
                 <Row>
                     <Col xs lg="4" className="open-rooms">
@@ -149,6 +160,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     />
                 </Row>
             </Container>
-        </>
+            </Container>
+        </Col>
+        </Row>
+        </Container>
     );
 };

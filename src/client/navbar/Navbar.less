@@ -1,95 +1,120 @@
-@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap");
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Raleway";
-}
-.navbar {
-    background-color: aqua;
-    height: 80px;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    float: right;
-}
+.my-nav {
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        
+    }
 
-.nav-container {
-    background-color: #372e55;
-    width: 348px;
-    height: 100vh;
-    display: flex;
-    justify-content: right;
-    position: fixed;
-    top: 0%;
-}
+    .navbar {
+        background-color: aqua;
+        height: 80px;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        float: right;
+    }
+    
+    .nav-container {
+        background-color: #372e55;
+        width: 348px;
+        height: 100vh;
+        display: flex;
+        justify-content: right;
+        position: fixed;
+        top: 0%;
+    }
+    
+    .menu-bars {
+        margin-left: 2rem;
+        font-size: 1em;
+        background: none;
+    }
+    
+    .nav-menu {
+        background: rgb(124, 113, 164);
+        background: linear-gradient(
+            0deg,
+            rgba(124, 113, 164, 1) 0%,
+            rgba(92, 78, 142, 1) 100%
+        );
+        width: 253px;
+        height: 85%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top: 7.5%;
+        border-radius: 24px 0px 0px 24px;
+        float: right;
+        left: 27.3%;
+        line-height: 15px;
+    }
+    
+    .nav-text {
+        margin-top: 5%;
+        display: flex;
+        position: relative;
+        justify-content: flex-end;
+        margin-left: 50px;
+        align-items: center;
+        padding: 18px, 60px, 58px, 106px;
+        list-style: none;
+        height: 60px;
+        text-align: right;
+    }
+    
+    .nav-text a {
+        text-decoration: none;
+        color: white;
+        font-size: 1em;
+        width: 95%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 5px 16px;
+        border-radius: 24px 0 0 24px;
+        font-weight: bold;
+    }
+    
+    .nav-text a svg {
+        font-size: 1.8em;
+    }
+    
+    .nav-text a:hover {
+        background-color: white;
+        color: #5c4e8e;
+    }
+    
+    .nav-menu-items {
+        width: 100%;
+        position: absolute;
+        top: 20%;
+    }
+    
+    span {
+        margin-left: 16px;
+    }
+    
+    @media screen and (max-width: 1366px){
+        .nav-container{
+            width: 200px;
+        }
+    
+        .nav-menu{
+            width: 145px;
+            left: 27.6%;    
+            
+        }
+    
+        .nav-menu-items{
+            width: 50%;
+            right: 80px;
+        }
+    
+        .nav-text a{
+            font-size: 0.8em;
+        }
+    
+    }
 
-.menu-bars {
-    margin-left: 2rem;
-    font-size: 1em;
-    background: none;
-}
-
-.nav-menu {
-    background: rgb(124, 113, 164);
-    background: linear-gradient(
-        0deg,
-        rgba(124, 113, 164, 1) 0%,
-        rgba(92, 78, 142, 1) 100%
-    );
-    width: 253px;
-    height: 85%;
-    display: flex;
-    justify-content: center;
-    position: relative;
-    top: 7.5%;
-    border-radius: 24px 0px 0px 24px;
-    float: right;
-    left: 27.3%;
-    line-height: 15px;
-}
-
-.nav-text {
-    margin-top: 5%;
-    display: flex;
-    position: relative;
-    justify-content: flex-end;
-    margin-left: 50px;
-    align-items: center;
-    padding: 18px, 60px, 58px, 106px;
-    list-style: none;
-    height: 60px;
-    text-align: right;
-}
-
-.nav-text a {
-    text-decoration: none;
-    color: white;
-    font-size: 1em;
-    width: 95%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 5px 16px;
-    border-radius: 24px 0 0 24px;
-    font-weight: bold;
-}
-
-.nav-text a svg {
-    font-size: 1.8em;
-}
-
-.nav-text a:hover {
-    background-color: white;
-    color: #5c4e8e;
-}
-
-.nav-menu-items {
-    width: 100%;
-    position: absolute;
-    top: 20%;
-}
-
-span {
-    margin-left: 16px;
 }
