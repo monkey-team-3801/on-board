@@ -60,6 +60,8 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             if (text === "") {
                 return;
             }
+            setText("");
+
             const date: string = new Date().toISOString();
             const message: MessageData = {
                 sendUser: username,
