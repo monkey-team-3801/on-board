@@ -8,6 +8,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://github.com/monkey-team-3801)
 
+[![DeepScan grade](https://deepscan.io/api/teams/10797/projects/13693/branches/236582/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=10797&pid=13693&bid=236582)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce4a96161b7440d9a96cc09fd1bbc36c)](https://app.codacy.com/gh/monkey-team-3801/on-board?utm_source=github.com&utm_medium=referral&utm_content=monkey-team-3801/on-board&utm_campaign=Badge_Grade_Dashboard)
 ![Node.js CI](https://github.com/monkey-team-3801/on-board/workflows/Node.js%20CI/badge.svg)
 ![Deploy](https://github.com/monkey-team-3801/on-board/workflows/Deploy/badge.svg)
