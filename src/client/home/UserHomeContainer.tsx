@@ -1,7 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { useFetch, useDynamicFetch } from "../hooks";
 import { UserDataResponseType, SessionResponseType } from "../../types";
@@ -68,101 +67,85 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container fluid className="no-padding">
-            <Row className="no-padding" >
-                <Col lg="1" className="no-padding">
+            <Row className="no-padding">
+                <Col xl="2" lg="2" className="no-padding">
                     <Container fluid className="no-padding">
-                        <Col>
+                        <Col w-100>
                             <Navbar />
                         </Col>
                     </Container>
                 </Col>
-            <Col lg="11" >
-            <Container fluid>    
-                <Row className="no-padding">                
-                    <Col lg="6">
-                        <Container className="calender">
-                            <Row>
-                                <Calendar sessions={[]} />
+                <Col xl="10" lg="10">
+                    <Container fluid>
+                        <Row className="no-padding">
+                            <Col xl="6" lg="6">
+                                <Container className="calender">
+                                    <Row>
+                                        <Calendar sessions={[]} />
+                                    </Row>
+                                </Container>
+                            </Col>
+
+                            <Col xl="6" xs lg="6" className="announcements">
+                                <Container>
+                                    <Row>
+                                        <h1>Announcements</h1>
+                                    </Row>
+                                </Container>
+                            </Col>
+                        </Row>
+                        <Container fluid>
+                            <Row className="no-padding">
+                                <Col xs lg="6" xl="6" className="classes no-padding">
+                                    <h1>Upcoming Classes</h1>
+                                    <Row >
+                                        <Col className="class-1">
+                                            <Container>
+                                                <div className="class-1-background">
+                                                    <h3>CSSE1001</h3>
+                                                    <Button>Connect</Button>
+                                                </div>
+                                            </Container>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col className="class-2">
+                                            <Container>
+                                                <div className="class-2-background">
+                                                    <h3>DECO3801</h3>
+                                                    <Button>Connect</Button>
+                                                </div>
+                                            </Container>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col lg="6" xl="6" className="open-rooms">
+                                    <h1>Open Rooms</h1>
+                                    <Row>
+                                        <Col className="open-rooms">
+                                            <RoomDisplayContainer
+                                                data={sessionResponse.data.sessions}
+                                                onDeleteClick={onDeleteClick}
+                                                onJoinClick={onJoinClick}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <CreateRoomPage
+                                            createRoom={async (name: string) => {
+                                                await createRoom({ name });
+                                                await refresh();
+                                            }}
+                                        />
+                                    </Row>
+                                </Col>
+
                             </Row>
+
                         </Container>
-                    </Col>
-                    <Col xs lg="4" className="announcements">
-                        <Container>
-                            <Row>
-                                <h1>Announcements</h1>
-                            </Row>
-                        </Container>
-                    </Col>
-               
-                </Row>
-            <Container fluid>
-                <Row>
-                    <Col  lg="4" className="open-rooms">
-                        <h1>Open Rooms</h1>
-                    </Col>
-                    
-                    <Col xs lg="4" className="classes">
-                        <h1>Upcoming Classes</h1>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col className="open-rooms">
-                        <p>
-                            Logged in as {userDataResponse.data.username}:{" "}
-                            {userDataResponse.data.id}
-                        </p>
-                        <Button
-                            variant="light"
-                            size="sm"
-                            onClick={() => {
-                                localStorage.setItem(
-                                    LocalStorageKey.JWT_TOKEN,
-                                    ""
-                                );
-                                props.history.replace("/");
-                            }}
-                        >
-                            Logout
-                        </Button>
-                    </Col>
-                    <Col className="class-1">
-                        <Container>
-                            <div className="class-1-background">
-                                <h3>CSSE1001</h3>
-                                <Button>Connect</Button>
-                            </div>
-                        </Container>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col className="open-rooms">
-                        <RoomDisplayContainer
-                            data={sessionResponse.data.sessions}
-                            onDeleteClick={onDeleteClick}
-                            onJoinClick={onJoinClick}
-                        />
-                    </Col>
-                    <Col className="class-2">
-                        <Container>
-                            <div className="class-2-background">
-                                <h3>DECO3801</h3>
-                                <Button>Connect</Button>
-                            </div>
-                        </Container>
-                    </Col>
-                </Row>
-                <Row>
-                    <CreateRoomPage
-                        createRoom={async (name: string) => {
-                            await createRoom({ name });
-                            await refresh();
-                        }}
-                    />
-                </Row>
-            </Container>
-            </Container>
-        </Col>
-        </Row>
+                    </Container>
+                </Col>
+            </Row>
         </Container>
     );
 };

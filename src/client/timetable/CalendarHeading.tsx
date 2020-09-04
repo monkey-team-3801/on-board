@@ -14,7 +14,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
     setTimeFrame,
 }) => {
     const monthHeading: string = format(new Date(year, month), "MMMM, yyyy");
-    const x = monthHeading.split(",")
+    const x = monthHeading.split(",");
     return (
         <div className="month-heading">
             <div

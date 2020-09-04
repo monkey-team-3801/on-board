@@ -4,7 +4,7 @@ import { NavbarData } from "./NavbarData";
 import "./Navbar.less";
 function Navbar() {
     return (
-        <div  className="my-nav">
+        <div className="my-nav">
             <div className="nav-container responsive">
                 <nav className="nav-menu active nav-menu responsive">
                     <ul className="nav-menu-items">
@@ -21,9 +21,8 @@ function Navbar() {
                     </ul>
                 </nav>
             </div>
-        </div>    
+        </div>
     );
-
 }
 
 export default Navbar;
