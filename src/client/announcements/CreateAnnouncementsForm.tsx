@@ -46,7 +46,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData?.data?.map((course) => {
+            const options = courseData.data.map((course) => {
                 return { value: course.code, label: course.code };
             });
             setCourseCodes(options);

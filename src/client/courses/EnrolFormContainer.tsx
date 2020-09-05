@@ -45,7 +45,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData?.data?.map((course) => {
+            const options = courseData.data.map((course) => {
                 return { value: course.code, label: course.code };
             });
             setCourseCodes(options);
@@ -54,7 +54,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(enrolledCoursesData)) {
-            const options = enrolledCoursesData?.data?.courses.map((course) => {
+            const options = enrolledCoursesData.data.courses.map((course) => {
                 return { value: course, label: course };
             });
             initialCoursesRef.current = options;
