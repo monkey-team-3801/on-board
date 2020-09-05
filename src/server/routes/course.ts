@@ -21,8 +21,8 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
     const query = await Course.find();
     return query.map((course) => ({
         code: course.code,
-        description: course?.description,
-        activities: course?.activities,
+        description: course.description,
+        activities: course.activities,
     }));
 };
 
@@ -68,7 +68,7 @@ router.post(
     asyncHandler<CourseListResponseType>(async (req, res) => {
         try {
             res.json(
-                await (await findAllCourses()).map((course) => {
+                (await findAllCourses()).map((course) => {
                     return {
                         code: course.code,
                     };
