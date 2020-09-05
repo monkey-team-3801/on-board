@@ -3,19 +3,25 @@ import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch } from "../hooks";
-import { UserDataResponseType, SessionResponseType } from "../../types";
-import { LocalStorageKey, RequestState } from "../types";
+import { SessionResponseType } from "../../types";
+import {
+    LocalStorageKey,
+    RequestState,
+    TopLayerContainerProps,
+} from "../types";
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
+import { CreateAnnouncementsForm } from "../announcements";
+import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
+import { EnrolFormContainer } from "../courses";
 
-type Props = RouteComponentProps & {};
+type Props = RouteComponentProps & TopLayerContainerProps & {};
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { history } = props;
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const { history, userData } = props;
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
@@ -56,10 +62,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    if (
-        !requestIsLoaded(userDataResponse) ||
-        !requestIsLoaded(sessionResponse)
-    ) {
+    if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;
     }
 
@@ -71,8 +74,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col>
                     <p>
-                        Logged in as {userDataResponse.data.username}:{" "}
-                        {userDataResponse.data.id}
+                        Logged in as {userData.username}: {userData.id}
                     </p>
                 </Col>
                 <Col>
@@ -102,6 +104,19 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         await refresh();
                     }}
                 />
+            </Row>
+            <Row>
+                <Col>
+                    <EnrolFormContainer userId={userData.id} />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CreateAnnouncementsForm userId={userData.id} />
+                </Col>
+                <Col>
+                    <AnnouncementsContainer userId={userData.id} />
+                </Col>
             </Row>
         </Container>
     );
