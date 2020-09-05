@@ -9,9 +9,12 @@ import { socket } from "../io";
  */
 export const useTransformingSocket = <T extends any, S extends any = any>(
     event: string,
-    componentDidMount: (socket: SocketIOClient.Socket) => SocketIOClient.Socket,
-    transformSocketData: (prev: T | undefined, data: S) => T | undefined,
-    initialValue?: T
+    initialValue?: T,
+    componentDidMount?: (
+        socket: SocketIOClient.Socket
+    ) => SocketIOClient.Socket,
+    transformSocketData?: (prev: T | undefined, data: S) => T | undefined,
+    onEventEmit?: () => void
 ): {
     data: T | undefined;
     setData: React.Dispatch<React.SetStateAction<T | undefined>>;
@@ -19,16 +22,26 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
 } => {
     const [data, setData] = React.useState<T | undefined>(initialValue);
 
-    React.useEffect(() => {
-        componentDidMount(socket.connect()).on(event, (data: S) => {
+    const onEvent = React.useCallback(
+        (data: S) => {
             setData((prev: T | undefined) => {
-                return transformSocketData(prev, data);
+                return transformSocketData?.(prev, data);
             });
-        });
+            onEventEmit?.();
+        },
+        [transformSocketData, onEventEmit]
+    );
+
+    React.useEffect(() => {
+        if (componentDidMount) {
+            componentDidMount(socket.connect()).on(event, onEvent);
+        } else {
+            socket.connect().on(event, onEvent);
+        }
         return () => {
             socket.disconnect();
         };
-    }, [event, setData, transformSocketData, componentDidMount]);
+    }, [event, setData, transformSocketData, componentDidMount, onEvent]);
 
     return { data, setData, socket };
 };

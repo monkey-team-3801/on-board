@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 
 import { RequestState, BaseResponseType, LocalStorageKey } from "../types";
-import { AnyObjectMap } from "../../server/types";
+import { AnyObjectMap } from "../../types";
 import { HTTPStatusCodeToResponseState } from "./utils";
 
 /**
@@ -38,6 +38,10 @@ export const useDynamicFetch = <
     const fetchData = React.useCallback(
         async (endpoint: string, requestData?: AnyObjectMap<any>) => {
             try {
+                setResponseType({
+                    state: RequestState.LOADING,
+                    data: undefined,
+                });
                 const response = await axios.post<T>(endpoint, requestData, {
                     headers: {
                         Authorization:
@@ -74,6 +78,12 @@ export const useDynamicFetch = <
             fetchData(apiEndpoint, apiRequestData);
         } else {
             componentMounted.current = true;
+            setResponseType((response: BaseResponseType<T>) => {
+                return {
+                    ...response,
+                    state: RequestState.LOADED,
+                };
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData, apiEndpoint]);

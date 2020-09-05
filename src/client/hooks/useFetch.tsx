@@ -2,7 +2,7 @@ import React from "react";
 
 import { BaseResponseType } from "../types";
 import { useDynamicFetch } from "./useDynamicFetch";
-import { AnyObjectMap } from "../../server/types";
+import { AnyObjectMap } from "../../types";
 
 /**
  * Custom hook to fetch data from some api endpoint.
