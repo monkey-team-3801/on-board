@@ -27,7 +27,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
 
     const refreshAnnouncements = React.useCallback(() => {
         refresh();
-    }, []);
+    }, [refresh]);
 
     const [enrolCourseResponse, enrolInCourses] = useDynamicFetch<
         undefined,

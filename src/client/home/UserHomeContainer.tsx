@@ -55,6 +55,12 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         },
         [history]
     );
+    
+    const refreshAnnouncements = React.useCallback(() => {
+        setRefreshKey((k) => {
+            return k + 1;
+        });
+    }, []);
 
     if (createRoomResponse.state === RequestState.ERROR) {
         return <div>Error while creating room</div>;
@@ -110,11 +116,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col>
                     <EnrolFormContainer
-                        refresh={() => {
-                            setRefreshKey((k) => {
-                                return k + 1;
-                            });
-                        }}
+                        refresh={refreshAnnouncements}
                         userId={userData.id}
                     />
                 </Col>
