@@ -31,7 +31,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
         await loginUser({ username, password });
     };
 
-    if (requestIsLoaded(userData)) {
+    if (!requestIsLoaded(userData)) {
         return <div>loading</div>;
     }
 
