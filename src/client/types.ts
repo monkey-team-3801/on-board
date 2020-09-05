@@ -23,8 +23,8 @@ export type TopLayerContainerProps = {
     userData: {
         username: string;
         id: string;
-    }
-}
+    };
+};
 
 export type CourseOptionType = {
     value: string;

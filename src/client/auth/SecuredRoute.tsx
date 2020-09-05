@@ -1,5 +1,10 @@
 import React from "react";
-import { RouteProps, Redirect, Route, RouteComponentProps } from "react-router-dom";
+import {
+    RouteProps,
+    Redirect,
+    Route,
+    RouteComponentProps,
+} from "react-router-dom";
 
 import { useFetch } from "../hooks";
 import { RequestState } from "../types";

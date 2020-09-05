@@ -1,11 +1,6 @@
 import { ParamsDictionary } from "express-serve-static-core";
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import {
-    AnyObjectMap,
-    BaseJob,
-    AnnouncementJob,
-    ClassOpenJob,
-} from "../types";
+import { AnyObjectMap, BaseJob, AnnouncementJob, ClassOpenJob } from "../types";
 import { ExecutingEvent } from "../events";
 
 /**

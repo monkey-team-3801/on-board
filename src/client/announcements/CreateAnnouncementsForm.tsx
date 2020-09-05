@@ -118,8 +118,8 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                         styles={{
                             control: (x) => ({
                                 ...x,
-                                borderColor: isCourseEmpty ? "red" : "initial"
-                            })
+                                borderColor: isCourseEmpty ? "red" : "initial",
+                            }),
                         }}
                     />
                 </Form.Group>

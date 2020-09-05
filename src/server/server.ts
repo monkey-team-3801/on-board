@@ -19,7 +19,7 @@ import {
     sessionRoute,
     courseRoute,
     authRoute,
-    jobRoute
+    jobRoute,
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";

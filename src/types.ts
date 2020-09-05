@@ -63,7 +63,7 @@ export type CourseCodesType = Array<Pick<CourseDataUnique, "code">>;
 
 export type CourseListResponseType = CourseCodesType;
 
-export type CourseListRequestType = CourseCodesType;;
+export type CourseListRequestType = CourseCodesType;
 
 export type CourseAnnouncementsType = {
     title: string;
@@ -71,7 +71,7 @@ export type CourseAnnouncementsType = {
     courseCode: string;
     user: string;
     date: string;
-}
+};
 
 export enum UserType {
     STUDENT,
@@ -118,20 +118,22 @@ export interface ClassOpenJob extends BaseJob<any> {
 
 type WithUserId = {
     userId: string;
-}
+};
 
-export type CreateAnnouncementJobRequestType = AnnouncementJob<Omit<CourseAnnouncementsType, "date">>;
+export type CreateAnnouncementJobRequestType = AnnouncementJob<
+    Omit<CourseAnnouncementsType, "date">
+>;
 
 export type EnrolCourseRequestType = WithUserId & {
     courses: Array<string>;
-}
+};
 
 export type UserEnrolledCoursesResponseType = {
     courses: Array<string>;
-}
+};
 
 export type GetAnnouncementsRequestType = WithUserId;
 
 export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType>;
-}
+};

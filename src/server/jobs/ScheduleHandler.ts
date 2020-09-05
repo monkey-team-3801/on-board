@@ -41,11 +41,18 @@ export class ScheduleHandler<T = any> {
         const currentDate: Date = new Date();
         this.jobMap.set(
             job._id.toHexString(),
-            schedule.scheduleJob(currentDate.getTime() + Math.max(new Date(job.jobDate).getTime() - currentDate.getTime(), 0), () => {
-                // TODO job execution goes here.
-                jobRunner(job);
-                this.removeQueuedJob(job._id);
-            })
+            schedule.scheduleJob(
+                currentDate.getTime() +
+                    Math.max(
+                        new Date(job.jobDate).getTime() - currentDate.getTime(),
+                        0
+                    ),
+                () => {
+                    // TODO job execution goes here.
+                    jobRunner(job);
+                    this.removeQueuedJob(job._id);
+                }
+            )
         );
     }
 

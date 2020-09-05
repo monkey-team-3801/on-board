@@ -105,25 +105,36 @@ router.post(
         async (req, res) => {
             const user = await User.findById(req.body.userId);
             if (user) {
-                const courseAnnouncements = user.courses.map(async (courseCode) => {
-                    const courses = await Course.find({
-                        code: courseCode,
-                    });
-                    if (courses) {
-                        const announcements = courses.flatMap((course) => {
-                            return course.announcements.map((announcement) => announcement);
+                const courseAnnouncements = user.courses.map(
+                    async (courseCode) => {
+                        const courses = await Course.find({
+                            code: courseCode,
                         });
-                        return announcements;
+                        if (courses) {
+                            const announcements = courses.flatMap((course) => {
+                                return course.announcements.map(
+                                    (announcement) => announcement
+                                );
+                            });
+                            return announcements;
+                        }
+                        return [];
                     }
-                    return [];
-                });
-                const allAnnouncements = (await Promise.all(courseAnnouncements)).reduce((prev, next) => {
-                    return prev.concat(next || []);
-                }, []).sort((a, b) => {
-                    return new Date(b.date).getTime() - new Date(a.date).getTime();
-                });
+                );
+                const allAnnouncements = (
+                    await Promise.all(courseAnnouncements)
+                )
+                    .reduce((prev, next) => {
+                        return prev.concat(next || []);
+                    }, [])
+                    .sort((a, b) => {
+                        return (
+                            new Date(b.date).getTime() -
+                            new Date(a.date).getTime()
+                        );
+                    });
                 res.json({
-                    announcements: allAnnouncements
+                    announcements: allAnnouncements,
                 });
             }
             res.end();
