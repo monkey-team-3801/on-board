@@ -92,3 +92,17 @@ router.post(
     })
 );
 
+router.post(
+    "/courses",
+    asyncHandler<UserEnrolledCoursesResponseType>(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            if (user) {
+                res.json({
+                    courses: user.courses,
+                });
+            }
+        }
+        res.end();
+    })
+);
