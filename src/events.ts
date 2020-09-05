@@ -16,3 +16,12 @@ export enum RoomEvent {
 export type PrivateRoomJoinData = {
     sessionId: string;
 };
+
+export enum ExecutingEvent {
+    ANNOUNCEMENT,
+    CLASS_OPEN,
+}
+
+export enum AnnouncementEvent {
+    NEW = "ANNOUNCEMENT_NEW",
+}

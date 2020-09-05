@@ -1,3 +1,5 @@
+import { ExecutingEvent } from "./events";
+
 export type AnyObjectMap<S> = { [key: string]: S };
 
 export type SessionData = SessionInfo & {
@@ -53,7 +55,23 @@ export type CourseResponseType = CourseDataUnique & {
     activities: Array<CourseActivityResponseType>;
 };
 
-export type CoursesResponseType = Array<CourseResponseType>;
+export type CoursesType = Array<CourseResponseType>;
+
+export type CoursesResponseType = CoursesType;
+
+export type CourseCodesType = Array<Pick<CourseDataUnique, "code">>;
+
+export type CourseListResponseType = CourseCodesType;
+
+export type CourseListRequestType = CourseCodesType;;
+
+export type CourseAnnouncementsType = {
+    title: string;
+    content: string;
+    courseCode: string;
+    user: string;
+    date: string;
+}
 
 export enum UserType {
     STUDENT,
@@ -82,3 +100,38 @@ export type UserDataResponseType = {
     username: string;
     userType: UserType;
 };
+
+export interface BaseJob<T = any> {
+    jobDate: string;
+    executingEvent: ExecutingEvent;
+    data: T;
+}
+
+export interface AnnouncementJob<T = CourseAnnouncementsType>
+    extends BaseJob<T> {
+    executingEvent: ExecutingEvent.ANNOUNCEMENT;
+}
+
+export interface ClassOpenJob extends BaseJob<any> {
+    executingEvent: ExecutingEvent.CLASS_OPEN;
+}
+
+type WithUserId = {
+    userId: string;
+}
+
+export type CreateAnnouncementJobRequestType = AnnouncementJob<Omit<CourseAnnouncementsType, "date">>;
+
+export type EnrolCourseRequestType = WithUserId & {
+    courses: Array<string>;
+}
+
+export type UserEnrolledCoursesResponseType = {
+    courses: Array<string>;
+}
+
+export type GetAnnouncementsRequestType = WithUserId;
+
+export type GetAnnouncementsResponseType = {
+    announcements: Array<CourseAnnouncementsType>;
+}

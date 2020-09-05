@@ -4,9 +4,9 @@ import {
     AnyObjectMap,
     BaseJob,
     AnnouncementJob,
-    ExecutingEvent,
     ClassOpenJob,
-} from "./types";
+} from "../types";
+import { ExecutingEvent } from "../events";
 
 /**
  * T: Response data type.
