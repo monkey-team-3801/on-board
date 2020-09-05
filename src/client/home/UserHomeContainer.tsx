@@ -55,7 +55,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         },
         [history]
     );
-    
+
     const refreshAnnouncements = React.useCallback(() => {
         setRefreshKey((k) => {
             return k + 1;
