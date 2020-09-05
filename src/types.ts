@@ -2,19 +2,9 @@ import { ExecutingEvent } from "./events";
 
 export type AnyObjectMap<S> = { [key: string]: S };
 
-export type SessionData = SessionInfo & {
-    id: string;
-    name: string;
-    messages?: Array<Omit<MessageData, "sessionId">>;
-};
-
 export type SessionInfo = {
     id: string;
     name: string;
-};
-
-export type SessionResponseType = {
-    sessions: Array<SessionInfo>;
 };
 
 export type MessageData = {
@@ -22,6 +12,16 @@ export type MessageData = {
     content: string;
     sessionId: string;
     sentTime: string;
+};
+
+export type SessionData = SessionInfo & {
+    id: string;
+    name: string;
+    messages?: Array<Omit<MessageData, "sessionId">>;
+};
+
+export type SessionResponseType = {
+    sessions: Array<SessionInfo>;
 };
 
 export type NewMessageRequestType = Omit<MessageData, "sentTime">;
