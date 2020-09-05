@@ -5,20 +5,22 @@ import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
 import { RegisterContainer } from "../user/RegisterContainer";
 import { RequestState, LocalStorageKey } from "../types";
-import { Redirect } from "react-router-dom";
+import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
 
-type Props = {};
+type Props = RouteComponentProps;
 
 export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
+    const { history } = props;
     const [data] = useFetch("/auth");
     const [showRegister, setShowRegister] = React.useState<boolean>(false);
 
     const onFetchSuccess = React.useCallback(
         (response: LoginSuccessResponseType) => {
             localStorage.setItem(LocalStorageKey.JWT_TOKEN, response.jwtToken);
+            history.push("/home");
         },
-        []
+        [history]
     );
 
     const toggleRegisterForm = React.useCallback((value: boolean) => {
@@ -43,11 +45,13 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
                                 <RegisterContainer
                                     onFetchSuccess={onFetchSuccess}
                                     toggleRegisterForm={toggleRegisterForm}
+                                    {...props}
                                 />
                             ) : (
                                 <LoginContainer
                                     onFetchSuccess={onFetchSuccess}
                                     toggleRegisterForm={toggleRegisterForm}
+                                    {...props}
                                 />
                             )}
                         </Row>

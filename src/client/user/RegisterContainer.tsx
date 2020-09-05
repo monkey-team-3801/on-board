@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 
 import { useDynamicFetch } from "../hooks";
@@ -8,9 +8,9 @@ import {
     CreateUserRequestType,
     LoginSuccessResponseType,
 } from "../../types";
-import { RequestState } from "../types";
+import { requestIsLoaded } from "../utils";
 
-type Props = {
+type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
     toggleRegisterForm: (value: boolean) => void;
 };
@@ -22,7 +22,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
     const [password, setPassword] = React.useState<string>("");
     const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
 
-    const [data, registerUser] = useDynamicFetch<
+    const [userData, registerUser] = useDynamicFetch<
         LoginSuccessResponseType,
         CreateUserRequestType
     >("user/register", undefined, false, props.onFetchSuccess);
@@ -45,7 +45,6 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
-
         await registerUser({
             username,
             password,
@@ -53,8 +52,8 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
         });
     };
 
-    if (data.state === RequestState.LOADED) {
-        return <Redirect to={"/home"} />;
+    if (!requestIsLoaded(userData)) {
+        return <div>loading</div>;
     }
 
     return (
@@ -67,6 +66,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                         onChange={(e) => {
                             changeUserType(e.target.value);
                         }}
+                        required
                     >
                         <option value="student">Student</option>
                         <option value="tutor">Tutor</option>

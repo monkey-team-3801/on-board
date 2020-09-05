@@ -3,11 +3,11 @@ import { Form, Button } from "react-bootstrap";
 
 import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
-import { Redirect } from "react-router-dom";
-import { RequestState } from "../types";
+import { RouteComponentProps } from "react-router-dom";
 import "../styles/Login.less";
+import { requestIsLoaded } from "../utils";
 
-type Props = {
+type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
     toggleRegisterForm: (value: boolean) => void;
 };
@@ -19,7 +19,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
     const [password, setPassword] = React.useState<string>("");
 
     // UserID can be found through userID.data.id on login success.
-    const [userID, loginUser] = useDynamicFetch<
+    const [userData, loginUser] = useDynamicFetch<
         LoginSuccessResponseType,
         LoginUserRequestType
     >("user/login", undefined, false, props.onFetchSuccess);
@@ -28,12 +28,11 @@ export const LoginContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
-
         await loginUser({ username, password });
     };
 
-    if (userID.state === RequestState.LOADED) {
-        return <Redirect to={"/home"} />;
+    if (requestIsLoaded(userData)) {
+        return <div>loading</div>;
     }
 
     return (

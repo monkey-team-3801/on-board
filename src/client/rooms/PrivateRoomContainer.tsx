@@ -6,8 +6,9 @@ import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
 import { UserDataResponseType } from "../../types";
+import { TopLayerContainerProps } from "../types";
 
-type Props = RouteComponentProps<{ roomId: string }> & {};
+type Props = RouteComponentProps<{ roomId: string }> & TopLayerContainerProps & {};
 
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
