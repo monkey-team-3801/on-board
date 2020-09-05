@@ -13,19 +13,26 @@ import { CourseOptionType } from "../types";
 
 type Props = {
     userId: string;
+    refresh: () => void;
 };
 
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { userId, refresh } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
     const [enrolledCoursesData] = useFetch<UserEnrolledCoursesResponseType>(
         "/user/courses"
     );
+
+    const refreshAnnouncements = React.useCallback(() => {
+        refresh();
+    }, []);
+
     const [enrolCourseResponse, enrolInCourses] = useDynamicFetch<
         undefined,
         EnrolCourseRequestType
-    >("/user/enrol", undefined, false);
+    >("/user/enrol", undefined, false, refreshAnnouncements);
 
     const [courseCodes, setCourseCodes] = React.useState<
         Array<CourseOptionType>
@@ -72,7 +79,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                 onSubmit={async (e) => {
                     e.preventDefault();
                     await enrolInCourses({
-                        userId: props.userId,
+                        userId,
                         courses: enrolledCourse.map((course) => course.value),
                     });
                 }}

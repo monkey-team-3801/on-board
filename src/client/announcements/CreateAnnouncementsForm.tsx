@@ -58,7 +58,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container>
+        <Container style={{height: 600}}>
             <Row>
                 <h3>Create Announcement</h3>
             </Row>

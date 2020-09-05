@@ -10,21 +10,32 @@ import { AnnouncementEvent } from "../../events";
 
 type Props = {
     userId: string;
+    refreshKey: number;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { userId, refreshKey } = props;
+
+    const apiData = React.useMemo(() => {
+        return {
+            userId: userId,
+        };
+    }, [userId]);
+
     const [announcementsData, refresh] = useFetch<
         GetAnnouncementsResponseType,
         GetAnnouncementsRequestType
-    >("/courses/announcements", {
-        userId: props.userId,
-    });
+    >("/courses/announcements", apiData);
 
     useSocket<undefined>(AnnouncementEvent.NEW, undefined, undefined, () => {
         refresh();
     });
+
+    React.useEffect(() => {
+        refresh();
+    }, [refreshKey, refresh]);
 
     if (!requestIsLoaded(announcementsData)) {
         return <div>loading</div>;

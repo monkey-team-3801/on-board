@@ -23,6 +23,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 ) => {
     const { history, userData } = props;
 
+    const [refreshKey, setRefreshKey] = React.useState<number>(0);
+
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
         { id: string }
@@ -107,7 +109,14 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row>
                 <Col>
-                    <EnrolFormContainer userId={userData.id} />
+                    <EnrolFormContainer
+                        refresh={() => {
+                            setRefreshKey((k) => {
+                                return k + 1;
+                            });
+                        }}
+                        userId={userData.id}
+                    />
                 </Col>
             </Row>
             <Row>
@@ -115,7 +124,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     <CreateAnnouncementsForm userId={userData.id} />
                 </Col>
                 <Col>
-                    <AnnouncementsContainer userId={userData.id} />
+                    <AnnouncementsContainer
+                        refreshKey={refreshKey}
+                        userId={userData.id}
+                    />
                 </Col>
             </Row>
         </Container>
