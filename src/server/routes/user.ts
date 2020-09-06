@@ -69,6 +69,7 @@ router.post(
                     id: user._id.toHexString(),
                     username: user.username,
                     userType: user.userType,
+                    courses: user.courses,
                 });
             }
         }

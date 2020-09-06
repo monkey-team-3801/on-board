@@ -23,6 +23,7 @@ export type TopLayerContainerProps = {
     userData: {
         username: string;
         id: string;
+        courses: Array<string>;
     };
 };
 

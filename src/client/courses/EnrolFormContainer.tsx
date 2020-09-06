@@ -10,20 +10,22 @@ import {
 } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { CourseOptionType } from "../types";
+import { AnnouncementEvent } from "../../events";
 
 type Props = {
-    userId: string;
     refresh: () => void;
+    userId: string;
+    socket: SocketIOClient.Socket;
 };
 
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, refresh } = props;
+    const { userId, refresh, socket } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
-    const [enrolledCoursesData] = useFetch<UserEnrolledCoursesResponseType>(
-        "/user/courses"
-    );
+    const [enrolledCoursesData, refreshEnrolledCourse] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const refreshAnnouncements = React.useCallback(() => {
         refresh();
@@ -63,10 +65,13 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
     }, [enrolledCoursesData]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return !requestIsLoaded(enrolCourseResponse);
-    }, [enrolCourseResponse]);
+        return (
+            !requestIsLoaded(enrolCourseResponse) ||
+            !requestIsLoaded(enrolledCoursesData)
+        );
+    }, [enrolCourseResponse, enrolledCoursesData]);
 
-    if (!requestIsLoaded(courseData) || !requestIsLoaded(enrolledCoursesData)) {
+    if (!requestIsLoaded(courseData)) {
         return <div>loading</div>;
     }
 
@@ -78,10 +83,18 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
             <Form
                 onSubmit={async (e) => {
                     e.preventDefault();
-                    await enrolInCourses({
+                    const data: EnrolCourseRequestType = {
                         userId,
                         courses: enrolledCourse.map((course) => course.value),
-                    });
+                    };
+                    await enrolInCourses(data);
+                    socket.emit(
+                        AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+                        {
+                            courses: data.courses,
+                        }
+                    );
+                    await refreshEnrolledCourse();
                 }}
             >
                 <Form.Group>

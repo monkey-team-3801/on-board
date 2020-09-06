@@ -11,6 +11,7 @@ import {
     PrivateRoomJoinData,
     ChatEvent,
     ChatMessageSendType,
+    AnnouncementEvent,
 } from "../events";
 
 import {
@@ -38,6 +39,15 @@ io.on("connect", (socket: SocketIO.Socket) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
+    socket.on(
+        AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+        (data: { courses: Array<string> }) => {
+            socket.leaveAll();
+            data.courses.forEach((course) => {
+                socket.join(`${course}_ANNOUNCEMENT`);
+            });
+        }
+    );
 });
 
 app.use(bodyParser.json());

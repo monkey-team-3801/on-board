@@ -16,7 +16,7 @@ const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
         });
     }
     await course?.save();
-    io.emit(AnnouncementEvent.NEW, job.data);
+    io.in(`${job.data.courseCode}_ANNOUNCEMENT`).emit(AnnouncementEvent.NEW);
 };
 
 export const jobRunner = (job: BaseJob): void => {

@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-import { useFetch, useDynamicFetch } from "../hooks";
+import { useFetch, useDynamicFetch, useSocket } from "../hooks";
 import { SessionResponseType } from "../../types";
 import {
     LocalStorageKey,
@@ -15,6 +15,7 @@ import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
+import { AnnouncementEvent } from "../../events";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -22,6 +23,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { history, userData } = props;
+    const { courses } = userData;
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
@@ -37,6 +39,29 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [sessionResponse, refresh] = useFetch<SessionResponseType>(
         "session/sessions"
+    );
+
+    const componentDidMount = React.useCallback(
+        (socket: SocketIOClient.Socket) => {
+            return socket.emit(
+                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+                {
+                    courses,
+                }
+            );
+        },
+        [courses]
+    );
+
+    const { socket } = useSocket(
+        AnnouncementEvent.NEW,
+        undefined,
+        componentDidMount,
+        () => {
+            setRefreshKey((k) => {
+                return k + 1;
+            });
+        }
     );
 
     const onDeleteClick = React.useCallback(
@@ -118,6 +143,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     <EnrolFormContainer
                         refresh={refreshAnnouncements}
                         userId={userData.id}
+                        socket={socket}
                     />
                 </Col>
             </Row>

@@ -24,4 +24,5 @@ export enum ExecutingEvent {
 
 export enum AnnouncementEvent {
     NEW = "ANNOUNCEMENT_NEW",
+    COURSE_ANNOUNCEMENTS_SUBSCRIBE = "COURSE_ANNOUNCEMENTS_SUBSCRIBE",
 }

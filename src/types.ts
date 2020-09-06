@@ -99,6 +99,7 @@ export type UserDataResponseType = {
     id: string;
     username: string;
     userType: UserType;
+    courses: Array<string>;
 };
 
 export interface BaseJob<T = any> {

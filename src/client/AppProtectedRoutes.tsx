@@ -17,20 +17,21 @@ export const AppProtectedRoutes = (props: Props) => {
     const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
     const { data } = userDataResponse;
 
-    const userData: { username?: string; id?: string } = React.useMemo(() => {
+    const userData = React.useMemo(() => {
         return {
             username: data?.username,
             id: data?.id,
+            courses: data?.courses,
         };
     }, [data]);
 
-    const { username, id } = userData;
+    const { username, id, courses } = userData;
 
     if (!requestIsLoaded(userDataResponse)) {
         return <div>Loading</div>;
     }
 
-    if (!username || !id) {
+    if (!username || !id || !courses) {
         props.history.push("/");
         return <></>;
     }
@@ -43,7 +44,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     return (
                         <UserHomeContainer
                             {...routerProps}
-                            userData={{ username, id } as any}
+                            userData={{ username, id, courses }}
                         />
                     );
                 }}
@@ -56,7 +57,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     return (
                         <ClassroomPageContainer
                             {...routerProps}
-                            userData={{ username, id }}
+                            userData={{ username, id, courses }}
                         />
                     );
                 }}
@@ -69,7 +70,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     return (
                         <PrivateRoomContainer
                             {...routerProps}
-                            userData={{ username, id }}
+                            userData={{ username, id, courses }}
                         />
                     );
                 }}

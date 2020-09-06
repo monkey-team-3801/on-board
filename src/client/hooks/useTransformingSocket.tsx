@@ -29,19 +29,19 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
             });
             onEventEmit?.();
         },
-        [transformSocketData, onEventEmit]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [transformSocketData]
     );
 
     React.useEffect(() => {
         if (componentDidMount) {
-            componentDidMount(socket.connect()).on(event, onEvent);
+            componentDidMount(socket).on(event, onEvent);
         } else {
-            socket.connect().on(event, onEvent);
+            socket.on(event, onEvent);
         }
-        return () => {
-            socket.disconnect();
-        };
-    }, [event, setData, transformSocketData, componentDidMount, onEvent]);
+        // Somewhat dangerious to use this rule here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [event]);
 
     return { data, setData, socket };
 };

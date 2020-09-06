@@ -13,7 +13,7 @@ export const useSocket = <T extends any>(
         socket: SocketIOClient.Socket
     ) => SocketIOClient.Socket,
     onEventEmit?: () => void
-): [T | undefined, SocketIOClient.Socket] => {
+): { data: T | undefined; socket: SocketIOClient.Socket } => {
     const { data, socket } = useTransformingSocket<T, T>(
         event,
         initialValue,
@@ -24,5 +24,5 @@ export const useSocket = <T extends any>(
         onEventEmit
     );
 
-    return [data, socket];
+    return { data, socket };
 };
