@@ -3,7 +3,6 @@
 [![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](https://github.com/monkey-team-3801)
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-electricity.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/monkey-team-3801)
 [![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://github.com/monkey-team-3801)
