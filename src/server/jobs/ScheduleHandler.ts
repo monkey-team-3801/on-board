@@ -38,21 +38,12 @@ export class ScheduleHandler<T = any> {
      * @param job Future job.
      */
     private async queueNewJob(job: IJob): Promise<void> {
-        const currentDate: Date = new Date();
         this.jobMap.set(
             job._id.toHexString(),
-            schedule.scheduleJob(
-                currentDate.getTime() +
-                    Math.max(
-                        new Date(job.jobDate).getTime() - currentDate.getTime(),
-                        0
-                    ),
-                () => {
-                    // TODO job execution goes here.
-                    jobRunner(job);
-                    this.removeQueuedJob(job._id);
-                }
-            )
+            schedule.scheduleJob(new Date(job.jobDate), () => {
+                jobRunner(job);
+                this.removeQueuedJob(job._id);
+            })
         );
     }
 
@@ -62,12 +53,22 @@ export class ScheduleHandler<T = any> {
      */
     public async addNewJob(job: BaseJob<T>): Promise<void> {
         try {
-            const jobReference: IJob = await Job.create({
-                jobDate: job.jobDate,
-                executingEvent: job.executingEvent,
-                data: job.data,
-            });
-            this.queueNewJob(jobReference);
+            const currentDate: Date = new Date();
+            const jobDate: Date = new Date(job.jobDate);
+            if (jobDate.getTime() <= currentDate.getTime()) {
+                const modifiedJobData = {
+                    ...job,
+                    jobDate: new Date().toISOString(),
+                };
+                jobRunner(modifiedJobData);
+            } else {
+                const jobReference: IJob = await Job.create({
+                    jobDate: job.jobDate,
+                    executingEvent: job.executingEvent,
+                    data: job.data,
+                });
+                this.queueNewJob(jobReference);
+            }
         } catch (e) {
             throw new Error(e);
         }
