@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Container } from "react-bootstrap";
 
 import { useDynamicFetch } from "../hooks";
 import {
@@ -58,7 +58,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
 
     return (
         <div>
-            
+            <h1 className="form-heading">CREATE NEW ACCOUNT</h1>
             <Form onSubmit={(e) => handleSubmit(e)}>
                 <div className="formcontent">
                 <Form.Group>
@@ -77,7 +77,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                     </Form.Control>
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Username</Form.Label>
+                    {/* <Form.Label>Username</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="text"
@@ -88,7 +88,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                     />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Password</Form.Label>
+                    {/* <Form.Label>Password</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="password"
@@ -98,9 +98,11 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                         required
                     />
                 </Form.Group>
+                <Container>
                 <Button variant="primary" type="submit" className="registerbtn">
                     Register
                 </Button>
+                </Container>
                 </div>
             </Form>
             <Button

@@ -1,35 +1,55 @@
+@import url(https://fonts.googleapis.com/css2?family=Raleway&display=swap);
+
 .login-page-container {
+
+    // .Container .login-section {
+    //     width: 600px;
+    // }
     
     font-family: "Raleway";
     background-color: #493E71;
 
-    form {
-        width: 300px;
-        font-family: Raleway;
-        width: 450px;
-        min-height: 500px;
-        height: auto;
-        border-radius: 5px;
-        margin: 2% auto;
-        padding: 2%;
-        background-color: #F6F6F6;
-    }
+    .inputbar::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.5;
+      }
 
-    form .formcontent {
-        display: -webkit-flex;
-        display: flex;
-    
-        -webkit-justify-content: space-around;
-        justify-content: space-around;
-    
-        -webkit-flex-wrap: wrap;
-        flex-wrap: wrap;
-    
-        margin: 0 auto;
-        z-index: 5;
+    .form-heading {
+        font-size: 18px;
+        font-weight: 900;
+        color:  rgb(92, 78, 142);
     }
 
     .form-container {
+        font-family: Raleway;
+        min-height: 100px;
+        height: auto;
+        width: 500px;
+        border-radius: 0px 0px 5px 5px;
+        margin: 2% auto;
+        padding: 5%;
+        background-color: #F6F6F6;
+        margin-top: 0;
+    }
+
+    .login-container {
+        background-image: linear-gradient(to bottom, rgba(92, 78, 142, 100), rgba(124, 113, 164, 100));
+        font-family: Raleway;
+        width: 500px;
+        min-height: 200px;
+        height: auto;
+        border-radius: 5px 5px 0px 0px;
+        margin: 2% auto;
+        padding: 5%;
+        background-color: #F6F6F6;
+        margin-bottom: 0;
+    }
+
+
+    .formcontent {
+        width: 400px;
         display: -webkit-flex;
         display: flex;
     
@@ -43,52 +63,48 @@
         z-index: 5;
     }
 
+    /* Change the white to any color ;) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        
+    -webkit-box-shadow: 0 0 0 30px rgba(124, 113, 164, 50) inset !important;
+    -webkit-text-fill-color: white;
+    }
+
+    .inputbar:focus, .dropdownbar:focus{
+        border: 1px solid #493E71;
+
+    }
+
     .inputbar {
-        background-image: linear-gradient(to right, rgba(92, 78, 142, 50), rgba(124, 113, 164, 50));
+        background-image: linear-gradient(to right, rgba(92, 78, 142, 100), rgba(124, 113, 164, 100));
         border-radius: 25px;
-        // color: white;
+        font-family: Raleway;
+        font-weight: 500;
+        font-size: 12px;
         
-        width: 240px;
-    
+        width: 250px;
+        height: 30px;
         padding: 15px;
-        
-        font-size: 16px;
-    
-        outline: none;
-        border: none;
+        color:white;
     }
 
     .dropdownbar {
         border-radius: 25px;
-        width: 240px;
-        font-size: 16px;
+        height: 30px;
+        width: 250px;
+        font-family: Raleway;
+        font-weight: 500;
+        font-size: 12px;
         border-color: #493E71;
-    }
-
-
-    div .login-container {
-        background-image: linear-gradient(to bottom, rgba(92, 78, 142, 50), rgba(124, 113, 164, 50));
-        padding: 50px;
-        display: -webkit-flex;
-        display: flex;
-    
-        -webkit-justify-content: space-around;
-        justify-content: space-around;
-    
-        -webkit-flex-wrap: wrap;
-        flex-wrap: wrap;
-    
-        margin: 0 auto;
-
-        height: 300px;
-        z-index: 0;
-        color: #f6f6f6;
-    }
+    } 
 
 
     .loginbtn, .registerbtn {
         color: white;
-        width: 240px;
+        width: 100px;
         height: 50px;
     
         // margin-top: 2%;
@@ -107,15 +123,21 @@
         outline-color: rgb(92, 78, 142);
         background-color: white;
         color: rgb(92, 78, 142);
+        border: rgb(92, 78, 142);
     }
 
-    /* when the button is clicked */
+    #login-heading{
+        justify-items: left;
+        font-family: "Raleway";
+        font-weight: 900;
+        text-align: left;
+        font-size: 40px;
+        color: white;
+    }
 
-    // .loginbtn {
-    //     outline-color: rgb(92, 78, 142);
-    //     background-color: white;
-    //     color: rgb(92, 78, 142);
-    // }
-
+    .login-options{
+        font-size: 13px;
+        font-style: bold;
+    }
 
 }
