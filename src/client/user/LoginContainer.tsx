@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Col, Row, Container } from "react-bootstrap";
 
 import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
@@ -38,11 +38,11 @@ export const LoginContainer: React.FunctionComponent<Props> = (
 
     return (
         <div>
-            
+            <h1 className="form-heading">LOGIN</h1>
             <Form onSubmit={(e) => handleSubmit(e)} className="login">
                 <div className="formcontent">
                 <Form.Group>
-                    <Form.Label>Username</Form.Label>
+                    {/* <Form.Label>Username</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="text"
@@ -53,7 +53,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Password</Form.Label>
+                    {/* <Form.Label>Password</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="password"
@@ -63,11 +63,26 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                         required
                     />
                 </Form.Group>
+
+                <Container>
+                <Row className = "login-options">
+                    <Col>
+                    <input type="checkbox" id="remember-me" value="remember"></input>
+                    <label>Remember Me</label>
+                    </Col>
+                    <Col>
+                    <p>Forgot my Password</p>
+                    </Col>
+                </Row>
+                </Container>
+
+                
                 <Button variant="primary" type="submit" className="loginbtn">
                     Login
                 </Button>
                 </div>
-            </Form>
+
+                
             
             <Button
                 variant="light"
@@ -80,6 +95,9 @@ export const LoginContainer: React.FunctionComponent<Props> = (
             >
                 Register
             </Button>
+            </Form>
+
+            
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Col} from "react-bootstrap";
+// import {ReactComponent as logoWhite} from "./logo_white.svg";
 
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
@@ -8,6 +9,7 @@ import { RequestState, LocalStorageKey } from "../types";
 import { Redirect } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
 import "../styles/Login.less";
+import { findAllByDisplayValue } from "@testing-library/react";
 
 type Props = {};
 
@@ -33,27 +35,40 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
-            <Container>
-                <Row>
-                    <Container className="login-container">
-                        <h1>On Board 2020</h1>
-                    </Container>
-                    <Container className="form-container">
-                        <Row>
-                            {showRegister ? (
-                                <RegisterContainer
-                                    onFetchSuccess={onFetchSuccess}
-                                    toggleRegisterForm={toggleRegisterForm}
-                                />
-                            ) : (
-                                <LoginContainer
-                                    onFetchSuccess={onFetchSuccess}
-                                    toggleRegisterForm={toggleRegisterForm}
-                                />
-                            )}
-                        </Row>
-                    </Container>
-                </Row>
+            <Container className="login-section">
+                    <Row>
+                        {/* <Col></Col> */}
+                        <Col className="heading-column">
+                            <Container className="login-container">
+                            <img src="./client/logo_white.png" alt="On Board Logo"/>
+                            <h1 id="login-heading">On Board</h1>
+                        </Container>
+                        </Col>
+                        {/* <Col></Col> */}
+
+                    </Row>
+
+                    <Row>
+                        {/* <Col></Col> */}
+                        <Col className="heading-column">
+                            <Container className="form-container">
+                                
+                                    {showRegister ? (
+                                        <RegisterContainer
+                                            onFetchSuccess={onFetchSuccess}
+                                            toggleRegisterForm={toggleRegisterForm}
+                                        />
+                                    ) : (
+                                        <LoginContainer
+                                            onFetchSuccess={onFetchSuccess}
+                                            toggleRegisterForm={toggleRegisterForm}
+                                        />
+                                    )}
+                                    
+                            </Container>
+                        </Col>
+                        {/* <Col></Col> */}
+                    </Row>
             </Container>
         </div>
     );
