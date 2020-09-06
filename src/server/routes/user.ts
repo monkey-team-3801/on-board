@@ -7,6 +7,8 @@ import {
     LoginSuccessResponseType,
     LoginUserRequestType,
     UserDataResponseType,
+    EnrolCourseRequestType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { hashPassword, generateJWT, getUserDataFromJWT } from "./utils";
 
@@ -44,6 +46,7 @@ router.post(
                     username: req.body.username,
                     password: hashPassword(req.body.password),
                     userType: req.body.userType,
+                    courses: [],
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),
@@ -66,6 +69,38 @@ router.post(
                     id: user._id.toHexString(),
                     username: user.username,
                     userType: user.userType,
+                    courses: user.courses,
+                });
+            }
+        }
+        res.end();
+    })
+);
+
+router.post(
+    "/enrol",
+    asyncHandler<{}, {}, EnrolCourseRequestType>(async (req, res) => {
+        try {
+            const user = await User.findById(req.body.userId);
+            if (user) {
+                user.courses = req.body.courses;
+                user.save();
+            }
+            res.status(200).end();
+        } catch (e) {
+            res.status(500).end();
+        }
+    })
+);
+
+router.post(
+    "/courses",
+    asyncHandler<UserEnrolledCoursesResponseType>(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            if (user) {
+                res.json({
+                    courses: user.courses,
                 });
             }
         }

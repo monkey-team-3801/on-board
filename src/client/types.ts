@@ -18,3 +18,16 @@ export interface ResponseType<T> extends BaseResponseType<T> {
 export enum LocalStorageKey {
     JWT_TOKEN = "JWT_TOKEN",
 }
+
+export type TopLayerContainerProps = {
+    userData: {
+        username: string;
+        id: string;
+        courses: Array<string>;
+    };
+};
+
+export type CourseOptionType = {
+    value: string;
+    label: string;
+};

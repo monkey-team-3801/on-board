@@ -49,9 +49,9 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         ChatMessageReceiveType
     >(
         ChatEvent.CHAT_MESSAGE_RECEIVE,
+        props.initialChatLog,
         componentDidMount,
-        transformData,
-        props.initialChatLog
+        transformData
     );
 
     const onSubmit = React.useCallback(
