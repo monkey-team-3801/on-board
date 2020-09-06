@@ -21,6 +21,8 @@
 [![made-with-react](https://img.shields.io/badge/Made%20With-React-blue)]()
 [![made-with-typescript](https://img.shields.io/badge/Made%20With-TypeScript-blue)]()
 
+![alt text](/public/logo192.png "Logo Title Text 1")
+
 ## https://on-board.xyz
 
 ## About
