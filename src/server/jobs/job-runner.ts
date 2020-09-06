@@ -6,6 +6,7 @@ import { User } from "../database/schema";
 import { AnnouncementEvent } from "../../events";
 
 const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
+    console.log("Running job", job.jobDate, job.data.user);
     const user = await User.findById(job.data.user);
     const course = await Course.findOne({ code: job.data.courseCode });
     if (user) {
