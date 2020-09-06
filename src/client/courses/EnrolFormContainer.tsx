@@ -78,7 +78,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Row>
-                <h3>Course Enrollment</h3>
+                <h3>Course Enrolment</h3>
             </Row>
             <Form
                 onSubmit={async (e) => {
