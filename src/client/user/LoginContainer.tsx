@@ -41,7 +41,6 @@ export const LoginContainer: React.FunctionComponent<Props> = (
             <Form onSubmit={(e) => handleSubmit(e)} className="login">
                 <div className="formcontent">
                 <Form.Group>
-                    {/* <Form.Label>Username</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="text"
@@ -52,7 +51,6 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     />
                 </Form.Group>
                 <Form.Group>
-                    {/* <Form.Label>Password</Form.Label> */}
                     <Form.Control
                         className="inputbar"
                         type="password"
@@ -67,6 +65,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                 <Row className = "login-options">
                     <Col>
                     <input type="checkbox" id="remember-me" value="remember"></input>
+                    <span className="checkmark"></span>
                     <label>Remember Me</label>
                     </Col>
                     <Col>
@@ -74,15 +73,12 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Col>
                 </Row>
                 </Container>
-
-                
+             
                 <Button variant="primary" type="submit" className="loginbtn">
                     Login
                 </Button>
                 </div>
-
-                
-            
+            <div className="toggle-button">
             <Button
                 variant="light"
                 type="submit"
@@ -92,9 +88,11 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     props.toggleRegisterForm(true);
                 }}
             >
-                Register
+                Create new account
             </Button>
+            </div>
             </Form>
+            
 
             
         </div>
