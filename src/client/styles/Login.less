@@ -2,14 +2,16 @@
 
 .login-page-container {
 
-    // .Container .login-section {
-    //     width: 600px;
-    // }
-    
     font-family: "Raleway";
     background-color: #493E71;
 
-    .inputbar::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    .form-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgb(92, 78, 142);
+    }
+
+    .inputbar::placeholder { 
         color: white;
         font-size: 12px;
         font-weight: 500;
@@ -25,7 +27,6 @@
     .form-container {
         font-family: Raleway;
         min-height: 100px;
-        height: auto;
         width: 500px;
         border-radius: 0px 0px 5px 5px;
         margin: 2% auto;
@@ -41,15 +42,14 @@
         min-height: 200px;
         height: auto;
         border-radius: 5px 5px 0px 0px;
-        margin: 2% auto;
+        // margin: 2% auto;
         padding: 5%;
         background-color: #F6F6F6;
         margin-bottom: 0;
     }
 
-
     .formcontent {
-        width: 400px;
+        width: 340px;
         display: -webkit-flex;
         display: flex;
     
@@ -60,10 +60,8 @@
         flex-wrap: wrap;
     
         margin: 0 auto;
-        z-index: 5;
     }
 
-    /* Change the white to any color ;) */
     input:-webkit-autofill,
     input:-webkit-autofill:hover, 
     input:-webkit-autofill:focus, 
@@ -75,7 +73,6 @@
 
     .inputbar:focus, .dropdownbar:focus{
         border: 1px solid #493E71;
-
     }
 
     .inputbar {
@@ -106,18 +103,13 @@
         color: white;
         width: 100px;
         height: 50px;
-    
-        // margin-top: 2%;
         padding: 15px;
-        
         font-size: 16px;
         background-color: rgb(92, 78, 142);
         outline: none;
         border: none;
-
+        align-content: center;
     }
-
-    /* when the button is hovered over */
 
     .loginbtn:hover, .registerbtn:hover {
         outline-color: rgb(92, 78, 142);
@@ -137,7 +129,16 @@
 
     .login-options{
         font-size: 13px;
-        font-style: bold;
+        text-align: center;
     }
+    
+    .toggle-button{
+        background-color: #f6f6f6;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgb(92, 78, 142);
+        text-align: center;
+    }  
 
 }

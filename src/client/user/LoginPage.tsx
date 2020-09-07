@@ -36,39 +36,33 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
             <Container className="login-section">
-                    <Row>
-                        {/* <Col></Col> */}
-                        <Col className="heading-column">
-                            <Container className="login-container">
-                            <img src="./client/logo_white.png" alt="On Board Logo"/>
-                            <h1 id="login-heading">On Board</h1>
+                <Row>
+                    <Col className="heading-column">
+                        <Container className="login-container">
+                        <img src="./client/logo_white.png" alt="On Board Logo"/>
+                        <h1 id="login-heading">On Board</h1>
                         </Container>
-                        </Col>
-                        {/* <Col></Col> */}
-
-                    </Row>
-
-                    <Row>
-                        {/* <Col></Col> */}
-                        <Col className="heading-column">
-                            <Container className="form-container">
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className="heading-column">
+                        <Container className="form-container">
+                            
+                                {showRegister ? (
+                                    <RegisterContainer
+                                        onFetchSuccess={onFetchSuccess}
+                                        toggleRegisterForm={toggleRegisterForm}
+                                    />
+                                ) : (
+                                    <LoginContainer
+                                        onFetchSuccess={onFetchSuccess}
+                                        toggleRegisterForm={toggleRegisterForm}
+                                    />
+                                )}
                                 
-                                    {showRegister ? (
-                                        <RegisterContainer
-                                            onFetchSuccess={onFetchSuccess}
-                                            toggleRegisterForm={toggleRegisterForm}
-                                        />
-                                    ) : (
-                                        <LoginContainer
-                                            onFetchSuccess={onFetchSuccess}
-                                            toggleRegisterForm={toggleRegisterForm}
-                                        />
-                                    )}
-                                    
-                            </Container>
-                        </Col>
-                        {/* <Col></Col> */}
-                    </Row>
+                        </Container>
+                    </Col>
+                </Row>
             </Container>
         </div>
     );
