@@ -11,6 +11,7 @@ import {
     PrivateRoomJoinData,
     ChatEvent,
     ChatMessageSendType,
+    AnnouncementEvent,
 } from "../events";
 
 import {
@@ -19,6 +20,7 @@ import {
     sessionRoute,
     courseRoute,
     authRoute,
+    jobRoute,
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
@@ -37,6 +39,15 @@ io.on("connect", (socket: SocketIO.Socket) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
+    socket.on(
+        AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+        (data: { courses: Array<string> }) => {
+            socket.leaveAll();
+            data.courses.forEach((course) => {
+                socket.join(`${course}_ANNOUNCEMENT`);
+            });
+        }
+    );
 });
 
 app.use(bodyParser.json());
@@ -81,6 +92,9 @@ app.use("/courses", courseRoute);
 // Authorisation routes.
 app.use("/auth", authRoute);
 
+// Job routes.
+app.use("/job", jobRoute);
+
 // TODO API Routes
 app.use(
     "/api",
@@ -97,7 +111,7 @@ app.use("*", (req, res, next) => {
 const database: Database = new Database(process.env.MONGODB_URI);
 database.connect().then(() => {
     server.listen(process.env.PORT || 5000, async () => {
-        const scheduleHandler = new ScheduleHandler();
+        const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
         console.log("Server is listening on", process.env.PORT || 5000);

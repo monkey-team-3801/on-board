@@ -1,27 +1,14 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
-import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
-import { Calendar } from "./timetable/Calendar";
-import { SecuredRoute } from "./auth/SecuredRoute";
 import { LoginPage } from "./user/LoginPage";
-import { UserHomeContainer } from "./home/UserHomeContainer";
+import { AppProtectedRoutes } from "./AppProtectedRoutes";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <SecuredRoute path="/home" component={UserHomeContainer} />
-                <SecuredRoute
-                    path="/classroom/:classroomId"
-                    component={ClassroomPageContainer}
-                />
-                <SecuredRoute
-                    path="/room/:roomId"
-                    component={PrivateRoomContainer}
-                />
-                <SecuredRoute path="/calendar-test" component={Calendar} />
-                <Route path="/" component={LoginPage} />
+                <Route exact path="/" component={LoginPage} />
+                <Route component={AppProtectedRoutes} />
             </Switch>
         </BrowserRouter>
     );

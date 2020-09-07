@@ -9,9 +9,12 @@ import { socket } from "../io";
  */
 export const useTransformingSocket = <T extends any, S extends any = any>(
     event: string,
-    componentDidMount: (socket: SocketIOClient.Socket) => SocketIOClient.Socket,
-    transformSocketData: (prev: T | undefined, data: S) => T | undefined,
-    initialValue?: T
+    initialValue?: T,
+    componentDidMount?: (
+        socket: SocketIOClient.Socket
+    ) => SocketIOClient.Socket,
+    transformSocketData?: (prev: T | undefined, data: S) => T | undefined,
+    onEventEmit?: () => void
 ): {
     data: T | undefined;
     setData: React.Dispatch<React.SetStateAction<T | undefined>>;
@@ -19,16 +22,26 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
 } => {
     const [data, setData] = React.useState<T | undefined>(initialValue);
 
-    React.useEffect(() => {
-        componentDidMount(socket.connect()).on(event, (data: S) => {
+    const onEvent = React.useCallback(
+        (data: S) => {
             setData((prev: T | undefined) => {
-                return transformSocketData(prev, data);
+                return transformSocketData?.(prev, data);
             });
-        });
-        return () => {
-            socket.disconnect();
-        };
-    }, [event, setData, transformSocketData, componentDidMount]);
+            onEventEmit?.();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [transformSocketData]
+    );
+
+    React.useEffect(() => {
+        if (componentDidMount) {
+            componentDidMount(socket).on(event, onEvent);
+        } else {
+            socket.on(event, onEvent);
+        }
+        // Somewhat dangerious to use this rule here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [event]);
 
     return { data, setData, socket };
 };

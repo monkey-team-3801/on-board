@@ -2,22 +2,32 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-import { useFetch, useDynamicFetch } from "../hooks";
-import { UserDataResponseType, SessionResponseType } from "../../types";
-import { LocalStorageKey, RequestState } from "../types";
+import { useFetch, useDynamicFetch, useSocket } from "../hooks";
+import { SessionResponseType } from "../../types";
+import {
+    LocalStorageKey,
+    RequestState,
+    TopLayerContainerProps,
+} from "../types";
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import Navbar from "../navbar/Navbar";
 import { Calendar } from "../timetable/Calendar";
+import { CreateAnnouncementsForm } from "../announcements";
+import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
+import { EnrolFormContainer } from "../courses";
+import { AnnouncementEvent } from "../../events";
 
-type Props = RouteComponentProps & {};
+type Props = RouteComponentProps & TopLayerContainerProps & {};
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { history } = props;
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const { history, userData } = props;
+    const { courses } = userData;
+
+    const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
@@ -31,6 +41,29 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [sessionResponse, refresh] = useFetch<SessionResponseType>(
         "session/sessions"
+    );
+
+    const componentDidMount = React.useCallback(
+        (socket: SocketIOClient.Socket) => {
+            return socket.emit(
+                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+                {
+                    courses,
+                }
+            );
+        },
+        [courses]
+    );
+
+    const { socket } = useSocket(
+        AnnouncementEvent.NEW,
+        undefined,
+        componentDidMount,
+        () => {
+            setRefreshKey((k) => {
+                return k + 1;
+            });
+        }
     );
 
     const onDeleteClick = React.useCallback(
@@ -50,6 +83,12 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         [history]
     );
 
+    const refreshAnnouncements = React.useCallback(() => {
+        setRefreshKey((k) => {
+            return k + 1;
+        });
+    }, []);
+
     if (createRoomResponse.state === RequestState.ERROR) {
         return <div>Error while creating room</div>;
     }
@@ -58,22 +97,32 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    if (
-        !requestIsLoaded(userDataResponse) ||
-        !requestIsLoaded(sessionResponse)
-    ) {
+    if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;
     }
 
     return (
-        <Container fluid className="no-padding">
-            <Row className="no-padding">
-                <Col xl="2" lg="2" className="no-padding">
-                    <Container fluid className="no-padding">
-                        <Col w-100>
-                            <Navbar />
-                        </Col>
-                    </Container>
+        <Container>
+            <Container fluid className="no-padding">
+                <Row className="no-padding">
+                    <Col xl="2" lg="2" className="no-padding">
+                        <Container fluid className="no-padding">
+                            <Col w-100>
+                                <Navbar />
+                            </Col>
+                        </Container>
+                    </Col>
+
+                </Row>
+            </Container>
+            <Row>
+                <h1>User Homepage</h1>
+            </Row>
+            <Row>
+                <Col>
+                    <p>
+                        Logged in as {userData.username}: {userData.id}
+                    </p>
                 </Col>
                 <Col xl="10" lg="10">
                     <Container fluid>
@@ -227,6 +276,41 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             </Row>
                         </Container>
                     </Container>
+                </Col>
+            </Row>
+            <Row>
+                <RoomDisplayContainer
+                    data={sessionResponse.data.sessions}
+                    onDeleteClick={onDeleteClick}
+                    onJoinClick={onJoinClick}
+                />
+            </Row>
+            <Row>
+                <CreateRoomPage
+                    createRoom={async (name: string) => {
+                        await createRoom({ name });
+                        await refresh();
+                    }}
+                />
+            </Row>
+            <Row>
+                <Col>
+                    <EnrolFormContainer
+                        refresh={refreshAnnouncements}
+                        userId={userData.id}
+                        socket={socket}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CreateAnnouncementsForm userId={userData.id} />
+                </Col>
+                <Col>
+                    <AnnouncementsContainer
+                        refreshKey={refreshKey}
+                        userId={userData.id}
+                    />
                 </Col>
             </Row>
         </Container>

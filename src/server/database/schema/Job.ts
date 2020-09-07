@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { BaseJob, ExecutingEvent } from "../../types";
+import { BaseJob } from "../../../types";
+import { ExecutingEvent } from "../../../events";
 import { ObjectId } from "mongodb";
 
 export interface IJob extends mongoose.Document, BaseJob {
