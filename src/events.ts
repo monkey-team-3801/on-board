@@ -13,6 +13,12 @@ export enum RoomEvent {
     PRIVATE_ROOM_JOIN = "PRIVATE_ROOM_JOIN",
 }
 
+export enum SignInEvent {
+    USER_SIGNEDIN = "USER_SIGNEDIN",
+    USER_SIGNEDOUT= "USER_SIGNEDOUT",
+}
+
 export type PrivateRoomJoinData = {
     sessionId: string;
 };
+

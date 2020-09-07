@@ -6,11 +6,13 @@ import bodyParser from "body-parser";
 
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
+
 import {
     RoomEvent,
     PrivateRoomJoinData,
     ChatEvent,
     ChatMessageSendType,
+    SignInEvent,
 } from "../events";
 
 import {
@@ -36,6 +38,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+    });
+    socket.on(SignInEvent.USER_SIGNEDIN, (UserStatus) => {
+        console.log("a User signed in");
     });
 });
 

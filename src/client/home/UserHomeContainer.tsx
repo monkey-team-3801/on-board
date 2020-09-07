@@ -8,6 +8,8 @@ import { LocalStorageKey, RequestState } from "../types";
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
+import { socket } from "../io";
+import { SignInEvent } from "../../events";
 
 type Props = RouteComponentProps & {};
 
@@ -30,6 +32,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     const [sessionResponse, refresh] = useFetch<SessionResponseType>(
         "session/sessions"
     );
+
+    socket.emit(SignInEvent.USER_SIGNEDIN);
 
     const onDeleteClick = React.useCallback(
         async (id: string) => {
