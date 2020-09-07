@@ -37,7 +37,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
             >
                 &lt;
             </div>
-            <div>{`${x[0]} ${x[1]}`}</div>
+            <div className="month">{`${x[0]}`}</div><div className="year">{`${x[1]}`}</div>
             <div
                 className="right-chevron"
                 onClick={() =>
