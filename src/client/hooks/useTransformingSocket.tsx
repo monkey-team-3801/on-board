@@ -22,7 +22,7 @@ import { socket } from "../io";
  *         return prevState.concat([newData]);
  *     }
  *     return prevState; // Make no changes if prevState or newData is not initialised.
- *     
+ *
  * });
  *
  * // Render the list of announcements
