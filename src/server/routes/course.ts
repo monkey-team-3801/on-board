@@ -23,6 +23,8 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
         code: course.code,
         description: course.description,
         activities: course.activities,
+        StudentsList: [],
+        TutorsList: [],
     }));
 };
 
@@ -76,7 +78,6 @@ router.post(
                     };
                 })
             );
->>>>>>> master
         } catch (e) {
             console.log("error", e);
             res.status(500).end();
@@ -88,17 +89,6 @@ router.post(
     "/list",
     asyncHandler<CourseListResponseType>(async (req, res) => {
         try {
-<<<<<<< HEAD
-            const { code, description } = req.body;
-            const course = await Course.create({
-                code,
-                description,
-                activities: [],
-                StudentsList: [],
-                TutorsList: [],
-            });
-            res.status(200).json(course);
-=======
             res.json(
                 (await findAllCourses()).map((course) => {
                     return {
@@ -106,7 +96,6 @@ router.post(
                     };
                 })
             );
->>>>>>> master
         } catch (e) {
             console.log("error", e);
             res.status(500).end();
