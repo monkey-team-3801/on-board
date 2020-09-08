@@ -10,6 +10,7 @@ import { UserDataResponseType } from "../types";
 import { useFetch } from "./hooks";
 import { requestIsLoaded } from "./utils";
 import { RouteComponentProps } from "react-router-dom";
+import { UploadContainer } from "./filehandler/UploadContainer";
 
 type Props = RouteComponentProps;
 
@@ -75,7 +76,18 @@ export const AppProtectedRoutes = (props: Props) => {
                     );
                 }}
             />
-            <SecuredRoute path="/calendar-test" component={Calendar} />
+            <SecuredRoute
+                path="/calendar-test"
+                render={(routerProps: RouteComponentProps) => {
+                    return <Calendar {...routerProps} sessions={[]} />;
+                }}
+            />
+            <SecuredRoute
+                path="/upload"
+                render={() => {
+                    return <UploadContainer />;
+                }}
+            />
         </Switch>
     );
 };
