@@ -57,17 +57,6 @@ router.get(
     "/",
     asyncHandler<CoursesResponseType, {}, {}>(async (req, res) => {
         try {
-<<<<<<< HEAD
-            const query = await Course.find();
-            const courses: Array<CourseResponseType> = query.map((course) => ({
-                code: course.code,
-                description: course?.description,
-                activities: course?.activities,
-                StudentsList: course?.StudentsList,
-                TutorsList: course?.StudentsList,
-            }));
-            res.json(courses);
-=======
             res.json(await findAllCourses());
         } catch (e) {
             console.log("error", e);

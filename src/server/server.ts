@@ -12,11 +12,8 @@ import {
     PrivateRoomJoinData,
     ChatEvent,
     ChatMessageSendType,
-<<<<<<< HEAD
     SignInEvent,
-=======
     AnnouncementEvent,
->>>>>>> master
 } from "../events";
 
 import {
@@ -44,11 +41,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
-<<<<<<< HEAD
     socket.on(SignInEvent.USER_SIGNEDIN, (UserStatus) => {
         console.log("a User signed in");
     });
-=======
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
         (data: { courses: Array<string> }) => {
@@ -58,7 +53,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
->>>>>>> master
 });
 
 app.use(bodyParser.json());

@@ -46,12 +46,8 @@ router.post(
                     username: req.body.username,
                     password: hashPassword(req.body.password),
                     userType: req.body.userType,
-<<<<<<< HEAD
-                    courseList: [],
                     userStatus: 0,
-=======
                     courses: [],
->>>>>>> master
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),
@@ -74,10 +70,9 @@ router.post(
                     id: user._id.toHexString(),
                     username: user.username,
                     userType: user.userType,
-<<<<<<< HEAD
-                    userStatus: user.userStatus,
-=======
                     courses: user.courses,
+                    userStatus: user.userStatus,
+
                 });
             }
         }
@@ -109,7 +104,6 @@ router.post(
             if (user) {
                 res.json({
                     courses: user.courses,
->>>>>>> master
                 });
             }
         }

@@ -108,9 +108,7 @@ export type UserDataResponseType = {
     id: string;
     username: string;
     userType: UserType;
-<<<<<<< HEAD
     userStatus: UserStatus;
-=======
     courses: Array<string>;
 };
 
@@ -149,7 +147,6 @@ export type GetAnnouncementsRequestType = WithUserId;
 
 export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType>;
->>>>>>> master
 };
 
 export enum UserStatus {
