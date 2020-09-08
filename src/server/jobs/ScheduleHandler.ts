@@ -2,16 +2,19 @@ import schedule from "node-schedule";
 import { ObjectId } from "mongodb";
 
 import { Job, IJob } from "../database/schema";
-import { BaseJob } from "../types";
+import { BaseJob } from "../../types";
+import { jobRunner } from "./job-runner";
 
 /**
  * Basic handler for job scheduling.
  */
-export class ScheduleHandler {
+export class ScheduleHandler<T = any> {
+    private static instance: ScheduleHandler;
     private jobMap: Map<string, schedule.Job>;
 
     public constructor() {
         this.jobMap = new Map();
+        ScheduleHandler.instance = this;
     }
 
     /**
@@ -24,6 +27,7 @@ export class ScheduleHandler {
                 this.removeJobReference(job._id);
             } else {
                 // Queue new jobs for exexution.
+                console.log("Job queued", job.jobDate);
                 this.queueNewJob(job);
             }
         });
@@ -37,7 +41,7 @@ export class ScheduleHandler {
         this.jobMap.set(
             job._id.toHexString(),
             schedule.scheduleJob(new Date(job.jobDate), () => {
-                // TODO job execution goes here.
+                jobRunner(job);
                 this.removeQueuedJob(job._id);
             })
         );
@@ -47,14 +51,24 @@ export class ScheduleHandler {
      * Adds a new job to the database for execution at a future date. The job is automatically queued.
      * @param job Future job.
      */
-    public async addNewJob(job: BaseJob): Promise<void> {
+    public async addNewJob(job: BaseJob<T>): Promise<void> {
         try {
-            const jobReference: IJob = await Job.create({
-                jobDate: job.jobDate,
-                executingEvent: job.executingEvent,
-                data: job.data,
-            });
-            this.queueNewJob(jobReference);
+            const currentDate: Date = new Date();
+            const jobDate: Date = new Date(job.jobDate);
+            if (jobDate.getTime() <= currentDate.getTime()) {
+                const modifiedJobData = {
+                    ...job,
+                    jobDate: new Date().toISOString(),
+                };
+                jobRunner(modifiedJobData);
+            } else {
+                const jobReference: IJob = await Job.create({
+                    jobDate: job.jobDate,
+                    executingEvent: job.executingEvent,
+                    data: job.data,
+                });
+                this.queueNewJob(jobReference);
+            }
         } catch (e) {
             throw new Error(e);
         }
@@ -75,5 +89,16 @@ export class ScheduleHandler {
      */
     private async removeJobReference(id: ObjectId): Promise<void> {
         await Job.deleteOne({ _id: id });
+    }
+
+    /**
+     * Returns a singleton of this class if it exists, otherwise return a new instance.
+     */
+    public static getInstance<T>(): ScheduleHandler<T> {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new ScheduleHandler<T>();
+        return this.instance;
     }
 }

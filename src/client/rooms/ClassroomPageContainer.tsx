@@ -1,7 +1,9 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
+import { TopLayerContainerProps } from "../types";
 
-type Props = RouteComponentProps<{ classroomId: string }> & {};
+type Props = RouteComponentProps<{ classroomId: string }> &
+    TopLayerContainerProps & {};
 
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props

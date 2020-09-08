@@ -6,13 +6,25 @@ import {
     CourseActivityResponseType,
     CourseActivityUnique,
     CourseResponseType,
-    CourseDataUnique,
     CoursesResponseType,
     CourseActivityRequestFilterType,
+    CourseListResponseType,
+    GetAnnouncementsRequestType,
+    GetAnnouncementsResponseType,
 } from "../../types";
 import { addWeeks, setISODay } from "date-fns";
+import { User } from "../database/schema";
 
 export const router = express.Router();
+
+const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
+    const query = await Course.find();
+    return query.map((course) => ({
+        code: course.code,
+        description: course.description,
+        activities: course.activities,
+    }));
+};
 
 router.get(
     "/:course_code",
@@ -45,6 +57,7 @@ router.get(
     "/",
     asyncHandler<CoursesResponseType, {}, {}>(async (req, res) => {
         try {
+<<<<<<< HEAD
             const query = await Course.find();
             const courses: Array<CourseResponseType> = query.map((course) => ({
                 code: course.code,
@@ -54,6 +67,8 @@ router.get(
                 TutorsList: course?.StudentsList,
             }));
             res.json(courses);
+=======
+            res.json(await findAllCourses());
         } catch (e) {
             console.log("error", e);
             res.status(500).end();
@@ -62,9 +77,29 @@ router.get(
 );
 
 router.post(
-    "/create",
-    asyncHandler<CourseResponseType, {}, CourseDataUnique>(async (req, res) => {
+    "/list",
+    asyncHandler<CourseListResponseType>(async (req, res) => {
         try {
+            res.json(
+                (await findAllCourses()).map((course) => {
+                    return {
+                        code: course.code,
+                    };
+                })
+            );
+>>>>>>> master
+        } catch (e) {
+            console.log("error", e);
+            res.status(500).end();
+        }
+    })
+);
+
+router.post(
+    "/list",
+    asyncHandler<CourseListResponseType>(async (req, res) => {
+        try {
+<<<<<<< HEAD
             const { code, description } = req.body;
             const course = await Course.create({
                 code,
@@ -74,11 +109,63 @@ router.post(
                 TutorsList: [],
             });
             res.status(200).json(course);
+=======
+            res.json(
+                (await findAllCourses()).map((course) => {
+                    return {
+                        code: course.code,
+                    };
+                })
+            );
+>>>>>>> master
         } catch (e) {
             console.log("error", e);
             res.status(500).end();
         }
     })
+);
+
+router.post(
+    "/announcements",
+    asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
+        async (req, res) => {
+            const user = await User.findById(req.body.userId);
+            if (user) {
+                const courseAnnouncements = user.courses.map(
+                    async (courseCode) => {
+                        const courses = await Course.find({
+                            code: courseCode,
+                        });
+                        if (courses) {
+                            const announcements = courses.flatMap((course) => {
+                                return course.announcements.map(
+                                    (announcement) => announcement
+                                );
+                            });
+                            return announcements;
+                        }
+                        return [];
+                    }
+                );
+                const allAnnouncements = (
+                    await Promise.all(courseAnnouncements)
+                )
+                    .reduce((prev, next) => {
+                        return prev.concat(next || []);
+                    }, [])
+                    .sort((a, b) => {
+                        return (
+                            new Date(b.date).getTime() -
+                            new Date(a.date).getTime()
+                        );
+                    });
+                res.json({
+                    announcements: allAnnouncements,
+                });
+            }
+            res.end();
+        }
+    )
 );
 
 router.delete(
