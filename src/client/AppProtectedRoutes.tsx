@@ -10,7 +10,7 @@ import { UserDataResponseType } from "../types";
 import { useFetch } from "./hooks";
 import { requestIsLoaded } from "./utils";
 import { RouteComponentProps } from "react-router-dom";
-import { UploadContainer } from "./filehandler/UploadContainer";
+import { UploadTest } from "./filehandler/UploadTest";
 
 type Props = RouteComponentProps;
 
@@ -85,7 +85,7 @@ export const AppProtectedRoutes = (props: Props) => {
             <SecuredRoute
                 path="/upload"
                 render={() => {
-                    return <UploadContainer />;
+                    return <UploadTest />;
                 }}
             />
         </Switch>

@@ -138,3 +138,13 @@ export type GetAnnouncementsRequestType = WithUserId;
 export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType>;
 };
+
+export enum FileUploadType {
+    PROFILE,
+    DOCUMENTS,
+}
+
+export type FileUploadRequestType = {
+    files: Array<File>;
+    reqType: FileUploadType;
+};
