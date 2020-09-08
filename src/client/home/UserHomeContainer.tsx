@@ -12,15 +12,11 @@ import {
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
-<<<<<<< HEAD
-import { socket } from "../io";
 import { SignInEvent } from "../../events";
-=======
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
 import { AnnouncementEvent } from "../../events";
->>>>>>> master
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -46,9 +42,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         "session/sessions"
     );
 
-<<<<<<< HEAD
-    socket.emit(SignInEvent.USER_SIGNEDIN);
-=======
     const componentDidMount = React.useCallback(
         (socket: SocketIOClient.Socket) => {
             return socket.emit(
@@ -71,7 +64,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             });
         }
     );
->>>>>>> master
+
+    socket.emit(SignInEvent.USER_SIGNEDIN);
 
     const onDeleteClick = React.useCallback(
         async (id: string) => {
