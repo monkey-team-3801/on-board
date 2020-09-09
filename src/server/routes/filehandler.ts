@@ -1,6 +1,6 @@
 import express from "express";
 import { asyncHandler } from "../utils";
-import { FileUploadRequestType, FileUploadType } from "../../types";
+// import { FileUploadRequestType, FileUploadType } from "../../types";
 
 export const router = express.Router();
 
