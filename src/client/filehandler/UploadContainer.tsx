@@ -47,12 +47,12 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     });
 
     return (
-        <div {...getRootProps()} className="container">
+        <div {...getRootProps()} className="dropContainer">
             <input {...getInputProps()} />
             {isDragActive ? (
-                <p className="message">Drop the files here ...</p>
+                <p className="dropMessage">Drop the files here ...</p>
             ) : (
-                <p className="message">
+                <p className="dropMessage">
                     Drag 'n' drop some files here, or click to select files
                 </p>
             )}
