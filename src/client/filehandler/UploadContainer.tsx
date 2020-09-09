@@ -2,7 +2,7 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import "../styles/UploadContainer.less";
 import { useDynamicFetch } from "../hooks";
-import { FileUploadRequestType, FileUploadType } from "../../types";
+import { FileUploadType } from "../../types";
 
 // To differentiate between documents and profile pictures.
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 export const UploadContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [data, uploadFile] = useDynamicFetch<any, FileUploadRequestType>(
+    const [, uploadFile] = useDynamicFetch<undefined, FormData>(
         "filehandler/upload",
         undefined,
         false
@@ -36,10 +36,12 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             console.log("failed");
             return;
         }
-        await uploadFile({
-            files: acceptedFiles,
-            reqType: props.uploadType,
+        const formData = new FormData();
+        acceptedFiles.forEach((file) => {
+            formData.append(file.name, file, file.name);
         });
+
+        await uploadFile(formData);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -3,6 +3,7 @@ import { createServer, Server } from "http";
 import socketIO from "socket.io";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import fileUpload from "express-fileupload";
 
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
@@ -52,6 +53,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
 });
 
 app.use(bodyParser.json());
+app.use(fileUpload());
 
 // Request initialiser
 app.use((req, res, next) => {
