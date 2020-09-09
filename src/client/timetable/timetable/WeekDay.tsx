@@ -15,6 +15,7 @@ export const WeekDay: React.FunctionComponent<Props> = ({
     dayEndTime,
     activities,
 }) => {
+    // TODO: compute stacked and stack index
     return (
         <div className="week-day">
             {range(dayStartTime, dayEndTime).map((hour) => (
@@ -25,8 +26,8 @@ export const WeekDay: React.FunctionComponent<Props> = ({
                     details={activity}
                     dayStartTime={dayStartTime}
                     dayEndTime={dayEndTime}
-                    stacked={}
-                    stackIndex={}
+                    stacked={0}
+                    stackIndex={0}
                 />
             ))}
         </div>

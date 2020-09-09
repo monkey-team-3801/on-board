@@ -82,3 +82,8 @@ export type UserDataResponseType = {
     username: string;
     userType: UserType;
 };
+
+export type VideoSessionResponseType = {
+    sessionId: string;
+    name: string
+};

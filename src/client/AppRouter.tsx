@@ -9,6 +9,7 @@ import { SecuredRoute } from "./auth/SecuredRoute";
 import { LoginPage } from "./user/LoginPage";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { VideoContainer } from "./video/VideoContainer";
+import { VideoRoomLobby } from "./video/VideoRoomLobby";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -26,7 +27,8 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                 />
                 <SecuredRoute path="/calendar-test" component={Calendar} />
                 <SecuredRoute path="/timetable-test" component={Timetable} />
-                <Route path="/video" component={VideoContainer} />
+                <Route path="/video-test" exact component={VideoRoomLobby} />
+                <Route path="/video-test/:roomId" exact component={VideoContainer} />
                 <Route path="/" component={LoginPage} />
             </Switch>
         </BrowserRouter>

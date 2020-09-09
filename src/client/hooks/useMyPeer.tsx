@@ -5,9 +5,10 @@ export const useMyPeer: () => [
     Peer,
     React.RefObject<HTMLVideoElement>
 ] = () => {
-    const [myPeer] = useState<Peer>(() => new Peer());
+    const [myPeer, setPeer] = useState<Peer>(() => new Peer());
     // My stream
     const videoRef = useRef<HTMLVideoElement>(null);
+
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
@@ -21,7 +22,16 @@ export const useMyPeer: () => [
                         videoRef.current?.play();
                     });
                 }
+                myPeer.on("call", call => {
+                    call.answer(stream);
+                });
+
             });
+
+        myPeer.on("open", () => {
+            setPeer(myPeer);
+        });
+
     }, [myPeer, videoRef]);
     return [myPeer, videoRef];
 };

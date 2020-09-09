@@ -16,3 +16,12 @@ export enum RoomEvent {
 export type PrivateRoomJoinData = {
     sessionId: string;
 };
+
+export enum VideoEvent {
+    USER_JOIN_ROOM = "USER_JOIN_ROOM",
+}
+
+export type PrivateVideoRoomJoinData = {
+    sessionId: string;
+    userId: string;
+};

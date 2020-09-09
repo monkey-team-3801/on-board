@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import { createServer, Server } from "http";
 import socketIO from "socket.io";
+import { PeerServer } from "peer";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 
@@ -11,6 +12,8 @@ import {
     PrivateRoomJoinData,
     ChatEvent,
     ChatMessageSendType,
+    VideoEvent,
+    PrivateVideoRoomJoinData,
 } from "../events";
 
 import {
@@ -18,7 +21,7 @@ import {
     chatRoute,
     sessionRoute,
     courseRoute,
-    authRoute,
+    authRoute, videoRoute
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
@@ -29,6 +32,13 @@ const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
 
+const peerServer = PeerServer({
+    path: "/",
+    port: 5001,
+});
+
+app.use("/", peerServer);
+
 io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
         socket.join(data.sessionId);
@@ -36,6 +46,11 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+    });
+    // TODO: merge PrivateVideoRoomJoinData with PrivateRoomJoinData?
+    socket.on(VideoEvent.USER_JOIN_ROOM, (data: PrivateVideoRoomJoinData) => {
+        socket.join(data.sessionId);
+        socket.to(data.sessionId).emit(VideoEvent.USER_JOIN_ROOM);
     });
 });
 
@@ -77,6 +92,9 @@ app.use("/user", userRoute);
 
 // Course routes.
 app.use("/courses", courseRoute);
+
+// Video routes.
+app.use("/videos", videoRoute);
 
 // Authorisation routes.
 app.use("/auth", authRoute);
