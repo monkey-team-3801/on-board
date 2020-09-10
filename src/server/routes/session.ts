@@ -6,7 +6,6 @@ import {
     SessionResponseType,
     SessionInfo,
     SessionData,
-    RoomType,
     SessionRequestType,
     ClassroomSessionData,
 } from "../../types";
