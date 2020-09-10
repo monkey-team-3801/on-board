@@ -5,6 +5,23 @@ import { getUserDataFromJWT } from "./utils";
 export const router = express.Router();
 
 router.post(
+    "/getPfp",
+    asyncHandler(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            if (user) {
+                const pfp = user.pfp;
+                if (pfp) {
+                    res.write(pfp, "binary");
+                    res.end(null, "binary");
+                }
+            }
+        }
+        res.end();
+    })
+);
+
+router.post(
     "/pfpUpload",
     asyncHandler(async (req, res) => {
         if (req.files) {
