@@ -103,33 +103,36 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container fluid>
-            <Row>
-                <Col xl="2" lg="2" md="3" d-md-block className="no-padding overflow-hidden">
-                    <Container fluid className="no-padding">
-                        <Col w-100>
-                            <Navbar />
+            <Col xl="2" lg="2" md="3" d-md-block className="no-padding ">
+                <Container fluid className="no-padding">
+                    <Col w-100>
+                        <Navbar />
+                    </Col>
+                </Container>
+            </Col>
+            <Col xl="10" lg="10" md="9" className="ml-sm-auto px-md-4">
+                <Container fluid>
+                    <Row className="no-padding">
+                        <Col xl="6" lg="6">
+                            <Container className="calender">
+                                <Row>
+                                    <Calendar sessions={[]} />
+                                </Row>
+                                <Col>
+                                    <p>
+                                        Logged in as {userData.username}:{" "}
+                                        {userData.id}
+                                    </p>
+                                </Col>
+                            </Container>
                         </Col>
-                    </Container>
-                </Col>
-                <Col xl="10" lg="10" md="9" className="ml-sm-auto px-md-4">
-                    <Container fluid>
-                        <Row className="no-padding">
-                            <Col xl="6" lg="6">
-                                <Container className="calender">
-                                    <Row>
-                                        <Calendar sessions={[]} />
-                                    </Row>
-                                    <Col>
-                                        <p>
-                                            Logged in as {userData.username}: {userData.id}
-                                        </p>
-                                    </Col>
-                                </Container>
-                            </Col>
-                            <Col xl="6" xs lg="6" className="announcements">
+                        <Col xl="6" xs lg="6" className="announcements">
+                            <AnnouncementsContainer
+                                refreshKey={refreshKey}
+                                userId={userData.id}
+                            />
+                        </Col>
 
-                            </Col>
-                        </Row>
                         <Container fluid>
                             <Row className="no-padding">
                                 <Col
@@ -194,14 +197,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 onJoinClick={onJoinClick}
                             />
                         </Row>
-                        <Row>
-                            <CreateRoomPage
-                                createRoom={async (name: string) => {
-                                    await createRoom({ name });
-                                    await refresh();
-                                }}
-                            />
-                        </Row>
+
                         <Row>
                             <Col>
                                 <EnrolFormContainer
@@ -222,9 +218,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 />
                             </Col>
                         </Row>
-                    </Container>
-                </Col>
-            </Row>
-        </Container >
+                    </Row>
+                </Container>
+            </Col>
+        </Container>
     );
 };

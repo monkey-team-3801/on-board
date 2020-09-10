@@ -6,6 +6,7 @@ import {
 } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { Container, Row, Col } from "react-bootstrap";
+import "../styles/Announcements.less";
 type Props = {
     userId: string;
     refreshKey: number;
@@ -40,7 +41,10 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
             <Row>
                 <h3>Announcements</h3>
             </Row>
-            <div style={{ height: 800, overflow: "auto" }}>
+            <div
+                className="announcement-container"
+                style={{ height: 50, overflow: "auto" }}
+            >
                 {announcementsData.data.announcements.map((announcement, i) => {
                     return (
                         <Row
