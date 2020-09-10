@@ -14,7 +14,6 @@ router.post(
                 res.status(500).end();
             }
             const file = ftp[0];
-            console.log(ftp);
             if (!Array.isArray(file)) {
                 const fileSize = file.size;
                 const fileType = file.mimetype;
