@@ -102,29 +102,16 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container>
-            <Container fluid className="no-padding">
-                <Row className="no-padding">
-                    <Col xl="2" lg="2" className="no-padding">
-                        <Container fluid className="no-padding">
-                            <Col w-100>
-                                <Navbar />
-                            </Col>
-                        </Container>
-                    </Col>
-
-                </Row>
-            </Container>
+        <Container fluid>
             <Row>
-                <h1>User Homepage</h1>
-            </Row>
-            <Row>
-                <Col>
-                    <p>
-                        Logged in as {userData.username}: {userData.id}
-                    </p>
+                <Col xl="2" lg="2" md="3" d-md-block className="no-padding overflow-hidden">
+                    <Container fluid className="no-padding">
+                        <Col w-100>
+                            <Navbar />
+                        </Col>
+                    </Container>
                 </Col>
-                <Col xl="10" lg="10">
+                <Col xl="10" lg="10" md="9" className="ml-sm-auto px-md-4">
                     <Container fluid>
                         <Row className="no-padding">
                             <Col xl="6" lg="6">
@@ -132,90 +119,15 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <Row>
                                         <Calendar sessions={[]} />
                                     </Row>
+                                    <Col>
+                                        <p>
+                                            Logged in as {userData.username}: {userData.id}
+                                        </p>
+                                    </Col>
                                 </Container>
                             </Col>
-
                             <Col xl="6" xs lg="6" className="announcements">
-                                <Container>
-                                    <Row>
-                                        <h1>Announcements</h1>
-                                    </Row>
-                                    <Row className="announcements">
-                                        <Container>
-                                            <Col>
-                                                <Row>
-                                                    <Col
-                                                        xl="1"
-                                                        xs
-                                                        lg="1"
-                                                        className="no-padding"
-                                                    >
-                                                        <div className="class-1-banner"></div>
-                                                    </Col>
-                                                    <Col xl="10" xs lg="10">
-                                                        <Row>
-                                                            <div>
-                                                                <h3>
-                                                                    CSSE1001
-                                                                </h3>
-                                                            </div>
-                                                        </Row>
-                                                        <Row>
-                                                            <div>
-                                                                <h4>
-                                                                    Assignment 1
-                                                                    Due
-                                                                </h4>
-                                                            </div>
-                                                        </Row>
-                                                        <Row>
-                                                            <div>
-                                                                <p className="announcement-time">
-                                                                    Today
-                                                                    10:30am
-                                                                </p>
-                                                            </div>
-                                                        </Row>
-                                                        <Row>
-                                                            <div>
-                                                                <p>
-                                                                    A reminder
-                                                                    your
-                                                                    assignment
-                                                                    is due
-                                                                    tomorrow.
-                                                                    Good luck!
-                                                                </p>
-                                                            </div>
 
-                                                            <Container>
-                                                                <Row>
-                                                                    <Col
-                                                                        xl="1"
-                                                                        xs
-                                                                        lg="1"
-                                                                    >
-                                                                        <div className="class-1-teacher"></div>
-                                                                    </Col>
-
-                                                                    <Col>
-                                                                        <div className="class-1-teacher-name">
-                                                                            <h5>
-                                                                                Richard
-                                                                                Thomas
-                                                                            </h5>
-                                                                        </div>
-                                                                    </Col>
-                                                                </Row>
-                                                            </Container>
-                                                            <div className="closing-banner"></div>
-                                                        </Row>
-                                                    </Col>
-                                                </Row>
-                                            </Col>
-                                        </Container>
-                                    </Row>
-                                </Container>
                             </Col>
                         </Row>
                         <Container fluid>
@@ -275,44 +187,44 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 </Col>
                             </Row>
                         </Container>
+                        <Row>
+                            <RoomDisplayContainer
+                                data={sessionResponse.data.sessions}
+                                onDeleteClick={onDeleteClick}
+                                onJoinClick={onJoinClick}
+                            />
+                        </Row>
+                        <Row>
+                            <CreateRoomPage
+                                createRoom={async (name: string) => {
+                                    await createRoom({ name });
+                                    await refresh();
+                                }}
+                            />
+                        </Row>
+                        <Row>
+                            <Col>
+                                <EnrolFormContainer
+                                    refresh={refreshAnnouncements}
+                                    userId={userData.id}
+                                    socket={socket}
+                                />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <CreateAnnouncementsForm userId={userData.id} />
+                            </Col>
+                            <Col>
+                                <AnnouncementsContainer
+                                    refreshKey={refreshKey}
+                                    userId={userData.id}
+                                />
+                            </Col>
+                        </Row>
                     </Container>
                 </Col>
             </Row>
-            <Row>
-                <RoomDisplayContainer
-                    data={sessionResponse.data.sessions}
-                    onDeleteClick={onDeleteClick}
-                    onJoinClick={onJoinClick}
-                />
-            </Row>
-            <Row>
-                <CreateRoomPage
-                    createRoom={async (name: string) => {
-                        await createRoom({ name });
-                        await refresh();
-                    }}
-                />
-            </Row>
-            <Row>
-                <Col>
-                    <EnrolFormContainer
-                        refresh={refreshAnnouncements}
-                        userId={userData.id}
-                        socket={socket}
-                    />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <CreateAnnouncementsForm userId={userData.id} />
-                </Col>
-                <Col>
-                    <AnnouncementsContainer
-                        refreshKey={refreshKey}
-                        userId={userData.id}
-                    />
-                </Col>
-            </Row>
-        </Container>
+        </Container >
     );
 };
