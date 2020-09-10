@@ -42,7 +42,7 @@ router.post(
                     return;
                 }
                 session.peers.push(req.body.peerId);
-                session.save();
+                await session.save();
                 res.status(200).end();
             } catch (e) {
                 console.log("error", e);
