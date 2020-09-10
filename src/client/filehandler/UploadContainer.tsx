@@ -13,12 +13,11 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [, uploadFile] = useDynamicFetch<undefined, FormData>(
-        "filehandler/upload",
+        "filehandler/pfpUpload",
         undefined,
         false
     );
 
-    // This needs to be updated to contain relevant file types as well.
     function checkValid(files: Array<File>): boolean {
         if (props.uploadType === FileUploadType.PROFILE) {
             return files.length === 1;
@@ -32,6 +31,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
     const onDrop = async (acceptedFiles: Array<File>) => {
         console.log(acceptedFiles);
+        // Handle error
         if (!checkValid(acceptedFiles)) {
             console.log("failed");
             return;

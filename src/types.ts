@@ -143,8 +143,3 @@ export enum FileUploadType {
     PROFILE,
     DOCUMENTS,
 }
-
-export type FileUploadRequestType = {
-    files: Array<File>;
-    reqType: FileUploadType;
-};
