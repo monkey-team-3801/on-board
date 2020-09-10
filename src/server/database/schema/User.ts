@@ -8,6 +8,7 @@ export interface IUser extends mongoose.Document {
     password: string;
     userType: UserType;
     courses: Array<string>;
+    pfp: Buffer;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -15,6 +16,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     password: { type: String, required: true },
     userType: { type: UserType, required: true },
     courses: { type: Array, required: true },
+    pfp: { type: Buffer, required: false },
 });
 
 export const User = mongoose.model<IUser>("User", UserSchema);
