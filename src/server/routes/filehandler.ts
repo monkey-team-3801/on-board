@@ -11,7 +11,6 @@ router.post(
             // File to process
             const ftp = Object.keys(req.files).map((x) => req.files![x]);
             if (ftp.length > 1) {
-                // naughty boy
                 res.status(500).end();
             }
             const file = ftp[0];
@@ -30,14 +29,15 @@ router.post(
                             req.headers.authorization
                         );
                         if (user) {
-                            const userID = user._id;
+                            user.pfp = fileData;
+                            user.save();
+                            res.status(200).end();
                         }
                     }
                 }
             }
         }
-
-        res.end();
+        res.status(500).end();
     })
 );
 
