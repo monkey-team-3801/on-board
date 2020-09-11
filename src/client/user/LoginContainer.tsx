@@ -73,7 +73,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Col>
                 </Row>
                 </Container>
-             
+
                 <Button variant="primary" type="submit" className="loginbtn">
                     Login
                 </Button>
@@ -92,9 +92,9 @@ export const LoginContainer: React.FunctionComponent<Props> = (
             </Button>
             </div>
             </Form>
-            
 
-            
+
+
         </div>
     );
 };
