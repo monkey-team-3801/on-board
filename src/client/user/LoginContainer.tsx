@@ -100,7 +100,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                             props.toggleRegisterForm(true);
                         }}
                     >
-                        Create new account
+                        Create an account
                     </Button>
                 </div>
             </Form>
