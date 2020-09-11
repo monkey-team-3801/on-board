@@ -13,13 +13,13 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [, uploadPfp] = useDynamicFetch<undefined, FormData>(
-        "filehandler/pfpUpload",
+        "/filehandler/pfpUpload",
         undefined,
         false
     );
 
     const [, uploadFile] = useDynamicFetch<undefined, FormData>(
-        "filehandler/uploadFiles",
+        "/filehandler/uploadFiles",
         undefined,
         false
     );
@@ -48,8 +48,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         });
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
-        }
-        if (props.uploadType === FileUploadType.DOCUMENTS) {
+        } else if (props.uploadType === FileUploadType.DOCUMENTS) {
             await uploadFile(formData);
         }
     };

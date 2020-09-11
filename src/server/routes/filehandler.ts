@@ -7,14 +7,16 @@ export const router = express.Router();
 
 // Upload documents
 router.post(
-    "uploadFiles",
+    "/uploadFiles",
     asyncHandler(async (req, res) => {
+        console.log("test");
+        console.log("HELLO");
         res.end();
     })
 );
 
 // Gets the files for a session
-router.post(
+router.get(
     "/getFiles",
     asyncHandler(async (req, res) => {
         res.end();
@@ -26,7 +28,6 @@ router.get(
     "/getPfp/:userId",
     asyncHandler<undefined, { userId: string }, any>(async (req, res) => {
         const user = await User.findById(req.params.userId);
-        console.log(user);
         if (user) {
             const pfp = user.pfp;
             if (pfp) {
