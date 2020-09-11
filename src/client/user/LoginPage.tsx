@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col} from "react-bootstrap";
+import { Container, Row} from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
 import { RegisterContainer } from "../user/RegisterContainer";
@@ -7,7 +7,7 @@ import { RequestState, LocalStorageKey } from "../types";
 import { Redirect } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
 import "../styles/Login.less";
-import { findAllByDisplayValue } from "@testing-library/react";
+// import { findAllByDisplayValue } from "@testing-library/react";
 
 type Props = {};
 
