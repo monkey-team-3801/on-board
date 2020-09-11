@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row} from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
 import { RegisterContainer } from "../user/RegisterContainer";
@@ -32,27 +32,29 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
             <Container className="login-section">
-                        <Container className="login-container">
-                            <Row className="heading-row">
-                                <div className="logo-image"></div>
-                                <h1 id="login-heading">On Board</h1>
-                            </Row>
-                        </Container>
-                        <Container className="form-container">
-                                {showRegister ? (
-                                    <RegisterContainer
-                                        onFetchSuccess={onFetchSuccess}
-                                        toggleRegisterForm={toggleRegisterForm}
-                                        {...props}
-                                    />
-                                ) : (
-                                    <LoginContainer
-                                        onFetchSuccess={onFetchSuccess}
-                                        toggleRegisterForm={toggleRegisterForm}
-                                        {...props}
-                                    />
-                                )}
-                        </Container>
+                <Container className="login-container">
+                    <Row className="heading-row">
+                        <div className="heading-row-container">
+                            <div className="logo-image"></div>
+                            <h1 id="login-heading">On Board</h1>
+                        </div>
+                    </Row>
+                </Container>
+                <Container className="form-container">
+                    {showRegister ? (
+                        <RegisterContainer
+                            onFetchSuccess={onFetchSuccess}
+                            toggleRegisterForm={toggleRegisterForm}
+                            {...props}
+                        />
+                    ) : (
+                        <LoginContainer
+                            onFetchSuccess={onFetchSuccess}
+                            toggleRegisterForm={toggleRegisterForm}
+                            {...props}
+                        />
+                    )}
+                </Container>
             </Container>
         </div>
     );

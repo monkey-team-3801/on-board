@@ -40,61 +40,70 @@ export const LoginContainer: React.FunctionComponent<Props> = (
             <h1 className="form-heading">LOGIN</h1>
             <Form onSubmit={(e) => handleSubmit(e)} className="login">
                 <div className="formcontent">
-                <Form.Group>
-                    <Form.Control
-                        className="inputbar"
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Control
-                        className="inputbar"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            className="inputbar"
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            className="inputbar"
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
 
-                <Container>
-                <Row className = "login-options">
-                    <Col>
-                    <input type="checkbox" id="remember-me" value="remember"></input>
-                    <span className="checkmark"></span>
-                    <label>Remember Me</label>
-                    </Col>
-                    <Col>
-                    <p>Forgot my Password</p>
-                    </Col>
-                </Row>
-                </Container>
+                    <Container>
+                        <Row>
+                            <div className="login-options">
+                                <Col className="center">
+                                    <input
+                                        type="checkbox"
+                                        id="remember-me"
+                                        value="remember"
+                                    ></input>
+                                    <span className="checkmark"></span>
+                                    <label>Remember Me</label>
+                                </Col>
+                                <Col className="center">
+                                    <p className="forget-password">
+                                        Forgot my Password
+                                    </p>
+                                </Col>
+                            </div>
+                        </Row>
+                    </Container>
 
-                <Button variant="primary" type="submit" className="loginbtn">
-                    Login
-                </Button>
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        className="loginbtn"
+                    >
+                        Login
+                    </Button>
                 </div>
-            <div className="toggle-button">
-            <Button
-                variant="light"
-                type="submit"
-                size="sm"
-                className="toggle-button"
-                onClick={() => {
-                    props.toggleRegisterForm(true);
-                }}
-            >
-                Create new account
-            </Button>
-            </div>
+                <div className="toggle-button">
+                    <Button
+                        variant="light"
+                        type="submit"
+                        size="sm"
+                        className="toggle-button"
+                        onClick={() => {
+                            props.toggleRegisterForm(true);
+                        }}
+                    >
+                        Create new account
+                    </Button>
+                </div>
             </Form>
-
-
-
         </div>
     );
 };

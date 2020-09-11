@@ -61,61 +61,65 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
             <h1 className="form-heading">REGISTER</h1>
             <Form onSubmit={(e) => handleSubmit(e)}>
                 <div className="formcontent">
-                <Form.Group>
-                    <Form.Label className="form-label">Account type</Form.Label>
-                    <Form.Control
-                        className="dropdownbar"
-                        as="select"
-                        onChange={(e) => {
-                            changeUserType(e.target.value);
-                        }}
-                        required
+                    <Form.Group>
+                        <Form.Label className="form-label">
+                            Account type
+                        </Form.Label>
+                        <Form.Control
+                            className="dropdownbar"
+                            as="select"
+                            onChange={(e) => {
+                                changeUserType(e.target.value);
+                            }}
+                            required
+                        >
+                            <option value="student">Student</option>
+                            <option value="tutor">Tutor</option>
+                            <option value="coordinator">Coordinator</option>
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            className="inputbar"
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            className="inputbar"
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </Form.Group>
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        className="registerbtn"
                     >
-                        <option value="student">Student</option>
-                        <option value="tutor">Tutor</option>
-                        <option value="coordinator">Coordinator</option>
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Control
-                        className="inputbar"
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Control
-                        className="inputbar"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </Form.Group>
-                <Button variant="primary" type="submit" className="registerbtn">
-                    Register
-                </Button>
+                        Register
+                    </Button>
                 </div>
-
             </Form>
             <div className="toggle-button">
-            <Button
-                variant="light"
-                type="submit"
-                size="sm"
-                className="toggle-button"
-                onClick={() => {
-                    props.toggleRegisterForm(false);
-                }}
-            >
-                I have an account
-            </Button>
+                <Button
+                    variant="light"
+                    type="submit"
+                    size="sm"
+                    className="toggle-button"
+                    onClick={() => {
+                        props.toggleRegisterForm(false);
+                    }}
+                >
+                    I have an account
+                </Button>
             </div>
-
         </div>
     );
 };
