@@ -1,7 +1,12 @@
 import React from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-import { RequestState, BaseResponseType, LocalStorageKey } from "../types";
+import {
+    RequestState,
+    BaseResponseType,
+    LocalStorageKey,
+    ErrorResponseType,
+} from "../types";
 import { AnyObjectMap } from "../../types";
 import { HTTPStatusCodeToResponseState } from "./utils";
 
@@ -43,7 +48,7 @@ export const useDynamicFetch = <
     apiRequestData?: S,
     invokeImmediately: boolean | undefined = true,
     onFetchSuccess?: (response: T) => void,
-    onFetchError?: () => void
+    onFetchError?: (err: AxiosError<ErrorResponseType>) => void
 ): [BaseResponseType<T>, (newRequestData: S | undefined) => Promise<void>] => {
     const componentMounted: React.MutableRefObject<boolean> = React.useRef<
         boolean
@@ -76,11 +81,16 @@ export const useDynamicFetch = <
                 });
                 onFetchSuccess?.(response.data);
             } catch (e) {
-                setResponseType({
-                    state: HTTPStatusCodeToResponseState(e.response.status),
-                    data: undefined,
-                });
-                onFetchError?.();
+                const err: AxiosError<ErrorResponseType> = e;
+                if (err.response) {
+                    setResponseType({
+                        state: HTTPStatusCodeToResponseState(
+                            err.response.status
+                        ),
+                        data: undefined,
+                    });
+                    onFetchError?.(err);
+                }
             }
         },
         [onFetchSuccess, onFetchError]
