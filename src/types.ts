@@ -94,6 +94,10 @@ export type SessionResponseType = {
     sessions: Array<SessionInfo>;
 };
 
+export type SessionDeleteRequestType = SessionRequestType & {
+    id: string;
+};
+
 export type LoginUserRequestType = {
     username: string;
     password: string;

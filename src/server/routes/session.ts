@@ -8,6 +8,8 @@ import {
     SessionData,
     SessionRequestType,
     ClassroomSessionData,
+    SessionDeleteRequestType,
+    RoomType,
 } from "../../types";
 import { ClassroomSession } from "../database/schema";
 
@@ -115,9 +117,14 @@ router.post(
 
 router.post(
     "/delete",
-    asyncHandler<undefined, {}, { id: string }>(async (req, res) => {
+    asyncHandler<undefined, {}, SessionDeleteRequestType>(async (req, res) => {
         console.log("Deleting session:", req.body.id);
-        await Session.findByIdAndDelete(req.body.id);
+        if (req.body.roomType === RoomType.PRIVATE) {
+            await Session.findByIdAndDelete(req.body.id);
+        } else if (req.body.roomType === RoomType.CLASS) {
+            await ClassroomSession.findByIdAndDelete(req.body.id);
+        }
+
         res.status(200).end();
     })
 );

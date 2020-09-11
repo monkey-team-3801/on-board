@@ -3,7 +3,12 @@ import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch, useSocket } from "../hooks";
-import { SessionResponseType, SessionRequestType, RoomType } from "../../types";
+import {
+    SessionResponseType,
+    SessionRequestType,
+    RoomType,
+    SessionDeleteRequestType,
+} from "../../types";
 import {
     LocalStorageKey,
     RequestState,
@@ -30,7 +35,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        { id: string }
+        SessionDeleteRequestType
     >("session/delete", undefined, false);
 
     const [createRoomResponse, createRoom] = useDynamicFetch<
@@ -76,10 +81,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     );
 
     const onDeleteClick = React.useCallback(
-        async (id: string) => {
-            await deleteRoom({
-                id,
-            });
+        async (request: SessionDeleteRequestType) => {
+            await deleteRoom(request);
             await refreshPrivateRooms();
             await refreshClassrooms();
         },
@@ -148,7 +151,12 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <RoomDisplayContainer
                     data={classroomsResponse.data.sessions}
-                    onDeleteClick={onDeleteClick}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.CLASS,
+                        });
+                    }}
                     onJoinClick={onClassroomJoinClick}
                 />
             </Row>
@@ -156,7 +164,12 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <RoomDisplayContainer
                     data={privateRoomsResponse.data.sessions}
-                    onDeleteClick={onDeleteClick}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.PRIVATE,
+                        });
+                    }}
                     onJoinClick={onPrivateRoomJoinClick}
                 />
             </Row>
