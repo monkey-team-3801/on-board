@@ -15,7 +15,7 @@ export const router = express.Router();
 
 router.post(
     "/create",
-    asyncHandler<undefined, {}, { name: string }>(async (req, res) => {
+    asyncHandler<undefined, {}, { name: string }>(async (req, res, next) => {
         try {
             if (req.body.name && req.body.name !== "") {
                 const session = await createNewSession(req.body.name, "");
@@ -23,8 +23,8 @@ router.post(
             }
             res.status(200).end();
         } catch (e) {
-            console.log("error", e);
-            res.status(500).end();
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
     })
 );
@@ -32,7 +32,7 @@ router.post(
 router.post(
     "/sessions",
     asyncHandler<SessionResponseType, {}, SessionRequestType>(
-        async (req, res) => {
+        async (req, res, next) => {
             try {
                 const sessions: Array<SessionInfo> = (await Session.find())
                     .filter((session) => session.roomType === req.body.roomType)
@@ -62,7 +62,8 @@ router.post(
                 });
             } catch (e) {
                 console.log("error", e);
-                res.status(500).end();
+                res.status(500);
+                next(new Error("Unexpected error has occured."));
             }
         }
     )
@@ -70,7 +71,7 @@ router.post(
 
 router.post(
     "/getPrivateSession",
-    asyncHandler<SessionData, {}, { id: string }>(async (req, res) => {
+    asyncHandler<SessionData, {}, { id: string }>(async (req, res, next) => {
         try {
             const session = await Session.findById(req.body.id);
             if (session) {
@@ -84,33 +85,37 @@ router.post(
             }
         } catch (e) {
             console.log("error", e);
-            res.status(500).end();
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
     })
 );
 
 router.post(
     "/getClassroomSession",
-    asyncHandler<ClassroomSessionData, {}, { id: string }>(async (req, res) => {
-        try {
-            const session = await ClassroomSession.findById(req.body.id);
-            if (session) {
-                res.json({
-                    id: session._id,
-                    name: session.name,
-                    description: session.description,
-                    courseCode: session.courseCode,
-                    messages: session.messages,
-                    startTime: session.startTime,
-                    endTime: session.endTime,
-                });
+    asyncHandler<ClassroomSessionData, {}, { id: string }>(
+        async (req, res, next) => {
+            try {
+                const session = await ClassroomSession.findById(req.body.id);
+                if (session) {
+                    res.json({
+                        id: session._id,
+                        name: session.name,
+                        description: session.description,
+                        courseCode: session.courseCode,
+                        messages: session.messages,
+                        startTime: session.startTime,
+                        endTime: session.endTime,
+                    });
+                }
+            } catch (e) {
+                console.log("error", e);
+                res.status(500);
+                next(new Error("Unexpected error has occured."));
             }
-        } catch (e) {
-            console.log("error", e);
-            res.status(500).end();
+            res.end();
         }
-        res.end();
-    })
+    )
 );
 
 router.post(

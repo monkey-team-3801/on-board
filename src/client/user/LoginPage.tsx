@@ -27,10 +27,6 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         setShowRegister(value);
     }, []);
 
-    if (data.state === RequestState.LOADING) {
-        return <div>Loading</div>;
-    }
-
     return (
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}

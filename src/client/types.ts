@@ -15,6 +15,12 @@ export interface ResponseType<T> extends BaseResponseType<T> {
     data: T;
 }
 
+export interface ErrorResponseType extends BaseResponseType<undefined> {
+    state: RequestState.LOADED;
+    data: undefined;
+    message: string | undefined;
+}
+
 export enum LocalStorageKey {
     JWT_TOKEN = "JWT_TOKEN",
 }
