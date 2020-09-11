@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
+
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
 import { RegisterContainer } from "../user/RegisterContainer";
@@ -7,6 +8,7 @@ import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
 import "../styles/Login.less";
+import { ParticlesContainer } from "../particles/ParticlesContainer";
 
 type Props = RouteComponentProps;
 
@@ -30,6 +32,7 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
+            <ParticlesContainer />
             <Container className="login-section">
                 <Container className="login-container">
                     <Row className="heading-row">

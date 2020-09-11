@@ -8,7 +8,7 @@ import {
     CreateUserRequestType,
     LoginSuccessResponseType,
 } from "../../types";
-import { requestIsLoaded, requestHasError } from "../utils";
+import { requestHasError } from "../utils";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
