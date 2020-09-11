@@ -5,8 +5,8 @@ import { Container, Row, Button, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
-import { UserDataResponseType } from "../../types";
 import { TopLayerContainerProps } from "../types";
+import { SessionData } from "../../types";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -14,16 +14,14 @@ type Props = RouteComponentProps<{ roomId: string }> &
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const [sessionResponse] = useFetch<SessionData, { id: string }>(
+        "/session/getPrivateRooms",
+        {
+            id: props.match.params.roomId,
+        }
+    );
 
-    const [sessionResponse] = useFetch<any, any>("/session/getSession", {
-        id: props.match.params.roomId,
-    });
-
-    if (
-        !requestIsLoaded(sessionResponse) ||
-        !requestIsLoaded(userDataResponse)
-    ) {
+    if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;
     }
 
@@ -51,7 +49,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             <Row>
                 <ChatContainer
                     roomId={props.match.params.roomId}
-                    username={userDataResponse.data?.username}
+                    username={props.userData.username}
                     initialChatLog={sessionResponse.data.messages}
                 />
             </Row>

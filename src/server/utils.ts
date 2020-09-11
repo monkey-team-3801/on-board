@@ -1,7 +1,15 @@
 import { ParamsDictionary } from "express-serve-static-core";
 import { NextFunction, RequestHandler, Request, Response } from "express";
-import { AnyObjectMap, BaseJob, AnnouncementJob, ClassOpenJob } from "../types";
+import {
+    AnyObjectMap,
+    BaseJob,
+    AnnouncementJob,
+    ClassOpenJob,
+    RoomType,
+} from "../types";
 import { ExecutingEvent } from "../events";
+import { Session } from "./database";
+import { ClassroomSession } from "./database/schema";
 
 /**
  * T: Response data type.
@@ -39,4 +47,38 @@ export const isAnnouncementJob = (job: BaseJob): job is AnnouncementJob => {
 
 export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
     return job.executingEvent === ExecutingEvent.CLASS_OPEN;
+};
+
+export const createNewSession = async (
+    name: string,
+    description: string,
+    courseCode?: string
+) => {
+    const session = await Session.create({
+        name,
+        messages: [],
+        roomType: RoomType.PRIVATE,
+        description,
+        courseCode,
+    });
+    return session;
+};
+
+export const createNewClassroomSession = async (
+    name: string,
+    description: string,
+    courseCode: string,
+    startTime: string,
+    endTime: string
+) => {
+    const session = await ClassroomSession.create({
+        name,
+        messages: [],
+        roomType: RoomType.CLASS,
+        description,
+        courseCode,
+        startTime,
+        endTime,
+    });
+    return session;
 };

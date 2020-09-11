@@ -26,3 +26,7 @@ export enum AnnouncementEvent {
     NEW = "ANNOUNCEMENT_NEW",
     COURSE_ANNOUNCEMENTS_SUBSCRIBE = "COURSE_ANNOUNCEMENTS_SUBSCRIBE",
 }
+
+export enum ClassEvent {
+    OPEN = "OPEN",
+}

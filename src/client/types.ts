@@ -31,3 +31,11 @@ export type CourseOptionType = {
     value: string;
     label: string;
 };
+
+export type ClassOpenEventData =
+    | {
+          id: string;
+          course: string;
+          roomName: string;
+      }
+    | undefined;

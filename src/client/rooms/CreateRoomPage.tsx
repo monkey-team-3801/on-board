@@ -34,7 +34,7 @@ export const CreateRoomPage: React.FunctionComponent<Props> = (
                     </Col>
                     <Col xs="auto">
                         <Button type="submit" className="mb-2">
-                            Create Room
+                            Create Private Room
                         </Button>
                     </Col>
                 </Form.Row>
