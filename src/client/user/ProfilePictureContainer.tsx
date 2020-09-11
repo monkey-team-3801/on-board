@@ -1,4 +1,5 @@
 import React from "react";
+import "./ProfilePictureContainer.less";
 
 type Props = {
     userId: string;
@@ -10,7 +11,7 @@ export const ProfilePictureContainer = (props: Props) => {
             <img
                 src={`/filehandler/getPfp/${props.userId}`}
                 alt="profile"
-                className="pfp"
+                className="pfpContainer"
             ></img>
         </div>
     );
