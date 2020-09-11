@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 
 import { asyncHandler, createNewSession } from "../utils";
 import { Session } from "../database";
