@@ -11,7 +11,7 @@ export const UploadTest = (props: Props) => {
     return (
         <div>
             <UploadContainer
-                uploadType={FileUploadType.PROFILE}
+                uploadType={FileUploadType.DOCUMENTS}
             ></UploadContainer>
             <br></br>
             <ProfilePictureContainer {...props}></ProfilePictureContainer>

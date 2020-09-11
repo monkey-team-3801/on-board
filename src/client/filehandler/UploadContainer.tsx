@@ -7,6 +7,7 @@ import { FileUploadType } from "../../types";
 // To differentiate between documents and profile pictures.
 type Props = {
     uploadType: FileUploadType;
+    sessionID?: string;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -49,6 +50,15 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
+            const obj = {
+                sid: props.sessionID,
+            };
+            const json = JSON.stringify(obj);
+            const blob = new Blob([json], {
+                type: "application/json",
+            });
+
+            formData.append("document", blob);
             await uploadFile(formData);
         }
     };

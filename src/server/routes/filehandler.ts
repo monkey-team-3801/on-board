@@ -1,7 +1,7 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
-import { User } from "../database/schema";
+import { User, Session } from "../database/schema";
 
 export const router = express.Router();
 
@@ -9,8 +9,35 @@ export const router = express.Router();
 router.post(
     "/uploadFiles",
     asyncHandler(async (req, res) => {
-        console.log("test");
-        console.log("HELLO");
+        if (req.files) {
+            // File to process
+            const ftp = Object.keys(req.files).map((x) => req.files![x]);
+
+            const sessionID = ftp[ftp.length - 1];
+            if (!Array.isArray(sessionID)) {
+                // Get session ID.
+                const sid = JSON.parse(sessionID.data.toString())["sid"];
+                const sessionQuery = await Session.findById(sid);
+
+                if (sessionQuery) {
+                    // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
+                    if (ftp.length > 1 || ftp.length < 7) {
+                        // Need a better way to foreach through ftp?
+                        let x: number = 0;
+                        while (x < ftp.length - 1) {
+                            const file = ftp[x];
+                            if (!Array.isArray(file)) {
+                                const buf = file.data.toString("base64");
+                                // sessionQuery.files.push(buf);
+                            }
+                        }
+                        console.log(x);
+                    }
+                    // sessionQuery.save();
+                }
+            }
+        }
+
         res.end();
     })
 );

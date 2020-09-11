@@ -10,7 +10,7 @@ export const ProfilePictureContainer = (props: Props) => {
         <div>
             <img
                 src={`/filehandler/getPfp/${props.userId}`}
-                alt="profile"
+                alt="user profile"
                 className="pfpContainer"
             ></img>
         </div>
