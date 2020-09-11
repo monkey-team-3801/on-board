@@ -43,11 +43,13 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
                                     <RegisterContainer
                                         onFetchSuccess={onFetchSuccess}
                                         toggleRegisterForm={toggleRegisterForm}
+                                        {...props}
                                     />
                                 ) : (
                                     <LoginContainer
                                         onFetchSuccess={onFetchSuccess}
                                         toggleRegisterForm={toggleRegisterForm}
+                                        {...props}
                                     />
                                 )}
                         </Container>
