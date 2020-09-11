@@ -100,7 +100,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                     Register
                 </Button>
                 </div>
-                
+
             </Form>
             <div className="toggle-button">
             <Button
@@ -115,7 +115,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                 I have an account
             </Button>
             </div>
-            
+
         </div>
     );
 };
