@@ -15,7 +15,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [sessionResponse] = useFetch<SessionData, { id: string }>(
-        "/session/getPrivateRooms",
+        "/session/getPrivateSession",
         {
             id: props.match.params.roomId,
         }
