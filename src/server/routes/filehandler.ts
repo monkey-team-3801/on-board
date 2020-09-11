@@ -1,6 +1,7 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
+import { User } from "../database/schema";
 
 export const router = express.Router();
 
@@ -21,17 +22,15 @@ router.post(
 );
 
 // Get the user profile picture.
-router.post(
-    "/getPfp",
-    asyncHandler(async (req, res) => {
-        if (req.headers.authorization) {
-            const user = await getUserDataFromJWT(req.headers.authorization);
-            if (user) {
-                const pfp = user.pfp;
-                if (pfp) {
-                    res.write(pfp, "binary");
-                    res.end(null, "binary");
-                }
+router.get(
+    "/getPfp/:userId",
+    asyncHandler<undefined, { userId: string }, any>(async (req, res) => {
+        const user = await User.findById(req.params.userId);
+        console.log(user);
+        if (user) {
+            const pfp = user.pfp;
+            if (pfp) {
+                res.end(pfp, "binary");
             }
         }
         res.end();

@@ -12,8 +12,14 @@ type Props = {
 export const UploadContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [, uploadFile] = useDynamicFetch<undefined, FormData>(
+    const [, uploadPfp] = useDynamicFetch<undefined, FormData>(
         "filehandler/pfpUpload",
+        undefined,
+        false
+    );
+
+    const [, uploadFile] = useDynamicFetch<undefined, FormData>(
+        "filehandler/uploadFiles",
         undefined,
         false
     );
@@ -40,8 +46,12 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         acceptedFiles.forEach((file) => {
             formData.append(file.name, file, file.name);
         });
-
-        await uploadFile(formData);
+        if (props.uploadType === FileUploadType.PROFILE) {
+            await uploadPfp(formData);
+        }
+        if (props.uploadType === FileUploadType.DOCUMENTS) {
+            await uploadFile(formData);
+        }
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -55,7 +65,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                 <p className="dropMessage">Drop the files here ...</p>
             ) : (
                 <p className="dropMessage">
-                    Drag 'n' drop some files here, or click to select files
+                    Drag 'n' drop some files here, or click here to select files
                 </p>
             )}
         </div>

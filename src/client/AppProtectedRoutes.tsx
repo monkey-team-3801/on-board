@@ -85,7 +85,7 @@ export const AppProtectedRoutes = (props: Props) => {
             <SecuredRoute
                 path="/upload"
                 render={() => {
-                    return <UploadTest />;
+                    return <UploadTest userId={userData.id!} />;
                 }}
             />
         </Switch>

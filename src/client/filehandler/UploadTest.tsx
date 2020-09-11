@@ -1,15 +1,20 @@
 import React from "react";
 import { UploadContainer } from "./UploadContainer";
 import { FileUploadType } from "../../types";
+import { ProfilePictureContainer } from "../user/ProfilePictureContainer";
 
-export const UploadTest = () => {
+type Props = {
+    userId: string;
+};
+
+export const UploadTest = (props: Props) => {
     return (
         <div>
             <UploadContainer
                 uploadType={FileUploadType.PROFILE}
-                // uncomment lines for different file types.
-                // uploadType={FileUploadType.DOCUMENTS}
             ></UploadContainer>
+            <br></br>
+            <ProfilePictureContainer {...props}></ProfilePictureContainer>
         </div>
     );
 };
