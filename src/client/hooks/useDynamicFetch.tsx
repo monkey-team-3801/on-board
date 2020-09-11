@@ -88,6 +88,7 @@ export const useDynamicFetch = <
                             err.response.status
                         ),
                         data: undefined,
+                        message: err.response.data.message,
                     });
                     onFetchError?.(err);
                 }

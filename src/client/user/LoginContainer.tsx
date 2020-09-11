@@ -5,7 +5,7 @@ import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
 import { RouteComponentProps } from "react-router-dom";
 import "../styles/Login.less";
-import { requestIsLoaded } from "../utils";
+import { requestHasError } from "../utils";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
@@ -30,10 +30,6 @@ export const LoginContainer: React.FunctionComponent<Props> = (
         event.preventDefault();
         await loginUser({ username, password });
     };
-
-    if (!requestIsLoaded(userData)) {
-        return <div>loading</div>;
-    }
 
     return (
         <div>
@@ -60,7 +56,6 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                             required
                         />
                     </Form.Group>
-
                     <Container>
                         <Row>
                             <div className="login-options">
@@ -81,7 +76,13 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                             </div>
                         </Row>
                     </Container>
-
+                    <Container>
+                        <div className="error-message-container">
+                            {requestHasError(userData) && (
+                                <p>{userData.message}</p>
+                            )}
+                        </div>
+                    </Container>
                     <Button
                         variant="primary"
                         type="submit"

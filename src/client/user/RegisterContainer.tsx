@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Container } from "react-bootstrap";
 
 import { useDynamicFetch } from "../hooks";
 import {
@@ -8,7 +8,7 @@ import {
     CreateUserRequestType,
     LoginSuccessResponseType,
 } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestHasError } from "../utils";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
@@ -52,10 +52,6 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
         });
     };
 
-    if (!requestIsLoaded(userData)) {
-        return <div>loading</div>;
-    }
-
     return (
         <div>
             <h1 className="form-heading">REGISTER</h1>
@@ -98,6 +94,13 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                             required
                         />
                     </Form.Group>
+                    <Container>
+                        <div className="error-message-container">
+                            {requestHasError(userData) && (
+                                <p>{userData.message}</p>
+                            )}
+                        </div>
+                    </Container>
                     <Button
                         variant="primary"
                         type="submit"

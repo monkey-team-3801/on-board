@@ -7,7 +7,6 @@ import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
 import "../styles/Login.less";
-// import { findAllByDisplayValue } from "@testing-library/react";
 
 type Props = RouteComponentProps;
 
