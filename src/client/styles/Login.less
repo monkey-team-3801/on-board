@@ -1,9 +1,20 @@
 @import url(https://fonts.googleapis.com/css2?family=Raleway&display=swap);
+html, body {
+    height: 100%;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    position: 0;
+}
 
 .login-page-container {
 
     font-family: "Raleway";
     background-color: #493E71;
+    
+    // height: 200%;
 
     .form-label {
         font-size: 12px;
@@ -26,7 +37,7 @@
 
     .form-container {
         font-family: Raleway;
-        min-height: 100px;
+        min-height: 200px;
         width: 500px;
         border-radius: 0px 0px 5px 5px;
         margin: 2% auto;
@@ -39,13 +50,10 @@
         background-image: linear-gradient(to bottom, rgba(92, 78, 142, 100), rgba(124, 113, 164, 100));
         font-family: Raleway;
         width: 500px;
-        min-height: 200px;
-        height: auto;
+        min-height: 100px;
         border-radius: 5px 5px 0px 0px;
-        // margin: 2% auto;
-        padding: 5%;
+        padding: 6%;
         background-color: #F6F6F6;
-        margin-bottom: 0;
     }
 
     .formcontent {
@@ -119,13 +127,16 @@
     }
 
     #login-heading{
-        justify-items: left;
         font-family: "Raleway";
         font-weight: 900;
-        text-align: left;
         font-size: 40px;
+        margin-left: 10px;
         color: white;
     }
+
+    // .heading-row {
+    //     content-align: center;
+    // }
 
     .login-options{
         font-size: 13px;
@@ -140,5 +151,15 @@
         color: rgb(92, 78, 142);
         text-align: center;
     }  
+
+    .logo-image {
+        background-image: url("logo_white.png");
+        background-position: center;
+        background-size: 50px 50px;
+        width: 50px;
+        height: 50px;
+        // padding: 0px 50px;
+        // padding-right: 50px;
+    }
 
 }
