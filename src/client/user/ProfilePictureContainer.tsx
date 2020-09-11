@@ -1,17 +1,10 @@
-import React, { useEffect } from "react";
-import { useDynamicFetch } from "../hooks";
+import React from "react";
 
 type Props = {
     userId: string;
 };
 
 export const ProfilePictureContainer = (props: Props) => {
-    // const [imageData, getPfp] = useDynamicFetch<string, undefined>(
-    //     "filehandler/getPfp",
-    //     undefined,
-    //     true
-    // );
-
     return (
         <div>
             <img
