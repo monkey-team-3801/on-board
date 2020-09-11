@@ -8,6 +8,7 @@ export enum RequestState {
 export interface BaseResponseType<T> {
     state: RequestState;
     data: T | undefined;
+    message?: string | undefined;
 }
 
 export interface ResponseType<T> extends BaseResponseType<T> {
@@ -18,7 +19,7 @@ export interface ResponseType<T> extends BaseResponseType<T> {
 export interface ErrorResponseType extends BaseResponseType<undefined> {
     state: RequestState.LOADED;
     data: undefined;
-    message: string | undefined;
+    message?: string | undefined;
 }
 
 export enum LocalStorageKey {
