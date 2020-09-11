@@ -4,6 +4,23 @@ import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+// Upload documents
+router.post(
+    "uploadFiles",
+    asyncHandler(async (req, res) => {
+        res.end();
+    })
+);
+
+// Gets the files for a session
+router.post(
+    "/getFiles",
+    asyncHandler(async (req, res) => {
+        res.end();
+    })
+);
+
+// Get the user profile picture.
 router.post(
     "/getPfp",
     asyncHandler(async (req, res) => {
@@ -21,6 +38,7 @@ router.post(
     })
 );
 
+// Upload a profile picture.
 router.post(
     "/pfpUpload",
     asyncHandler(async (req, res) => {
