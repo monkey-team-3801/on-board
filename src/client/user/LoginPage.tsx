@@ -1,7 +1,5 @@
 import React from "react";
 import { Container, Row, Col} from "react-bootstrap";
-// import {ReactComponent as logoWhite} from "./logo_white.svg";
-
 import { useFetch } from "../hooks";
 import { LoginContainer } from "../user/LoginContainer";
 import { RegisterContainer } from "../user/RegisterContainer";
@@ -36,18 +34,13 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
             <Container className="login-section">
-                <Row>
-                    <Col className="heading-column">
                         <Container className="login-container">
-                        <img src="./client/logo_white.png" alt="On Board Logo"/>
-                        <h1 id="login-heading">On Board</h1>
+                            <Row className="heading-row">
+                                <div className="logo-image"></div>
+                                <h1 id="login-heading">On Board</h1>
+                            </Row>
                         </Container>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col className="heading-column">
                         <Container className="form-container">
-                            
                                 {showRegister ? (
                                     <RegisterContainer
                                         onFetchSuccess={onFetchSuccess}
@@ -59,10 +52,7 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
                                         toggleRegisterForm={toggleRegisterForm}
                                     />
                                 )}
-                                
                         </Container>
-                    </Col>
-                </Row>
             </Container>
         </div>
     );
