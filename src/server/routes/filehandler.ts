@@ -51,17 +51,15 @@ router.post(
 router.post(
     "/getFiles",
     asyncHandler<undefined, { sessionID: string }, any>(async (req, res) => {
-        console.log(req.body["sid"]);
         const session = await Session.findById(req.body["sid"]);
         if (session) {
             const files = session.files;
             if (files) {
-                for (let value in files) {
-                    console.log(value);
-                }
+                const test = Object.fromEntries(files);
+                res.end(JSON.stringify(test));
             }
         }
-        res.end();
+        res.status(500).end();
     })
 );
 
