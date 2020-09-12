@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-import { useFetch } from "../hooks";
+import { useFetch, useDynamicFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
 import { UserDataResponseType, FileUploadType } from "../../types";
@@ -21,6 +21,16 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     const [sessionResponse] = useFetch<any, any>("/session/getSession", {
         id: props.match.params.roomId,
     });
+
+    const [fileData, getFiles] = useDynamicFetch<any, any>(
+        "/filehandler/getFiles",
+        { sid: props.match.params.roomId },
+        true
+    );
+
+    function refetchFileData() {
+        getFiles({ sid: props.match.params.roomId });
+    }
 
     if (
         !requestIsLoaded(sessionResponse) ||
@@ -60,14 +70,13 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                 </Col>
                 <Col>
                     <Row>
-                        <FileContainer
-                            sessionId={props.match.params.roomId}
-                        ></FileContainer>
+                        <FileContainer fileData={fileData}></FileContainer>
                     </Row>
                     <Row>
                         <UploadContainer
                             uploadType={FileUploadType.DOCUMENTS}
                             sessionID={props.match.params.roomId}
+                            refetch={refetchFileData}
                         ></UploadContainer>
                     </Row>
                 </Col>

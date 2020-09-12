@@ -8,6 +8,7 @@ import { FileUploadType } from "../../types";
 type Props = {
     uploadType: FileUploadType;
     sessionID?: string;
+    refetch?: Function;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -64,7 +65,10 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
-        } else if (props.uploadType === FileUploadType.DOCUMENTS) {
+        } else if (
+            props.uploadType === FileUploadType.DOCUMENTS &&
+            props.refetch
+        ) {
             // Append session ID at the end of the form data.
             const obj = {
                 sid: props.sessionID,
@@ -77,6 +81,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
             formData.append("document", blob);
             await uploadFile(formData);
+            props.refetch();
         }
     };
 

@@ -2,7 +2,7 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 
 export const router = express.Router();
 
@@ -28,7 +28,7 @@ router.post(
                         while (x < ftp.length - 1) {
                             const file = ftp[x];
                             if (!Array.isArray(file)) {
-                                sessionQuery.files?.set(uuid(), {
+                                sessionQuery.files?.set(uuidv4(), {
                                     filename: file.name,
                                     fileExtension: file.mimetype,
                                     size: file.size,
