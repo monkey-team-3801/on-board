@@ -14,6 +14,7 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         true
     );
 
+    // Converts bytes to be displayable.
     function sizeDisplay(size: number): string {
         if (size === 0) {
             return "0 Bytes";
@@ -26,11 +27,14 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     }
 
+    // Downloads the given file.
     function download(name: string): void {
         let link = document.createElement("a");
+
         let blob = new Blob([data.data[name].file], {
             type: data.data[name].fileExtension,
         });
+
         link.href = window.URL.createObjectURL(blob);
         link.download = data.data[name].filename;
         link.click();

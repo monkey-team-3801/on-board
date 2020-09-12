@@ -23,11 +23,10 @@ router.post(
                 if (sessionQuery) {
                     // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
                     if (ftp.length > 1 || ftp.length < 7) {
-                        // Need a better way to foreach through ftp?
+                        // Maybe a better way to foreach through ftp?
                         let x: number = 0;
                         while (x < ftp.length - 1) {
                             const file = ftp[x];
-                            console.log("x");
                             if (!Array.isArray(file)) {
                                 sessionQuery.files?.set(uuid(), {
                                     filename: file.name,
@@ -119,6 +118,8 @@ router.post(
 function verifyImageSignature(data: Buffer): string {
     let values: string = data.toString("hex");
     values = values.slice(0, 8);
+
+    // Set this to whatever type in the switch.
     let imgSig: string = "";
 
     // Verify file signature

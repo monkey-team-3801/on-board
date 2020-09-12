@@ -25,6 +25,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         false
     );
 
+    // Values are in bytes
     function maxFileSize(): number {
         if (props.uploadType === FileUploadType.DOCUMENTS) {
             return 10000000;
@@ -33,7 +34,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         }
     }
 
-    // Default max file size.
+    // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
@@ -49,18 +50,18 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     }
 
     const onDrop = async (acceptedFiles: Array<File>) => {
-        console.log(acceptedFiles);
-        // List of rejected files.
-        console.log(fileRejections);
-        // Handle error
+        // Handle error. Someone will need to handle this.
         if (!checkValid(acceptedFiles)) {
-            console.log("failed");
+            // Note: You can access rejected files through the variable "fileRejections" as below.
+            console.log(fileRejections);
             return;
         }
+
         const formData = new FormData();
         acceptedFiles.forEach((file) => {
             formData.append(file.name, file, file.name);
         });
+
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
@@ -68,6 +69,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             const obj = {
                 sid: props.sessionID,
             };
+
             const json = JSON.stringify(obj);
             const blob = new Blob([json], {
                 type: "application/json",
@@ -78,6 +80,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         }
     };
 
+    // File size is checked automatically by react-dropzone through the maxSize property seen below.
     const {
         getRootProps,
         getInputProps,
