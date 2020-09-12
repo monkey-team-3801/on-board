@@ -7,6 +7,27 @@ import { io } from "../server";
 
 export const router = express.Router();
 
+router.get(
+    "/file/:sessionId/:fileId",
+    asyncHandler<{}, { sessionId: string; fileId: string }>(
+        async (req, res) => {
+            res.status(503).end();
+            // const session = await Session.findById(req.params.sessionId);
+            // const file = session?.files?.get(req.params.fileId);
+            // const contents = file?.file;
+            // console.log("contents", contents);
+
+            // res.set(
+            //     "Content-disposition",
+            //     `attachment; filename=${file?.filename}`
+            // );
+            // res.set("Content-Type", file?.fileExtension);
+            // res.status(500);
+            // res.end(contents);
+        }
+    )
+);
+
 // Upload documents
 router.post(
     "/uploadFiles",
@@ -76,6 +97,7 @@ router.get(
                 res.end(pfp, "binary");
             }
         }
+        res.status(503);
         res.end();
     })
 );

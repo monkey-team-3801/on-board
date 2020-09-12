@@ -57,8 +57,13 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                             <div>
                                 <button
                                     className="file-dl-btn"
-                                    onClick={() => download(files)}
+                                    // onClick={() => download(files)}
                                 >
+                                    <a
+                                        href={`/filehandler/file/${props.sessionID}/${files}`}
+                                    >
+                                        test
+                                    </a>
                                     <FaDownload />
                                 </button>
 
