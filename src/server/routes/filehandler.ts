@@ -2,6 +2,7 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
+import { uuid } from "uuidv4";
 
 export const router = express.Router();
 
@@ -21,20 +22,22 @@ router.post(
 
                 if (sessionQuery) {
                     // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
-                    console.log("b");
                     if (ftp.length > 1 || ftp.length < 7) {
-                        console.log("a");
                         // Need a better way to foreach through ftp?
                         let x: number = 0;
                         while (x < ftp.length - 1) {
                             const file = ftp[x];
+                            console.log("x");
                             if (!Array.isArray(file)) {
-                                console.log("c");
-                                sessionQuery.files?.push(file.data);
+                                sessionQuery.files?.set(uuid(), {
+                                    filename: file.name,
+                                    fileExtension: file.mimetype,
+                                    size: file.size,
+                                    file: file.data,
+                                });
                             }
                             x += 1;
                         }
-                        console.log("test");
                     }
                     sessionQuery.save();
                 }
@@ -45,10 +48,19 @@ router.post(
 );
 
 // Gets the files for a session
-router.get(
+router.post(
     "/getFiles",
-    asyncHandler(async (req, res) => {
-        console.log("test");
+    asyncHandler<undefined, { sessionID: string }, any>(async (req, res) => {
+        console.log(req.body["sid"]);
+        const session = await Session.findById(req.body["sid"]);
+        if (session) {
+            const files = session.files;
+            if (files) {
+                for (let value in files) {
+                    console.log(value);
+                }
+            }
+        }
         res.end();
     })
 );
