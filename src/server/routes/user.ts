@@ -32,7 +32,7 @@ router.post(
                     return;
                 }
             }
-            res.status(500);
+            res.status(401);
             next(new Error("Incorrect username or password."));
         }
     )
@@ -56,14 +56,15 @@ router.post(
                 });
             } catch (e) {
                 const err: MongoError = e;
-                res.status(500);
                 if (err.code === 11000) {
+                    res.status(422);
                     next(
                         new Error(
                             `Username ${req.body.username} is not available.`
                         )
                     );
                 } else {
+                    res.status(500);
                     next(new Error("Unexpected error has occured."));
                 }
             }
