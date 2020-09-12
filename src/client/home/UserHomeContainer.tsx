@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Container, Row, Button, Col } from "react-bootstrap";
+import { Container, Row, Button, Col, Nav } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch, useSocket } from "../hooks";
 import { SessionResponseType } from "../../types";
@@ -18,6 +18,7 @@ import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
 import { AnnouncementEvent } from "../../events";
+import "../styles/Homepage.less"
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -102,125 +103,39 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container fluid>
-            <Col xl="2" lg="2" md="3" d-md-block className="no-padding ">
+        <Container className="homepage no-padding" fluid>
+            <Row className="nav">
+            </Row>
+            <Row className="content">
                 <Container fluid className="no-padding">
-                    <Col w-100>
-                        <Navbar />
+                    <Col xl="12" lg="12" md="12">
+                        <Container fluid className="no-padding">
+                            <Col className="left-col col-6">
+                                <Row className="calander no-padding">
+                                    <Calendar sessions={[]}
+
+                                    />
+                                </Row>
+                                <Row className="classes no-padding">
+                                    <h1>Classes</h1>
+                                </Row>
+                            </Col>
+
+                            <Col className="right-col col-6">
+                                <Row className="announcemnts no-padding">
+                                    <AnnouncementsContainer
+                                        refreshKey={refreshKey}
+                                        userId={userData.id}
+                                    />
+                                </Row>
+                                <Row className="bottom-right no-padding">
+                                    <h1>Bottom-right</h1>
+                                </Row>
+                            </Col>
+                        </Container>
                     </Col>
                 </Container>
-            </Col>
-            <Col xl="10" lg="10" md="9" className="ml-sm-auto px-md-4">
-                <Container fluid>
-                    <Row className="no-padding">
-                        <Col xl="6" lg="6">
-                            <Container className="calender">
-                                <Row>
-                                    <Calendar sessions={[]} />
-                                </Row>
-                                <Col>
-                                    <p>
-                                        Logged in as {userData.username}:{" "}
-                                        {userData.id}
-                                    </p>
-                                </Col>
-                            </Container>
-                        </Col>
-                        <Col xl="6" xs lg="6" className="announcements">
-                            <AnnouncementsContainer
-                                refreshKey={refreshKey}
-                                userId={userData.id}
-                            />
-                        </Col>
-
-                        <Container fluid>
-                            <Row className="no-padding">
-                                <Col
-                                    xs
-                                    lg="6"
-                                    xl="6"
-                                    className="classes no-padding"
-                                >
-                                    <h1>Upcoming Classes</h1>
-                                    <Row>
-                                        <Col className="class-1">
-                                            <Container>
-                                                <div className="class-1-background">
-                                                    <h3>CSSE1001</h3>
-                                                    <Button>Connect</Button>
-                                                </div>
-                                            </Container>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col className="class-2">
-                                            <Container>
-                                                <div className="class-2-background">
-                                                    <h3>DECO3801</h3>
-                                                    <Button>Connect</Button>
-                                                </div>
-                                            </Container>
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                <Col lg="6" xl="6" className="open-rooms">
-                                    <h1>Open Rooms</h1>
-                                    <Row>
-                                        <Col className="open-rooms">
-                                            <RoomDisplayContainer
-                                                data={
-                                                    sessionResponse.data
-                                                        .sessions
-                                                }
-                                                onDeleteClick={onDeleteClick}
-                                                onJoinClick={onJoinClick}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <CreateRoomPage
-                                            createRoom={async (
-                                                name: string
-                                            ) => {
-                                                await createRoom({ name });
-                                                await refresh();
-                                            }}
-                                        />
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Container>
-                        <Row>
-                            <RoomDisplayContainer
-                                data={sessionResponse.data.sessions}
-                                onDeleteClick={onDeleteClick}
-                                onJoinClick={onJoinClick}
-                            />
-                        </Row>
-
-                        <Row>
-                            <Col>
-                                <EnrolFormContainer
-                                    refresh={refreshAnnouncements}
-                                    userId={userData.id}
-                                    socket={socket}
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <CreateAnnouncementsForm userId={userData.id} />
-                            </Col>
-                            <Col>
-                                <AnnouncementsContainer
-                                    refreshKey={refreshKey}
-                                    userId={userData.id}
-                                />
-                            </Col>
-                        </Row>
-                    </Row>
-                </Container>
-            </Col>
+            </Row>
         </Container>
     );
 };

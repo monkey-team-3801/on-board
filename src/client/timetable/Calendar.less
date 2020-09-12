@@ -6,11 +6,15 @@
 .calendar-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    width: 100%;
     margin: auto;
+    padding: 7%;
     font-size: 1em;
     padding-top: 0.5%;
     text-align: center;
+    height: auto;
+    width: 100%;
+   
+        
 }
 
 .month-heading {
@@ -19,9 +23,11 @@
     display: flex;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 5%;
     justify-content: center;
     font-size: 2em;
     font-weight: normal;
+
 
     .year {
         font-size: 1.23em;
@@ -59,15 +65,21 @@
 
 @media screen and (max-width: 1366px) {
     .calendar-container {
-        width: 100%;
-        height: 100%;
-        margin-bottom: 5%;
+        
+        height: auto;
+        margin-top: 10%;
+        margin: auto;       
+        
+    }
+    .month-heading{
+        font-size: 2em;
+        height: 10px;
         
     }
 
     .calender{
-        height: auto;
-        width: auto;
-        margin-bottom: 5%;
+        
+        
+        
     }
 }
