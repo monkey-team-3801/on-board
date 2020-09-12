@@ -1,5 +1,5 @@
 import React from "react";
-import { useDropzone } from "react-dropzone";
+import Dropzone, { useDropzone } from "react-dropzone";
 import "../styles/UploadContainer.less";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadType } from "../../types";
@@ -25,6 +25,18 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         false
     );
 
+    function maxFileSize(): number {
+        if (props.uploadType === FileUploadType.DOCUMENTS) {
+            return 10000000;
+        } else {
+            return 1000000;
+        }
+    }
+
+    // Default max file size.
+    const mfs = maxFileSize();
+
+    // Check files are of appropriate length.
     function checkValid(files: Array<File>): boolean {
         if (props.uploadType === FileUploadType.PROFILE) {
             return files.length === 1;
@@ -38,6 +50,8 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
     const onDrop = async (acceptedFiles: Array<File>) => {
         console.log(acceptedFiles);
+        // List of rejected files.
+        console.log(fileRejections);
         // Handle error
         if (!checkValid(acceptedFiles)) {
             console.log("failed");
@@ -50,6 +64,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
+            // Append session ID at the end of the form data.
             const obj = {
                 sid: props.sessionID,
             };
@@ -63,8 +78,14 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         }
     };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const {
+        getRootProps,
+        getInputProps,
+        isDragActive,
+        fileRejections,
+    } = useDropzone({
         onDrop,
+        maxSize: mfs,
     });
 
     return (

@@ -10,7 +10,7 @@ router.post(
     "/uploadFiles",
     asyncHandler(async (req, res) => {
         if (req.files) {
-            // File to process
+            // Files to process
             const ftp = Object.keys(req.files).map((x) => req.files![x]);
 
             const sessionID = ftp[ftp.length - 1];
@@ -21,23 +21,25 @@ router.post(
 
                 if (sessionQuery) {
                     // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
+                    console.log("b");
                     if (ftp.length > 1 || ftp.length < 7) {
+                        console.log("a");
                         // Need a better way to foreach through ftp?
                         let x: number = 0;
                         while (x < ftp.length - 1) {
                             const file = ftp[x];
                             if (!Array.isArray(file)) {
-                                const buf = file.data.toString("base64");
-                                // sessionQuery.files.push(buf);
+                                console.log("c");
+                                sessionQuery.files?.push(file.data);
                             }
+                            x += 1;
                         }
-                        console.log(x);
+                        console.log("test");
                     }
-                    // sessionQuery.save();
+                    sessionQuery.save();
                 }
             }
         }
-
         res.end();
     })
 );
@@ -46,6 +48,7 @@ router.post(
 router.get(
     "/getFiles",
     asyncHandler(async (req, res) => {
+        console.log("test");
         res.end();
     })
 );
