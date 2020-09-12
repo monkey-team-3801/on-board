@@ -19,7 +19,7 @@ router.post(
 
                 res.status(200).json({
                     sessionId: session.sessionId,
-                    name: session.name
+                    name: session.name,
                 });
             } catch (e) {
                 console.log("error", e);
@@ -31,7 +31,7 @@ router.post(
 
 router.post(
     "/userJoin",
-    asyncHandler<{}, {}, { sessionId: string, peerId: string }>(
+    asyncHandler<{}, {}, { sessionId: string; peerId: string }>(
         async (req, res) => {
             try {
                 const session = await VideoSession.findOne({
@@ -54,16 +54,20 @@ router.post(
 
 router.post(
     "/",
-    asyncHandler<Array<VideoSessionResponseType>, {}, {}> (async (req, res, next) => {
-        try {
-            const sessions = await VideoSession.find({});
-            res.status(200).json(sessions.map(session => ({
-                sessionId: session.sessionId,
-                name: session.name
-            })));
-        } catch (e) {
-            console.log("error", e);
-            res.status(500).end();
+    asyncHandler<Array<VideoSessionResponseType>, {}, {}>(
+        async (req, res, next) => {
+            try {
+                const sessions = await VideoSession.find({});
+                res.status(200).json(
+                    sessions.map((session) => ({
+                        sessionId: session.sessionId,
+                        name: session.name,
+                    }))
+                );
+            } catch (e) {
+                console.log("error", e);
+                res.status(500).end();
+            }
         }
-    })
+    )
 );

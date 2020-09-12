@@ -13,7 +13,8 @@ import {
     ChatEvent,
     ChatMessageSendType,
     VideoEvent,
-    PrivateVideoRoomJoinData, PrivateVideoRoomLeaveData
+    PrivateVideoRoomJoinData,
+    PrivateVideoRoomLeaveData,
 } from "../events";
 
 import {
@@ -21,7 +22,8 @@ import {
     chatRoute,
     sessionRoute,
     courseRoute,
-    authRoute, videoRoute
+    authRoute,
+    videoRoute,
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
@@ -33,7 +35,7 @@ const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
 const peerServer = ExpressPeerServer(server, {
-    path: "/"
+    path: "/",
 });
 
 app.use("/peerServer", peerServer);
@@ -53,49 +55,34 @@ io.on("connect", (socket: SocketIO.Socket) => {
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
     // TODO: merge PrivateVideoRoomJoinData with PrivateRoomJoinData?
-    socket.on(VideoEvent.USER_JOIN_ROOM, async (data: PrivateVideoRoomJoinData) => {
-        const {sessionId, userId} = data;
-        const session = await VideoSession.findOne({
-            sessionId
-        });
-        if (!session) {
-            return;
-        }
-        // if (!socketPeerMap.get(socket.id)) {
-        //     socketPeerMap.set(socket.id, {
-        //         peerId: userId,
-        //         joinedRooms: []
-        //     });
-        // }
-        // // @ts-ignore
-        // // Key guaranteed to exist.
-        // socketPeerMap.get(socket.id).joinedRooms.push(sessionId);
-        session.peers.push(userId);
-        await session.save();
-        socket.join(sessionId);
-        socket.to(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
+    socket.on(
+        VideoEvent.USER_JOIN_ROOM,
+        async (data: PrivateVideoRoomJoinData) => {
+            const { sessionId, userId } = data;
+            console.log(data);
+            const session = await VideoSession.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
 
-        console.log("User joining ", userId);
-    });
+            session.peers.push(userId);
+            await session.save();
+            socket.join(sessionId);
+            socket.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
 
-    socket.on(VideoEvent.USER_LEAVE_ROOM, async (data: PrivateVideoRoomLeaveData) => {
-        const { sessionId, userId } = data;
-        const session = await VideoSession.findOne({
-            sessionId
-        });
-        if (!session) {
-            return;
+            console.log("User", userId, "joining", sessionId);
+            socket.on("disconnect", async () => {
+                session.peers = session.peers.filter((id) => id !== userId);
+                await session.save();
+                socket
+                    .in(sessionId)
+                    .emit(VideoEvent.UPDATE_USERS, session.peers);
+                console.log("User", userId, "leaving", sessionId);
+            });
         }
-        session.peers = session.peers.filter(id => id !== userId);
-        await session.save();
-        socket.to(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
-        socket.leave(sessionId);
-        // const peerJoinedRoom = socketPeerMap.get(socket.id);
-        // if (peerJoinedRoom) {
-        //     peerJoinedRoom.joinedRooms = peerJoinedRoom.joinedRooms.filter();
-        // }
-        console.log("User", userId, "leaving ", sessionId);
-    });
+    );
 });
 
 app.use(bodyParser.json());

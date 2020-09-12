@@ -1,56 +1,71 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Peer from "peerjs";
+import Peer, { MediaConnection } from "peerjs";
 import { Video } from "./Video";
 import { PeerId, useMyPeer } from "../hooks/useMyPeer";
 import { VideoEvent } from "../../events";
-import { useTransformingSocket } from "../hooks/useTransformingSocket";
 import { RouteComponentProps } from "react-router-dom";
-type Props = RouteComponentProps<{ roomId: string }> & {};
+import omit from "lodash/omit";
+import { useNewSocket } from "../hooks/useNewSocket";
+import { useMediaStream } from "../hooks/useMediaStream";
 
+type Props = RouteComponentProps<{ roomId: string }> & {};
+type PeerCalls = {
+    [key: string]: MediaConnection;
+};
+type PeerStreams = {
+    [key: string]: MediaStream;
+};
 
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const sessionId = props.match.params.roomId;
     const [myPeer, myPeerId, myRef] = useMyPeer();
-    // TODO: host our own peer server?
-    const componentDidMount = useCallback((socket: SocketIOClient.Socket) => {
-        if (!myPeerId) {
-            return socket;
-        }
-        return socket.emit(VideoEvent.USER_JOIN_ROOM, {
-            sessionId,
-            userId: myPeerId
-        });
-    }, [sessionId, myPeerId]);
-    const transformData = React.useCallback(
-        (peers: Array<PeerId> | undefined, newPeers: Array<PeerId>) => {
-            if (peers !== undefined) {
-                return [...peers, ...newPeers];
-            } else {
-                return newPeers;
+    const [peerCalls, setPeerCalls] = useState<PeerCalls>({});
+    const [peerStreams, setPeerStreams] = useState<PeerStreams>({});
+    const [socket] = useNewSocket();
+    const [myStream] = useMediaStream();
+
+    const addPeer = useCallback(
+        (peerId: PeerId) => {
+            if (myStream) {
+                const call = myPeer.call(peerId, myStream);
+                call.on("stream", (stream) => {
+                    setPeerStreams((prev) => ({ ...prev, [peerId]: stream }));
+                });
+                call.on("close", () => {
+                    setPeerStreams((prev) => omit(prev, peerId));
+                });
+                setPeerCalls({ ...peerCalls, [peerId]: call });
             }
         },
-        []
+        [myStream, peerCalls, myPeer]
     );
-
-    const { data: peerIds, setData: setPeerIds, socket } = useTransformingSocket<Array<PeerId>, Array<PeerId>>(
-        VideoEvent.UPDATE_USERS,
-        componentDidMount,
-        transformData,
-        new Array<PeerId>()
+    const removePeer = useCallback(
+        (peerId: PeerId) => {
+            setPeerStreams((prev) => omit(prev, peerId));
+            const call = peerCalls[peerId];
+            if (call) {
+                setPeerCalls((prev) => omit(prev, peerId));
+                call.close();
+            }
+        },
+        [peerCalls]
     );
+    // Emit User join room event
+    useEffect(() => {
+        console.log("Current peer id", myPeerId);
+        socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
+        // clean up
+        return () => {
+            socket.disconnect();
+        };
+    }, [socket, sessionId, myPeerId]);
 
-    // socket.on("disconnect", (reason: string) => {
-    //     if (reason === "io client disconnect") {
-    //         socket.emit(VideoEvent.USER_LEAVE_ROOM, { sessionId, userId: myPeerId });
-    //     }
-    // });
-    useEffect( () => {
-        window.addEventListener("beforeunload", (ev) => {
-            ev.preventDefault();
-            // ev.returnValue = "";
-            socket.emit(VideoEvent.USER_LEAVE_ROOM, { sessionId, userId: myPeerId });
-            return null;
-        });
+    // Listen to update event
+    socket.on(VideoEvent.UPDATE_USERS, (peers: Array<PeerId>) => {
+
     });
+    // Receive calls
+
+
     return <Video videoRef={myRef} mine={true} />;
 };
