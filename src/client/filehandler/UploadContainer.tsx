@@ -1,5 +1,5 @@
 import React from "react";
-import Dropzone, { useDropzone } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import "../styles/UploadContainer.less";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadType } from "../../types";

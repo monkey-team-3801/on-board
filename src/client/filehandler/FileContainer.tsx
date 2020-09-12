@@ -2,14 +2,13 @@ import React from "react";
 import { useDynamicFetch } from "../hooks";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
-import { FileStorageType } from "../../types";
 
 type Props = {
     sessionId: string;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const [data, getFiles] = useDynamicFetch<any, any>(
+    const [data] = useDynamicFetch<any, any>(
         "/filehandler/getFiles",
         { sid: props.sessionId },
         true
