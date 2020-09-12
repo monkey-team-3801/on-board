@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MessageData, FileStorageType } from "../../../types";
+import { MessageData } from "../../../types";
 
 interface ISession extends mongoose.Document {
     name: string;
