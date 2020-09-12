@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
 import { v4 as uuidv4 } from "uuid";
+import { io } from "../server";
 
 export const router = express.Router();
 
@@ -37,12 +38,14 @@ router.post(
                             }
                             x += 1;
                         }
+                        await sessionQuery.save();
+                        io.in(sid).emit("newfile");
+                        res.status(200).end();
                     }
-                    sessionQuery.save();
                 }
             }
         }
-        res.end();
+        res.status(500).end();
     })
 );
 

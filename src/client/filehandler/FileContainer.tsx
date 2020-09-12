@@ -1,13 +1,24 @@
 import React from "react";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
-import { BaseResponseType } from "../types";
+import { useDynamicFetch, useSocket } from "../hooks";
 
 type Props = {
-    fileData: BaseResponseType<any>;
+    sessionID: string;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
+    const [fileData, getFiles] = useDynamicFetch<any, any>(
+        "/filehandler/getFiles",
+        { sid: props.sessionID },
+        true
+    );
+
+    useSocket("newfile", undefined, undefined, () => {
+        console.log("test");
+        getFiles({ sid: props.sessionID });
+    });
+
     // Converts bytes to be displayable.
     function sizeDisplay(size: number): string {
         if (size === 0) {
@@ -21,18 +32,18 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     }
 
-    console.log(props.fileData);
+    console.log(fileData);
 
     // Downloads the given file.
     function download(name: string): void {
         let link = document.createElement("a");
 
-        let blob = new Blob([props.fileData.data[name].file], {
-            type: props.fileData.data[name].fileExtension,
+        let blob = new Blob([fileData.data[name].file], {
+            type: fileData.data[name].fileExtension,
         });
 
         link.href = window.URL.createObjectURL(blob);
-        link.download = props.fileData.data[name].filename;
+        link.download = fileData.data[name].filename;
         link.click();
     }
 
@@ -40,8 +51,8 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
-                {props.fileData.data &&
-                    Object.keys(props.fileData.data).map((files, i) => (
+                {fileData.data &&
+                    Object.keys(fileData.data).map((files, i) => (
                         <div className="file-bar" key={i}>
                             <div>
                                 <button
@@ -52,10 +63,8 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                 </button>
 
                                 <div className="file-name">
-                                    {props.fileData.data[files].filename}{" "}
-                                    {sizeDisplay(
-                                        props.fileData.data[files].size
-                                    )}
+                                    {fileData.data[files].filename}{" "}
+                                    {sizeDisplay(fileData.data[files].size)}
                                 </div>
                             </div>
                         </div>
