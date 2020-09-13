@@ -4,6 +4,7 @@ import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "../server";
+import { Binary } from "mongodb";
 
 export const router = express.Router();
 
@@ -11,19 +12,20 @@ router.get(
     "/file/:sessionId/:fileId",
     asyncHandler<{}, { sessionId: string; fileId: string }>(
         async (req, res) => {
-            res.status(503).end();
-            // const session = await Session.findById(req.params.sessionId);
-            // const file = session?.files?.get(req.params.fileId);
-            // const contents = file?.file;
-            // console.log("contents", contents);
+            console.log("test")
+            const session = await Session.findById(req.params.sessionId);
+            const file = session?.files?.get(req.params.fileId);
+            const contents: Binary = file?.file as any;
+            console.log("contents", contents);
 
-            // res.set(
-            //     "Content-disposition",
-            //     `attachment; filename=${file?.filename}`
-            // );
-            // res.set("Content-Type", file?.fileExtension);
+            res.set(
+                "Content-disposition",
+                `attachment; filename=${file?.filename}`
+            );
+            res.set("Content-Type", file?.fileExtension);
             // res.status(500);
-            // res.end(contents);
+            res.end(contents.buffer);
+            // res.download("xxx")
         }
     )
 );

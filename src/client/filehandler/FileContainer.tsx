@@ -61,6 +61,8 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                 >
                                     <a
                                         href={`/filehandler/file/${props.sessionID}/${files}`}
+                                        target="_self"
+                                        download
                                     >
                                         test
                                     </a>
