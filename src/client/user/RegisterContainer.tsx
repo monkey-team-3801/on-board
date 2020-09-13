@@ -25,7 +25,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
     const [userData, registerUser] = useDynamicFetch<
         LoginSuccessResponseType,
         CreateUserRequestType
-    >("user/register", undefined, false, props.onFetchSuccess);
+    >("/user/register", undefined, false, props.onFetchSuccess);
 
     const changeUserType = (type: string): void => {
         switch (type) {

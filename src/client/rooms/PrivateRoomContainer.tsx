@@ -5,8 +5,10 @@ import { Container, Row, Button, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
+import { FileUploadType, SessionData } from "../../types";
 import { TopLayerContainerProps } from "../types";
-import { SessionData } from "../../types";
+import { FileContainer } from "../filehandler/FileContainer";
+import { UploadContainer } from "../filehandler/UploadContainer";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -47,11 +49,26 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                 </Col>
             </Row>
             <Row>
-                <ChatContainer
-                    roomId={props.match.params.roomId}
-                    username={props.userData.username}
-                    initialChatLog={sessionResponse.data.messages}
-                />
+                <Col>
+                    <ChatContainer
+                        roomId={props.match.params.roomId}
+                        username={props.userData.username}
+                        initialChatLog={sessionResponse.data.messages}
+                    />
+                </Col>
+                <Col>
+                    <Row>
+                        <FileContainer
+                            sessionID={props.match.params.roomId}
+                        ></FileContainer>
+                    </Row>
+                    <Row>
+                        <UploadContainer
+                            uploadType={FileUploadType.DOCUMENTS}
+                            sessionID={props.match.params.roomId}
+                        ></UploadContainer>
+                    </Row>
+                </Col>
             </Row>
         </Container>
     );

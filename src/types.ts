@@ -167,3 +167,15 @@ export type GetAnnouncementsResponseType = {
 };
 
 export type CreateClassroomJobRequestType = ClassOpenJob;
+
+export enum FileUploadType {
+    PROFILE,
+    DOCUMENTS,
+}
+
+export type FileStorageType = {
+    filename: string;
+    fileExtension: string;
+    size: number;
+    file: Buffer;
+};

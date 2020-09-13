@@ -49,6 +49,7 @@ router.post(
                     password: hashPassword(req.body.password),
                     userType: req.body.userType,
                     courses: [],
+                    pfp: [],
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),

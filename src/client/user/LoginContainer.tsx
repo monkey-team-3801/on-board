@@ -22,7 +22,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
     const [userData, loginUser] = useDynamicFetch<
         LoginSuccessResponseType,
         LoginUserRequestType
-    >("user/login", undefined, false, props.onFetchSuccess);
+    >("/user/login", undefined, false, props.onFetchSuccess);
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLElement>

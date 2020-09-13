@@ -9,6 +9,7 @@ import { UserHomeContainer } from "./home/UserHomeContainer";
 import { UserDataResponseType } from "../types";
 import { useFetch, useSocket } from "./hooks";
 import { requestIsLoaded } from "./utils";
+import { UploadTest } from "./filehandler/UploadTest";
 import { ClassEvent } from "../events";
 import { ClassOpenIndicator } from "./components";
 import { ClassOpenEventData } from "./types";
@@ -64,34 +65,6 @@ export const AppProtectedRoutes = (props: Props) => {
                         );
                     }}
                 />
-                <SecuredRoute
-                    path="/classroom/:classroomId"
-                    render={(
-                        routerProps: RouteComponentProps<{
-                            classroomId: string;
-                        }>
-                    ) => {
-                        return (
-                            <ClassroomPageContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute
-                    path="/room/:roomId"
-                    render={(
-                        routerProps: RouteComponentProps<{ roomId: string }>
-                    ) => {
-                        return (
-                            <PrivateRoomContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
                 <SecuredRoute path="/calendar-test" component={Calendar} />
             </Switch>
             <Route
@@ -105,6 +78,44 @@ export const AppProtectedRoutes = (props: Props) => {
                             }}
                         />
                     );
+                }}
+            />
+            <SecuredRoute
+                path="/classroom/:classroomId"
+                render={(
+                    routerProps: RouteComponentProps<{ classroomId: string }>
+                ) => {
+                    return (
+                        <ClassroomPageContainer
+                            {...routerProps}
+                            userData={{ username, id, courses }}
+                        />
+                    );
+                }}
+            />
+            <SecuredRoute
+                path="/room/:roomId"
+                render={(
+                    routerProps: RouteComponentProps<{ roomId: string }>
+                ) => {
+                    return (
+                        <PrivateRoomContainer
+                            {...routerProps}
+                            userData={{ username, id, courses }}
+                        />
+                    );
+                }}
+            />
+            <SecuredRoute
+                path="/calendar-test"
+                render={(routerProps: RouteComponentProps) => {
+                    return <Calendar {...routerProps} sessions={[]} />;
+                }}
+            />
+            <SecuredRoute
+                path="/upload"
+                render={() => {
+                    return <UploadTest userId={userData.id!} />;
                 }}
             />
         </>

@@ -5,3 +5,4 @@ export { router as userRoute } from "./user";
 export { router as courseRoute } from "./course";
 export { router as authRoute } from "./auth";
 export { router as jobRoute } from "./job";
+export { router as fileRoute } from "./filehandler";

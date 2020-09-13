@@ -64,9 +64,11 @@ export const useDynamicFetch = <
     const fetchData = React.useCallback(
         async (endpoint: string, requestData?: AnyObjectMap<any>) => {
             try {
-                setResponseType({
-                    state: RequestState.LOADING,
-                    data: undefined,
+                setResponseType((response) => {
+                    return {
+                        ...response,
+                        state: RequestState.LOADING,
+                    };
                 });
                 const response = await axios.post<T>(endpoint, requestData, {
                     headers: {

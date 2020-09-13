@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
-import { MessageData, RoomType } from "../../../types";
+import { MessageData, RoomType, FileStorageType } from "../../../types";
 
 interface ISession extends mongoose.Document {
     name: string;
+    files?: Map<string, FileStorageType>;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;
     roomType: RoomType;
@@ -23,6 +24,7 @@ interface IClassroomSession extends ISession {
 const SessionSchema = new mongoose.Schema<ISession>({
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
+    files: { type: Map, default: new Map() },
     roomType: { type: Number },
 });
 
