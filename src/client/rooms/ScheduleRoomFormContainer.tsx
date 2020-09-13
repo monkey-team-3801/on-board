@@ -5,43 +5,49 @@ import Select from "react-select";
 import { useDynamicFetch, useFetch } from "../hooks";
 import {
     CourseListResponseType,
-    CreateAnnouncementJobRequestType,
+    CreateClassroomJobRequestType,
 } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
 import { SimpleDatepicker } from "../components";
 
+const isOptionType = (option: any): option is CourseOptionType => {
+    return option?.value && option?.label;
+};
+
 type Props = {
     userId: string;
 };
 
-export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
+export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [createAnnouncementResponse, createAnnouncement] = useDynamicFetch<
+    const [createClassroomResponse, createClassroom] = useDynamicFetch<
         undefined,
-        CreateAnnouncementJobRequestType
+        CreateClassroomJobRequestType
     >("/job/create", undefined, false);
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
 
-    const [title, setTitle] = React.useState<string>("");
-    const [content, setContent] = React.useState<string>("");
+    const [roomName, setRoomName] = React.useState<string>("");
+    const [description, setDescription] = React.useState<string>("");
     const [courseCodes, setCourseCodes] = React.useState<
         Array<CourseOptionType>
     >([]);
-    const [courses, setCourses] = React.useState<Array<CourseOptionType>>([]);
-    const [announcementTime, setAnnouncementTime] = React.useState<Date>(
-        new Date()
-    );
+    const [selectedCourse, setSelectedCourse] = React.useState<
+        CourseOptionType | undefined
+    >(undefined);
+    const [startingTime, setStartingTime] = React.useState<Date>(new Date());
+
+    const [endingTime, setEndingTime] = React.useState<Date>(new Date());
 
     const isCourseEmpty = React.useMemo(() => {
-        return courses.length === 0;
-    }, [courses]);
+        return selectedCourse?.value === undefined;
+    }, [selectedCourse]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return !requestIsLoaded(createAnnouncementResponse);
-    }, [createAnnouncementResponse]);
+        return !requestIsLoaded(createClassroomResponse);
+    }, [createClassroomResponse]);
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
@@ -59,41 +65,42 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     return (
         <Container style={{ height: 600 }}>
             <Row>
-                <h3>Create Announcement</h3>
+                <h3>Create Classroom</h3>
             </Row>
             <Form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                     e.preventDefault();
-                    courses.forEach((option) => {
-                        createAnnouncement({
-                            jobDate: announcementTime.toISOString(),
-                            executingEvent: ExecutingEvent.ANNOUNCEMENT,
+                    if (selectedCourse?.value) {
+                        await createClassroom({
+                            jobDate: startingTime.toISOString(),
+                            executingEvent: ExecutingEvent.CLASS_OPEN,
                             data: {
-                                title,
-                                content,
-                                user: props.userId,
-                                courseCode: option.value,
+                                roomName,
+                                description,
+                                courseCode: selectedCourse?.value,
+                                startTime: startingTime.toISOString(),
+                                endTime: endingTime.toISOString(),
                             },
                         });
-                    });
+                    }
                 }}
             >
                 <Form.Group>
-                    <Form.Label>Title</Form.Label>
+                    <Form.Label>Room name</Form.Label>
                     <Form.Control
                         type="text"
                         onChange={(e) => {
-                            setTitle(e.target.value);
+                            setRoomName(e.target.value);
                         }}
                         required
                     />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Content</Form.Label>
+                    <Form.Label>Description</Form.Label>
                     <Form.Control
                         as="textarea"
                         onChange={(e) => {
-                            setContent(e.target.value);
+                            setDescription(e.target.value);
                         }}
                         required
                     />
@@ -102,18 +109,14 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                     <Form.Label>Course</Form.Label>
                     <Select
                         options={courseCodes}
-                        value={courses}
-                        onChange={(value) => {
-                            if (value && Array.isArray(value)) {
-                                setCourses(value);
-                            } else {
-                                setCourses([]);
+                        value={selectedCourse}
+                        onChange={(option) => {
+                            if (isOptionType(option)) {
+                                setSelectedCourse(option);
                             }
                         }}
                         disabled={isSubmitting}
-                        isMulti
                         required
-                        closeMenuOnSelect={false}
                         styles={{
                             control: (x) => ({
                                 ...x,
@@ -123,11 +126,20 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                     />
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Schedule announcement</Form.Label>
+                    <Form.Label>Class start time</Form.Label>
                     <SimpleDatepicker
-                        time={announcementTime}
+                        time={startingTime}
                         onChange={(time) => {
-                            setAnnouncementTime(time);
+                            setStartingTime(time);
+                        }}
+                    />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Class end time</Form.Label>
+                    <SimpleDatepicker
+                        time={endingTime}
+                        onChange={(time) => {
+                            setEndingTime(time);
                         }}
                     />
                 </Form.Group>

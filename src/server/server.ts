@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Request, Response, NextFunction, Express } from "express";
 import { createServer, Server } from "http";
 import socketIO from "socket.io";
 import dotenv from "dotenv";
@@ -56,7 +56,7 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 
 // Request initialiser
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST");
     res.setHeader(
@@ -127,8 +127,15 @@ app.use(
     asyncHandler(async (req, res, next) => {})
 );
 
+// Error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    res.json({
+        message: err.message,
+    }).end();
+});
+
 // Catch-all route
-app.use("*", (req, res, next) => {
+app.use("*", (req: Request, res: Response, next: NextFunction) => {
     res.sendFile("index.html", {
         root: "build",
     });

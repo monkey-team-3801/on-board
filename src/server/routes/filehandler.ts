@@ -5,6 +5,7 @@ import { User, Session } from "../database/schema";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "../server";
 import { Binary } from "mongodb";
+import { FileStorageType } from "../../types";
 
 export const router = express.Router();
 
@@ -12,20 +13,16 @@ router.get(
     "/file/:sessionId/:fileId",
     asyncHandler<{}, { sessionId: string; fileId: string }>(
         async (req, res) => {
-            console.log("test")
             const session = await Session.findById(req.params.sessionId);
             const file = session?.files?.get(req.params.fileId);
             const contents: Binary = file?.file as any;
-            console.log("contents", contents);
 
             res.set(
                 "Content-disposition",
                 `attachment; filename=${file?.filename}`
             );
             res.set("Content-Type", file?.fileExtension);
-            // res.status(500);
             res.end(contents.buffer);
-            // res.download("xxx")
         }
     )
 );
@@ -75,23 +72,24 @@ router.post(
 // Gets the files for a session
 router.post(
     "/getFiles",
-    asyncHandler<undefined, { sessionID: string }, any>(async (req, res) => {
-        const session = await Session.findById(req.body["sid"]);
-        if (session) {
-            const files = session.files;
-            if (files) {
-                const test = Object.fromEntries(files);
-                res.end(JSON.stringify(test));
+    asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
+        async (req, res) => {
+            const session = await Session.findById(req.body.sid);
+            if (session) {
+                const files = session.files;
+                if (files) {
+                    res.json(Object.fromEntries(files)).status(200).end();
+                }
             }
+            res.status(500).end();
         }
-        res.status(500).end();
-    })
+    )
 );
 
 // Get the user profile picture.
 router.get(
     "/getPfp/:userId",
-    asyncHandler<undefined, { userId: string }, any>(async (req, res) => {
+    asyncHandler<undefined, { userId: string }>(async (req, res) => {
         const user = await User.findById(req.params.userId);
         if (user) {
             const pfp = user.pfp;
@@ -99,7 +97,6 @@ router.get(
                 res.end(pfp, "binary");
             }
         }
-        res.status(503);
         res.end();
     })
 );

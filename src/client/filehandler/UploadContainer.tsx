@@ -50,11 +50,11 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     }
 
     const onDrop = async (acceptedFiles: Array<File>) => {
-        // Handle error. Someone will need to handle this.
+        // Handle error. Someone will need to implement this.
         if (!checkValid(acceptedFiles)) {
             // Note: You can access rejected files through the variable "fileRejections" as below.
             console.log(fileRejections);
-            console.log("failed");
+            console.log("Some files failed to upload.");
             return;
         }
 

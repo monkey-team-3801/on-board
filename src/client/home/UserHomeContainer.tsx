@@ -3,13 +3,19 @@ import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch, useSocket } from "../hooks";
-import { SessionResponseType } from "../../types";
+import {
+    SessionResponseType,
+    SessionRequestType,
+    RoomType,
+    SessionDeleteRequestType,
+} from "../../types";
 import {
     LocalStorageKey,
     RequestState,
     TopLayerContainerProps,
 } from "../types";
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
+import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import { CreateAnnouncementsForm } from "../announcements";
@@ -29,7 +35,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        { id: string }
+        SessionDeleteRequestType
     >("session/delete", undefined, false);
 
     const [createRoomResponse, createRoom] = useDynamicFetch<
@@ -37,9 +43,19 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         { name: string }
     >("session/create", undefined, false);
 
-    const [sessionResponse, refresh] = useFetch<SessionResponseType>(
-        "session/sessions"
-    );
+    const [privateRoomsResponse, refreshPrivateRooms] = useFetch<
+        SessionResponseType,
+        SessionRequestType
+    >("session/sessions", {
+        roomType: RoomType.PRIVATE,
+    });
+
+    const [classroomsResponse, refreshClassrooms] = useFetch<
+        SessionResponseType,
+        SessionRequestType
+    >("session/sessions", {
+        roomType: RoomType.CLASS,
+    });
 
     const componentDidMount = React.useCallback(
         (socket: SocketIOClient.Socket) => {
@@ -65,18 +81,24 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     );
 
     const onDeleteClick = React.useCallback(
-        async (id: string) => {
-            await deleteRoom({
-                id,
-            });
-            await refresh();
+        async (request: SessionDeleteRequestType) => {
+            await deleteRoom(request);
+            await refreshPrivateRooms();
+            await refreshClassrooms();
         },
-        [deleteRoom, refresh]
+        [deleteRoom, refreshPrivateRooms, refreshClassrooms]
     );
 
-    const onJoinClick = React.useCallback(
+    const onPrivateRoomJoinClick = React.useCallback(
         (id: string) => {
             history.push(`/room/${id}`);
+        },
+        [history]
+    );
+
+    const onClassroomJoinClick = React.useCallback(
+        (id: string) => {
+            history.push(`/classroom/${id}`);
         },
         [history]
     );
@@ -95,7 +117,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    if (!requestIsLoaded(sessionResponse)) {
+    if (
+        !requestIsLoaded(privateRoomsResponse) ||
+        !requestIsLoaded(classroomsResponse)
+    ) {
         return <div>Loading</div>;
     }
 
@@ -125,16 +150,34 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row>
                 <RoomDisplayContainer
-                    data={sessionResponse.data.sessions}
-                    onDeleteClick={onDeleteClick}
-                    onJoinClick={onJoinClick}
+                    data={classroomsResponse.data.sessions}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.CLASS,
+                        });
+                    }}
+                    onJoinClick={onClassroomJoinClick}
+                />
+            </Row>
+            <hr></hr>
+            <Row>
+                <RoomDisplayContainer
+                    data={privateRoomsResponse.data.sessions}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.PRIVATE,
+                        });
+                    }}
+                    onJoinClick={onPrivateRoomJoinClick}
                 />
             </Row>
             <Row>
                 <CreateRoomPage
                     createRoom={async (name: string) => {
                         await createRoom({ name });
-                        await refresh();
+                        await refreshPrivateRooms();
                     }}
                 />
             </Row>
@@ -145,6 +188,11 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         userId={userData.id}
                         socket={socket}
                     />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <ScheduleRoomFormContainer userId={userData.id} />
                 </Col>
             </Row>
             <Row>

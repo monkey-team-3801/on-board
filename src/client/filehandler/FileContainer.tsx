@@ -2,20 +2,21 @@ import React from "react";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { useDynamicFetch, useSocket } from "../hooks";
+import { FileStorageType } from "../../types";
+import { requestIsLoaded } from "../utils";
 
 type Props = {
     sessionID: string;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const [fileData, getFiles] = useDynamicFetch<any, any>(
-        "/filehandler/getFiles",
-        { sid: props.sessionID },
-        true
-    );
+    const [fileData, getFiles] = useDynamicFetch<
+        { [key: string]: FileStorageType },
+        { sid: string }
+    >("/filehandler/getFiles", { sid: props.sessionID }, true);
 
+    // Updates the list of files displayed.
     useSocket("newfile", undefined, undefined, () => {
-        console.log("test");
         getFiles({ sid: props.sessionID });
     });
 
@@ -32,19 +33,8 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     }
 
-    console.log(fileData);
-
-    // Downloads the given file.
-    function download(name: string): void {
-        let link = document.createElement("a");
-
-        let blob = new Blob([fileData.data[name].file], {
-            type: fileData.data[name].fileExtension,
-        });
-
-        link.href = window.URL.createObjectURL(blob);
-        link.download = fileData.data[name].filename;
-        link.click();
+    if (!requestIsLoaded(fileData)) {
+        return <div>loading files...</div>;
     }
 
     return (
@@ -55,20 +45,15 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                     Object.keys(fileData.data).map((files, i) => (
                         <div className="file-bar" key={i}>
                             <div>
-                                <button
-                                    className="file-dl-btn"
-                                    // onClick={() => download(files)}
+                                <a
+                                    href={`/filehandler/file/${props.sessionID}/${files}`}
+                                    target="_self"
+                                    download
                                 >
-                                    <a
-                                        href={`/filehandler/file/${props.sessionID}/${files}`}
-                                        target="_self"
-                                        download
-                                    >
-                                        test
-                                    </a>
-                                    <FaDownload />
-                                </button>
-
+                                    <button className="file-dl-btn">
+                                        <FaDownload />
+                                    </button>
+                                </a>
                                 <div className="file-name">
                                     {fileData.data[files].filename}{" "}
                                     {sizeDisplay(fileData.data[files].size)}
