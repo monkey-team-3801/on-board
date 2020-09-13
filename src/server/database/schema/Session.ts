@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
-import { MessageData, RoomType } from "../../../types";
-import { MessageData, FileStorageType } from "../../../types";
+import { MessageData, RoomType, FileStorageType } from "../../../types";
 
 interface ISession extends mongoose.Document {
     name: string;
-    messages?: Array<Omit<MessageData, "sessionId">>;
     files?: Map<string, FileStorageType>;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;

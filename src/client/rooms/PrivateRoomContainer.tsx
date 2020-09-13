@@ -5,7 +5,7 @@ import { Container, Row, Button, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
-import { UserDataResponseType, FileUploadType } from "../../types";
+import { FileUploadType } from "../../types";
 import { TopLayerContainerProps } from "../types";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
@@ -50,11 +50,13 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                 </Col>
             </Row>
             <Row>
-                <ChatContainer
-                    roomId={props.match.params.roomId}
-                    username={props.userData.username}
-                    initialChatLog={sessionResponse.data.messages}
-                />
+                <Col>
+                    <ChatContainer
+                        roomId={props.match.params.roomId}
+                        username={props.userData.username}
+                        initialChatLog={sessionResponse.data.messages}
+                    />
+                </Col>
                 <Col>
                     <Row>
                         <FileContainer

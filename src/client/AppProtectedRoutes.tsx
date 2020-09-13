@@ -9,7 +9,6 @@ import { UserHomeContainer } from "./home/UserHomeContainer";
 import { UserDataResponseType } from "../types";
 import { useFetch, useSocket } from "./hooks";
 import { requestIsLoaded } from "./utils";
-import { RouteComponentProps } from "react-router-dom";
 import { UploadTest } from "./filehandler/UploadTest";
 import { ClassEvent } from "../events";
 import { ClassOpenIndicator } from "./components";
@@ -147,7 +146,6 @@ export const AppProtectedRoutes = (props: Props) => {
                     return <UploadTest userId={userData.id!} />;
                 }}
             />
-        </Switch>
         </>
     );
 };
