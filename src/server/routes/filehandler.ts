@@ -4,8 +4,8 @@ import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "../server";
-import { Binary } from "mongodb";
 import { FileStorageType } from "../../types";
+import { FileUploadEvent } from "../../events";
 
 export const router = express.Router();
 
@@ -15,14 +15,17 @@ router.get(
         async (req, res) => {
             const session = await Session.findById(req.params.sessionId);
             const file = session?.files?.get(req.params.fileId);
-            const contents: Binary = file?.file as any;
+            const contents = file?.file;
 
-            res.set(
-                "Content-disposition",
-                `attachment; filename=${file?.filename}`
-            );
-            res.set("Content-Type", file?.fileExtension);
-            res.end(contents.buffer);
+            if (contents && file) {
+                res.set(
+                    "Content-disposition",
+                    `attachment; filename=${file.filename}`
+                );
+                res.set("Content-Type", file.fileExtension);
+                res.status(200).end(contents.buffer);
+            }
+            res.status(500).end();
         }
     )
 );
@@ -59,7 +62,7 @@ router.post(
                             x += 1;
                         }
                         await sessionQuery.save();
-                        io.in(sid).emit("newfile");
+                        io.in(sid).emit(FileUploadEvent.NEW_FILE);
                         res.status(200).end();
                     }
                 }

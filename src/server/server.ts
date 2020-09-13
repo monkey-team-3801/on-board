@@ -66,27 +66,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.get(
-    "/file",
-    asyncHandler<{}, { sessionId: string; fileId: string }>(
-        async (req, res) => {
-            res.status(503).end();
-            // const session = await Session.findById(req.params.sessionId);
-            // const file = session?.files?.get(req.params.fileId);
-            // const contents = file?.file;
-            // console.log("contents", contents);
-
-            // res.set(
-            //     "Content-disposition",
-            //     `attachment; filename=${file?.filename}`
-            // );
-            // res.set("Content-Type", file?.fileExtension);
-            // res.status(500);
-            // res.end(contents);
-        }
-    )
-);
-
 // Base route
 app.get(
     "/",

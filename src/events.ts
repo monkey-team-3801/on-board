@@ -30,3 +30,7 @@ export enum AnnouncementEvent {
 export enum ClassEvent {
     OPEN = "OPEN",
 }
+
+export enum FileUploadEvent {
+    NEW_FILE = "NEW_FILE",
+}

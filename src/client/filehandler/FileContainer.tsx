@@ -4,6 +4,7 @@ import { FaDownload } from "react-icons/fa";
 import { useDynamicFetch, useSocket } from "../hooks";
 import { FileStorageType } from "../../types";
 import { requestIsLoaded } from "../utils";
+import { FileUploadEvent } from "../../events";
 
 type Props = {
     sessionID: string;
@@ -16,7 +17,7 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
     >("/filehandler/getFiles", { sid: props.sessionID }, true);
 
     // Updates the list of files displayed.
-    useSocket("newfile", undefined, undefined, () => {
+    useSocket(FileUploadEvent.NEW_FILE, undefined, undefined, () => {
         getFiles({ sid: props.sessionID });
     });
 
