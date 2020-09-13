@@ -5,11 +5,10 @@ import { Container, Row, Button, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
-import { FileUploadType } from "../../types";
+import { FileUploadType, SessionData } from "../../types";
 import { TopLayerContainerProps } from "../types";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
-import { SessionData } from "../../types";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};

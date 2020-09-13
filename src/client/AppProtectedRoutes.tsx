@@ -65,34 +65,6 @@ export const AppProtectedRoutes = (props: Props) => {
                         );
                     }}
                 />
-                <SecuredRoute
-                    path="/classroom/:classroomId"
-                    render={(
-                        routerProps: RouteComponentProps<{
-                            classroomId: string;
-                        }>
-                    ) => {
-                        return (
-                            <ClassroomPageContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute
-                    path="/room/:roomId"
-                    render={(
-                        routerProps: RouteComponentProps<{ roomId: string }>
-                    ) => {
-                        return (
-                            <PrivateRoomContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
                 <SecuredRoute path="/calendar-test" component={Calendar} />
             </Switch>
             <Route
