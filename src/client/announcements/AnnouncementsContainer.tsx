@@ -39,7 +39,7 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Row>
-                <h3>Announcements</h3>
+                <h4>Announcements</h4>
             </Row>
             <div
                 className="announcement-container"
@@ -48,27 +48,27 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                 {announcementsData.data.announcements.map((announcement, i) => {
                     return (
                         <Row
+                            className="announcement"
                             key={i}
                             style={{
-                                borderBottom: "1px solid grey",
                                 marginTop: 20,
                             }}
                         >
                             <Container>
                                 <Row>
                                     <Col>
-                                        <h6>{announcement.courseCode}</h6>
-                                        <h6>{announcement.title}</h6>
-                                        <p>{announcement.date}</p>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <p>{announcement.content}</p>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
+                                        <h6 className="coursecode">
+                                            {announcement.courseCode}
+                                        </h6>
+                                        <h6 className="title">
+                                            {announcement.title}
+                                        </h6>
+                                        <p className="date">
+                                            {announcement.date}
+                                        </p>
+                                        <p className="message">
+                                            {announcement.content}
+                                        </p>
                                         <p>{announcement.user}</p>
                                     </Col>
                                 </Row>
