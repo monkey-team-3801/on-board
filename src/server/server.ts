@@ -50,6 +50,10 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+    socket.on("canvasChange", (data) => {
+        console.log(data.sessionId);
+        socket.to(data.sessionId).emit("canvasDraw", data.canvasData);
+    });
 });
 
 app.use(bodyParser.json());

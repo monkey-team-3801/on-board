@@ -2,6 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
+
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
@@ -9,6 +10,7 @@ import { FileUploadType, SessionData } from "../../types";
 import { TopLayerContainerProps } from "../types";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
+import { DrawingCanvas } from "../canvas";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -31,6 +33,9 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
         <Container>
             <Row>
                 <h1>Private Room</h1>
+            </Row>
+            <Row>
+                <DrawingCanvas sessionId={sessionResponse.data.id}/>
             </Row>
             <Row>
                 <Col>

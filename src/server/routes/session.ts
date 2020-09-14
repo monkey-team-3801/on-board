@@ -12,6 +12,7 @@ import {
     RoomType,
 } from "../../types";
 import { ClassroomSession } from "../database/schema";
+import { ObjectID } from "mongodb";
 
 export const router = express.Router();
 
@@ -129,8 +130,38 @@ router.post(
         } else if (req.body.roomType === RoomType.CLASS) {
             await ClassroomSession.findByIdAndDelete(req.body.id);
         }
-
         res.status(200).end();
+    })
+);
+
+router.post(
+    "/saveCanvas",
+    asyncHandler<undefined, {}, any>(async (req, res) => {
+        try {
+            await Session.updateOne(
+                { _id: req.body.sessionId },
+                {
+                    canvasData: req.body.canvasData,
+                },
+                { upsert: true }
+            );
+            res.end();
+        } catch (e) {
+            console.log("err", e);
+        }
+    })
+);
+
+router.post(
+    "/getCanvas",
+    asyncHandler<any, {}, any>(async (req, res) => {
+        const session = await Session.findById(req.body.sessionId);
+        if (session) {
+            res.json({
+                canvasData: session.canvasData,
+            });
+        }
+        res.end();
     })
 );
 
