@@ -57,21 +57,19 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                             <Container>
                                 <Row>
                                     <Col>
-                                        <h6>{announcement.title}</h6>
-                                    </Col>
-                                    <Col>
                                         <h6>{announcement.courseCode}</h6>
-                                    </Col>
-                                    <Col>
-                                        <p>{announcement.user}</p>
-                                    </Col>
-                                    <Col>
+                                        <h6>{announcement.title}</h6>
                                         <p>{announcement.date}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col>
                                         <p>{announcement.content}</p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <p>{announcement.user}</p>
                                     </Col>
                                 </Row>
                             </Container>
