@@ -59,14 +59,15 @@ io.on("connect", (socket: SocketIO.Socket) => {
         VideoEvent.USER_JOIN_ROOM,
         async (data: PrivateVideoRoomJoinData) => {
             const { sessionId, userId } = data;
-            console.log(data);
             const session = await VideoSession.findOne({
                 sessionId,
             });
             if (!session) {
                 return;
             }
-
+            if (session.peers.includes(userId)) {
+                return;
+            }
             session.peers.push(userId);
             await session.save();
             socket.join(sessionId);
@@ -74,8 +75,11 @@ io.on("connect", (socket: SocketIO.Socket) => {
 
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
-                session.peers = session.peers.filter((id) => id !== userId);
-                await session.save();
+                await VideoSession.updateOne(
+                    { sessionId },
+                    { $pull: { peers: userId } },
+                    { runValidators: true }
+                );
                 socket
                     .in(sessionId)
                     .emit(VideoEvent.UPDATE_USERS, session.peers);

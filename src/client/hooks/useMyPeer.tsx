@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Peer from "peerjs";
 import { useMediaStream } from "./useMediaStream";
 
 export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
 
-export const useMyPeer: () => [
-    Peer,
-    PeerId,
-    React.RefObject<HTMLVideoElement>
-] = () => {
+export const useMyPeer: () => [Peer, PeerId, MediaStream | undefined] = () => {
     const [myPeer, setMyPeer] = useState<Peer>(
         () =>
             new Peer({
@@ -26,18 +22,8 @@ export const useMyPeer: () => [
             myPeer.destroy();
         }
     }, [myPeer]);
-    // My stream
-    const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        if (stream) {
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.addEventListener("loadedmetadata", () => {
-                    videoRef.current?.play();
-                });
-            }
-        }
         myPeer.on("disconnected", () => {
             cleanUp();
         });
@@ -55,6 +41,6 @@ export const useMyPeer: () => [
             setMyPeer(myPeer);
         });
         return () => cleanUp();
-    }, [stream, myPeer, videoRef, cleanUp]);
-    return [myPeer, myPeerId, videoRef];
+    }, [stream, myPeer, cleanUp]);
+    return [myPeer, myPeerId, stream];
 };

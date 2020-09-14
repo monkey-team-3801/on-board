@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-export const useMediaStream: () => [MediaStream | null] = () => {
-    const [stream, setStream] = useState<MediaStream | null>(null);
+export const useMediaStream: () => [MediaStream | undefined] = () => {
+    const [stream, setStream] = useState<MediaStream | undefined>(undefined);
     useEffect(() => {
         navigator.mediaDevices
             .getUserMedia({
