@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Container, Row, Button, Col, Nav } from "react-bootstrap";
+import { Container, Row, Button, Col, Nav, Collapse } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch, useSocket } from "../hooks";
 import { SessionResponseType } from "../../types";
@@ -117,7 +117,32 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     />
                                 </Row>
                                 <Row className="classes no-padding">
-                                    <h1>Classes</h1>
+                                    <Row className="class-1">
+                                        <Col xl="3" lg="3" className="course-code">
+                                            <h3>DECO 3801</h3>
+                                        </Col>
+                                        <Col xl="5" lg="5" className="course-content">
+                                            <h5>Tutorial</h5>
+                                            <p>Today - 10:00</p>
+                                            <p>Download Class Content</p>
+                                        </Col>
+                                        <Col className="connect">
+                                            <h4>Connect</h4>
+                                        </Col>
+                                    </Row>
+                                    <Row className="class-2">
+                                        <Col xl="3" lg="3" className="course-code">
+                                            <h3>CSSE 1001</h3>
+                                        </Col>
+                                        <Col xl="5" lg="5" className="course-content">
+                                            <h5>Lecture</h5>
+                                            <p>Today - 12:00</p>
+                                            <p>Download Class Content</p>
+                                        </Col>
+                                        <Col className="connect">
+                                            <h4>Connect</h4>
+                                        </Col>
+                                    </Row>
                                 </Row>
                             </Col>
 
