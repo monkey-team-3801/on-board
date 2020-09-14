@@ -18,7 +18,7 @@ import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
 import { AnnouncementEvent } from "../../events";
-import "../styles/Homepage.less"
+import "../styles/Homepage.less";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -105,6 +105,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     return (
         <Container className="homepage no-padding" fluid>
             <Row className="nav">
+                <Navbar />
             </Row>
             <Row className="content">
                 <Container fluid className="no-padding">
@@ -112,16 +113,22 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         <Container fluid className="no-padding">
                             <Col className="left-col col-6">
                                 <Row className="calander no-padding">
-                                    <Calendar sessions={[]}
-
-                                    />
+                                    <Calendar sessions={[]} />
                                 </Row>
                                 <Row className="classes no-padding">
                                     <Row className="class-1">
-                                        <Col xl="3" lg="3" className="course-code">
+                                        <Col
+                                            xl="3"
+                                            lg="3"
+                                            className="course-code"
+                                        >
                                             <h3>DECO 3801</h3>
                                         </Col>
-                                        <Col xl="5" lg="5" className="course-content">
+                                        <Col
+                                            xl="5"
+                                            lg="5"
+                                            className="course-content"
+                                        >
                                             <h5>Tutorial</h5>
                                             <p>Today - 10:00</p>
                                             <p>Download Class Content</p>
@@ -131,10 +138,18 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         </Col>
                                     </Row>
                                     <Row className="class-2">
-                                        <Col xl="3" lg="3" className="course-code">
+                                        <Col
+                                            xl="3"
+                                            lg="3"
+                                            className="course-code"
+                                        >
                                             <h3>CSSE 1001</h3>
                                         </Col>
-                                        <Col xl="5" lg="5" className="course-content">
+                                        <Col
+                                            xl="5"
+                                            lg="5"
+                                            className="course-content"
+                                        >
                                             <h5>Lecture</h5>
                                             <p>Today - 12:00</p>
                                             <p>Download Class Content</p>

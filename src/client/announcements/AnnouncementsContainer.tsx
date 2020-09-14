@@ -38,7 +38,7 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container>
-            <Row >
+            <Row>
                 <h3>Announcements</h3>
             </Row>
             <div

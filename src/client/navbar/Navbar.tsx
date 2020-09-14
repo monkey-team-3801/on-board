@@ -5,9 +5,10 @@ import "./Navbar.less";
 function Navbar() {
     return (
         <div className="my-nav">
-            <div className="nav-container responsive">
-                <nav className="nav-menu active nav-menu responsive">
-                    <ul className="nav-menu-items">
+            <div className="navbar responsive">
+                <nav className="navbar active nav-menu responsive">
+                    <div className="navbar-logo">Logo</div>
+                    <ul className="nav-menu">
                         {NavbarData.map((item, index) => {
                             return (
                                 <li key={index} className={item.cName}>

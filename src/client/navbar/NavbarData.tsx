@@ -3,21 +3,9 @@ import * as AiIcons from "react-icons/ai";
 
 export const NavbarData = [
     {
-        title: "Home",
+        title: "Homepage",
         path: "/",
         icon: <AiIcons.AiOutlineHome />,
-        cName: "nav-text",
-    },
-    {
-        title: "Courses",
-        path: "/courses",
-        icon: <AiIcons.AiOutlineBook />,
-        cName: "nav-text",
-    },
-    {
-        title: "Grades",
-        path: "/grades",
-        icon: <AiIcons.AiOutlineFileDone />,
         cName: "nav-text",
     },
     {
