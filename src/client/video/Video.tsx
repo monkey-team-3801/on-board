@@ -22,5 +22,5 @@ export const Video: React.FunctionComponent<Props> = ({
         }
     }, [videoStream]);
 
-    return <video id={mine ? "my-video" : "peers-video"} ref={videoRef} />;
+    return <video className={mine ? "my-video" : "peers-video"} ref={videoRef} />;
 };

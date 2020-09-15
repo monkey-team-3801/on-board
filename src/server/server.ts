@@ -70,8 +70,11 @@ io.on("connect", (socket: SocketIO.Socket) => {
             }
             session.peers.push(userId);
             await session.save();
+            // TODO: why is this emitting to only me?
             socket.join(sessionId);
-            socket.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
+            io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
+            // socket
+            //     .emit(VideoEvent.UPDATE_USERS, session.peers);
 
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
@@ -80,9 +83,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     { $pull: { peers: userId } },
                     { runValidators: true }
                 );
-                socket
-                    .in(sessionId)
-                    .emit(VideoEvent.UPDATE_USERS, session.peers);
+                io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
                 console.log("User", userId, "leaving", sessionId);
             });
         }

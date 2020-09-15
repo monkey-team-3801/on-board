@@ -20,12 +20,13 @@ export const useMyPeer: () => [Peer, PeerId, MediaStream | undefined] = () => {
         if (myPeer) {
             myPeer.disconnect();
             myPeer.destroy();
+            console.log("Cleaning up");
         }
     }, [myPeer]);
 
     useEffect(() => {
         myPeer.on("disconnected", () => {
-            cleanUp();
+            myPeer.reconnect();
         });
 
         myPeer.on("close", () => {
@@ -40,7 +41,6 @@ export const useMyPeer: () => [Peer, PeerId, MediaStream | undefined] = () => {
             setMyPeerId(id);
             setMyPeer(myPeer);
         });
-        return () => cleanUp();
     }, [stream, myPeer, cleanUp]);
     return [myPeer, myPeerId, stream];
 };
