@@ -27,7 +27,7 @@ const SessionSchema = new mongoose.Schema<ISession>({
     messages: { type: Array, default: [] },
     files: { type: Map, default: new Map() },
     roomType: { type: Number },
-    canvasData: { type: String }
+    canvasData: { type: String },
 });
 
 export const Session = mongoose.model<ISession>("Session", SessionSchema);
@@ -40,7 +40,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     courseCode: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
-    canvasData: { type: String }
+    canvasData: { type: String },
 });
 
 export const ClassroomSession = mongoose.model<IClassroomSession>(

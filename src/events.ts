@@ -34,3 +34,8 @@ export enum ClassEvent {
 export enum FileUploadEvent {
     NEW_FILE = "NEW_FILE",
 }
+
+export enum CanvasEvent {
+    CHANGE = "CANVAS_CHANGE",
+    DRAW = "CANVAS_DRAW",
+}

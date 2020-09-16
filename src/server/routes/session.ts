@@ -10,9 +10,11 @@ import {
     ClassroomSessionData,
     SessionDeleteRequestType,
     RoomType,
+    SaveCanvasRequestType,
+    GetCanvasRequestType,
+    GetCanvasResponseType,
 } from "../../types";
 import { ClassroomSession } from "../database/schema";
-import { ObjectID } from "mongodb";
 
 export const router = express.Router();
 
@@ -136,7 +138,7 @@ router.post(
 
 router.post(
     "/saveCanvas",
-    asyncHandler<undefined, {}, any>(async (req, res) => {
+    asyncHandler<undefined, {}, SaveCanvasRequestType>(async (req, res) => {
         try {
             await Session.updateOne(
                 { _id: req.body.sessionId },
@@ -154,15 +156,17 @@ router.post(
 
 router.post(
     "/getCanvas",
-    asyncHandler<any, {}, any>(async (req, res) => {
-        const session = await Session.findById(req.body.sessionId);
-        if (session) {
-            res.json({
-                canvasData: session.canvasData,
-            });
+    asyncHandler<GetCanvasResponseType, {}, GetCanvasRequestType>(
+        async (req, res) => {
+            const session = await Session.findById(req.body.sessionId);
+            if (session) {
+                res.json({
+                    canvasData: session.canvasData,
+                });
+            }
+            res.end();
         }
-        res.end();
-    })
+    )
 );
 
 // TODO

@@ -2,7 +2,6 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-
 import { useFetch } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
@@ -35,7 +34,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                 <h1>Private Room</h1>
             </Row>
             <Row>
-                <DrawingCanvas sessionId={sessionResponse.data.id}/>
+                <DrawingCanvas sessionId={sessionResponse.data.id} />
             </Row>
             <Row>
                 <Col>
