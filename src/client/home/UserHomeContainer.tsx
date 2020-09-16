@@ -18,7 +18,7 @@ import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
-import Navbar from "../navbar/Navbar";
+
 import { Calendar } from "../timetable/Calendar";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
@@ -129,86 +129,76 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container className="homepage no-padding" fluid>
-            <Row className="nav">
-                <Navbar />
-            </Row>
-            <Row>
-                <Col>
-                    <p>
-                        Logged in as {userData.username}: {userData.id}
-                    </p>
-                </Col>
-                <Col>
-                    <Button
-                        variant="light"
-                        size="sm"
-                        onClick={() => {
-                            localStorage.setItem(LocalStorageKey.JWT_TOKEN, "");
-                            props.history.replace("/");
-                        }}
-                    >
-                        Logout
-                    </Button>
-                </Col>
-            </Row>
-            <Row>
-                <RoomDisplayContainer
-                    data={classroomsResponse.data.sessions}
-                    onDeleteClick={async (id: string) => {
-                        onDeleteClick({
-                            id,
-                            roomType: RoomType.CLASS,
-                        });
-                    }}
-                    onJoinClick={onClassroomJoinClick}
-                />
-            </Row>
-            <hr></hr>
-            <Row>
-                <RoomDisplayContainer
-                    data={privateRoomsResponse.data.sessions}
-                    onDeleteClick={async (id: string) => {
-                        onDeleteClick({
-                            id,
-                            roomType: RoomType.PRIVATE,
-                        });
-                    }}
-                    onJoinClick={onPrivateRoomJoinClick}
-                />
-            </Row>
-            <Row>
-                <CreateRoomPage
-                    createRoom={async (name: string) => {
-                        await createRoom({ name });
-                        await refreshPrivateRooms();
-                    }}
-                />
-            </Row>
-            <Row>
-                <Col>
-                    <EnrolFormContainer
-                        refresh={refreshAnnouncements}
-                        userId={userData.id}
-                        socket={socket}
-                    />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <ScheduleRoomFormContainer userId={userData.id} />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <CreateAnnouncementsForm userId={userData.id} />
-                </Col>
-                <Col>
-                    <AnnouncementsContainer
-                        refreshKey={refreshKey}
-                        userId={userData.id}
-                    />
-                </Col>
-            </Row>
+            <div>home</div>
+            {/* <Row className="content">
+                <Container fluid className="no-padding">
+                    <Col xl="12" lg="12" md="12">
+                        <Container fluid className="no-padding">
+                            <Col className="left-col col-6">
+                                <Row className="calander no-padding">
+                                    <Calendar sessions={[]} />
+                                </Row>
+                                <Row className="classes no-padding">
+                                    <Row className="class-1">
+                                        <Col
+                                            xl="3"
+                                            lg="3"
+                                            className="course-code"
+                                        >
+                                            <h3>DECO 3801</h3>
+                                        </Col>
+                                        <Col
+                                            xl="5"
+                                            lg="5"
+                                            className="course-content"
+                                        >
+                                            <h5>Tutorial</h5>
+                                            <p>Today - 10:00</p>
+                                            <p>Download Class Content</p>
+                                        </Col>
+                                        <Col className="connect">
+                                            <h4>Connect</h4>
+                                        </Col>
+                                    </Row>
+                                    <Row className="class-2">
+                                        <Col
+                                            xl="3"
+                                            lg="3"
+                                            className="course-code"
+                                        >
+                                            <h3>CSSE 1001</h3>
+                                        </Col>
+                                        <Col
+                                            xl="5"
+                                            lg="5"
+                                            className="course-content"
+                                        >
+                                            <h5>Lecture</h5>
+                                            <p>Today - 12:00</p>
+                                            <p>Download Class Content</p>
+                                        </Col>
+                                        <Col className="connect">
+                                            <h4>Connect</h4>
+                                        </Col>
+                                    </Row>
+                                </Row>
+                            </Col>
+
+                            <Col className="right-col col-6">
+                                <Row className="announcemnts no-padding">
+                                    <AnnouncementsContainer
+                                        refreshKey={refreshKey}
+                                        userId={userData.id}
+                                    />
+                                </Row>
+                                <Row className="bottom-right no-padding">
+                                    <h1>Bottom-right</h1>
+                                </Row>
+                            </Col>
+                        </Container>
+                    </Col>
+                </Container>
+            </Row> */}
         </Container>
     );
 };

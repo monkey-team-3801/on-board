@@ -1,3 +1,88 @@
+nav.on-board-nav {
+    width: 100vw;
+    height: 50px;
+    background: linear-gradient(90deg, #594c8b 0%, #564988 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    .nav-control {
+        display: flex;
+        justify-content: space-between;
+        &.right {
+            margin-right: 30px;
+            .icon {
+                font-size: 24px;
+                cursor: pointer;
+                &:hover {
+                    background-color: #3c3167;
+                }
+            }
+        }
+        .logo-container {
+            .logo {
+                width: 100px;
+                height: 50px;
+                background-image: url("../styles/logo_white.png");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+            }
+        }
+        .control {
+            display: flex;
+            margin-left: 40px;
+            a {
+                color: white;
+            }
+            .link {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-width: 125px;
+                margin: 0px 5px;
+                padding: 0px 20px;
+                .icon {
+                    font-size: 20px;
+                }
+                &.active {
+                    background-color: #554980;
+                }
+                &:hover {
+                    background-color: #3c3167;
+                    text-decoration: none;
+                }
+                p {
+                    margin: 0;
+                }
+            }
+        }
+    }
+    .dropdown-toggle {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        &:hover {
+            background-color: #3c3167 !important;
+        }
+    }
+    .dropdown-toggle::after {
+        content: none;
+    }
+    .dropdown-item {
+        &:active {
+            background-color: #3c3167;
+        }
+    }
+    .dropdown-override {
+        & button {
+            background-color: #3c3167;
+            border: none;
+        }
+    }
+}
+
 .my-nav {
     * {
         box-sizing: border-box;

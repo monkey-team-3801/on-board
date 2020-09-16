@@ -1,5 +1,6 @@
 import React from "react";
 import { RouteComponentProps, Switch, Route } from "react-router-dom";
+import { Row } from "react-bootstrap";
 
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
@@ -13,6 +14,7 @@ import { UploadTest } from "./filehandler/UploadTest";
 import { ClassEvent } from "../events";
 import { ClassOpenIndicator } from "./components";
 import { ClassOpenEventData } from "./types";
+import { Navbar } from "./navbar";
 
 type Props = RouteComponentProps;
 
@@ -53,6 +55,7 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
+            <Navbar {...props} />
             <Switch>
                 <SecuredRoute
                     path="/home"
@@ -66,58 +69,61 @@ export const AppProtectedRoutes = (props: Props) => {
                     }}
                 />
                 <SecuredRoute path="/calendar-test" component={Calendar} />
+
+                <Route
+                    render={(routerProps: RouteComponentProps) => {
+                        return (
+                            <ClassOpenIndicator
+                                {...routerProps}
+                                event={eventData}
+                                onClose={() => {
+                                    setEventData(undefined);
+                                }}
+                            />
+                        );
+                    }}
+                />
+                <SecuredRoute
+                    path="/classroom/:classroomId"
+                    render={(
+                        routerProps: RouteComponentProps<{
+                            classroomId: string;
+                        }>
+                    ) => {
+                        return (
+                            <ClassroomPageContainer
+                                {...routerProps}
+                                userData={{ username, id, courses }}
+                            />
+                        );
+                    }}
+                />
+                <SecuredRoute
+                    path="/room/:roomId"
+                    render={(
+                        routerProps: RouteComponentProps<{ roomId: string }>
+                    ) => {
+                        return (
+                            <PrivateRoomContainer
+                                {...routerProps}
+                                userData={{ username, id, courses }}
+                            />
+                        );
+                    }}
+                />
+                <SecuredRoute
+                    path="/calendar-test"
+                    render={(routerProps: RouteComponentProps) => {
+                        return <Calendar {...routerProps} sessions={[]} />;
+                    }}
+                />
+                <SecuredRoute
+                    path="/upload"
+                    render={() => {
+                        return <UploadTest userId={userData.id!} />;
+                    }}
+                />
             </Switch>
-            <Route
-                render={(routerProps: RouteComponentProps) => {
-                    return (
-                        <ClassOpenIndicator
-                            {...routerProps}
-                            event={eventData}
-                            onClose={() => {
-                                setEventData(undefined);
-                            }}
-                        />
-                    );
-                }}
-            />
-            <SecuredRoute
-                path="/classroom/:classroomId"
-                render={(
-                    routerProps: RouteComponentProps<{ classroomId: string }>
-                ) => {
-                    return (
-                        <ClassroomPageContainer
-                            {...routerProps}
-                            userData={{ username, id, courses }}
-                        />
-                    );
-                }}
-            />
-            <SecuredRoute
-                path="/room/:roomId"
-                render={(
-                    routerProps: RouteComponentProps<{ roomId: string }>
-                ) => {
-                    return (
-                        <PrivateRoomContainer
-                            {...routerProps}
-                            userData={{ username, id, courses }}
-                        />
-                    );
-                }}
-            />
-            <SecuredRoute
-                path="/calendar-test"
-                render={(routerProps: RouteComponentProps) => {
-                    return <Calendar {...routerProps} sessions={[]} />;
-                }}
-            />
-            <SecuredRoute
-                path="/upload"
-                render={() => {
-                    return <UploadTest userId={userData.id!} />;
-                }}
-            />
         </>
     );
 };
