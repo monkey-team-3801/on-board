@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-import { useFetch } from "../hooks";
+import { useFetch, useSocket } from "../hooks";
 import { ChatContainer } from "../chat";
 import { requestIsLoaded } from "../utils";
 import { FileUploadType, SessionData } from "../../types";
@@ -10,6 +10,7 @@ import { TopLayerContainerProps } from "../types";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
 import { DrawingCanvas } from "../canvas";
+import { RoomEvent } from "../../events";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -23,6 +24,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             id: props.match.params.roomId,
         }
     );
+
+    const componentDidMount = React.useCallback(
+        (socket: SocketIOClient.Socket) => {
+            return socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
+                sessionId: props.match.params.roomId,
+            });
+        },
+        [props.match.params.roomId]
+    );
+
+    useSocket("", undefined, componentDidMount);
 
     if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;

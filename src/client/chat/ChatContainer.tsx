@@ -24,15 +24,6 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         NewMessageRequestType
     >("/chat/newMessage", undefined, false);
 
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
-            return socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
-                sessionId: props.roomId,
-            });
-        },
-        [props.roomId]
-    );
-
     const transformData = React.useCallback(
         (
             prev: Array<Omit<MessageData, "sessionId">> | undefined,
@@ -53,7 +44,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     >(
         ChatEvent.CHAT_MESSAGE_RECEIVE,
         props.initialChatLog,
-        componentDidMount,
+        undefined,
         transformData
     );
 
