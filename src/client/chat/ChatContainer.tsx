@@ -4,7 +4,7 @@ import { Container, Row, Button, Col, Form } from "react-bootstrap";
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
 import { MessageData, NewMessageRequestType } from "../../types";
-import { ChatEvent, ChatMessageReceiveType, RoomEvent } from "../../events";
+import { ChatEvent, ChatMessageReceiveType } from "../../events";
 import { RequestState } from "../types";
 import { ChatLog } from "./ChatLog";
 
