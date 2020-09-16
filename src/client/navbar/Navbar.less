@@ -1,3 +1,5 @@
+@import "../styles/Colours.less";
+
 nav.on-board-nav {
     width: 100vw;
     height: 50px;
@@ -15,7 +17,7 @@ nav.on-board-nav {
                 font-size: 24px;
                 cursor: pointer;
                 &:hover {
-                    background-color: #3c3167;
+                    background-color: @primary-dark;
                 }
             }
         }
@@ -50,7 +52,7 @@ nav.on-board-nav {
                     background-color: #554980;
                 }
                 &:hover {
-                    background-color: #3c3167;
+                    background-color: @primary-dark;
                     text-decoration: none;
                 }
                 p {
@@ -64,7 +66,7 @@ nav.on-board-nav {
         border: none !important;
         box-shadow: none !important;
         &:hover {
-            background-color: #3c3167 !important;
+            background-color: @primary-dark !important;
         }
     }
     .dropdown-toggle::after {
@@ -72,12 +74,12 @@ nav.on-board-nav {
     }
     .dropdown-item {
         &:active {
-            background-color: #3c3167;
+            background-color: @primary-dark;
         }
     }
     .dropdown-override {
         & button {
-            background-color: #3c3167;
+            background-color: @primary-dark;
             border: none;
         }
     }

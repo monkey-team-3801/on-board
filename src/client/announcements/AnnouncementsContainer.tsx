@@ -37,46 +37,76 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container>
-            <Row>
-                <h4>Announcements</h4>
-            </Row>
-            <div
-                className="announcement-container"
-                style={{ height: 50, overflow: "auto" }}
+        <Container className="content-container" fluid>
+            <Container
+                className="content-internal announcements-container"
+                fluid
             >
-                {announcementsData.data.announcements.map((announcement, i) => {
-                    return (
-                        <Row
-                            className="announcement"
-                            key={i}
-                            style={{
-                                marginTop: 20,
-                            }}
-                        >
-                            <Container>
-                                <Row>
-                                    <Col>
-                                        <h6 className="coursecode">
-                                            {announcement.courseCode}
-                                        </h6>
-                                        <h6 className="title">
-                                            {announcement.title}
-                                        </h6>
-                                        <p className="date">
-                                            {announcement.date}
-                                        </p>
-                                        <p className="message">
-                                            {announcement.content}
-                                        </p>
-                                        <p>{announcement.user}</p>
-                                    </Col>
+                <Row>
+                    <header>
+                        <h1>Announcements</h1>
+                    </header>
+                </Row>
+                <div className="announcement-list">
+                    {announcementsData.data.announcements.map(
+                        (announcement, i) => {
+                            return (
+                                <Row className="announcement" key={i}>
+                                    <Container>
+                                        <Row>
+                                            <Col>
+                                                <Row>
+                                                    <header
+                                                        style={{
+                                                            borderLeftColor: `#${Math.floor(
+                                                                Math.random() *
+                                                                    16777215
+                                                            )
+                                                                .toString(16)
+                                                                .toString()}`,
+                                                        }}
+                                                    >
+                                                        <h2 className="coursecode">
+                                                            {
+                                                                announcement.courseCode
+                                                            }
+                                                        </h2>
+                                                        <h3 className="title">
+                                                            {announcement.title}
+                                                        </h3>
+                                                        <p className="date">
+                                                            {new Date(
+                                                                announcement.date
+                                                            ).toDateString()}
+                                                        </p>
+                                                    </header>
+                                                </Row>
+                                                <Row>
+                                                    <div className="message">
+                                                        <p>
+                                                            {
+                                                                announcement.content
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </Row>
+                                                <Row>
+                                                    <div className="user">
+                                                        <p>
+                                                            {announcement.user}
+                                                        </p>
+                                                    </div>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                    <hr />
                                 </Row>
-                            </Container>
-                        </Row>
-                    );
-                })}
-            </div>
+                            );
+                        }
+                    )}
+                </div>
+            </Container>
         </Container>
     );
 };

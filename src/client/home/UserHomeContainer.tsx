@@ -19,12 +19,13 @@ import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 
-import { Calendar } from "../timetable/Calendar";
+import { Calendar, UpcomingEventsContainer } from "../timetable/";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
 import { AnnouncementEvent } from "../../events";
 import "../styles/Homepage.less";
+import { ClassesContainer } from "./ClassesContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -128,8 +129,28 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container className="homepage no-padding" fluid>
-            <div>home</div>
+        <div className="homepage">
+            <Row>
+                <Col xl="6" lg="6" md="12">
+                    <Row>
+                        <Calendar sessions={[]} />
+                    </Row>
+                    <Row>
+                        <ClassesContainer />
+                    </Row>
+                </Col>
+                <Col xl="6" lg="6" md="12">
+                    <Row>
+                        <AnnouncementsContainer
+                            refreshKey={refreshKey}
+                            userId={userData.id}
+                        />
+                    </Row>
+                    <Row>
+                        <p>test</p>
+                    </Row>
+                </Col>
+            </Row>
             {/* <Row className="content">
                 <Container fluid className="no-padding">
                     <Col xl="12" lg="12" md="12">
@@ -199,6 +220,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     </Col>
                 </Container>
             </Row> */}
-        </Container>
+        </div>
     );
 };

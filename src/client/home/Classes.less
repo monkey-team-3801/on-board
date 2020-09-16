@@ -1,0 +1,65 @@
+@import "../styles/Colours.less";
+
+.classes-container {
+    background-color: @content-bg;
+    h1 {
+        font-size: 24px;
+    }
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .classes-list {
+        max-height: 800px;
+        .class-container {
+            display: flex;
+            height: 200px;
+            background-color: grey;
+            margin: 10px 0px;
+            border-radius: 8px;
+            & > .row {
+                width: 100%;
+            }
+            .content {
+                display: flex;
+                height: 100%;
+                padding: 20px 0px;
+            }
+            .content-left {
+                .course-code-container {
+                    display: flex;
+                    width: 200px;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: rgba(0, 0, 0, 0.2);
+                    border-radius: 10px;
+                    h1 {
+                        color: white;
+                        margin: 0;
+                        text-align: center;
+                    }
+                }
+                .info-container {
+                    margin-left: 10px;
+                    color: white;
+                    h2 {
+                        font-size: 24px;
+                        margin: 0;
+                    }
+                    p {
+                        margin: 0;
+                    }
+                    .download-container {
+                        margin-top: 10px;
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                }
+            }
+        }
+        .content-right {
+            justify-content: flex-end;
+        }
+    }
+}

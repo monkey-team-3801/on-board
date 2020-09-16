@@ -1,53 +1,43 @@
-.calender {
-    margin-top: 5%;
-    margin-bottom: 5%;
+@import "../styles/Colours.less";
+
+.calendar {
+    background-color: @content-bg;
 }
 
 .calendar-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     margin: auto;
-    padding: 7%;
     padding-bottom: 0;
     font-size: 1em;
-    padding-top: 0.5%;
     text-align: center;
     height: auto;
     width: 100%;
 }
 
 .month-heading {
-    font-family: -apple-system, BlinkMacSystemFont, "Raleway";
-    width: 40%;
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 7.5%;
+    align-items: center;
     justify-content: center;
     font-size: 2em;
-    font-weight: normal;
-
-    .month {
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 65px;
+    margin-bottom: 20px;
+    .heading-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 600px;
+        .heading {
+            h1 {
+                font-size: 24px;
+                margin: 0;
+            }
+        }
     }
 
-    .year {
-        font-size: 1.23em;
-        font-weight: 600;
-        margin-left: 2%;
-    }
-
-    .left-chevron {
-        margin-right: 50%;
-        font-size: 1em;
-        color: #c38699;
-    }
+    .left-chevron,
     .right-chevron {
-        margin-left: 50%;
-        font-size: 1em;
         color: #c38699;
+        cursor: pointer;
     }
 }
 .calendar-date {
@@ -56,7 +46,7 @@
 }
 
 .calendar-date.today {
-    background-color: #5c4e8e;
+    background-color: @primary;
     color: #fff;
     padding: 5%;
     margin: auto;
@@ -67,17 +57,44 @@
     font-weight: bold;
 }
 
-@media screen and (max-width: 1366px) {
-    .calendar-container {
-        height: auto;
-        margin-top: 10%;
-        margin: auto;
-    }
-    .month-heading {
-        font-size: 2em;
-        height: 10px;
+.upcoming-events {
+    background-color: @dark;
+    height: 300px;
+    padding: 20px 50px;
+    margin: 10px 0px;
+    border-radius: 10px;
+    h1,
+    p {
+        color: white;
     }
 
-    .calender {
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        h1 {
+            font-size: 24px;
+        }
+    }
+
+    .events-container {
+        overflow: auto;
+        white-space: nowrap;
+        height: 200px;
+        .event {
+            width: 250px;
+            height: 100%;
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            hr {
+                width: 60%;
+                border-top: 5px solid;
+                border-radius: 4px;
+            }
+            p {
+                margin: 0;
+            }
+        }
     }
 }

@@ -1,8 +1,9 @@
 import React from "react";
+import { Dropdown } from "react-bootstrap";
 import { Link, RouteComponentProps } from "react-router-dom";
+
 import * as AiIcons from "react-icons/ai";
 import "./Navbar.less";
-import { Dropdown } from "react-bootstrap";
 
 type Props = RouteComponentProps;
 

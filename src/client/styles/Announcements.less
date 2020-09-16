@@ -1,32 +1,48 @@
-.announcement-container {
-    height: 250px !important;
-    overflow-y: scroll !important;
-    margin-left: 2%;
-}
+@import "../styles/Colours.less";
 
-.announcement-container::-webkit-scrollbar {
-    display: none;
-}
-
-.announcement {
-    border-bottom: solid 2px;
-    border-bottom-color: #5c4e8e;
-}
-
-.coursecode {
-    font-size: 18px !important;
-    color: #202020;
-    font-weight: 1000 !important;
-}
-
-.title {
-    font-size: 16px !important;
-    color: #202020;
-    font-weight: 600 !important;
-}
-
-.date {
-    font-size: 10px;
-    font-weight: 500;
-    color: #3c519f;
+.announcements-container {
+    background-color: @content-bg;
+    header {
+        width: 100%;
+        h1 {
+            text-align: center;
+            font-size: 25px;
+        }
+    }
+    .announcement-list {
+        max-height: 1000px;
+        overflow: auto;
+        .announcement {
+            margin-top: 50px;
+            header {
+                margin-left: 25px;
+                padding-left: 25px;
+                border-left: 5px solid grey;
+                p,
+                h2,
+                h3 {
+                    margin: 0;
+                }
+                h2 {
+                    font-size: 20px;
+                }
+                h3 {
+                    font-size: 18px;
+                }
+            }
+            .message,
+            .user {
+                margin-left: 55px;
+            }
+            .date {
+                font-size: 10px;
+                font-weight: 500;
+                color: #3c519f;
+            }
+            hr {
+                width: 100%;
+                margin: 0px 20%;
+            }
+        }
+    }
 }

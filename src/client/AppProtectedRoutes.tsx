@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps, Switch, Route } from "react-router-dom";
-import { Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
@@ -56,74 +56,76 @@ export const AppProtectedRoutes = (props: Props) => {
     return (
         <>
             <Navbar {...props} />
-            <Switch>
-                <SecuredRoute
-                    path="/home"
-                    render={(routerProps: RouteComponentProps) => {
-                        return (
-                            <UserHomeContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute path="/calendar-test" component={Calendar} />
+            <Container fluid>
+                <Switch>
+                    <SecuredRoute
+                        path="/home"
+                        render={(routerProps: RouteComponentProps) => {
+                            return (
+                                <UserHomeContainer
+                                    {...routerProps}
+                                    userData={{ username, id, courses }}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute path="/calendar-test" component={Calendar} />
 
-                <Route
-                    render={(routerProps: RouteComponentProps) => {
-                        return (
-                            <ClassOpenIndicator
-                                {...routerProps}
-                                event={eventData}
-                                onClose={() => {
-                                    setEventData(undefined);
-                                }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute
-                    path="/classroom/:classroomId"
-                    render={(
-                        routerProps: RouteComponentProps<{
-                            classroomId: string;
-                        }>
-                    ) => {
-                        return (
-                            <ClassroomPageContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute
-                    path="/room/:roomId"
-                    render={(
-                        routerProps: RouteComponentProps<{ roomId: string }>
-                    ) => {
-                        return (
-                            <PrivateRoomContainer
-                                {...routerProps}
-                                userData={{ username, id, courses }}
-                            />
-                        );
-                    }}
-                />
-                <SecuredRoute
-                    path="/calendar-test"
-                    render={(routerProps: RouteComponentProps) => {
-                        return <Calendar {...routerProps} sessions={[]} />;
-                    }}
-                />
-                <SecuredRoute
-                    path="/upload"
-                    render={() => {
-                        return <UploadTest userId={userData.id!} />;
-                    }}
-                />
-            </Switch>
+                    <Route
+                        render={(routerProps: RouteComponentProps) => {
+                            return (
+                                <ClassOpenIndicator
+                                    {...routerProps}
+                                    event={eventData}
+                                    onClose={() => {
+                                        setEventData(undefined);
+                                    }}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/classroom/:classroomId"
+                        render={(
+                            routerProps: RouteComponentProps<{
+                                classroomId: string;
+                            }>
+                        ) => {
+                            return (
+                                <ClassroomPageContainer
+                                    {...routerProps}
+                                    userData={{ username, id, courses }}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/room/:roomId"
+                        render={(
+                            routerProps: RouteComponentProps<{ roomId: string }>
+                        ) => {
+                            return (
+                                <PrivateRoomContainer
+                                    {...routerProps}
+                                    userData={{ username, id, courses }}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/calendar-test"
+                        render={(routerProps: RouteComponentProps) => {
+                            return <Calendar {...routerProps} sessions={[]} />;
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/upload"
+                        render={() => {
+                            return <UploadTest userId={userData.id!} />;
+                        }}
+                    />
+                </Switch>
+            </Container>
         </>
     );
 };
