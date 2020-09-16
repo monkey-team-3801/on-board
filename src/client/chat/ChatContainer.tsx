@@ -11,7 +11,7 @@ import { ChatLog } from "./ChatLog";
 type Props = {
     username: string;
     roomId: string;
-    initialChatLog: Array<MessageData>;
+    initialChatLog: Array<Omit<MessageData, "sessionId">>;
 };
 
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -34,7 +34,10 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     const transformData = React.useCallback(
-        (prev: Array<MessageData> | undefined, data: MessageData) => {
+        (
+            prev: Array<Omit<MessageData, "sessionId">> | undefined,
+            data: Omit<MessageData, "sessionId">
+        ) => {
             if (prev && data) {
                 return prev.concat([data]);
             } else {
@@ -45,7 +48,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     const { data, setData, socket } = useTransformingSocket<
-        Array<MessageData>,
+        Array<Omit<MessageData, "sessionId">>,
         ChatMessageReceiveType
     >(
         ChatEvent.CHAT_MESSAGE_RECEIVE,

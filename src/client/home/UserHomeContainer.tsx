@@ -3,13 +3,19 @@ import { RouteComponentProps } from "react-router-dom";
 import { Container, Row, Button, Col, Nav, Collapse } from "react-bootstrap";
 
 import { useFetch, useDynamicFetch, useSocket } from "../hooks";
-import { SessionResponseType } from "../../types";
+import {
+    SessionResponseType,
+    SessionRequestType,
+    RoomType,
+    SessionDeleteRequestType,
+} from "../../types";
 import {
     LocalStorageKey,
     RequestState,
     TopLayerContainerProps,
 } from "../types";
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
+import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import Navbar from "../navbar/Navbar";
@@ -32,7 +38,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        { id: string }
+        SessionDeleteRequestType
     >("session/delete", undefined, false);
 
     const [createRoomResponse, createRoom] = useDynamicFetch<
@@ -40,9 +46,19 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         { name: string }
     >("session/create", undefined, false);
 
-    const [sessionResponse, refresh] = useFetch<SessionResponseType>(
-        "session/sessions"
-    );
+    const [privateRoomsResponse, refreshPrivateRooms] = useFetch<
+        SessionResponseType,
+        SessionRequestType
+    >("session/sessions", {
+        roomType: RoomType.PRIVATE,
+    });
+
+    const [classroomsResponse, refreshClassrooms] = useFetch<
+        SessionResponseType,
+        SessionRequestType
+    >("session/sessions", {
+        roomType: RoomType.CLASS,
+    });
 
     const componentDidMount = React.useCallback(
         (socket: SocketIOClient.Socket) => {
@@ -68,18 +84,24 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     );
 
     const onDeleteClick = React.useCallback(
-        async (id: string) => {
-            await deleteRoom({
-                id,
-            });
-            await refresh();
+        async (request: SessionDeleteRequestType) => {
+            await deleteRoom(request);
+            await refreshPrivateRooms();
+            await refreshClassrooms();
         },
-        [deleteRoom, refresh]
+        [deleteRoom, refreshPrivateRooms, refreshClassrooms]
     );
 
-    const onJoinClick = React.useCallback(
+    const onPrivateRoomJoinClick = React.useCallback(
         (id: string) => {
             history.push(`/room/${id}`);
+        },
+        [history]
+    );
+
+    const onClassroomJoinClick = React.useCallback(
+        (id: string) => {
+            history.push(`/classroom/${id}`);
         },
         [history]
     );
@@ -98,7 +120,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    if (!requestIsLoaded(sessionResponse)) {
+    if (
+        !requestIsLoaded(privateRoomsResponse) ||
+        !requestIsLoaded(classroomsResponse)
+    ) {
         return <div>Loading</div>;
     }
 
@@ -107,74 +132,82 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row className="nav">
                 <Navbar />
             </Row>
-            <Row className="content">
-                <Container fluid className="no-padding">
-                    <Col xl="12" lg="12" md="12">
-                        <Container fluid className="no-padding">
-                            <Col className="left-col col-6">
-                                <Row className="calander no-padding">
-                                    <Calendar sessions={[]} />
-                                </Row>
-                                <Row className="classes no-padding">
-                                    <Row className="class-1">
-                                        <Col
-                                            xl="3"
-                                            lg="3"
-                                            className="course-code"
-                                        >
-                                            <h3>DECO 3801</h3>
-                                        </Col>
-                                        <Col
-                                            xl="5"
-                                            lg="5"
-                                            className="course-content"
-                                        >
-                                            <h5>Tutorial</h5>
-                                            <p>Today - 10:00</p>
-                                            <p>Download Class Content</p>
-                                        </Col>
-                                        <Col className="connect">
-                                            <h4>Connect</h4>
-                                        </Col>
-                                    </Row>
-                                    <Row className="class-2">
-                                        <Col
-                                            xl="3"
-                                            lg="3"
-                                            className="course-code"
-                                        >
-                                            <h3>CSSE 1001</h3>
-                                        </Col>
-                                        <Col
-                                            xl="5"
-                                            lg="5"
-                                            className="course-content"
-                                        >
-                                            <h5>Lecture</h5>
-                                            <p>Today - 12:00</p>
-                                            <p>Download Class Content</p>
-                                        </Col>
-                                        <Col className="connect">
-                                            <h4>Connect</h4>
-                                        </Col>
-                                    </Row>
-                                </Row>
-                            </Col>
-
-                            <Col className="right-col col-6">
-                                <Row className="announcemnts no-padding">
-                                    <AnnouncementsContainer
-                                        refreshKey={refreshKey}
-                                        userId={userData.id}
-                                    />
-                                </Row>
-                                <Row className="bottom-right no-padding">
-                                    <h1>Bottom-right</h1>
-                                </Row>
-                            </Col>
-                        </Container>
-                    </Col>
-                </Container>
+            <Row>
+                <Col>
+                    <p>
+                        Logged in as {userData.username}: {userData.id}
+                    </p>
+                </Col>
+                <Col>
+                    <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => {
+                            localStorage.setItem(LocalStorageKey.JWT_TOKEN, "");
+                            props.history.replace("/");
+                        }}
+                    >
+                        Logout
+                    </Button>
+                </Col>
+            </Row>
+            <Row>
+                <RoomDisplayContainer
+                    data={classroomsResponse.data.sessions}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.CLASS,
+                        });
+                    }}
+                    onJoinClick={onClassroomJoinClick}
+                />
+            </Row>
+            <hr></hr>
+            <Row>
+                <RoomDisplayContainer
+                    data={privateRoomsResponse.data.sessions}
+                    onDeleteClick={async (id: string) => {
+                        onDeleteClick({
+                            id,
+                            roomType: RoomType.PRIVATE,
+                        });
+                    }}
+                    onJoinClick={onPrivateRoomJoinClick}
+                />
+            </Row>
+            <Row>
+                <CreateRoomPage
+                    createRoom={async (name: string) => {
+                        await createRoom({ name });
+                        await refreshPrivateRooms();
+                    }}
+                />
+            </Row>
+            <Row>
+                <Col>
+                    <EnrolFormContainer
+                        refresh={refreshAnnouncements}
+                        userId={userData.id}
+                        socket={socket}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <ScheduleRoomFormContainer userId={userData.id} />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CreateAnnouncementsForm userId={userData.id} />
+                </Col>
+                <Col>
+                    <AnnouncementsContainer
+                        refreshKey={refreshKey}
+                        userId={userData.id}
+                    />
+                </Col>
             </Row>
         </Container>
     );

@@ -11,7 +11,7 @@
 ![Node.js CI](https://github.com/monkey-team-3801/on-board/workflows/Node.js%20CI/badge.svg)
 ![Deploy](https://github.com/monkey-team-3801/on-board/workflows/Deploy/badge.svg)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/monkey-team-3801/on-board/blob/master/LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/Naereen/StrapDown.js.svg)](https://GitHub.com/monkey-team-3801/on-board/graphs/contributors/)
+[![GitHub contributors](https://img.shields.io/github/contributors/Naereen/StrapDown.js.svg)](https://GitHub.com/monkey-team-3801/on-board/graphs/contributors)
 [![GitHub issues-closed](https://img.shields.io/github/issues-closed/Naereen/StrapDown.js.svg)](https://GitHub.com/monkey-team-3801/on-board/issues?q=is%3Aissue+is%3Aclosed)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/monkey-team-3801/on-board/pulse)
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://on-board-prod.herokuapp.com/)
