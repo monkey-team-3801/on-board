@@ -5,11 +5,14 @@ import {
     GetAnnouncementsResponseType,
 } from "../../types";
 import { requestIsLoaded } from "../utils";
-import { Container, Row, Col } from "react-bootstrap";
-import "../styles/Announcements.less";
+import { Container, Row } from "react-bootstrap";
+
+import "./Announcements.less";
+import { AnnouncementEntry } from "./AnnouncementEntry";
 type Props = {
     userId: string;
     refreshKey: number;
+    setShowLoader: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
@@ -37,76 +40,17 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container className="content-container" fluid>
-            <Container
-                className="content-internal announcements-container"
-                fluid
-            >
-                <Row>
-                    <header>
-                        <h1>Announcements</h1>
-                    </header>
-                </Row>
-                <div className="announcement-list">
-                    {announcementsData.data.announcements.map(
-                        (announcement, i) => {
-                            return (
-                                <Row className="announcement" key={i}>
-                                    <Container>
-                                        <Row>
-                                            <Col>
-                                                <Row>
-                                                    <header
-                                                        style={{
-                                                            borderLeftColor: `#${Math.floor(
-                                                                Math.random() *
-                                                                    16777215
-                                                            )
-                                                                .toString(16)
-                                                                .toString()}`,
-                                                        }}
-                                                    >
-                                                        <h2 className="coursecode">
-                                                            {
-                                                                announcement.courseCode
-                                                            }
-                                                        </h2>
-                                                        <h3 className="title">
-                                                            {announcement.title}
-                                                        </h3>
-                                                        <p className="date">
-                                                            {new Date(
-                                                                announcement.date
-                                                            ).toDateString()}
-                                                        </p>
-                                                    </header>
-                                                </Row>
-                                                <Row>
-                                                    <div className="message">
-                                                        <p>
-                                                            {
-                                                                announcement.content
-                                                            }
-                                                        </p>
-                                                    </div>
-                                                </Row>
-                                                <Row>
-                                                    <div className="user">
-                                                        <p>
-                                                            {announcement.user}
-                                                        </p>
-                                                    </div>
-                                                </Row>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                    <hr />
-                                </Row>
-                            );
-                        }
-                    )}
-                </div>
-            </Container>
-        </Container>
+        <>
+            <div className="announcement-list">
+                {announcementsData.data.announcements.map((announcement, i) => {
+                    return (
+                        <Row className="announcement" key={i}>
+                            <AnnouncementEntry announcement={announcement} />
+                            <hr />
+                        </Row>
+                    );
+                })}
+            </div>
+        </>
     );
 };

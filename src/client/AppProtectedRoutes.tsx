@@ -113,12 +113,6 @@ export const AppProtectedRoutes = (props: Props) => {
                         }}
                     />
                     <SecuredRoute
-                        path="/calendar-test"
-                        render={(routerProps: RouteComponentProps) => {
-                            return <Calendar {...routerProps} sessions={[]} />;
-                        }}
-                    />
-                    <SecuredRoute
                         path="/upload"
                         render={() => {
                             return <UploadTest userId={userData.id!} />;

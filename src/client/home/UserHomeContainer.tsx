@@ -19,13 +19,14 @@ import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 
-import { Calendar, UpcomingEventsContainer } from "../timetable/";
+import { Calendar, UpcomingEventsContainer } from "../timetable";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
 import { AnnouncementEvent } from "../../events";
 import "../styles/Homepage.less";
 import { ClassesContainer } from "./ClassesContainer";
+import { ContainerWrapper } from "../components";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -133,93 +134,86 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>
-                        <Calendar sessions={[]} />
+                        <ContainerWrapper className="calendar">
+                            {(setShowLoader) => {
+                                return (
+                                    <Calendar
+                                        setShowLoader={setShowLoader}
+                                        sessions={[]}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ClassesContainer />
+                        <ContainerWrapper
+                            className="classes-container"
+                            title="Classes"
+                        >
+                            {(setShowLoader) => {
+                                return (
+                                    <ClassesContainer
+                                        setShowLoader={setShowLoader}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
                     </Row>
                 </Col>
                 <Col xl="6" lg="6" md="12">
                     <Row>
-                        <AnnouncementsContainer
-                            refreshKey={refreshKey}
-                            userId={userData.id}
-                        />
-                    </Row>
-                    <Row>
-                        <p>test</p>
-                    </Row>
-                </Col>
-            </Row>
-            {/* <Row className="content">
-                <Container fluid className="no-padding">
-                    <Col xl="12" lg="12" md="12">
-                        <Container fluid className="no-padding">
-                            <Col className="left-col col-6">
-                                <Row className="calander no-padding">
-                                    <Calendar sessions={[]} />
-                                </Row>
-                                <Row className="classes no-padding">
-                                    <Row className="class-1">
-                                        <Col
-                                            xl="3"
-                                            lg="3"
-                                            className="course-code"
-                                        >
-                                            <h3>DECO 3801</h3>
-                                        </Col>
-                                        <Col
-                                            xl="5"
-                                            lg="5"
-                                            className="course-content"
-                                        >
-                                            <h5>Tutorial</h5>
-                                            <p>Today - 10:00</p>
-                                            <p>Download Class Content</p>
-                                        </Col>
-                                        <Col className="connect">
-                                            <h4>Connect</h4>
-                                        </Col>
-                                    </Row>
-                                    <Row className="class-2">
-                                        <Col
-                                            xl="3"
-                                            lg="3"
-                                            className="course-code"
-                                        >
-                                            <h3>CSSE 1001</h3>
-                                        </Col>
-                                        <Col
-                                            xl="5"
-                                            lg="5"
-                                            className="course-content"
-                                        >
-                                            <h5>Lecture</h5>
-                                            <p>Today - 12:00</p>
-                                            <p>Download Class Content</p>
-                                        </Col>
-                                        <Col className="connect">
-                                            <h4>Connect</h4>
-                                        </Col>
-                                    </Row>
-                                </Row>
-                            </Col>
-
-                            <Col className="right-col col-6">
-                                <Row className="announcemnts no-padding">
+                        <ContainerWrapper
+                            className="announcements-container"
+                            title="Announcements"
+                        >
+                            {(setShowLoader) => {
+                                return (
                                     <AnnouncementsContainer
                                         refreshKey={refreshKey}
                                         userId={userData.id}
+                                        setShowLoader={setShowLoader}
                                     />
-                                </Row>
-                                <Row className="bottom-right no-padding">
-                                    <h1>Bottom-right</h1>
-                                </Row>
-                            </Col>
-                        </Container>
-                    </Col>
-                </Container>
-            </Row> */}
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper>
+                            {(setShowLoader) => {
+                                return (
+                                    <EnrolFormContainer
+                                        refresh={refreshAnnouncements}
+                                        userId={userData.id}
+                                        socket={socket}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper>
+                            {(setShowLoader) => {
+                                return (
+                                    <ScheduleRoomFormContainer
+                                        userId={userData.id}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper>
+                            {(setShowLoader) => {
+                                return (
+                                    <CreateAnnouncementsForm
+                                        userId={userData.id}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                </Col>
+            </Row>
         </div>
     );
 };

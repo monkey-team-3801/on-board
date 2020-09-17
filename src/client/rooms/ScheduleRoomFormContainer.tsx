@@ -63,7 +63,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container style={{ height: 600 }}>
+        <Container>
             <Row>
                 <h3>Create Classroom</h3>
             </Row>
