@@ -12,7 +12,6 @@ import { socket } from "../io";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 
-
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
 
