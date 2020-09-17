@@ -14,7 +14,7 @@ import {
     RequestState,
     TopLayerContainerProps,
 } from "../types";
-import { CreateRoomPage } from "../rooms/CreateRoomPage";
+import { CreateRoomForm } from "../rooms/CreateRoomForm";
 import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
@@ -134,7 +134,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>
-                        <ContainerWrapper className="calendar">
+                        <ContainerWrapper className="calendar" title="Calendar">
                             {(setShowLoader) => {
                                 return (
                                     <Calendar
@@ -154,6 +154,58 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <ClassesContainer
                                         setShowLoader={setShowLoader}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper>
+                            {(setShowLoader) => {
+                                return (
+                                    <CreateRoomForm
+                                        createRoom={async (name: string) => {
+                                            await createRoom({ name });
+                                            await refreshPrivateRooms();
+                                        }}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper title="Private rooms">
+                            {(setShowLoader) => {
+                                return (
+                                    <RoomDisplayContainer
+                                        data={
+                                            privateRoomsResponse.data.sessions
+                                        }
+                                        onDeleteClick={async (id: string) => {
+                                            onDeleteClick({
+                                                id,
+                                                roomType: RoomType.PRIVATE,
+                                            });
+                                        }}
+                                        onJoinClick={onPrivateRoomJoinClick}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper title="Class rooms">
+                            {(setShowLoader) => {
+                                return (
+                                    <RoomDisplayContainer
+                                        data={classroomsResponse.data.sessions}
+                                        onDeleteClick={async (id: string) => {
+                                            onDeleteClick({
+                                                id,
+                                                roomType: RoomType.CLASS,
+                                            });
+                                        }}
+                                        onJoinClick={onClassroomJoinClick}
                                     />
                                 );
                             }}
