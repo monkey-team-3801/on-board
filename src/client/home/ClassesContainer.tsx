@@ -40,7 +40,7 @@ const Class = () => {
                         </div>
                         <div className="info-container">
                             <h2>Tutorial</h2>
-                            <p>Today - 11AM</p>
+                            <p>Today at 11AM</p>
                             <div className="download-container">
                                 <Button variant="light" size="sm">
                                     Download Class Content
@@ -51,7 +51,9 @@ const Class = () => {
                 </Col>
                 <Col xl="6" lg="6" md="12">
                     <div className="content content-right">
-                        <Button variant="light">Connect</Button>
+                        <div className="connect">
+                            <Button variant="light">Connect</Button>
+                        </div>
                     </div>
                 </Col>
             </Row>

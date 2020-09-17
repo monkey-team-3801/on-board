@@ -20,6 +20,14 @@ nav.on-board-nav {
                     background-color: @primary-dark;
                 }
             }
+            .welcome {
+                display: flex;
+                align-items: center;
+                padding-right: 10px;
+                p {
+                    margin: 0;
+                }
+            }
         }
         .logo-container {
             .logo {
@@ -82,107 +90,5 @@ nav.on-board-nav {
             background-color: @primary-dark;
             border: none;
         }
-    }
-}
-
-.my-nav {
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    .navbar {
-        background: linear-gradient(
-            90deg,
-            rgb(89, 76, 139) 0%,
-            rgb(124, 113, 165) 100%
-        );
-        width: 100vw;
-
-        height: 70px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.2rem;
-    }
-
-    .nav-menu {
-        display: grid;
-        grid-template-columns: repeat(3, auto);
-        grid-gap: 100px;
-        list-style: none;
-        text-align: center;
-        width: 70vw;
-        justify-content: center;
-        margin-right: 2rem;
-    }
-
-    .navbar-logo {
-        color: #fff;
-        justify-self: endnd;
-        margin-left: 5px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 2rem;
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-        height: 80px;
-    }
-
-    .menu-bars {
-        margin-left: 2rem;
-        font-size: 1em;
-        background: none;
-    }
-
-    .nav-text {
-        margin-top: 5%;
-        display: grid;
-        position: relative;
-        justify-content: center;
-        margin: auto;
-        align-items: center;
-        padding: 18px, 60px, 58px, 106px;
-        list-style: none;
-        height: 60px;
-        text-align: right;
-    }
-
-    .nav-text a {
-        text-decoration: none;
-        color: white;
-        opacity: 0.3;
-        font-size: 13px;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: 5px 16px;
-        margin: auto;
-
-        font-weight: bold;
-    }
-
-    .nav-text a svg {
-        font-size: 1.8em;
-    }
-
-    .nav-text a:hover {
-        color: #fff;
-        opacity: 1;
-    }
-
-    .nav-menu-items {
-        width: 100%;
-        position: absolute;
-        top: 20%;
-    }
-
-    span {
-        margin-left: 10px;
     }
 }

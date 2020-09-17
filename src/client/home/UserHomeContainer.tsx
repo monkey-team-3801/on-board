@@ -122,12 +122,12 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    if (
-        !requestIsLoaded(privateRoomsResponse) ||
-        !requestIsLoaded(classroomsResponse)
-    ) {
-        return <div>Loading</div>;
-    }
+    // if (
+    //     !requestIsLoaded(privateRoomsResponse) ||
+    //     !requestIsLoaded(classroomsResponse)
+    // ) {
+    //     return <div>Loading</div>;
+    // }
 
     return (
         <div className="homepage">
@@ -177,18 +177,23 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         <ContainerWrapper title="Private rooms">
                             {(setShowLoader) => {
                                 return (
-                                    <RoomDisplayContainer
-                                        data={
-                                            privateRoomsResponse.data.sessions
-                                        }
-                                        onDeleteClick={async (id: string) => {
-                                            onDeleteClick({
-                                                id,
-                                                roomType: RoomType.PRIVATE,
-                                            });
-                                        }}
-                                        onJoinClick={onPrivateRoomJoinClick}
-                                    />
+                                    privateRoomsResponse.data && (
+                                        <RoomDisplayContainer
+                                            data={
+                                                privateRoomsResponse.data
+                                                    .sessions
+                                            }
+                                            onDeleteClick={async (
+                                                id: string
+                                            ) => {
+                                                onDeleteClick({
+                                                    id,
+                                                    roomType: RoomType.PRIVATE,
+                                                });
+                                            }}
+                                            onJoinClick={onPrivateRoomJoinClick}
+                                        />
+                                    )
                                 );
                             }}
                         </ContainerWrapper>
@@ -197,16 +202,22 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         <ContainerWrapper title="Class rooms">
                             {(setShowLoader) => {
                                 return (
-                                    <RoomDisplayContainer
-                                        data={classroomsResponse.data.sessions}
-                                        onDeleteClick={async (id: string) => {
-                                            onDeleteClick({
-                                                id,
-                                                roomType: RoomType.CLASS,
-                                            });
-                                        }}
-                                        onJoinClick={onClassroomJoinClick}
-                                    />
+                                    classroomsResponse.data && (
+                                        <RoomDisplayContainer
+                                            data={
+                                                classroomsResponse.data.sessions
+                                            }
+                                            onDeleteClick={async (
+                                                id: string
+                                            ) => {
+                                                onDeleteClick({
+                                                    id,
+                                                    roomType: RoomType.CLASS,
+                                                });
+                                            }}
+                                            onJoinClick={onClassroomJoinClick}
+                                        />
+                                    )
                                 );
                             }}
                         </ContainerWrapper>

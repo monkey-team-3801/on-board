@@ -15,6 +15,7 @@ import { ClassEvent } from "../events";
 import { ClassOpenIndicator } from "./components";
 import { ClassOpenEventData } from "./types";
 import { Navbar } from "./navbar";
+import { ClassesPageContainer } from "./classes";
 
 type Props = RouteComponentProps;
 
@@ -55,18 +56,12 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
-            <Navbar {...props} />
-            <Route
-                render={(routerProps: RouteComponentProps) => {
-                    return (
-                        <ClassOpenIndicator
-                            {...routerProps}
-                            event={eventData}
-                            onClose={() => {
-                                setEventData(undefined);
-                            }}
-                        />
-                    );
+            <Navbar {...props} username={data?.username} />
+            <ClassOpenIndicator
+                {...props}
+                event={eventData}
+                onClose={() => {
+                    setEventData(undefined);
                 }}
             />
             <Container fluid>
@@ -80,6 +75,12 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{ username, id, courses }}
                                 />
                             );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/classes"
+                        render={(routerProps: RouteComponentProps) => {
+                            return <ClassesPageContainer />;
                         }}
                     />
                     <SecuredRoute

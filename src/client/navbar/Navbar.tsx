@@ -4,8 +4,11 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as AiIcons from "react-icons/ai";
 import "./Navbar.less";
+import { LocalStorageKey } from "../types";
 
-type Props = RouteComponentProps;
+type Props = RouteComponentProps & {
+    username?: string;
+};
 
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
     return (
@@ -16,7 +19,7 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                 </div>
                 <div className="control">
                     <Link
-                        to="home"
+                        to="/home"
                         className={`link ${
                             props.location.pathname === "/home" ? "active" : ""
                         }`}
@@ -25,7 +28,7 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                         <p>Home</p>
                     </Link>
                     <Link
-                        to="classes"
+                        to="/classes"
                         className={`link ${
                             props.location.pathname === "/classes"
                                 ? "active"
@@ -38,6 +41,9 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                 </div>
             </div>
             <div className="nav-control right">
+                <div className="welcome">
+                    <p>Welcome {props.username}</p>
+                </div>
                 <Dropdown className="dropdown-override">
                     <Dropdown.Toggle>
                         <AiIcons.AiOutlineMenu className="icon" />
@@ -46,36 +52,20 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                         <Dropdown.Header>Settings</Dropdown.Header>
                         <Dropdown.Item>Profile</Dropdown.Item>
                         <Dropdown.Divider />
-                        <Dropdown.Item>Logout</Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => {
+                                localStorage.setItem(
+                                    LocalStorageKey.JWT_TOKEN,
+                                    ""
+                                );
+                                props.history.replace("/");
+                            }}
+                        >
+                            Logout
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-                {/* <div>
-                
-                </div> */}
             </div>
         </nav>
     );
-
-    // return (
-
-    //     <div className="my-nav">
-    //         <div className="navbar responsive">
-    //             <nav className="navbar active nav-menu responsive">
-    //                 <div className="navbar-logo">Logo</div>
-    //                 <ul className="nav-menu">
-    //                     {NavbarData.map((item, index) => {
-    //                         return (
-    //                             <li key={index} className={item.cName}>
-    //                                 <Link to={item.path}>
-    //                                     {item.icon}
-    //                                     <span>{item.title}</span>
-    //                                 </Link>
-    //                             </li>
-    //                         );
-    //                     })}
-    //                 </ul>
-    //             </nav>
-    //         </div>
-    //     </div>
-    // );
 };
