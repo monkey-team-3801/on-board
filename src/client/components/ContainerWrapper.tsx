@@ -18,7 +18,7 @@ export const ContainerWrapper: React.FunctionComponent<Props> = (
         true
     );
 
-    const [showLoader, setShowLoader] = React.useState<boolean>(false);
+    const [, setShowLoader] = React.useState<boolean>(false);
 
     return (
         <Container className="content-container" fluid>

@@ -1,21 +1,19 @@
 import React from "react";
-import { RouteComponentProps, Switch, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
-
+import { RouteComponentProps, Switch } from "react-router-dom";
+import { ClassEvent } from "../events";
+import { UserDataResponseType } from "../types";
+import { SecuredRoute } from "./auth/SecuredRoute";
+import { ClassesPageContainer } from "./classes";
+import { ClassOpenIndicator } from "./components";
+import { UploadTest } from "./filehandler/UploadTest";
+import { UserHomeContainer } from "./home/UserHomeContainer";
+import { useFetch, useSocket } from "./hooks";
+import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
-import { Calendar } from "./timetable/Calendar";
-import { SecuredRoute } from "./auth/SecuredRoute";
-import { UserHomeContainer } from "./home/UserHomeContainer";
-import { UserDataResponseType } from "../types";
-import { useFetch, useSocket } from "./hooks";
-import { requestIsLoaded } from "./utils";
-import { UploadTest } from "./filehandler/UploadTest";
-import { ClassEvent } from "../events";
-import { ClassOpenIndicator } from "./components";
 import { ClassOpenEventData } from "./types";
-import { Navbar } from "./navbar";
-import { ClassesPageContainer } from "./classes";
+import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
 

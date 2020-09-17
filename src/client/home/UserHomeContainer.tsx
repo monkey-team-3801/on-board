@@ -1,32 +1,25 @@
 import React from "react";
+import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { Container, Row, Button, Col, Nav, Collapse } from "react-bootstrap";
-
-import { useFetch, useDynamicFetch, useSocket } from "../hooks";
+import { AnnouncementEvent } from "../../events";
 import {
-    SessionResponseType,
-    SessionRequestType,
     RoomType,
     SessionDeleteRequestType,
+    SessionRequestType,
+    SessionResponseType,
 } from "../../types";
-import {
-    LocalStorageKey,
-    RequestState,
-    TopLayerContainerProps,
-} from "../types";
-import { CreateRoomForm } from "../rooms/CreateRoomForm";
-import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
-import { requestIsLoaded } from "../utils";
-import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
-
-import { Calendar, UpcomingEventsContainer } from "../timetable";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
-import { EnrolFormContainer } from "../courses";
-import { AnnouncementEvent } from "../../events";
-import "../styles/Homepage.less";
-import { ClassesContainer } from "./ClassesContainer";
 import { ContainerWrapper } from "../components";
+import { EnrolFormContainer } from "../courses";
+import { useDynamicFetch, useFetch, useSocket } from "../hooks";
+import { CreateRoomForm } from "../rooms/CreateRoomForm";
+import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
+import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
+import "../styles/Homepage.less";
+import { Calendar } from "../timetable";
+import { RequestState, TopLayerContainerProps } from "../types";
+import { ClassesContainer } from "./ClassesContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 

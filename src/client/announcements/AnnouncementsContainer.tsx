@@ -5,7 +5,7 @@ import {
     GetAnnouncementsResponseType,
 } from "../../types";
 import { requestIsLoaded } from "../utils";
-import { Container, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 
 import "./Announcements.less";
 import { AnnouncementEntry } from "./AnnouncementEntry";
