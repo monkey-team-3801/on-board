@@ -11,6 +11,7 @@ import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
 import { DrawingCanvas } from "../canvas";
 import { RoomEvent } from "../../events";
+import { socket } from "../io";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -18,23 +19,19 @@ type Props = RouteComponentProps<{ roomId: string }> &
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { roomId } = props.match.params;
     const [sessionResponse] = useFetch<SessionData, { id: string }>(
         "/session/getPrivateSession",
         {
-            id: props.match.params.roomId,
+            id: roomId,
         }
     );
 
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
-            return socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
-                sessionId: props.match.params.roomId,
-            });
-        },
-        [props.match.params.roomId]
-    );
-
-    useSocket("", undefined, componentDidMount);
+    React.useEffect(() => {
+        socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
+            sessionId: roomId,
+        });
+    }, [roomId]);
 
     if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;
@@ -50,7 +47,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row>
                 <Col>
-                    <p>Room ID: {props.match.params.roomId}</p>
+                    <p>Room ID: {roomId}</p>
                 </Col>
                 <Col>
                     <Button
@@ -67,21 +64,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col>
                     <ChatContainer
-                        roomId={props.match.params.roomId}
+                        roomId={roomId}
                         username={props.userData.username}
                         initialChatLog={sessionResponse.data.messages}
                     />
                 </Col>
                 <Col>
                     <Row>
-                        <FileContainer
-                            sessionID={props.match.params.roomId}
-                        ></FileContainer>
+                        <FileContainer sessionID={roomId}></FileContainer>
                     </Row>
                     <Row>
                         <UploadContainer
                             uploadType={FileUploadType.DOCUMENTS}
-                            sessionID={props.match.params.roomId}
+                            sessionID={roomId}
                         ></UploadContainer>
                     </Row>
                 </Col>

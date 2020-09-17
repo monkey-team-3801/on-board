@@ -41,7 +41,7 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
         socket: SocketIOClient.Socket
     ) => SocketIOClient.Socket,
     transformSocketData?: (prev: T | undefined, data: S) => T | undefined,
-    onEventEmit?: (data: any) => void
+    onEventEmit?: (data: S) => void
 ): {
     data: T | undefined;
     setData: React.Dispatch<React.SetStateAction<T | undefined>>;
