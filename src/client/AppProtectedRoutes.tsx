@@ -56,6 +56,19 @@ export const AppProtectedRoutes = (props: Props) => {
     return (
         <>
             <Navbar {...props} />
+            <Route
+                render={(routerProps: RouteComponentProps) => {
+                    return (
+                        <ClassOpenIndicator
+                            {...routerProps}
+                            event={eventData}
+                            onClose={() => {
+                                setEventData(undefined);
+                            }}
+                        />
+                    );
+                }}
+            />
             <Container fluid>
                 <Switch>
                     <SecuredRoute
@@ -65,21 +78,6 @@ export const AppProtectedRoutes = (props: Props) => {
                                 <UserHomeContainer
                                     {...routerProps}
                                     userData={{ username, id, courses }}
-                                />
-                            );
-                        }}
-                    />
-                    <SecuredRoute path="/calendar-test" component={Calendar} />
-
-                    <Route
-                        render={(routerProps: RouteComponentProps) => {
-                            return (
-                                <ClassOpenIndicator
-                                    {...routerProps}
-                                    event={eventData}
-                                    onClose={() => {
-                                        setEventData(undefined);
-                                    }}
                                 />
                             );
                         }}
