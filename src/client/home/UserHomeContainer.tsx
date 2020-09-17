@@ -115,13 +115,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         return <div>Error while deleting room</div>;
     }
 
-    // if (
-    //     !requestIsLoaded(privateRoomsResponse) ||
-    //     !requestIsLoaded(classroomsResponse)
-    // ) {
-    //     return <div>Loading</div>;
-    // }
-
     return (
         <div className="homepage">
             <Row>
