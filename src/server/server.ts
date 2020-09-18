@@ -13,6 +13,7 @@ import {
     ChatEvent,
     ChatMessageSendType,
     AnnouncementEvent,
+    CanvasEvent,
 } from "../events";
 
 import {
@@ -50,6 +51,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+    socket.on(CanvasEvent.DRAW, (data) => {
+        socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
+    });
 });
 
 app.use(bodyParser.json());

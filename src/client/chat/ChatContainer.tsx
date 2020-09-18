@@ -4,7 +4,7 @@ import { Container, Row, Button, Col, Form } from "react-bootstrap";
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
 import { MessageData, NewMessageRequestType } from "../../types";
-import { ChatEvent, ChatMessageReceiveType, RoomEvent } from "../../events";
+import { ChatEvent, ChatMessageReceiveType } from "../../events";
 import { RequestState } from "../types";
 import { ChatLog } from "./ChatLog";
 
@@ -23,15 +23,6 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         undefined,
         NewMessageRequestType
     >("/chat/newMessage", undefined, false);
-
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
-            return socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
-                sessionId: props.roomId,
-            });
-        },
-        [props.roomId]
-    );
 
     const transformData = React.useCallback(
         (
@@ -53,7 +44,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     >(
         ChatEvent.CHAT_MESSAGE_RECEIVE,
         props.initialChatLog,
-        componentDidMount,
+        undefined,
         transformData
     );
 

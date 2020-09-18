@@ -179,3 +179,16 @@ export type FileStorageType = {
     size: number;
     file: Buffer;
 };
+
+export type SaveCanvasRequestType = {
+    sessionId: string;
+    canvasData?: string;
+};
+
+export type GetCanvasResponseType = {
+    canvasData?: string;
+};
+
+export type GetCanvasRequestType = {
+    sessionId: string;
+};
