@@ -31,7 +31,7 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
 router.get(
     "/:course_code",
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
-        async (req, res) => {
+        async (req, res, next) => {
             try {
                 const course = await Course.findOne({
                     code: req.params.course_code,
@@ -48,7 +48,6 @@ router.get(
                     TutorsList: course.TutorsList,
                 });
             } catch (e) {
-                console.log("error", e);
                 res.status(500).end();
             }
         }
@@ -57,19 +56,20 @@ router.get(
 
 router.get(
     "/",
-    asyncHandler<CoursesResponseType, {}, {}>(async (req, res) => {
+    asyncHandler<CoursesResponseType, {}, {}>(async (req, res, next) => {
         try {
             res.json(await findAllCourses());
         } catch (e) {
             console.log("error", e);
-            res.status(500).end();
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
     })
 );
 
 router.post(
     "/list",
-    asyncHandler<CourseListResponseType>(async (req, res) => {
+    asyncHandler<CourseListResponseType>(async (req, res, next) => {
         try {
             res.json(
                 (await findAllCourses()).map((course) => {
@@ -80,14 +80,15 @@ router.post(
             );
         } catch (e) {
             console.log("error", e);
-            res.status(500).end();
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
     })
 );
 
 router.post(
     "/list",
-    asyncHandler<CourseListResponseType>(async (req, res) => {
+    asyncHandler<CourseListResponseType>(async (req, res, next) => {
         try {
             res.json(
                 (await findAllCourses()).map((course) => {
@@ -98,7 +99,8 @@ router.post(
             );
         } catch (e) {
             console.log("error", e);
-            res.status(500).end();
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
     })
 );

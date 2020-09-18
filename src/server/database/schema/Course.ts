@@ -9,9 +9,13 @@ interface ICourse extends mongoose.Document {
     code: string;
     description: string;
     activities: Array<CourseActivityResponseType>;
+<<<<<<< HEAD
     StudentsList: Array<UserDataResponseType>;
     TutorsList: Array<UserDataResponseType>;
     announcements: Array<CourseAnnouncementsType>;
+=======
+    announcements: Array<CourseAnnouncementsType & { username: string }>;
+>>>>>>> master
 }
 
 const CourseSchema = new mongoose.Schema<ICourse>({
