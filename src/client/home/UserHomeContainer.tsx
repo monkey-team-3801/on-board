@@ -12,7 +12,7 @@ import {
 import { CreateRoomPage } from "../rooms/CreateRoomPage";
 import { requestIsLoaded } from "../utils";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
-import { SignInEvent } from "../../events";
+import { SignInEvent, SendOnlineUsersEvent } from "../../events";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { EnrolFormContainer } from "../courses";
@@ -65,7 +65,21 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         }
     );
 
-    socket.emit(SignInEvent.USER_SIGNEDIN);
+    socket.emit(SignInEvent.USER_SIGNEDIN, userData.username);
+    
+    /*
+    socket.on(SendOnlineUsersEvent.ONLINE_USERS_LIST, function (data: {
+        ONLINE_USERS_LIST: any;
+    }) {
+        console.log(data.ONLINE_USERS_LIST);
+    });
+*/
+
+    socket.on(SendOnlineUsersEvent.ONLINE_USERS_LIST, function (
+        data: Array<{}>
+    ) {
+        console.log(data);
+    });
 
     const onDeleteClick = React.useCallback(
         async (id: string) => {
@@ -108,6 +122,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 <h1>User Homepage</h1>
             </Row>
             <Row>
+                <h1> Online Users: {} </h1>
+            </Row>
+            <Row>
                 <Col>
                     <p>
                         Logged in as {userData.username}: {userData.id}
@@ -126,6 +143,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     </Button>
                 </Col>
             </Row>
+
             <Row>
                 <RoomDisplayContainer
                     data={sessionResponse.data.sessions}
@@ -158,6 +176,13 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     <AnnouncementsContainer
                         refreshKey={refreshKey}
                         userId={userData.id}
+                    />
+                </Col>
+                <Col>
+                    <EnrolFormContainer
+                        refresh={refreshAnnouncements}
+                        userId={userData.id}
+                        socket={socket}
                     />
                 </Col>
             </Row>

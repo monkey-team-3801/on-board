@@ -51,12 +51,11 @@ export type CourseDataUnique = {
     description: string;
 };
 
-export type CourseResponseType = CourseDataUnique &
-      {
-        activities: Array<CourseActivityResponseType>;
-        StudentsList: Array<UserDataResponseType>;
-        TutorsList: Array<UserDataResponseType>;
-    };
+export type CourseResponseType = CourseDataUnique & {
+    activities: Array<CourseActivityResponseType>;
+    StudentsList: Array<UserDataResponseType>;
+    TutorsList: Array<UserDataResponseType>;
+};
 
 export type CoursesType = Array<CourseResponseType>;
 
@@ -108,7 +107,7 @@ export type UserDataResponseType = {
     id: string;
     username: string;
     userType: UserType;
-    userStatus: UserStatus;
+    isUserOnline: boolean;
     courses: Array<string>;
 };
 
@@ -148,8 +147,3 @@ export type GetAnnouncementsRequestType = WithUserId;
 export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType>;
 };
-
-export enum UserStatus {
-    ONLINE,
-    OFFLINE,
-}

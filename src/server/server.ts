@@ -14,6 +14,7 @@ import {
     ChatMessageSendType,
     SignInEvent,
     AnnouncementEvent,
+    SendOnlineUsersEvent,
 } from "../events";
 
 import {
@@ -26,24 +27,57 @@ import {
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
+import { UserDataResponseType } from "../types";
+import { User } from "./database/schema";
 
 dotenv.config();
 
 const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
+let onlineUsers: Array<string> = [];
 
 io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
         socket.join(data.sessionId);
     });
+
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
-    socket.on(SignInEvent.USER_SIGNEDIN, (UserStatus) => {
-        console.log("a User signed in");
-    });
+
+    socket.on(
+        SignInEvent.USER_SIGNEDIN,
+        async (data: UserDataResponseType["username"]) => {
+            const user = await User.findOne({ data });
+
+            if (user == null) {
+                return;
+            } else {
+                user.isUserOnline = true;
+
+                console.log(user.isUserOnline);
+                //onlineUsers.push(data);
+                socket.emit(SendOnlineUsersEvent.ONLINE_USERS_LIST, {
+                    onlineUsers,
+                });
+            }
+        }
+    );
+
+    /*
+
+    socket.on(SignInEvent.USER_SIGNEDIN, (data: UserDataResponseType["username"]) => {
+
+            onlineUsers.push(data);
+            socket.broadcast.emit(SendOnlineUsersEvent.ONLINE_USERS_LIST, {
+                onlineUsers,
+            });
+            console.log(onlineUsers);
+        }
+    );
+    */
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
         (data: { courses: Array<string> }) => {

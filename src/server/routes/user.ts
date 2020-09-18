@@ -46,8 +46,8 @@ router.post(
                     username: req.body.username,
                     password: hashPassword(req.body.password),
                     userType: req.body.userType,
-                    userStatus: 0,
                     courses: [],
+                    isUserOnline: true,
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),
@@ -71,8 +71,7 @@ router.post(
                     username: user.username,
                     userType: user.userType,
                     courses: user.courses,
-                    userStatus: user.userStatus,
-
+                    isUserOnline: user.isUserOnline,
                 });
             }
         }

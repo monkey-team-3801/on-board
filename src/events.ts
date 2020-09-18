@@ -18,6 +18,10 @@ export enum SignInEvent {
     USER_SIGNEDOUT= "USER_SIGNEDOUT",
 }
 
+export enum SendOnlineUsersEvent {
+    ONLINE_USERS_LIST = "ONLINE_USERS_LIST",
+}
+
 export type PrivateRoomJoinData = {
     sessionId: string;
 };
