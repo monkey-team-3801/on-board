@@ -57,7 +57,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container style={{ height: 600 }}>
+        <Container>
             <Row>
                 <h3>Create Announcement</h3>
             </Row>
@@ -71,7 +71,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             data: {
                                 title,
                                 content,
-                                user: props.userId,
+                                userId: props.userId,
                                 courseCode: option.value,
                             },
                         });

@@ -61,7 +61,6 @@ router.post(
                             courseCode: session.courseCode,
                         };
                     });
-
                 res.json({
                     sessions: [...sessions, ...classroomSessions],
                 });

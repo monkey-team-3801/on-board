@@ -71,7 +71,7 @@ export type CourseAnnouncementsType = {
     title: string;
     content: string;
     courseCode: string;
-    user: string;
+    userId: string;
     date: string;
 };
 
@@ -163,7 +163,7 @@ export type UserEnrolledCoursesResponseType = {
 export type GetAnnouncementsRequestType = WithUserId;
 
 export type GetAnnouncementsResponseType = {
-    announcements: Array<CourseAnnouncementsType>;
+    announcements: Array<CourseAnnouncementsType & { username: string }>;
 };
 
 export type CreateClassroomJobRequestType = ClassOpenJob;
