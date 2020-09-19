@@ -31,3 +31,19 @@ export const requestIsUnauthorised = <T>(
 ): responseType is ErrorResponseType => {
     return responseType.state === RequestState.UNAUTHORISED;
 };
+
+/**
+ * Throttles a function by some ms.
+ * @param callback Function to throttle
+ * @param delay Delay in ms
+ */
+export const throttle = (callback: any, delay: number) => {
+    let previousCall = new Date().getTime();
+    return function () {
+        const time = new Date().getTime();
+        if (time - previousCall >= delay) {
+            previousCall = time;
+            callback.apply(null, arguments);
+        }
+    };
+};
