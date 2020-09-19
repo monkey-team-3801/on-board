@@ -54,6 +54,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(CanvasEvent.DRAW, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
     });
+    socket.on(CanvasEvent.CLEAR, (data) => {
+        socket.to(data.sessionId).emit(CanvasEvent.CLEAR);
+    });
 });
 
 app.use(bodyParser.json());

@@ -1,7 +1,7 @@
 import express from "express";
 
 import { asyncHandler, createNewSession } from "../utils";
-import { Session } from "../database";
+import { Session, ClassroomSession, SessionCanvas } from "../database";
 import {
     SessionResponseType,
     SessionInfo,
@@ -14,7 +14,6 @@ import {
     GetCanvasRequestType,
     GetCanvasResponseType,
 } from "../../types";
-import { ClassroomSession } from "../database/schema";
 
 export const router = express.Router();
 
@@ -24,6 +23,10 @@ router.post(
         try {
             if (req.body.name && req.body.name !== "") {
                 const session = await createNewSession(req.body.name, "");
+                await SessionCanvas.create({
+                    sessionId: session._id,
+                    strokes: [],
+                });
                 console.log("Session created:", session.name);
             }
             res.status(200).end();
@@ -128,6 +131,7 @@ router.post(
         console.log("Deleting session:", req.body.id);
         if (req.body.roomType === RoomType.PRIVATE) {
             await Session.findByIdAndDelete(req.body.id);
+            await SessionCanvas.findOneAndDelete({ sessionId: req.body.id });
         } else if (req.body.roomType === RoomType.CLASS) {
             await ClassroomSession.findByIdAndDelete(req.body.id);
         }
@@ -139,13 +143,18 @@ router.post(
     "/saveCanvas",
     asyncHandler<undefined, {}, SaveCanvasRequestType>(async (req, res) => {
         try {
-            await Session.updateOne(
-                { _id: req.body.sessionId },
+            await SessionCanvas.findOneAndUpdate(
                 {
-                    canvasData: req.body.canvasData,
+                    sessionId: req.body.sessionId,
                 },
-                { upsert: true }
-            );
+                {
+                    $push: {
+                        strokes: {
+                            $each: req.body.strokes,
+                        },
+                    },
+                }
+            ).lean();
             res.end();
         } catch (e) {
             console.log("err", e);
@@ -157,10 +166,12 @@ router.post(
     "/getCanvas",
     asyncHandler<GetCanvasResponseType, {}, GetCanvasRequestType>(
         async (req, res) => {
-            const session = await Session.findById(req.body.sessionId);
-            if (session) {
+            const canvas = await SessionCanvas.findOne({
+                sessionId: req.body.sessionId,
+            }).lean();
+            if (canvas) {
                 res.json({
-                    canvasData: session.canvasData,
+                    strokes: canvas.strokes,
                 });
             }
             res.end();
@@ -168,6 +179,20 @@ router.post(
     )
 );
 
+router.post(
+    "/clearCanvas",
+    asyncHandler<undefined, {}, GetCanvasRequestType>(async (req, res) => {
+        await SessionCanvas.findOneAndUpdate(
+            {
+                sessionId: req.body.sessionId,
+            },
+            {
+                strokes: [],
+            }
+        ).lean();
+        res.end();
+    })
+);
 // TODO
 // router.post(
 //     "/edit",
