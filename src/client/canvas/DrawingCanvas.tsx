@@ -77,7 +77,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     React.useEffect(() => {
-        setInterval(() => {
+        const intervalRef = setInterval(() => {
             if (queuedStrokes.current.length > 0) {
                 saveCanvasData({
                     sessionId,
@@ -87,6 +87,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
             }
         }, 10000);
         return () => {
+            clearInterval(intervalRef);
             if (queuedStrokes.current.length > 0) {
                 saveCanvasData({
                     sessionId,
