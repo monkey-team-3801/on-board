@@ -5,7 +5,7 @@ import { useDynamicFetch } from "../hooks";
 import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
 import { RouteComponentProps } from "react-router-dom";
 import "../styles/Login.less";
-import { requestHasError } from "../utils";
+import { requestIsUnauthorised } from "../utils";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
@@ -78,7 +78,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Container>
                     <Container>
                         <div className="error-message-container">
-                            {requestHasError(userData) && (
+                            {requestIsUnauthorised(userData) && (
                                 <p>{userData.message}</p>
                             )}
                         </div>

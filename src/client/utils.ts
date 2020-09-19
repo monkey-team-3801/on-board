@@ -21,3 +21,13 @@ export const requestHasError = <T>(
 ): responseType is ErrorResponseType => {
     return responseType.state === RequestState.ERROR;
 };
+
+/**
+ * Type guard to check if a request was loaded.
+ * @param responseType Request response.
+ */
+export const requestIsUnauthorised = <T>(
+    responseType: BaseResponseType<T>
+): responseType is ErrorResponseType => {
+    return responseType.state === RequestState.UNAUTHORISED;
+};
