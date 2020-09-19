@@ -182,13 +182,22 @@ export type FileStorageType = {
 
 export type SaveCanvasRequestType = {
     sessionId: string;
-    canvasData?: string;
+    strokes: Array<Stroke>;
 };
 
 export type GetCanvasResponseType = {
-    canvasData?: string;
+    strokes: Array<Stroke>;
 };
 
 export type GetCanvasRequestType = {
     sessionId: string;
+};
+
+export type Stroke = {
+    x0: number;
+    x1: number;
+    y0: number;
+    y1: number;
+    colour: string;
+    size: number;
 };

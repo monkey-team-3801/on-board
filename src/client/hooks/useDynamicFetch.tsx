@@ -45,7 +45,7 @@ export const useDynamicFetch = <
     S extends AnyObjectMap<any> | undefined = undefined
 >(
     apiEndpoint: string,
-    apiRequestData?: S,
+    apiRequestData?: Partial<S>,
     invokeImmediately: boolean | undefined = true,
     onFetchSuccess?: (response: T) => void,
     onFetchError?: (err: AxiosError<ErrorResponseType>) => void

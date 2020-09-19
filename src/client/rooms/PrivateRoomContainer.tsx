@@ -37,7 +37,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container>
+        <Container fluid>
             <Row>
                 <h1>Private Room</h1>
             </Row>
