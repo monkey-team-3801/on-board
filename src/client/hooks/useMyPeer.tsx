@@ -10,7 +10,7 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
         () =>
             new Peer({
                 host: window.location.hostname,
-                port: 5000,
+                port: Number(process.env.PORT) || 5000,
                 path: "/peerServer",
             })
     );
