@@ -12,6 +12,7 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
                 host: window.location.hostname,
                 port: Number(process.env.PORT) || 5000,
                 path: "/peerServer",
+                secure: process.env.NODE_ENV === "production"
             })
     );
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
