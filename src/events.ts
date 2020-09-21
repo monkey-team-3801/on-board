@@ -38,4 +38,5 @@ export enum FileUploadEvent {
 export enum CanvasEvent {
     CHANGE = "CANVAS_CHANGE",
     DRAW = "CANVAS_DRAW",
+    CLEAR = "CANVAS_CLEAR",
 }

@@ -1,0 +1,18 @@
+.drawing-canvas {
+    .canvas-container {
+        position: relative;
+        overflow: hidden;
+        canvas {
+            background-color: white;
+        }
+        .cursor {
+            position: absolute;
+            z-index: 1;
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
