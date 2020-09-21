@@ -65,16 +65,12 @@ io.on("connect", (socket: SocketIO.Socket) => {
             if (!session) {
                 return;
             }
-            if (session.peers.includes(userId)) {
-                return;
+            if (!session.peers.includes(userId)) {
+                session.peers.push(userId);
+                await session.save();
             }
-            session.peers.push(userId);
-            await session.save();
-            // TODO: why is this emitting to only me?
             socket.join(sessionId);
             io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
-            // socket
-            //     .emit(VideoEvent.UPDATE_USERS, session.peers);
 
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {

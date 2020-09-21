@@ -2,12 +2,14 @@ import React, { useEffect, useRef } from "react";
 
 type Props = {
     videoStream: MediaStream | undefined;
+    muted: boolean;
     mine: boolean;
 };
 
 export const Video: React.FunctionComponent<Props> = ({
     videoStream,
     mine,
+    muted
 }) => {
     // My stream
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -22,5 +24,5 @@ export const Video: React.FunctionComponent<Props> = ({
         }
     }, [videoStream]);
 
-    return <video className={mine ? "my-video" : "peers-video"} ref={videoRef} />;
+    return <video className={mine ? "my-video" : "peers-video"} ref={videoRef} muted={muted}/>;
 };
