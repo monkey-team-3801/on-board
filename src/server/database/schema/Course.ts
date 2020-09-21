@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { UserDataResponseType} from "../../../types";
+import { UserDataResponseType } from "../../../types";
 import {
     CourseActivityResponseType,
     CourseAnnouncementsType,
@@ -9,9 +9,9 @@ interface ICourse extends mongoose.Document {
     code: string;
     description: string;
     activities: Array<CourseActivityResponseType>;
+    announcements: Array<CourseAnnouncementsType & { username: string }>;
     StudentsList: Array<UserDataResponseType>;
     TutorsList: Array<UserDataResponseType>;
-    announcements: Array<CourseAnnouncementsType>;
 }
 
 const CourseSchema = new mongoose.Schema<ICourse>({

@@ -4,14 +4,14 @@ import { Container, Row, Button, Col, Form } from "react-bootstrap";
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
 import { MessageData, NewMessageRequestType } from "../../types";
-import { ChatEvent, ChatMessageReceiveType, RoomEvent } from "../../events";
+import { ChatEvent, ChatMessageReceiveType } from "../../events";
 import { RequestState } from "../types";
 import { ChatLog } from "./ChatLog";
 
 type Props = {
     username: string;
     roomId: string;
-    initialChatLog: Array<MessageData>;
+    initialChatLog: Array<Omit<MessageData, "sessionId">>;
 };
 
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -24,17 +24,11 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         NewMessageRequestType
     >("/chat/newMessage", undefined, false);
 
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
-            return socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
-                sessionId: props.roomId,
-            });
-        },
-        [props.roomId]
-    );
-
     const transformData = React.useCallback(
-        (prev: Array<MessageData> | undefined, data: MessageData) => {
+        (
+            prev: Array<Omit<MessageData, "sessionId">> | undefined,
+            data: Omit<MessageData, "sessionId">
+        ) => {
             if (prev && data) {
                 return prev.concat([data]);
             } else {
@@ -45,12 +39,12 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     const { data, setData, socket } = useTransformingSocket<
-        Array<MessageData>,
+        Array<Omit<MessageData, "sessionId">>,
         ChatMessageReceiveType
     >(
         ChatEvent.CHAT_MESSAGE_RECEIVE,
         props.initialChatLog,
-        componentDidMount,
+        undefined,
         transformData
     );
 

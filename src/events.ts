@@ -35,3 +35,17 @@ export enum AnnouncementEvent {
     NEW = "ANNOUNCEMENT_NEW",
     COURSE_ANNOUNCEMENTS_SUBSCRIBE = "COURSE_ANNOUNCEMENTS_SUBSCRIBE",
 }
+
+export enum ClassEvent {
+    OPEN = "OPEN",
+}
+
+export enum FileUploadEvent {
+    NEW_FILE = "NEW_FILE",
+}
+
+export enum CanvasEvent {
+    CHANGE = "CANVAS_CHANGE",
+    DRAW = "CANVAS_DRAW",
+    CLEAR = "CANVAS_CLEAR",
+}

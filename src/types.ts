@@ -5,6 +5,8 @@ export type AnyObjectMap<S> = { [key: string]: S };
 export type SessionInfo = {
     id: string;
     name: string;
+    description: string;
+    courseCode?: string;
 };
 
 export type MessageData = {
@@ -15,13 +17,13 @@ export type MessageData = {
 };
 
 export type SessionData = SessionInfo & {
-    id: string;
-    name: string;
-    messages?: Array<Omit<MessageData, "sessionId">>;
+    messages: Array<Omit<MessageData, "sessionId">>;
 };
 
-export type SessionResponseType = {
-    sessions: Array<SessionInfo>;
+export type ClassroomSessionData = SessionData & {
+    courseCode: string;
+    startTime: string;
+    endTime: string;
 };
 
 export type NewMessageRequestType = Omit<MessageData, "sentTime">;
@@ -71,7 +73,7 @@ export type CourseAnnouncementsType = {
     title: string;
     content: string;
     courseCode: string;
-    user: string;
+    userId: string;
     date: string;
 };
 
@@ -85,6 +87,22 @@ export type CourseParticipantsResponseType = {
     code: String;
     StudentsList: Array<UserDataResponseType>;
     TutorsList: Array<UserDataResponseType>;
+};
+export enum RoomType {
+    CLASS,
+    PRIVATE,
+}
+
+export type SessionRequestType = {
+    roomType?: RoomType;
+};
+
+export type SessionResponseType = {
+    sessions: Array<SessionInfo>;
+};
+
+export type SessionDeleteRequestType = SessionRequestType & {
+    id: string;
 };
 
 export type LoginUserRequestType = {
@@ -111,6 +129,14 @@ export type UserDataResponseType = {
     courses: Array<string>;
 };
 
+export type ClassroomData = {
+    roomName: string;
+    description: string;
+    courseCode: string;
+    startTime: string;
+    endTime: string;
+};
+
 export interface BaseJob<T = any> {
     jobDate: string;
     executingEvent: ExecutingEvent;
@@ -122,7 +148,7 @@ export interface AnnouncementJob<T = CourseAnnouncementsType>
     executingEvent: ExecutingEvent.ANNOUNCEMENT;
 }
 
-export interface ClassOpenJob extends BaseJob<any> {
+export interface ClassOpenJob extends BaseJob<ClassroomData> {
     executingEvent: ExecutingEvent.CLASS_OPEN;
 }
 
@@ -145,5 +171,41 @@ export type UserEnrolledCoursesResponseType = {
 export type GetAnnouncementsRequestType = WithUserId;
 
 export type GetAnnouncementsResponseType = {
-    announcements: Array<CourseAnnouncementsType>;
+    announcements: Array<CourseAnnouncementsType & { username: string }>;
+};
+
+export type CreateClassroomJobRequestType = ClassOpenJob;
+
+export enum FileUploadType {
+    PROFILE,
+    DOCUMENTS,
+}
+
+export type FileStorageType = {
+    filename: string;
+    fileExtension: string;
+    size: number;
+    file: Buffer;
+};
+
+export type SaveCanvasRequestType = {
+    sessionId: string;
+    strokes: Array<Stroke>;
+};
+
+export type GetCanvasResponseType = {
+    strokes: Array<Stroke>;
+};
+
+export type GetCanvasRequestType = {
+    sessionId: string;
+};
+
+export type Stroke = {
+    x0: number;
+    x1: number;
+    y0: number;
+    y1: number;
+    colour: string;
+    size: number;
 };

@@ -1,12 +1,16 @@
 import React from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { Container, Row, Button, Col } from "react-bootstrap";
-
-import { useFetch } from "../hooks";
+import { RoomEvent } from "../../events";
+import { FileUploadType, SessionData } from "../../types";
+import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
-import { requestIsLoaded } from "../utils";
-import { UserDataResponseType } from "../../types";
+import { FileContainer } from "../filehandler/FileContainer";
+import { UploadContainer } from "../filehandler/UploadContainer";
+import { useFetch } from "../hooks";
+import { socket } from "../io";
 import { TopLayerContainerProps } from "../types";
+import { requestIsLoaded } from "../utils";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {};
@@ -14,27 +18,35 @@ type Props = RouteComponentProps<{ roomId: string }> &
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const { roomId } = props.match.params;
+    const [sessionResponse] = useFetch<SessionData, { id: string }>(
+        "/session/getPrivateSession",
+        {
+            id: roomId,
+        }
+    );
 
-    const [sessionResponse] = useFetch<any, any>("/session/getSession", {
-        id: props.match.params.roomId,
-    });
+    React.useEffect(() => {
+        socket.emit(RoomEvent.PRIVATE_ROOM_JOIN, {
+            sessionId: roomId,
+        });
+    }, [roomId]);
 
-    if (
-        !requestIsLoaded(sessionResponse) ||
-        !requestIsLoaded(userDataResponse)
-    ) {
+    if (!requestIsLoaded(sessionResponse)) {
         return <div>Loading</div>;
     }
 
     return (
-        <Container>
+        <Container fluid>
             <Row>
                 <h1>Private Room</h1>
             </Row>
             <Row>
+                <DrawingCanvas sessionId={sessionResponse.data.id} />
+            </Row>
+            <Row>
                 <Col>
-                    <p>Room ID: {props.match.params.roomId}</p>
+                    <p>Room ID: {roomId}</p>
                 </Col>
                 <Col>
                     <Button
@@ -49,11 +61,24 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                 </Col>
             </Row>
             <Row>
-                <ChatContainer
-                    roomId={props.match.params.roomId}
-                    username={userDataResponse.data?.username}
-                    initialChatLog={sessionResponse.data.messages}
-                />
+                <Col>
+                    <ChatContainer
+                        roomId={roomId}
+                        username={props.userData.username}
+                        initialChatLog={sessionResponse.data.messages}
+                    />
+                </Col>
+                <Col>
+                    <Row>
+                        <FileContainer sessionID={roomId}></FileContainer>
+                    </Row>
+                    <Row>
+                        <UploadContainer
+                            uploadType={FileUploadType.DOCUMENTS}
+                            sessionID={roomId}
+                        ></UploadContainer>
+                    </Row>
+                </Col>
             </Row>
         </Container>
     );

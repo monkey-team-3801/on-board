@@ -8,11 +8,18 @@ export enum RequestState {
 export interface BaseResponseType<T> {
     state: RequestState;
     data: T | undefined;
+    message?: string | undefined;
 }
 
 export interface ResponseType<T> extends BaseResponseType<T> {
     state: RequestState.LOADED;
     data: T;
+}
+
+export interface ErrorResponseType extends BaseResponseType<undefined> {
+    state: RequestState.LOADED;
+    data: undefined;
+    message?: string | undefined;
 }
 
 export enum LocalStorageKey {
@@ -31,3 +38,11 @@ export type CourseOptionType = {
     value: string;
     label: string;
 };
+
+export type ClassOpenEventData =
+    | {
+          id: string;
+          course: string;
+          roomName: string;
+      }
+    | undefined;
