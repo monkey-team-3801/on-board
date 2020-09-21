@@ -50,6 +50,7 @@ router.post(
                     userType: req.body.userType,
                     courses: [],
                     isUserOnline: true,
+                    pfp: [],
                 });
                 res.status(200).json({
                     id: user._id.toHexString(),
