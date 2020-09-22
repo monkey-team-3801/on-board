@@ -76,15 +76,17 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         if (myStream) {
             console.log("My stream exists");
             myPeer.on("call", (call: MediaConnection) => {
-
                 console.log("Receiving call from", call.peer);
-                    call.answer(myStream);
-                    setPeerCalls((prev) => ({ ...prev, [call.peer]: call }));
-                    call.on("stream", (stream) => {
-                        console.log("Receiving stream from", call.peer);
-                        setPeerStreams((prev) => ({ ...prev, [call.peer]: stream }));
-                    });
+                call.answer(myStream);
+                setPeerCalls((prev) => ({ ...prev, [call.peer]: call }));
+                call.on("stream", (stream) => {
+                    console.log("Receiving stream from", call.peer);
+                    setPeerStreams((prev) => ({
+                        ...prev,
+                        [call.peer]: stream,
+                    }));
                 });
+            });
         }
     }, [myPeer, myStream]);
 
@@ -116,13 +118,13 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         return () => {
             //socket.disconnect();
         };
-    }, [addPeer, myPeerId, myStream, peerCalls, peerStreams, removePeer, sessionId]);
+    }, [myPeerId, myStream]);
 
     // Receive calls
 
     return (
         <div>
-            <Video videoStream={myStream} mine={true} muted={true}/>
+            <Video videoStream={myStream} mine={true} muted={true} />
             {keys(peerStreams).map((peerId, index) => (
                 <Video
                     key={index}

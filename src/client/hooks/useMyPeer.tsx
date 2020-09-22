@@ -13,17 +13,14 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
         port: Number(process.env.PORT as any),
         //port: Number(window.location.port) || 5000,
         path: "/peerServer",
-        secure: process.env.NODE_ENV === "production"
+        secure: process.env.NODE_ENV === "production",
     };
     // if (process.env.NODE_ENV === "development") {
     //     options.port = Number(process.env.PORT) || 5000;
     // }
     console.log(options);
     console.log("port:", window.location.port);
-    const [myPeer, setMyPeer] = useState<Peer>(
-        () =>
-            new Peer(options)
-    );
+    const [myPeer, setMyPeer] = useState<Peer>(() => new Peer(options));
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
     const cleanUp = useCallback(() => {
         if (myPeer) {
