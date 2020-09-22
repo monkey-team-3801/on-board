@@ -13,6 +13,7 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
         secure: process.env.NODE_ENV === "production"
     };
     console.log(options);
+    console.log("port:", process.env.PORT);
     const [myPeer, setMyPeer] = useState<Peer>(
         () =>
             new Peer(options)
