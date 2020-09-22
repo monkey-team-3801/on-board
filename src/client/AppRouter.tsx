@@ -10,6 +10,7 @@ import { LoginPage } from "./user/LoginPage";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { VideoContainer } from "./video/VideoContainer";
 import { VideoRoomLobby } from "./video/VideoRoomLobby";
+import { AppProtectedRoutes } from "./AppProtectedRoutes";
 
 export const AppRouter: React.FunctionComponent<{}> = () => {
     return (
@@ -33,7 +34,9 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                     exact
                     component={VideoContainer}
                 />
-                <Route path="/" component={LoginPage} />
+
+                <Route exact path="/" component={LoginPage} />
+                <Route component={AppProtectedRoutes} />
             </Switch>
         </BrowserRouter>
     );

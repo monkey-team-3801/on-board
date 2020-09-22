@@ -1,3 +1,3 @@
 import socketIOClient from "socket.io-client";
 
-export const socket = socketIOClient("/").connect();
+export const socket: SocketIOClient.Socket = socketIOClient("/").connect();

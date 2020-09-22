@@ -2,15 +2,34 @@ import React from "react";
 
 import { BaseResponseType } from "../types";
 import { useDynamicFetch } from "./useDynamicFetch";
-import { AnyObjectMap } from "../../server/types";
+import { AnyObjectMap } from "../../types";
 
 /**
- * Custom hook to fetch data from some api endpoint.
- * @param apiEndpoint API endpoint
- * @param apiRequestData Data to send
- * @param invokeImmediately Fetches on first render if true
- * @param T: Response data type
- * @param S: Request data type
+ * Custom hook to fetch data from some api endpoint. Use this if you never need to change the data sent to the server, i.e static fetch.
+ * @param apiEndpoint API endpoint.
+ * @param apiRequestData Data to send to the endpoint.
+ * @param invokeImmediately Should the fetch execute on first component render?
+ * @param onFetchSuccess Callback for when the fetch was successful.
+ * @param onFetchError Callback when the fetch failed.
+ * @returns ResponseType<T> object with the current state of the request: LOADED, LOADING, ERROR which is set accordingly.
+ * ResponseType<T>.data contains the response data from the endpoint.
+ * T: Response data type.
+ * S: Request data type as any form of a valid JSON object.
+ *
+ * Example: Getting the current server time.
+ * const [response, refresh] = useFetch<{ time: string }>("/time");
+ *
+ * React.useEffect(() => {
+ *     setInterval(() => {
+ *         // refresh every 1000ms i.e 1s.
+ *         refresh();
+ *     }, 1000)
+ * }, [])
+ *
+ * // Render the time.
+ * return (
+ *     isRequestLoaded(response) && <div>{`The current time is: ${response.time}`}</div>
+ * )
  */
 export const useFetch = <
     T,

@@ -8,6 +8,6 @@ export const useNewSocket: () => [SocketIOClient.Socket] = () => {
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [socket]);
     return [socket];
 };

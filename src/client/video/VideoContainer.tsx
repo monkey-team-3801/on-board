@@ -116,7 +116,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         return () => {
             //socket.disconnect();
         };
-    }, [myPeerId, myStream]);
+    }, [addPeer, myPeerId, myStream, peerCalls, peerStreams, removePeer, sessionId]);
 
     // Receive calls
 

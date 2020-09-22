@@ -1,18 +1,10 @@
-export type AnyObjectMap<S> = { [key: string]: S };
+import { ExecutingEvent } from "./events";
 
-export type SessionData = SessionInfo & {
-    id: string;
-    name: string;
-    messages?: Array<Omit<MessageData, "sessionId">>;
-};
+export type AnyObjectMap<S> = { [key: string]: S };
 
 export type SessionInfo = {
     id: string;
     name: string;
-};
-
-export type SessionResponseType = {
-    sessions: Array<SessionInfo>;
 };
 
 export type MessageData = {
@@ -20,6 +12,16 @@ export type MessageData = {
     content: string;
     sessionId: string;
     sentTime: string;
+};
+
+export type SessionData = SessionInfo & {
+    id: string;
+    name: string;
+    messages?: Array<Omit<MessageData, "sessionId">>;
+};
+
+export type SessionResponseType = {
+    sessions: Array<SessionInfo>;
 };
 
 export type NewMessageRequestType = Omit<MessageData, "sentTime">;
@@ -53,7 +55,23 @@ export type CourseResponseType = CourseDataUnique & {
     activities: Array<CourseActivityResponseType>;
 };
 
-export type CoursesResponseType = Array<CourseResponseType>;
+export type CoursesType = Array<CourseResponseType>;
+
+export type CoursesResponseType = CoursesType;
+
+export type CourseCodesType = Array<Pick<CourseDataUnique, "code">>;
+
+export type CourseListResponseType = CourseCodesType;
+
+export type CourseListRequestType = CourseCodesType;
+
+export type CourseAnnouncementsType = {
+    title: string;
+    content: string;
+    courseCode: string;
+    user: string;
+    date: string;
+};
 
 export enum UserType {
     STUDENT,
@@ -81,6 +99,44 @@ export type UserDataResponseType = {
     id: string;
     username: string;
     userType: UserType;
+    courses: Array<string>;
+};
+
+export interface BaseJob<T = any> {
+    jobDate: string;
+    executingEvent: ExecutingEvent;
+    data: T;
+}
+
+export interface AnnouncementJob<T = CourseAnnouncementsType>
+    extends BaseJob<T> {
+    executingEvent: ExecutingEvent.ANNOUNCEMENT;
+}
+
+export interface ClassOpenJob extends BaseJob<any> {
+    executingEvent: ExecutingEvent.CLASS_OPEN;
+}
+
+type WithUserId = {
+    userId: string;
+};
+
+export type CreateAnnouncementJobRequestType = AnnouncementJob<
+    Omit<CourseAnnouncementsType, "date">
+>;
+
+export type EnrolCourseRequestType = WithUserId & {
+    courses: Array<string>;
+};
+
+export type UserEnrolledCoursesResponseType = {
+    courses: Array<string>;
+};
+
+export type GetAnnouncementsRequestType = WithUserId;
+
+export type GetAnnouncementsResponseType = {
+    announcements: Array<CourseAnnouncementsType>;
 };
 
 export type VideoSessionResponseType = {

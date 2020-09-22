@@ -32,3 +32,13 @@ export type PrivateVideoRoomLeaveData = {
     sessionId: string;
     userId: string;
 };
+
+export enum ExecutingEvent {
+    ANNOUNCEMENT,
+    CLASS_OPEN,
+}
+
+export enum AnnouncementEvent {
+    NEW = "ANNOUNCEMENT_NEW",
+    COURSE_ANNOUNCEMENTS_SUBSCRIBE = "COURSE_ANNOUNCEMENTS_SUBSCRIBE",
+}
