@@ -70,8 +70,8 @@ io.on("connect", (socket: SocketIO.Socket) => {
             if (!session.peers.includes(userId)) {
                 session.peers.push(userId);
                 await session.save();
+                socket.join(sessionId);
             }
-            socket.join(sessionId);
             io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
 
             console.log("User", userId, "joining", sessionId);
@@ -84,7 +84,8 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
                 console.log("User", userId, "leaving", sessionId);
             });
-        });
+        }
+    );
 
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
