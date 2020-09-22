@@ -10,7 +10,7 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
     // TODO: change hard coded port
     const options: Peer.PeerJSOption = {
         host: window.location.hostname,
-        port: Number(process.env.PORT as any),
+        port: Number(process.env.PORT as any) || 5000,
         //port: Number(window.location.port) || 5000,
         path: "/peerServer",
         secure: process.env.NODE_ENV === "production"
