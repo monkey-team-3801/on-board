@@ -3,7 +3,7 @@ import Switch from "react-bootstrap/esm/Switch";
 
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
-import { Calendar } from "./timetable/Calendar";
+import { Calendar } from "./timetable/calendar/Calendar";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { UserDataResponseType } from "../types";
