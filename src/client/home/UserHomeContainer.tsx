@@ -6,6 +6,7 @@ import {
     SendOnlineUsersEvent,
     SignInEvent,
 } from "../../events";
+import { IUser, User } from "../../server/database";
 import {
     RoomType,
     SessionDeleteRequestType,
@@ -24,6 +25,7 @@ import "../styles/Homepage.less";
 import { Calendar } from "../timetable";
 import { RequestState, TopLayerContainerProps } from "../types";
 import { ClassesContainer } from "./ClassesContainer";
+import { OnlineUsersContainer } from "./OnlineUsersContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -34,6 +36,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     const { courses } = userData;
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
+
+    const [x, setX] = React.useState<Array<string>>([]);
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
@@ -92,11 +96,11 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     });
 */
 
-    socket.on(SendOnlineUsersEvent.ONLINE_USERS_LIST, function (
-        data: Array<{}>
-    ) {
+    socket.on(SendOnlineUsersEvent.ONLINE_USERS_LIST, (data: []) => {
         console.log(data);
+        setX(data);
     });
+    //console.log(User.find({ isUserOnline: true }));
 
     const onDeleteClick = React.useCallback(
         async (request: SessionDeleteRequestType) => {
@@ -153,13 +157,14 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     </Row>
                     <Row>
                         <ContainerWrapper
-                            className="classes-container"
-                            title="Classes"
+                            className="onlineUsers"
+                            title="Online Users"
                         >
                             {(setShowLoader) => {
                                 return (
-                                    <ClassesContainer
+                                    <OnlineUsersContainer
                                         setShowLoader={setShowLoader}
+                                        onlineUsers={x}
                                     />
                                 );
                             }}

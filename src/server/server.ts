@@ -30,15 +30,16 @@ import {
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
-import { UserDataResponseType } from "../types";
+import { UserDataResponseType, UserType } from "../types";
 import { User } from "./database/schema";
+import { userInfo } from "os";
 
 dotenv.config();
+let onlineUsers2: Array<string> = [];
 
 const app: Express = express();
 const server: Server = createServer(app);
 export const io: socketIO.Server = socketIO(server, { serveClient: false });
-let onlineUsers: Array<string> = [];
 
 io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
@@ -50,25 +51,30 @@ io.on("connect", (socket: SocketIO.Socket) => {
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
 
-    socket.on(
-        SignInEvent.USER_SIGNEDIN,
-        async (data: UserDataResponseType["username"]) => {
-            const user = await User.findOne({ data });
+    socket.on(SignInEvent.USER_SIGNEDIN, async (data: string) => {
+        const user = await User.findOne({ username: data });
 
-            if (user == null) {
-                return;
-            } else {
-                user.isUserOnline = true;
-
-                console.log(user.isUserOnline);
-                //onlineUsers.push(data);
-                socket.emit(SendOnlineUsersEvent.ONLINE_USERS_LIST, {
-                    onlineUsers,
-                });
-            }
+        if (user == null) {
+            return;
+        }
+        user.isUserOnline = true;
+        await user.save();
+        const onlineUsers = await User.find({
+            isUserOnline: true,
+        });
+        const usernames = onlineUsers.map((user) => user.username);
+        socket.emit(SendOnlineUsersEvent.ONLINE_USERS_LIST, usernames);
+    });
+    /*
+    socket.emit(
+        SendOnlineUsersEvent.ONLINE_USERS_LIST,
+        async (data: typeof onlineUsers) => {
+            const onlineUsers = await User.find({
+                isUserOnline: true,
+            }).select(("username" = 1));
         }
     );
-
+    */
     /*
 
     socket.on(SignInEvent.USER_SIGNEDIN, (data: UserDataResponseType["username"]) => {

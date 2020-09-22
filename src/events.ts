@@ -15,7 +15,7 @@ export enum RoomEvent {
 
 export enum SignInEvent {
     USER_SIGNEDIN = "USER_SIGNEDIN",
-    USER_SIGNEDOUT= "USER_SIGNEDOUT",
+    USER_SIGNEDOUT = "USER_SIGNEDOUT",
 }
 
 export enum SendOnlineUsersEvent {
