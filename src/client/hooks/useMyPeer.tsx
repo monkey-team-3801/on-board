@@ -8,12 +8,12 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
     // TODO: change hard coded port
     const options = {
         host: window.location.hostname,
-        port: Number(process.env.PORT) || 5000,
+        port: Number(window.location.port) || 5000,
         path: "/peerServer",
         secure: process.env.NODE_ENV === "production"
     };
     console.log(options);
-    console.log("port:", process.env.PORT);
+    console.log("port:", window.location.port);
     const [myPeer, setMyPeer] = useState<Peer>(
         () =>
             new Peer(options)
