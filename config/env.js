@@ -65,8 +65,7 @@ function getClientEnvironment(publicUrl) {
             (env, key) => {
                 env[key] = process.env[key];
                 return env;
-            },
-            {
+            }, {
                 // Useful for determining whether we’re running in production mode.
                 // Most importantly, it switches React into the correct mode.
                 NODE_ENV: process.env.NODE_ENV || "development",
@@ -83,6 +82,7 @@ function getClientEnvironment(publicUrl) {
                 WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
                 WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
                 WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
+                PORT: process.env.PORT || 5000,
             }
         );
     // Stringify all values so we can feed into webpack DefinePlugin

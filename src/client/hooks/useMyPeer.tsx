@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Peer from "peerjs";
 
+declare var PORT: any;
+
 export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
 
@@ -8,6 +10,7 @@ export const useMyPeer: () => [Peer, PeerId] = () => {
     // TODO: change hard coded port
     const options: Peer.PeerJSOption = {
         host: window.location.hostname,
+        port: Number(PORT as any),
         //port: Number(window.location.port) || 5000,
         path: "/peerServer",
         secure: process.env.NODE_ENV === "production"
