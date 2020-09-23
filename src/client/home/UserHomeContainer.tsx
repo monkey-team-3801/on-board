@@ -6,7 +6,6 @@ import {
     SendOnlineUsersEvent,
     SignInEvent,
 } from "../../events";
-import { IUser, User } from "../../server/database";
 import {
     RoomType,
     SessionDeleteRequestType,
@@ -150,6 +149,20 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <Calendar
                                         setShowLoader={setShowLoader}
                                         sessions={[]}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper
+                            className="classes-container"
+                            title="Classes"
+                        >
+                            {(setShowLoader) => {
+                                return (
+                                    <ClassesContainer
+                                        setShowLoader={setShowLoader}
                                     />
                                 );
                             }}
