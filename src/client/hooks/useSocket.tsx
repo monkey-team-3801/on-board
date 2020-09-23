@@ -27,7 +27,7 @@ export const useSocket = <T extends any>(
     componentDidMount?: (
         socket: SocketIOClient.Socket
     ) => SocketIOClient.Socket,
-    onEventEmit?: () => void
+    onEventEmit?: (data: T) => void
 ): { data: T | undefined; socket: SocketIOClient.Socket } => {
     const { data, socket } = useTransformingSocket<T, T>(
         event,

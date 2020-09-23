@@ -1,7 +1,12 @@
 import React from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-import { RequestState, BaseResponseType, LocalStorageKey } from "../types";
+import {
+    RequestState,
+    BaseResponseType,
+    LocalStorageKey,
+    ErrorResponseType,
+} from "../types";
 import { AnyObjectMap } from "../../types";
 import { HTTPStatusCodeToResponseState } from "./utils";
 
@@ -40,10 +45,10 @@ export const useDynamicFetch = <
     S extends AnyObjectMap<any> | undefined = undefined
 >(
     apiEndpoint: string,
-    apiRequestData?: S,
+    apiRequestData?: Partial<S>,
     invokeImmediately: boolean | undefined = true,
     onFetchSuccess?: (response: T) => void,
-    onFetchError?: () => void
+    onFetchError?: (err: AxiosError<ErrorResponseType>) => void
 ): [BaseResponseType<T>, (newRequestData: S | undefined) => Promise<void>] => {
     const componentMounted: React.MutableRefObject<boolean> = React.useRef<
         boolean
@@ -59,9 +64,11 @@ export const useDynamicFetch = <
     const fetchData = React.useCallback(
         async (endpoint: string, requestData?: AnyObjectMap<any>) => {
             try {
-                setResponseType({
-                    state: RequestState.LOADING,
-                    data: undefined,
+                setResponseType((response) => {
+                    return {
+                        ...response,
+                        state: RequestState.LOADING,
+                    };
                 });
                 const response = await axios.post<T>(endpoint, requestData, {
                     headers: {
@@ -76,11 +83,17 @@ export const useDynamicFetch = <
                 });
                 onFetchSuccess?.(response.data);
             } catch (e) {
-                setResponseType({
-                    state: HTTPStatusCodeToResponseState(e.response.status),
-                    data: undefined,
-                });
-                onFetchError?.();
+                const err: AxiosError<ErrorResponseType> = e;
+                if (err.response) {
+                    setResponseType({
+                        state: HTTPStatusCodeToResponseState(
+                            err.response.status
+                        ),
+                        data: undefined,
+                        message: err.response.data.message,
+                    });
+                    onFetchError?.(err);
+                }
             }
         },
         [onFetchSuccess, onFetchError]

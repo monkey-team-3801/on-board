@@ -1,0 +1,223 @@
+.login-page-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: #493e71;
+
+    .login-section {
+        z-index: 1;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgb(92, 78, 142);
+    }
+
+    .inputbar::placeholder {
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0.5;
+    }
+
+    .form-heading {
+        font-size: 18px;
+        font-weight: 400;
+        color: rgb(92, 78, 142);
+        text-align: center;
+    }
+
+    .form-container {
+        font-family: Raleway;
+        min-height: 200px;
+        width: 500px;
+        border-radius: 0px 0px 5px 5px;
+        margin: 2% auto;
+        padding: 5%;
+        background-color: #f6f6f6;
+        margin-top: 0;
+    }
+
+    .login-container {
+        background-image: linear-gradient(
+            to bottom,
+            rgba(92, 78, 142, 100),
+            rgba(124, 113, 164, 100)
+        );
+        font-family: Raleway;
+        width: 500px;
+        min-height: 100px;
+        border-radius: 5px 5px 0px 0px;
+        padding: 65px;
+        background-color: #f6f6f6;
+    }
+
+    .formcontent {
+        width: 340px;
+        display: -webkit-flex;
+        display: flex;
+
+        -webkit-justify-content: space-around;
+        justify-content: space-around;
+
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+
+        margin: 0 auto;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px rgba(124, 113, 164, 50) inset !important;
+        -webkit-text-fill-color: white;
+    }
+
+    .inputbar:focus,
+    .dropdownbar:focus {
+        border: 1px solid #493e71;
+    }
+
+    .inputbar {
+        background-image: linear-gradient(
+            to right,
+            rgba(92, 78, 142, 100),
+            rgba(124, 113, 164, 100)
+        );
+        border-radius: 25px;
+        font-family: Raleway;
+        font-weight: 500;
+        font-size: 12px;
+
+        width: 250px;
+        height: 30px;
+        padding: 15px;
+        color: white;
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba(100, 86, 147, 0.2);
+        }
+    }
+
+    .dropdownbar {
+        border-radius: 25px;
+        height: 30px;
+        width: 250px;
+        font-family: Raleway;
+        font-weight: 500;
+        font-size: 12px;
+        border-color: #493e71;
+    }
+
+    .loginbtn,
+    .registerbtn {
+        color: white;
+        width: 100px;
+        height: 50px;
+        padding: 10px;
+        font-size: 16px;
+        background-color: rgb(92, 78, 142);
+        outline: none;
+        border: 1px solid transparent;
+        align-content: center;
+        &:hover {
+            outline-color: rgb(92, 78, 142);
+            background-color: white;
+            color: rgb(92, 78, 142);
+            border: 1px solid rgb(92, 78, 142);
+        }
+    }
+
+    #login-heading {
+        font-weight: bold;
+        font-size: 40px;
+        margin: 0px 0px 0px 10px;
+        color: white;
+    }
+
+    .heading-row-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .login-options {
+        display: flex;
+        width: 100%;
+        font-size: 13px;
+        text-align: center;
+        align-items: center;
+        margin-bottom: 15px;
+        p,
+        label {
+            margin: 0;
+        }
+        label {
+            margin-left: 5px;
+        }
+    }
+
+    .toggle-button {
+        background-color: #f6f6f6;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgb(92, 78, 142);
+        text-align: center;
+    }
+
+    button.toggle-button {
+        &:hover {
+            background-color: #493e7105;
+        }
+    }
+
+    .logo-image {
+        background-image: url("logo_white.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 60px;
+        height: 60px;
+    }
+
+    .forget-password {
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .error-message-container {
+        display: flex;
+        height: 20px;
+        width: 100%;
+        margin-bottom: 10px;
+        .center;
+        p {
+            font-size: 12px;
+            color: red;
+            margin: 0;
+        }
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .center-vertical {
+        .flex;
+        align-items: center;
+    }
+
+    .center-horizontal {
+        .flex;
+        justify-content: center;
+    }
+
+    .center {
+        .center-vertical;
+        .center-horizontal;
+    }
+}

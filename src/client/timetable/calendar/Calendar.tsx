@@ -11,9 +11,12 @@ import { CourseActivityResponseType } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
+import { Container, Row } from "react-bootstrap";
+import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 
 type Props = {
     sessions: Array<CourseActivityResponseType>;
+    setShowLoader: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type State = {
@@ -46,54 +49,57 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
     return (
         <>
-            <CalendarHeading
-                month={chosenMonth}
-                year={chosenYear}
-                setTimeFrame={setTimeFrame}
-            />
-            <div className="calendar-container">
-                {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                ].map((dayName: string) => (
-                    <div key={dayName} className="day-headings">
-                        {dayName}
+            <Row>
+                <Container>
+                    <CalendarHeading
+                        month={chosenMonth}
+                        year={chosenYear}
+                        setTimeFrame={setTimeFrame}
+                    />
+                    <div className="calendar-container">
+                        {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
+                            (dayName: string) => (
+                                <div key={dayName} className="day-headings">
+                                    {dayName}
+                                </div>
+                            )
+                        )}
+                        {/* TODO: fetch session data from server */}
+                        {lastMonthRange.map((date: Date, index: number) => (
+                            <CalendarDay
+                                sessionsInDay={[]}
+                                date={date}
+                                chosenMonth={chosenMonth}
+                                chosenYear={chosenYear}
+                                key={index}
+                            />
+                        ))}
+                        {chosenMonthRange.map((date: Date, index: number) => (
+                            <CalendarDay
+                                sessionsInDay={[]}
+                                date={date}
+                                chosenMonth={chosenMonth}
+                                chosenYear={chosenYear}
+                                key={index}
+                            />
+                        ))}
+                        {nextMonthRange.map((date: Date, index: number) => (
+                            <CalendarDay
+                                sessionsInDay={[]}
+                                date={date}
+                                chosenMonth={chosenMonth}
+                                chosenYear={chosenYear}
+                                key={index}
+                            />
+                        ))}
                     </div>
-                ))}
-                {/* TODO: fetch session data from server */}
-                {lastMonthRange.map((date: Date, index: number) => (
-                    <CalendarDay
-                        sessionsInDay={[]}
-                        date={date}
-                        chosenMonth={chosenMonth}
-                        chosenYear={chosenYear}
-                        key={index}
-                    />
-                ))}
-                {chosenMonthRange.map((date: Date, index: number) => (
-                    <CalendarDay
-                        sessionsInDay={[]}
-                        date={date}
-                        chosenMonth={chosenMonth}
-                        chosenYear={chosenYear}
-                        key={index}
-                    />
-                ))}
-                {nextMonthRange.map((date: Date, index: number) => (
-                    <CalendarDay
-                        sessionsInDay={[]}
-                        date={date}
-                        chosenMonth={chosenMonth}
-                        chosenYear={chosenYear}
-                        key={index}
-                    />
-                ))}
-            </div>
+                </Container>
+            </Row>
+            <Row>
+                <Container>
+                    <UpcomingEventsContainer />
+                </Container>
+            </Row>
         </>
     );
 };

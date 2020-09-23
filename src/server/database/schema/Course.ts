@@ -8,7 +8,7 @@ interface ICourse extends mongoose.Document {
     code: string;
     description: string;
     activities: Array<CourseActivityResponseType>;
-    announcements: Array<CourseAnnouncementsType>;
+    announcements: Array<CourseAnnouncementsType & { username: string }>;
 }
 
 const CourseSchema = new mongoose.Schema<ICourse>({

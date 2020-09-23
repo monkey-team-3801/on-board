@@ -1,6 +1,4 @@
 import React from "react";
-import format from "date-fns/format";
-import parse from "date-fns/parse";
 import { Form, Button, Container, Row } from "react-bootstrap";
 import Select from "react-select";
 
@@ -12,6 +10,7 @@ import {
 import { requestIsLoaded } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
+import { SimpleDatepicker } from "../components";
 
 type Props = {
     userId: string;
@@ -58,7 +57,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container style={{ height: 600 }}>
+        <Container>
             <Row>
                 <h3>Create Announcement</h3>
             </Row>
@@ -72,7 +71,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             data: {
                                 title,
                                 content,
-                                user: props.userId,
+                                userId: props.userId,
                                 courseCode: option.value,
                             },
                         });
@@ -125,17 +124,10 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Schedule announcement</Form.Label>
-                    <Form.Control
-                        value={format(announcementTime, "yyyy-MM-dd'T'HH:mm")}
-                        type="datetime-local"
-                        onChange={(e) => {
-                            setAnnouncementTime(
-                                parse(
-                                    e.target.value,
-                                    "yyyy-MM-dd'T'HH:mm",
-                                    new Date()
-                                )
-                            );
+                    <SimpleDatepicker
+                        time={announcementTime}
+                        onChange={(time) => {
+                            setAnnouncementTime(time);
                         }}
                     />
                 </Form.Group>

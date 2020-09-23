@@ -7,6 +7,8 @@ import { RegisterContainer } from "../user/RegisterContainer";
 import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
+import "../styles/Login.less";
+import { ParticlesContainer } from "../particles/ParticlesContainer";
 
 type Props = RouteComponentProps;
 
@@ -27,36 +29,34 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         setShowRegister(value);
     }, []);
 
-    if (data.state === RequestState.LOADING) {
-        return <div>Loading</div>;
-    }
-
     return (
         <div className="login-page-container">
             {data.state === RequestState.LOADED && <Redirect to="/home" />}
-            <Container>
-                <Row>
-                    <Container>
-                        <h1>On Board 2020</h1>
-                    </Container>
-                    <Container className="form-container">
-                        <Row>
-                            {showRegister ? (
-                                <RegisterContainer
-                                    onFetchSuccess={onFetchSuccess}
-                                    toggleRegisterForm={toggleRegisterForm}
-                                    {...props}
-                                />
-                            ) : (
-                                <LoginContainer
-                                    onFetchSuccess={onFetchSuccess}
-                                    toggleRegisterForm={toggleRegisterForm}
-                                    {...props}
-                                />
-                            )}
-                        </Row>
-                    </Container>
-                </Row>
+            <ParticlesContainer />
+            <Container className="login-section">
+                <Container className="login-container">
+                    <Row className="heading-row">
+                        <div className="heading-row-container">
+                            <div className="logo-image"></div>
+                            <h1 id="login-heading">On Board</h1>
+                        </div>
+                    </Row>
+                </Container>
+                <Container className="form-container">
+                    {showRegister ? (
+                        <RegisterContainer
+                            onFetchSuccess={onFetchSuccess}
+                            toggleRegisterForm={toggleRegisterForm}
+                            {...props}
+                        />
+                    ) : (
+                        <LoginContainer
+                            onFetchSuccess={onFetchSuccess}
+                            toggleRegisterForm={toggleRegisterForm}
+                            {...props}
+                        />
+                    )}
+                </Container>
             </Container>
         </div>
     );

@@ -3,7 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { MessageData } from "../../types";
 
 type Props = {
-    data: MessageData;
+    data: Omit<MessageData, "sessionId">;
     currentUser: string;
 };
 export const Log: React.FunctionComponent<Props> = (props: Props) => {

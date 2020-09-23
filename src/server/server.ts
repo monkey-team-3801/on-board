@@ -1,9 +1,10 @@
-import express, { Express } from "express";
+import express, { Request, Response, NextFunction, Express } from "express";
 import { createServer, Server } from "http";
 import socketIO from "socket.io";
 import { ExpressPeerServer } from "peer";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import fileUpload from "express-fileupload";
 
 import { asyncHandler } from "./utils";
 import { Database } from "./database";
@@ -16,6 +17,7 @@ import {
     PrivateVideoRoomJoinData,
     PrivateVideoRoomLeaveData,
     AnnouncementEvent,
+    CanvasEvent,
 } from "../events";
 
 import {
@@ -26,6 +28,7 @@ import {
     authRoute,
     videoRoute,
     jobRoute,
+    fileRoute,
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
@@ -96,12 +99,19 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+    socket.on(CanvasEvent.DRAW, (data) => {
+        socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
+    });
+    socket.on(CanvasEvent.CLEAR, (data) => {
+        socket.to(data.sessionId).emit(CanvasEvent.CLEAR);
+    });
 });
 
 app.use(bodyParser.json());
+app.use(fileUpload());
 
 // Request initialiser
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST");
     res.setHeader(
@@ -146,14 +156,23 @@ app.use("/auth", authRoute);
 // Job routes.
 app.use("/job", jobRoute);
 
+app.use("/filehandler", fileRoute);
+
 // TODO API Routes
 app.use(
     "/api",
     asyncHandler(async (req, res, next) => {})
 );
 
+// Error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    res.json({
+        message: err.message,
+    }).end();
+});
+
 // Catch-all route
-app.use("*", (req, res, next) => {
+app.use("*", (req: Request, res: Response, next: NextFunction) => {
     res.sendFile("index.html", {
         root: "build",
     });

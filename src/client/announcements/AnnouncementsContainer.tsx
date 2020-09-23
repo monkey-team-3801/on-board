@@ -5,10 +5,14 @@ import {
     GetAnnouncementsResponseType,
 } from "../../types";
 import { requestIsLoaded } from "../utils";
-import { Container, Row, Col } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+
+import "./Announcements.less";
+import { AnnouncementEntry } from "./AnnouncementEntry";
 type Props = {
     userId: string;
     refreshKey: number;
+    setShowLoader: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
@@ -36,45 +40,17 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container>
-            <Row>
-                <h3>Announcements</h3>
-            </Row>
-            <div style={{ height: 800, overflow: "auto" }}>
+        <>
+            <div className="announcement-list">
                 {announcementsData.data.announcements.map((announcement, i) => {
                     return (
-                        <Row
-                            key={i}
-                            style={{
-                                borderBottom: "1px solid grey",
-                                marginTop: 20,
-                            }}
-                        >
-                            <Container>
-                                <Row>
-                                    <Col>
-                                        <h6>{announcement.title}</h6>
-                                    </Col>
-                                    <Col>
-                                        <h6>{announcement.courseCode}</h6>
-                                    </Col>
-                                    <Col>
-                                        <p>{announcement.user}</p>
-                                    </Col>
-                                    <Col>
-                                        <p>{announcement.date}</p>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <p>{announcement.content}</p>
-                                    </Col>
-                                </Row>
-                            </Container>
+                        <Row className="announcement" key={i}>
+                            <AnnouncementEntry announcement={announcement} />
+                            <hr />
                         </Row>
                     );
                 })}
             </div>
-        </Container>
+        </>
     );
 };

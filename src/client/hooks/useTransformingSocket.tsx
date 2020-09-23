@@ -41,7 +41,7 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
         socket: SocketIOClient.Socket
     ) => SocketIOClient.Socket,
     transformSocketData?: (prev: T | undefined, data: S) => T | undefined,
-    onEventEmit?: () => void
+    onEventEmit?: (data: S) => void
 ): {
     data: T | undefined;
     setData: React.Dispatch<React.SetStateAction<T | undefined>>;
@@ -54,7 +54,7 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
             setData((prev: T | undefined) => {
                 return transformSocketData?.(prev, data);
             });
-            onEventEmit?.();
+            onEventEmit?.(data);
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [transformSocketData]

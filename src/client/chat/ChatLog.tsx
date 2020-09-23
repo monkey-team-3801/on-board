@@ -4,7 +4,7 @@ import { MessageData } from "../../types";
 import { Log } from "./Log";
 
 type Props = {
-    messages: Array<MessageData>;
+    messages: Array<Omit<MessageData, "sessionId">>;
     currentUser: string;
 };
 
