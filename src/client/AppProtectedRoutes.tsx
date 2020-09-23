@@ -135,15 +135,19 @@ export const AppProtectedRoutes = (props: Props) => {
                         }}
                         component={VideoRoomLobby}
                     />
-                    <SecuredRoute
+                    {/* <SecuredRoute
                         path="/video-test/:roomId"
                         exact
                         render={(
                             routerProps: RouteComponentProps<{ roomId: string }>
                         ) => {
-                            return <VideoContainer {...routerProps} />;
+                            return (
+                                <VideoContainer
+                                    roomId={props.match.params.roomId}
+                                />
+                            );
                         }}
-                    />
+                    /> */}
                 </Switch>
             </Container>
         </>

@@ -9,8 +9,9 @@ import keys from "lodash/keys";
 import difference from "lodash/difference";
 import { socket } from "../io";
 import { useMediaStream } from "../hooks/useMediaStream";
+import { Button } from "react-bootstrap";
 
-type Props = RouteComponentProps<{ roomId: string }> & {};
+type Props = { sessionId: string };
 type PeerCalls = {
     [key: string]: MediaConnection;
 };
@@ -19,16 +20,16 @@ type PeerStreams = {
 };
 
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
-    const sessionId = props.match.params.roomId;
-    const [myPeer, myPeerId] = useMyPeer();
+    const { sessionId } = props;
+    const [myPeer, myPeerId, setupPeer] = useMyPeer();
     const [peerCalls, setPeerCalls] = useState<PeerCalls>({});
     const [peerStreams, setPeerStreams] = useState<PeerStreams>({});
-    const [myStream] = useMediaStream();
+    const [myStream, getMediaStream, clearMediaStream] = useMediaStream();
     const addPeer = useCallback(
         (peerId: PeerId) => {
             console.log("Adding Peer", peerId);
             console.log("My stream:", myStream);
-            if (myStream) {
+            if (myStream && myPeer) {
                 //console.log(peerId, myStream, myPeer.id, myPeerId);
                 console.log("Trying to call", peerId);
                 const call = myPeer.call(peerId, myStream);
@@ -73,11 +74,19 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
 
     // Listen to calls
     useEffect(() => {
-        if (myStream) {
+        console.log(myStream, myPeer);
+        if (myPeer && myPeerId) {
             console.log("My stream exists");
+            socket.emit(VideoEvent.USER_JOIN_ROOM, {
+                sessionId,
+                userId: myPeerId,
+            });
             myPeer.on("call", (call: MediaConnection) => {
                 console.log("Receiving call from", call.peer);
                 call.answer(myStream);
+                // if (myStream) {
+
+                // }
                 setPeerCalls((prev) => ({ ...prev, [call.peer]: call }));
                 call.on("stream", (stream) => {
                     console.log("Receiving stream from", call.peer);
@@ -87,17 +96,20 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                     }));
                 });
             });
+        } else {
+            if (myPeerId) {
+                console.log("disconnected");
+                socket.emit(VideoEvent.USER_LEAVE_ROOM, {
+                    sessionId,
+                    userId: myPeerId,
+                });
+            }
         }
-    }, [myPeer, myStream]);
+    }, [myStream, myPeer, myPeerId]);
 
-    // Handle socket interactions
-    useEffect(() => {
-        if (myPeerId === "") {
-            return;
-        }
-        // Listen to update event
-        socket.on(VideoEvent.UPDATE_USERS, (updatedPeers: Array<PeerId>) => {
-            console.log("updating users");
+    const onSocketUpdateUsers = useCallback(
+        (updatedPeers: Array<PeerId>) => {
+            console.log("updating users", updatedPeers);
             const currentPeers = keys(peerCalls);
             const removedPeers = difference(currentPeers, updatedPeers);
             const addedPeers = difference(updatedPeers, currentPeers);
@@ -111,20 +123,40 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 removePeer(removedPeer);
             }
             console.log(peerStreams);
-        });
-        console.log("Use effect running, emitting join room");
-        socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
+        },
+        [addPeer, myPeerId, peerCalls, peerStreams, removePeer]
+    );
 
+    const onSocketRemoveUser = useCallback(
+        (removedPeerId: string) => {
+            if (removedPeerId !== myPeerId) {
+                console.log("removing");
+                removePeer(removedPeerId);
+            }
+        },
+        [myPeerId, removePeer]
+    );
+
+    // Handle socket interactions
+    useEffect(() => {
+        // Listen to update event
+        socket.on(VideoEvent.UPDATE_USERS, onSocketUpdateUsers);
+        socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
+        // console.log("Use effect running, emitting join room");
+        // socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
         return () => {
-            //socket.disconnect();
+            socket.off(VideoEvent.UPDATE_USERS, onSocketUpdateUsers);
+            socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
         };
-    }, [myPeerId, myStream]);
+    }, [onSocketUpdateUsers, onSocketRemoveUser]);
 
     // Receive calls
 
     return (
         <div>
-            <Video videoStream={myStream} mine={true} muted={true} />
+            {myStream && myPeer && (
+                <Video videoStream={myStream} mine={true} muted={true} />
+            )}
             {keys(peerStreams).map((peerId, index) => (
                 <Video
                     key={index}
@@ -133,6 +165,31 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                     muted={true}
                 />
             ))}
+            <Button
+                onClick={() => {
+                    if (!myPeer) {
+                        setupPeer();
+                    }
+                }}
+            >
+                Connect
+            </Button>
+            <Button
+                onClick={() => {
+                    if (!myStream) {
+                        getMediaStream();
+                    }
+                }}
+            >
+                Enable webcam
+            </Button>
+            <Button
+                onClick={() => {
+                    clearMediaStream();
+                }}
+            >
+                Disconnect
+            </Button>
         </div>
     );
 };

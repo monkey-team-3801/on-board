@@ -4,6 +4,8 @@ import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import { useFetch } from "../hooks";
 import { ClassroomSessionData } from "../../types";
+import { Container } from "react-bootstrap";
+import { VideoContainer } from "../video/VideoContainer";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -32,6 +34,9 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             <p>Start time: {sessionResponse.data.startTime}</p>
             <p>End time: {sessionResponse.data.endTime}</p>
             <div>id: {props.match.params.classroomId}</div>
+            <Container>
+                <VideoContainer sessionId={props.match.params.classroomId} />
+            </Container>
         </div>
     );
 };

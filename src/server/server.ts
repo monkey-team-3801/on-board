@@ -90,6 +90,16 @@ io.on("connect", (socket: SocketIO.Socket) => {
         }
     );
 
+    socket.on(VideoEvent.USER_LEAVE_ROOM, async ({ sessionId, userId }) => {
+        await VideoSession.updateOne(
+            { sessionId },
+            { $pull: { peers: userId } },
+            { runValidators: true }
+        );
+        io.in(sessionId).emit(VideoEvent.USER_LEAVE_ROOM, userId);
+        console.log("User", userId, "disconnected", sessionId);
+    });
+
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
         (data: { courses: Array<string> }) => {

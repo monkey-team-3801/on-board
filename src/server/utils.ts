@@ -10,6 +10,7 @@ import {
 import { ExecutingEvent } from "../events";
 import { Session } from "./database";
 import { ClassroomSession } from "./database/schema";
+import { VideoSession } from "./database/schema/VideoSession";
 
 /**
  * T: Response data type.
@@ -79,6 +80,10 @@ export const createNewClassroomSession = async (
         courseCode,
         startTime,
         endTime,
+    });
+    await VideoSession.create({
+        sessionId: session._id,
+        peers: [],
     });
     return session;
 };

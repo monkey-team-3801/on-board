@@ -14,6 +14,7 @@ import {
     GetCanvasRequestType,
     GetCanvasResponseType,
 } from "../../types";
+import { VideoSession } from "../database/schema/VideoSession";
 
 export const router = express.Router();
 
@@ -134,6 +135,7 @@ router.post(
             await SessionCanvas.findOneAndDelete({ sessionId: req.body.id });
         } else if (req.body.roomType === RoomType.CLASS) {
             await ClassroomSession.findByIdAndDelete(req.body.id);
+            await VideoSession.findOneAndDelete({ sessionId: req.body.id });
         }
         res.status(200).end();
     })

@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-export const useMediaStream: () => [MediaStream | undefined] = () => {
+export const useMediaStream: () => [
+    MediaStream | undefined,
+    () => void,
+    () => void
+] = () => {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined);
-    useEffect(() => {
+    const getMediaStream = useCallback(() => {
         navigator.mediaDevices
             .getUserMedia({
                 video: true,
@@ -12,5 +16,8 @@ export const useMediaStream: () => [MediaStream | undefined] = () => {
                 setStream(stream);
             });
     }, []);
-    return [stream];
+    const clearMediaStream = useCallback(() => {
+        setStream(undefined);
+    }, []);
+    return [stream, getMediaStream, clearMediaStream];
 };

@@ -204,5 +204,4 @@ export type Stroke = {
 
 export type VideoSessionResponseType = {
     sessionId: string;
-    name: string;
 };

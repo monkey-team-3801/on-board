@@ -7,26 +7,22 @@ export const router = express.Router();
 
 router.post(
     "/create",
-    asyncHandler<VideoSessionResponseType, {}, { name: string }>(
-        async (req, res) => {
-            try {
-                const session = await VideoSession.create({
-                    name: req.body.name,
-                    sessionId: uuid(),
-                    peers: [],
-                });
-                console.log("Video Session created:", session.sessionId);
+    asyncHandler<VideoSessionResponseType, {}>(async (req, res) => {
+        try {
+            const session = await VideoSession.create({
+                sessionId: uuid(),
+                peers: [],
+            });
+            console.log("Video Session created:", session.sessionId);
 
-                res.status(200).json({
-                    sessionId: session.sessionId,
-                    name: session.name,
-                });
-            } catch (e) {
-                console.log("error", e);
-                res.status(500).end();
-            }
+            res.status(200).json({
+                sessionId: session.sessionId,
+            });
+        } catch (e) {
+            console.log("error", e);
+            res.status(500).end();
         }
-    )
+    })
 );
 
 router.post(
@@ -61,7 +57,6 @@ router.post(
                 res.status(200).json(
                     sessions.map((session) => ({
                         sessionId: session.sessionId,
-                        name: session.name,
                     }))
                 );
             } catch (e) {
