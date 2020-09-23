@@ -13,8 +13,12 @@ import { useFetch, useSocket } from "./hooks";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
+import { Calendar } from "./timetable/calendar/Calendar";
+import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
+import { VideoContainer } from "./video/VideoContainer";
+import { VideoRoomLobby } from "./video/VideoRoomLobby";
 
 type Props = RouteComponentProps;
 
@@ -114,6 +118,30 @@ export const AppProtectedRoutes = (props: Props) => {
                         path="/upload"
                         render={() => {
                             return <UploadTest userId={userData.id!} />;
+                        }}
+                    />
+
+                    <SecuredRoute
+                        path="/timetable-test"
+                        render={(routerProps: RouteComponentProps) => {
+                            return <Timetable />;
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/video-test"
+                        exact
+                        render={(routerProps: RouteComponentProps) => {
+                            return <VideoRoomLobby />;
+                        }}
+                        component={VideoRoomLobby}
+                    />
+                    <SecuredRoute
+                        path="/video-test/:roomId"
+                        exact
+                        render={(
+                            routerProps: RouteComponentProps<{ roomId: string }>
+                        ) => {
+                            return <VideoContainer {...routerProps} />;
                         }}
                     />
                 </Switch>
