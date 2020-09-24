@@ -25,6 +25,7 @@ export enum VideoEvent {
 
 export type PrivateVideoRoomJoinData = {
     sessionId: string;
+    peerId: string;
     userId: string;
 };
 

@@ -45,12 +45,6 @@ const peerServer = ExpressPeerServer(server, {
 
 app.use("/peerServer", peerServer);
 
-// type PeerJoinedRooms = {
-//     peerId: string;
-//     joinedRooms: Array<string>;
-// };
-// const socketPeerMap: Map<string, PeerJoinedRooms> = new Map();
-
 io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
         socket.join(data.sessionId);
@@ -63,42 +57,69 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(
         VideoEvent.USER_JOIN_ROOM,
         async (data: PrivateVideoRoomJoinData) => {
-            const { sessionId, userId } = data;
+            const { sessionId, userId, peerId } = data;
             const session = await VideoSession.findOne({
                 sessionId,
             });
             if (!session) {
                 return;
             }
-            if (!session.peers.includes(userId)) {
-                session.peers.push(userId);
+            if (session.userPeerMap.has(userId)) {
+                session.userReferenceMap.set(
+                    userId,
+                    (session.userReferenceMap.get(userId) ?? 0) + 1
+                );
+                await session.save();
+            } else {
+                session.userPeerMap.set(userId, peerId);
+                session.userReferenceMap.set(userId, 1);
                 await session.save();
                 socket.join(sessionId);
+                socket
+                    .in(sessionId)
+                    .emit(VideoEvent.USER_JOIN_ROOM, { userId, peerId });
             }
-            io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
-
-            console.log("User", userId, "joining", sessionId);
+            // console.log("User", userId, "joining", sessionId, peerId);
             socket.on("disconnect", async () => {
-                await VideoSession.updateOne(
-                    { sessionId },
-                    { $pull: { peers: userId } },
-                    { runValidators: true }
-                );
-                io.in(sessionId).emit(VideoEvent.UPDATE_USERS, session.peers);
-                console.log("User", userId, "leaving", sessionId);
+                const currentReference =
+                    session.userReferenceMap.get(userId) ?? 1;
+                if (currentReference - 1 === 0) {
+                    session.userPeerMap.delete(userId);
+                    session.userReferenceMap.delete(userId);
+                    await session.save();
+                    io.in(sessionId).emit(VideoEvent.USER_LEAVE_ROOM, {
+                        userId,
+                        peerId,
+                    });
+                    console.log("User", userId, "leaving", sessionId);
+                } else {
+                    session.userReferenceMap.set(
+                        userId,
+                        (session.userReferenceMap.get(userId) ?? 0) - 1
+                    );
+                    await session.save();
+                }
             });
         }
     );
 
-    socket.on(VideoEvent.USER_LEAVE_ROOM, async ({ sessionId, userId }) => {
-        await VideoSession.updateOne(
-            { sessionId },
-            { $pull: { peers: userId } },
-            { runValidators: true }
-        );
-        io.in(sessionId).emit(VideoEvent.USER_LEAVE_ROOM, userId);
-        console.log("User", userId, "disconnected", sessionId);
-    });
+    // socket.on(
+    //     VideoEvent.USER_LEAVE_ROOM,
+    //     async ({ sessionId, peerId, userId }) => {
+    //         if (peerId) {
+    //             const session = await VideoSession.findOne({
+    //                 sessionId,
+    //             });
+    //             if (!session) {
+    //                 return;
+    //             }
+    //             session.userPeerMap.delete(userId);
+    //             await session.save();
+    //             io.in(sessionId).emit(VideoEvent.USER_LEAVE_ROOM, peerId);
+    //             console.log("Peer", peerId, "disconnected", sessionId);
+    //         }
+    //     }
+    // );
 
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,

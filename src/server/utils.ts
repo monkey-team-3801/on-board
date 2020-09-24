@@ -83,7 +83,8 @@ export const createNewClassroomSession = async (
     });
     await VideoSession.create({
         sessionId: session._id,
-        peers: [],
+        userPeerMap: new Map(),
+        userReferenceMap: new Map(),
     });
     return session;
 };

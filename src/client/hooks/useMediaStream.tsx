@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 export const useMediaStream: () => [
     MediaStream | undefined,
@@ -19,5 +19,8 @@ export const useMediaStream: () => [
     const clearMediaStream = useCallback(() => {
         setStream(undefined);
     }, []);
+    useEffect(() => {
+        getMediaStream();
+    }, [getMediaStream]);
     return [stream, getMediaStream, clearMediaStream];
 };

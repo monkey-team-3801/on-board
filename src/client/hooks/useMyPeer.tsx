@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Peer from "peerjs";
+import { cleanup } from "@testing-library/react";
 
 declare var process: any;
 
@@ -15,7 +16,9 @@ export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
         port: process.env.NODE_ENV === "production" ? undefined : 5000,
     };
 
-    const [myPeer, setMyPeer] = useState<Peer | undefined>();
+    const [myPeer, setMyPeer] = useState<Peer | undefined>(
+        () => new Peer(options)
+    );
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
     const cleanUp = useCallback(() => {
         if (myPeer) {
@@ -36,25 +39,26 @@ export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
     useEffect(() => {
         if (myPeer) {
             myPeer.on("disconnected", () => {
-                myPeer.reconnect();
+                // myPeer.reconnect();
+                cleanup();
+                setupPeer();
             });
 
             myPeer.on("close", () => {
-                cleanUp();
+                //cleanUp();
                 console.log("closed");
             });
 
             myPeer.on("error", (error) => {
                 console.log("errored");
-                cleanUp();
                 console.log(error);
+                //cleanUp();
             });
             myPeer.on("open", (id) => {
-                console.log("open");
                 setMyPeerId(id);
                 // setMyPeer(myPeer);
             });
         }
-    }, [myPeer, cleanUp]);
+    }, [myPeer, cleanUp, setupPeer]);
     return [myPeer, myPeerId, setupPeer];
 };

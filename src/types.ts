@@ -205,3 +205,12 @@ export type Stroke = {
 export type VideoSessionResponseType = {
     sessionId: string;
 };
+
+export type UserPeer = {
+    userId: string;
+    peerId: string;
+};
+
+export type VideoPeersResponseType = {
+    peers: Array<UserPeer>;
+};

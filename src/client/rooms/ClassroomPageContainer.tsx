@@ -35,7 +35,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             <p>End time: {sessionResponse.data.endTime}</p>
             <div>id: {props.match.params.classroomId}</div>
             <Container>
-                <VideoContainer sessionId={props.match.params.classroomId} />
+                <VideoContainer
+                    sessionId={props.match.params.classroomId}
+                    userId={props.userData.id}
+                />
             </Container>
         </div>
     );
