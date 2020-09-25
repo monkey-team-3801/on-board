@@ -10,7 +10,7 @@ import { RouteComponentProps } from "react-router-dom";
 import omit from "lodash/omit";
 import keys from "lodash/keys";
 import difference from "lodash/difference";
-// import { socket } from "../io";
+import { socket } from "../io";
 import { useMediaStream } from "../hooks/useMediaStream";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
@@ -30,7 +30,7 @@ type VideoStreamData = {
     stream: MediaStream;
 };
 
-const socket: SocketIOClient.Socket = socketIOClient("/").connect();
+// const socket: SocketIOClient.Socket = socketIOClient("/").connect();
 
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId } = props;
