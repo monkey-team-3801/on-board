@@ -13,7 +13,7 @@ export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
         host: window.location.hostname,
         path: "/peerServer",
         secure: process.env.NODE_ENV === "production",
-        port: process.env.NODE_ENV === "production" ? undefined : 5000,
+        port: process.env.NODE_ENV === "production" ? 443 : 5000,
     };
 
     const [myPeer, setMyPeer] = useState<Peer | undefined>(
