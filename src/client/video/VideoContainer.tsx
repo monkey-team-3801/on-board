@@ -260,18 +260,20 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                         />
                     )}
                 </Col>
-                {Array.from(peerStreams.entries()).map(([userId, stream]) => {
-                    return (
-                        <Col lg={4} key={stream.id}>
-                            <p>{userId}</p>
-                            <Video
-                                videoStream={stream}
-                                mine={false}
-                                muted={true}
-                            />
-                        </Col>
-                    );
-                })}
+                {Array.from(peerStreams.entries()).map(
+                    ([userId, stream], i) => {
+                        return (
+                            <Col lg={4} key={i}>
+                                <p>{userId}</p>
+                                <Video
+                                    videoStream={stream}
+                                    mine={false}
+                                    muted={true}
+                                />
+                            </Col>
+                        );
+                    }
+                )}
             </Row>
             <Row>
                 <Button
