@@ -51,8 +51,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const addPeer = useCallback(
         (userPeer: UserPeer) => {
             const { userId: theirUserId, peerId } = userPeer;
-            console.log(myStream, myPeer);
-            if (myStream && myPeer && !peerStreams.has(theirUserId)) {
+            if (myStream && myPeer) {
                 console.log("My stream:", myStream);
                 //console.log(peerId, myStream, myPeer.id, myPeerId);
                 console.log("Trying to call", peerId);
@@ -65,25 +64,25 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 call.on("stream", (stream) => {
                     console.log("MY CALL Receiving stream from", peerId);
                     setPeerStreams((prev) => {
-                        return prev.set(theirUserId, stream);
+                        return prev.set(peerId, stream);
                     });
                 });
                 call.on("close", () => {
                     console.log("disconnecting from", peerId);
                     setPeerStreams((prev) => {
-                        return prev.delete(theirUserId);
+                        return prev.delete(peerId);
                     });
                     setPeerCalls((prev) => {
-                        return prev.delete(theirUserId);
+                        return prev.delete(peerId);
                     });
                 });
                 call.on("error", (error) => {
                     console.log("Call error", error);
                     setPeerStreams((prev) => {
-                        return prev.delete(theirUserId);
+                        return prev.delete(peerId);
                     });
                     setPeerCalls((prev) => {
-                        return prev.delete(theirUserId);
+                        return prev.delete(peerId);
                     });
                 });
                 // setPeerCalls((prev) => {
@@ -93,7 +92,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                     console.log("Receiving call from", call.peer);
                     call.answer(myStream);
                     setPeerCalls((prev) => {
-                        return prev.set(theirUserId, call);
+                        return prev.set(call.peer, call);
                     });
                     call.on("stream", (stream) => {
                         console.log(
@@ -101,7 +100,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                             call.peer
                         );
                         setPeerStreams((prev) => {
-                            return prev.set(theirUserId, stream);
+                            return prev.set(call.peer, stream);
                         });
                     });
                 });
@@ -113,7 +112,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         const { userId: theirUserId, peerId } = userPeer;
         console.log("Removing peer", peerId);
         setPeerStreams((prev) => {
-            return prev.delete(theirUserId);
+            return prev.delete(peerId);
         });
         setPeerCalls((prev) => {
             const call = prev.get(theirUserId);
@@ -136,7 +135,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 }
             });
         }
-    }, [response, addPeer, myPeerId]);
+    }, [response, myPeerId]);
 
     useEffect(() => {
         if (myPeerId) {
@@ -159,6 +158,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     useEffect(() => {
         return () => {
             console.log("cleanup");
+            clearMediaStream();
             socket.disconnect();
         };
     }, []);
