@@ -5,7 +5,7 @@ import { requestIsLoaded } from "../utils";
 import { useFetch } from "../hooks";
 import { ClassroomSessionData } from "../../types";
 import { Container } from "react-bootstrap";
-import { VideoContainer } from "../video/VideoContainer";
+import { StreamSelectorWrapper } from "../video/StreamSelectorWrapper";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -35,7 +35,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             <p>End time: {sessionResponse.data.endTime}</p>
             <div>id: {props.match.params.classroomId}</div>
             <Container>
-                <VideoContainer
+                <StreamSelectorWrapper
                     sessionId={props.match.params.classroomId}
                     userId={props.userData.id}
                 />
