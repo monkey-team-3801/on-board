@@ -16,6 +16,8 @@ export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
         port: process.env.NODE_ENV === "production" ? 443 : 5000,
     };
 
+    console.log("opt", options);
+
     const [myPeer, setMyPeer] = useState<Peer | undefined>(
         () => new Peer(options)
     );
