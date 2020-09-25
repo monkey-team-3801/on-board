@@ -112,7 +112,6 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
             }
             console.log(peerStreams);
         });
-        console.log("Use effect running, emitting join room");
         socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
 
         return () => {
@@ -124,13 +123,13 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
 
     return (
         <div>
-            <Video videoStream={myStream} mine={true} muted={true} />
+            <Video videoStream={myStream} mine={true} muted={false} />
             {keys(peerStreams).map((peerId, index) => (
                 <Video
                     key={index}
                     videoStream={peerStreams[peerId]}
                     mine={false}
-                    muted={true}
+                    muted={false}
                 />
             ))}
         </div>
