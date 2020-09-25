@@ -13,7 +13,12 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Row>
-                <VideoContainer {...props} myStream={myStream} />
+                <VideoContainer
+                    {...props}
+                    myStream={myStream}
+                    // Hack to force component rerender
+                    key={new Date().toString()}
+                />
             </Row>
             <Row>
                 <Button
