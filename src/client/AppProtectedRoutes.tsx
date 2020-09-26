@@ -10,6 +10,7 @@ import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { Navbar } from "./navbar";
+import { ResponseContainer } from "./responses/ResponseContainer";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { ClassOpenEventData } from "./types";
@@ -113,6 +114,12 @@ export const AppProtectedRoutes = (props: Props) => {
                         path="/upload"
                         render={() => {
                             return <UploadTest userId={userData.id!} />;
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/resp"
+                        render={() => {
+                            return <ResponseContainer />;
                         }}
                     />
                 </Switch>
