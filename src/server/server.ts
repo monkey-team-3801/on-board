@@ -215,6 +215,15 @@ database.connect().then(() => {
         const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
+        await VideoSession.updateMany(
+            {},
+            {
+                $set: {
+                    userPeerMap: new Map(),
+                    userReferenceMap: new Map(),
+                },
+            }
+        );
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });

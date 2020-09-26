@@ -18,7 +18,7 @@ import { requestIsLoaded } from "../utils";
 import "./VideoContainer.less";
 import { VideoPeersResponseType, UserPeer } from "../../types";
 
-type Props = { sessionId: string; userId: string };
+type Props = { sessionId: string; userId: string; myStream?: MediaStream };
 type PeerCalls = {
     [key: string]: MediaConnection;
 };
@@ -32,8 +32,31 @@ type VideoStreamData = {
 
 // const socket: SocketIOClient.Socket = socketIOClient("/").connect();
 
+// export const createEmptyAudioTrack = () => {
+//     const ctx = new AudioContext();
+//     const oscillator = ctx.createOscillator();
+//     const dst = oscillator.connect(ctx.createMediaStreamDestination());
+//     oscillator.start();
+//     const track = (dst as any).stream.getAudioTracks()[0];
+//     return Object.assign(track, { enabled: false });
+//   };
+
+//   export const createEmptyVideoTrack = ({ width, height } = { }) => {
+//     const canvas: HTMLCanvasElement = Object.assign(document.createElement("canvas"), { width, height });
+//     canvas?.getContext('2d')?.fillRect(0, 0, width, height);
+
+//     const stream = canvas.captureStream();
+//     const track = stream.getVideoTracks()[0];
+
+//     return Object.assign(track, { enabled: false });
+//   };
+
+//   const audioTrack = createEmptyAudioTrack();
+//   const videoTrack = createEmptyVideoTrack({ width:640, height:480 });
+//   const mediaStream = new MediaStream([audioTrack, videoTrack]);
+
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
-    const { sessionId, userId } = props;
+    const { sessionId, userId, myStream } = props;
     const [myPeer, myPeerId, setupPeer] = useMyPeer();
     const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
         Map()
@@ -41,7 +64,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
     );
-    const [myStream, getMediaStream, clearMediaStream] = useMediaStream();
+    // const [myStream, setMediaStream] = useMediaStream();
 
     const [response] = useFetch<
         VideoPeersResponseType,
@@ -51,41 +74,43 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const addPeer = useCallback(
         (userPeer: UserPeer) => {
             const { userId: theirUserId, peerId } = userPeer;
-            console.log(myStream, myPeer);
-            if (myStream && myPeer && !peerStreams.has(theirUserId)) {
-                console.log("My stream:", myStream);
-                //console.log(peerId, myStream, myPeer.id, myPeerId);
-                console.log("Trying to call", peerId);
-                const call = myPeer.call(peerId, myStream);
-                if (!call) {
-                    console.log("Call is undefined");
-                    return;
+            if (myPeer) {
+                if (myStream) {
+                    console.log("My stream:", myStream);
+                    //console.log(peerId, myStream, myPeer.id, myPeerId);
+                    console.log("Trying to call", peerId);
+                    const call = myPeer.call(peerId, myStream);
+                    if (!call) {
+                        console.log("Call is undefined");
+                        return;
+                    }
+                    console.log("Connecting to Peer", peerId);
+                    call.on("stream", (stream) => {
+                        console.log("MY CALL Receiving stream from", peerId);
+                        setPeerStreams((prev) => {
+                            return prev.set(peerId, stream);
+                        });
+                    });
+                    call.on("close", () => {
+                        console.log("disconnecting from", peerId);
+                        setPeerStreams((prev) => {
+                            return prev.delete(peerId);
+                        });
+                        setPeerCalls((prev) => {
+                            return prev.delete(peerId);
+                        });
+                    });
+                    call.on("error", (error) => {
+                        console.log("Call error", error);
+                        setPeerStreams((prev) => {
+                            return prev.delete(peerId);
+                        });
+                        setPeerCalls((prev) => {
+                            return prev.delete(peerId);
+                        });
+                    });
                 }
-                console.log("Connecting to Peer", peerId);
-                call.on("stream", (stream) => {
-                    console.log("MY CALL Receiving stream from", peerId);
-                    setPeerStreams((prev) => {
-                        return prev.set(theirUserId, stream);
-                    });
-                });
-                call.on("close", () => {
-                    console.log("disconnecting from", peerId);
-                    setPeerStreams((prev) => {
-                        return prev.delete(theirUserId);
-                    });
-                    setPeerCalls((prev) => {
-                        return prev.delete(theirUserId);
-                    });
-                });
-                call.on("error", (error) => {
-                    console.log("Call error", error);
-                    setPeerStreams((prev) => {
-                        return prev.delete(theirUserId);
-                    });
-                    setPeerCalls((prev) => {
-                        return prev.delete(theirUserId);
-                    });
-                });
+
                 // setPeerCalls((prev) => {
                 //     return prev.set(call.peer, call);
                 // });
@@ -93,7 +118,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                     console.log("Receiving call from", call.peer);
                     call.answer(myStream);
                     setPeerCalls((prev) => {
-                        return prev.set(theirUserId, call);
+                        return prev.set(call.peer, call);
                     });
                     call.on("stream", (stream) => {
                         console.log(
@@ -101,7 +126,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                             call.peer
                         );
                         setPeerStreams((prev) => {
-                            return prev.set(theirUserId, stream);
+                            return prev.set(call.peer, stream);
                         });
                     });
                 });
@@ -113,7 +138,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         const { userId: theirUserId, peerId } = userPeer;
         console.log("Removing peer", peerId);
         setPeerStreams((prev) => {
-            return prev.delete(theirUserId);
+            return prev.delete(peerId);
         });
         setPeerCalls((prev) => {
             const call = prev.get(theirUserId);
@@ -136,7 +161,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 }
             });
         }
-    }, [response, addPeer, myPeerId]);
+    }, [response, myPeerId]);
 
     useEffect(() => {
         if (myPeerId) {
@@ -252,6 +277,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
             <Row>
                 <Col lg={4}>
                     <p>You</p>
+                    {myStream ? "Stream exists" : "Stream not exists"}
                     {myStream && myPeer && (
                         <Video
                             videoStream={myStream}
@@ -260,29 +286,20 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                         />
                     )}
                 </Col>
-                {Array.from(peerStreams.entries()).map(([userId, stream]) => {
-                    return (
-                        <Col lg={4} key={stream.id}>
-                            <p>{userId}</p>
-                            <Video
-                                videoStream={stream}
-                                mine={false}
-                                muted={true}
-                            />
-                        </Col>
-                    );
-                })}
-            </Row>
-            <Row>
-                <Button
-                    onClick={() => {
-                        if (!myStream) {
-                            getMediaStream();
-                        }
-                    }}
-                >
-                    Enable webcam
-                </Button>
+                {Array.from(peerStreams.entries()).map(
+                    ([userId, stream], i) => {
+                        return (
+                            <Col lg={4} key={i}>
+                                <p>{userId}</p>
+                                <Video
+                                    videoStream={stream}
+                                    mine={false}
+                                    muted={true}
+                                />
+                            </Col>
+                        );
+                    }
+                )}
             </Row>
         </Container>
     );
