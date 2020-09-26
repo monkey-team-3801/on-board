@@ -8,15 +8,12 @@ export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
 
 export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
-    // TODO: change hard coded port
     const options: Peer.PeerJSOption = {
         host: "/",
         path: "/peerServer",
         secure: process.env.NODE_ENV === "production",
         port: process.env.NODE_ENV === "production" ? 443 : 5000,
     };
-
-    console.log("opt", options);
 
     const [myPeer, setMyPeer] = useState<Peer | undefined>(
         () => new Peer(options)
