@@ -14,10 +14,20 @@ export const MultipleChoiceContainer = (props: Props) => {
     const [options, setOptions] = React.useState<OrderedMap<string, string>>(x);
 
     const [, uploadForm] = useDynamicFetch<any, any>(
-        "/response-handler/submitForm",
+        "/response-handler/submitMcForm",
         undefined,
         false
     );
+
+    const converToFormData = (): FormData => {
+        const form = new FormData();
+        const optionEntries = Array.from(options.keys());
+        console.log(optionEntries);
+        for (let value of optionEntries) {
+            form.append(value, options.get<string>(value, "test"));
+        }
+        return form;
+    };
 
     const submitForm = (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
@@ -25,7 +35,9 @@ export const MultipleChoiceContainer = (props: Props) => {
         if (!props.q) {
             return;
         }
-        uploadForm(undefined);
+        const form = converToFormData();
+        form.append("question", props.q);
+        uploadForm(form);
     };
 
     return (
