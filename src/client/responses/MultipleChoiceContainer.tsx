@@ -19,25 +19,15 @@ export const MultipleChoiceContainer = (props: Props) => {
         false
     );
 
-    const converToFormData = (): FormData => {
-        const form = new FormData();
-        const optionEntries = Array.from(options.keys());
-        console.log(optionEntries);
-        for (let value of optionEntries) {
-            form.append(value, options.get<string>(value, "test"));
-        }
-        return form;
-    };
-
     const submitForm = (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
         // Fails silently for now.
         if (!props.q) {
             return;
         }
-        const form = converToFormData();
-        form.append("question", props.q);
-        uploadForm(form);
+        const data = options.toObject();
+        data["question"] = props.q;
+        uploadForm(data);
     };
 
     return (
