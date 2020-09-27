@@ -1,7 +1,12 @@
 import React from "react";
-import { Form, FormControl, FormGroup, InputGroup } from "react-bootstrap";
+import {
+    Button,
+    Form,
+    FormControl,
+    FormGroup,
+    InputGroup,
+} from "react-bootstrap";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
-import { ShortAnswerContainer } from "./ShortAnswerContainer";
 
 export const ResponseOptionsContainer = () => {
     const [checkedOption, setOption] = React.useState<string>("mc");
@@ -43,13 +48,14 @@ export const ResponseOptionsContainer = () => {
                     onChange={(e) => {
                         setQuestion(e.target.value);
                     }}
+                    required={true}
                 />
             </InputGroup>
             <div>
                 {checkedOption === "mc" ? (
                     <MultipleChoiceContainer q={question} />
                 ) : (
-                    <ShortAnswerContainer q={question} />
+                    <Button type="submit">Submit</Button>
                 )}
             </div>
         </div>
