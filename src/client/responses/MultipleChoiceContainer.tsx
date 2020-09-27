@@ -66,7 +66,11 @@ export const MultipleChoiceContainer = (props: Props) => {
                 );
             })}
             <Button type="submit">Submit</Button>
-            {props.q ? null : <div>please fill out the question field.</div>}
+            {props.q ? null : (
+                <div style={{ color: "red" }}>
+                    please fill out the question field.
+                </div>
+            )}
         </Form>
     );
 };
