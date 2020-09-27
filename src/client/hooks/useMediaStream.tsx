@@ -7,32 +7,39 @@ declare global {
         ) => Promise<MediaStream>;
     }
 }
-
-type MediaType = "camera" | "display" | "none";
-type MediaOptionsType = {
-    video: boolean;
-    audio: boolean;
+const defaultConstraints: MediaStreamConstraints = {
+    video: {
+        width: 480,
+        height: 360,
+        frameRate: 8,
+        aspectRatio: 1.3333333,
+    },
+    audio: {
+        noiseSuppression: true,
+        echoCancellation: true
+    }
 };
+type MediaType = "camera" | "display" | "none";
 
 export const useMediaStream: () => [
     MediaStream | undefined,
-    (type: MediaType, options?: MediaOptionsType) => Promise<void>
+    (type: MediaType, constraints?: MediaStreamConstraints) => Promise<void>
 ] = () => {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined);
     const setMediaStream = useCallback(
         async (
             type: MediaType,
-            options: MediaOptionsType = { video: true, audio: false }
+            constraints: MediaStreamConstraints = defaultConstraints
         ) => {
             try {
                 if (type === "camera") {
                     const stream = await navigator.mediaDevices.getUserMedia(
-                        options
+                        constraints
                     );
                     setStream(stream);
                 } else if (type === "display") {
                     const stream = await navigator.mediaDevices.getDisplayMedia(
-                        options
+                        constraints
                     );
                     setStream(stream);
                 } else {

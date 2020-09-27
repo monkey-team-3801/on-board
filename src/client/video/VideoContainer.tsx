@@ -10,7 +10,7 @@ import { RouteComponentProps } from "react-router-dom";
 import omit from "lodash/omit";
 import keys from "lodash/keys";
 import difference from "lodash/difference";
-// import { socket } from "../io";
+import { socket } from "../io";
 import { useMediaStream } from "../hooks/useMediaStream";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
@@ -30,7 +30,8 @@ type VideoStreamData = {
     stream: MediaStream;
 };
 
-const socket: SocketIOClient.Socket = socketIOClient("/").connect();
+
+// const socket: SocketIOClient.Socket = socketIOClient("/").connect();
 
 // export const createEmptyAudioTrack = () => {
 //     const ctx = new AudioContext();
@@ -70,7 +71,12 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         VideoPeersResponseType,
         { sessionId: string; userId: string }
     >("/videos/peers", { sessionId, userId });
-
+    // myStream?.getTracks().forEach(track => {
+    //     console.log(track, track.getCapabilities());
+    // });
+    myStream?.getVideoTracks().forEach(track => {
+        console.log("video track settings:", track.getSettings());
+    });
     const addPeer = useCallback(
         (userPeer: UserPeer) => {
             const { userId: theirUserId, peerId } = userPeer;
