@@ -1,5 +1,5 @@
 import React from "react";
-import { FormControl, InputGroup } from "react-bootstrap";
+import { Form, FormControl, FormGroup, InputGroup } from "react-bootstrap";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 import { ShortAnswerContainer } from "./ShortAnswerContainer";
 
@@ -12,32 +12,31 @@ export const ResponseOptionsContainer = () => {
         setOption(option);
     };
 
-    // TODO: Use radio buttons from bootstrap
     return (
         <div>
             <h1>response options container</h1>
-            <input
-                type="radio"
-                value="Multiple Choice"
-                name="formType"
-                onChange={(e) => {
-                    setOption("mc");
-                }}
-                checked={checkedOption === "mc"}
-            />
-            &nbsp; Multiple Choice &nbsp;&nbsp;&nbsp;
-            <input
-                type="radio"
-                value="Short Answer"
-                name="formType"
-                onChange={(e) => {
-                    setOption("sa");
-                }}
-                checked={checkedOption === "sa"}
-            />
-            &nbsp; Short Answer
-            <br></br>
-            <br></br>
+            <Form>
+                <FormGroup>
+                    <Form.Check
+                        type={"radio"}
+                        label={"Multiple Choice"}
+                        inline
+                        checked={checkedOption === "mc"}
+                        onChange={() => {
+                            setOption("mc");
+                        }}
+                    />
+                    <Form.Check
+                        type={"radio"}
+                        label={"Short Answer"}
+                        inline
+                        checked={checkedOption === "sa"}
+                        onChange={() => {
+                            setOption("sa");
+                        }}
+                    />
+                </FormGroup>
+            </Form>
             <InputGroup>
                 <FormControl
                     placeholder="Question"
