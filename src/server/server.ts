@@ -24,6 +24,7 @@ import {
     authRoute,
     jobRoute,
     fileRoute,
+    responseRoute,
 } from "./routes";
 import { userRoute } from "./routes";
 import { ScheduleHandler } from "./jobs";
@@ -105,7 +106,11 @@ app.use("/auth", authRoute);
 // Job routes.
 app.use("/job", jobRoute);
 
+// File routes.
 app.use("/filehandler", fileRoute);
+
+// Response collection routes.
+app.use("/response-handler", responseRoute);
 
 // TODO API Routes
 app.use(

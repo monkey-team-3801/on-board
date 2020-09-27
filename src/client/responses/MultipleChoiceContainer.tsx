@@ -2,6 +2,7 @@ import { OrderedMap } from "immutable";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
+import { useDynamicFetch } from "../hooks";
 
 type Props = {
     q: string;
@@ -12,12 +13,19 @@ export const MultipleChoiceContainer = (props: Props) => {
     const x = OrderedMap<string, string>(g);
     const [options, setOptions] = React.useState<OrderedMap<string, string>>(x);
 
+    const [, uploadForm] = useDynamicFetch<any, any>(
+        "/response-handler/submitForm",
+        undefined,
+        false
+    );
+
     const submitForm = (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
         // Fails silently for now.
         if (!props.q) {
             return;
         }
+        uploadForm(undefined);
     };
 
     return (
