@@ -3,17 +3,12 @@ import { MessageData, RoomType, FileStorageType } from "../../../types";
 
 interface ISession extends mongoose.Document {
     name: string;
-    files?: Map<string, FileStorageType>;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;
     roomType: RoomType;
     courseCode?: string;
+    files?: Map<string, FileStorageType>;
 }
-
-// interface PrivateRoom extends ISession {
-//     roomType: RoomType.PRIVATE;
-// }
-
 interface IClassroomSession extends ISession {
     roomType: RoomType.CLASS;
     courseCode: string;
@@ -21,14 +16,16 @@ interface IClassroomSession extends ISession {
     endTime: string;
 }
 
+interface IBreakoutSession extends ISession {
+    parentSessionId: string;
+}
 const SessionSchema = new mongoose.Schema<ISession>({
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
     files: { type: Map, default: new Map() },
     roomType: { type: Number },
+    courseCode: { type: String },
 });
-
-export const Session = mongoose.model<ISession>("Session", SessionSchema);
 
 const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     name: { type: String, required: true },
@@ -40,7 +37,23 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     endTime: { type: String, required: true },
 });
 
+const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
+    name: { type: String, required: true },
+    messages: { type: Array, default: [] },
+    files: { type: Map, default: new Map() },
+    roomType: { type: Number },
+    courseCode: { type: String },
+    parentSessionId: { type: String, required: true },
+});
+
+export const Session = mongoose.model<ISession>("Session", SessionSchema);
+
 export const ClassroomSession = mongoose.model<IClassroomSession>(
     "ClassroomSession",
     ClassroomSessionSchema
+);
+
+export const BreakoutSession = mongoose.model<IBreakoutSession>(
+    "BreakoutSession",
+    BreakoutSessionSchema
 );
