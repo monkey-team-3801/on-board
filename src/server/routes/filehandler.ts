@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { io } from "../server";
 import { FileStorageType } from "../../types";
 import { FileUploadEvent } from "../../events";
+import { readFile } from "fs";
 
 export const router = express.Router();
 
@@ -96,11 +97,20 @@ router.get(
         const user = await User.findById(req.params.userId);
         if (user) {
             const pfp = user.pfp;
-            if (pfp) {
+            res.contentType("image/jpeg");
+            if (pfp.byteLength !== 0) {
                 res.end(pfp, "binary");
+            } else {
+                readFile("public/default_user.jpg", (err, data) => {
+                    if (err) {
+                        console.log(err);
+                        res.end();
+                    } else {
+                        res.end(data, "binary");
+                    }
+                });
             }
         }
-        res.end();
     })
 );
 
