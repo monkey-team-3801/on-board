@@ -9,7 +9,7 @@ import {
 } from "../types";
 import { ExecutingEvent } from "../events";
 import { Session } from "./database";
-import { ClassroomSession } from "./database/schema";
+import { ClassroomSession, SessionUsers } from "./database/schema";
 import { VideoSession } from "./database/schema/VideoSession";
 
 /**
@@ -81,10 +81,17 @@ export const createNewClassroomSession = async (
         startTime,
         endTime,
     });
+    await SessionUsers.create({
+        sessionId: session._id,
+        userReferenceMap: new Map(),
+    });
+    // TODO MOVE VIDEO SESSION USER REFERENCE TO SESSION USERS SCHEMA.
     await VideoSession.create({
         sessionId: session._id,
         userPeerMap: new Map(),
         userReferenceMap: new Map(),
+        numScreensAllowed: 1,
+        sharingUsers: [],
     });
     return session;
 };
