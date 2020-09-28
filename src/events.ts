@@ -11,6 +11,8 @@ export type ChatMessageReceiveType = MessageData;
 
 export enum RoomEvent {
     PRIVATE_ROOM_JOIN = "PRIVATE_ROOM_JOIN",
+    CLASSROOM_JOIN = "CLASSROOM_JOIN",
+    CLASSROOM_LEAVE = "CLASSROOM_LEAVE",
 }
 
 export type PrivateRoomJoinData = {
