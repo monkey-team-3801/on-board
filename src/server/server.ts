@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 
 import { asyncHandler } from "./utils";
-import { Database } from "./database";
+import { Database, SessionUsers } from "./database";
 import {
     RoomEvent,
     PrivateRoomJoinData,
@@ -53,6 +53,47 @@ io.on("connect", (socket: SocketIO.Socket) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
+    socket.on(
+        RoomEvent.CLASSROOM_JOIN,
+        async (data: PrivateVideoRoomJoinData) => {
+            const { sessionId, userId } = data;
+            const session = await SessionUsers.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            if (session.userReferenceMap.has(userId)) {
+                session.userReferenceMap.set(
+                    userId,
+                    (session.userReferenceMap.get(userId) ?? 0) + 1
+                );
+                await session.save();
+            } else {
+                session.userReferenceMap.set(userId, 1);
+                await session.save();
+                socket.join(sessionId);
+                io.in(sessionId).emit(RoomEvent.CLASSROOM_JOIN);
+            }
+            console.log("User", userId, "joining", sessionId);
+            socket.on("disconnect", async () => {
+                const currentReference =
+                    session.userReferenceMap.get(userId) ?? 1;
+                if (currentReference - 1 === 0) {
+                    session.userReferenceMap.delete(userId);
+                    await session.save();
+                    io.in(sessionId).emit(RoomEvent.CLASSROOM_LEAVE);
+                    console.log("User", userId, "leaving", sessionId);
+                } else {
+                    session.userReferenceMap.set(
+                        userId,
+                        (session.userReferenceMap.get(userId) ?? 0) - 1
+                    );
+                    await session.save();
+                }
+            });
+        }
+    );
     // TODO: merge PrivateVideoRoomJoinData with PrivateRoomJoinData?
     socket.on(
         VideoEvent.USER_JOIN_ROOM,
@@ -163,6 +204,8 @@ app.get(
 // Automatically serve the index.html file from the build folder
 app.use("/", express.static("build"));
 
+app.use("/public", express.static("public"));
+
 // Health check route.
 app.use("/health", healthCheckRoute);
 
@@ -215,15 +258,15 @@ database.connect().then(() => {
         const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
-        await VideoSession.updateMany(
-            {},
-            {
-                $set: {
-                    userPeerMap: new Map(),
-                    userReferenceMap: new Map(),
-                },
-            }
-        );
+        // await VideoSession.updateMany(
+        //     {},
+        //     {
+        //         $set: {
+        //             userPeerMap: new Map(),
+        //             userReferenceMap: new Map(),
+        //         },
+        //     }
+        // );
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });
