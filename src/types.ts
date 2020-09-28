@@ -214,3 +214,9 @@ export type UserPeer = {
 export type VideoPeersResponseType = {
     peers: Array<UserPeer>;
 };
+
+export type BreakoutRoomData = {
+    name: string;
+    roomId: string;
+    description: string;
+};

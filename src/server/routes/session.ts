@@ -1,7 +1,14 @@
 import express from "express";
 
 import { asyncHandler, createNewSession } from "../utils";
-import { Session, ClassroomSession, SessionCanvas } from "../database";
+import {
+    Session,
+    ClassroomSession,
+    SessionCanvas,
+    SessionUsers,
+    BreakoutSession,
+    User,
+} from "../database";
 import {
     SessionResponseType,
     SessionInfo,
@@ -13,6 +20,8 @@ import {
     SaveCanvasRequestType,
     GetCanvasRequestType,
     GetCanvasResponseType,
+    BreakoutRoomData,
+    UserDataResponseType,
 } from "../../types";
 import { VideoSession } from "../database/schema/VideoSession";
 
@@ -195,10 +204,83 @@ router.post(
         res.end();
     })
 );
-// TODO
-// router.post(
-//     "/edit",
-//     asyncHandler((req, res) => {
-//         res.status(200).end();
-//     })
-// );
+
+router.post(
+    "/getSessionUsers",
+    asyncHandler<
+        { users: Array<Omit<UserDataResponseType, "courses">> },
+        {},
+        { sessionId: string }
+    >(async (req, res) => {
+        const sessionUsers = await SessionUsers.findOne({
+            sessionId: req.body.sessionId,
+        });
+        const ids = Array.from(sessionUsers?.userReferenceMap.keys() || []);
+        const users = (
+            await User.find({
+                _id: {
+                    $in: ids,
+                },
+            })
+        ).map((user) => {
+            return {
+                id: user._id.toHexString(),
+                username: user.username,
+                userType: user.userType,
+            };
+        });
+
+        console.log(users, ids);
+        res.json({
+            users,
+        });
+    })
+);
+
+router.post(
+    "/createBreakoutRooms",
+    asyncHandler<
+        { rooms: Array<Omit<BreakoutRoomData, "description">> },
+        {},
+        { amount: number; sessionId: string }
+    >(async (req, res) => {
+        const session = await Session.findById(req.body.sessionId);
+        if (session) {
+            const breakoutRooms: Array<Omit<
+                BreakoutRoomData,
+                "description"
+            >> = (
+                await Promise.all(
+                    Array.from({ length: req.body.amount }).map(
+                        async (_, i) => {
+                            return await BreakoutSession.create({
+                                name: `${session.name} - Breakout Room ${
+                                    i + 1
+                                }`,
+                                messages: [],
+                                description: session.description,
+                                roomType: RoomType.PRIVATE,
+                                courseCode: session?.courseCode,
+                                parentSessionId: session?._id,
+                            });
+                        }
+                    )
+                )
+            ).map((room) => {
+                return {
+                    name: room.name,
+                    roomId: room._id,
+                };
+            });
+
+            res.json({
+                rooms: breakoutRooms,
+            });
+        } else {
+            res.json({
+                rooms: [],
+            });
+        }
+        res.end();
+    })
+);
