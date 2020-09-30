@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { RoomEvent } from "../../events";
-import { FileUploadType, SessionData } from "../../types";
+import { FileUploadType, SessionData, RoomType } from "../../types";
 import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
@@ -23,8 +23,6 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
 ) => {
     const { roomId } = props.match.params;
 
-    console.log(props);
-
     return (
         <SessionContainer
             roomType={props.roomType}
@@ -34,6 +32,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             {(sessionData: SessionData, socket: SocketIOClient.Socket) => {
                 return (
                     <>
+                        {props.roomType === "breakout" && (
+                            <Row>
+                                <Button
+                                    onClick={() => {
+                                        props.history.push(
+                                            `/classroom/${sessionData.parentSessionId}`
+                                        );
+                                    }}
+                                >
+                                    Main Room
+                                </Button>
+                            </Row>
+                        )}
                         <Row>
                             <h1>Private Room</h1>
                         </Row>
