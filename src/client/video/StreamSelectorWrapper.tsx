@@ -8,7 +8,7 @@ type Props = { sessionId: string; userId: string };
 export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [myStream, setMediaStream] = useMediaStream();
+    const [myStream, enableMediaStream, disableMediaStream] = useMediaStream();
 
     return (
         <Container>
@@ -17,27 +17,27 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
                     {...props}
                     myStream={myStream}
                     // Hack to force component rerender
-                    key={new Date().toString()}
+                    //key={new Date().toString()}
                 />
             </Row>
             <Row>
                 <Button
                     onClick={() => {
-                        setMediaStream("camera");
+                        enableMediaStream();
                     }}
                 >
                     Show Camera
                 </Button>
                 <Button
                     onClick={() => {
-                        setMediaStream("display");
+
                     }}
                 >
                     Show Screen
                 </Button>
                 <Button
                     onClick={() => {
-                        setMediaStream("none");
+                        disableMediaStream();
                     }}
                 >
                     Turn off stream

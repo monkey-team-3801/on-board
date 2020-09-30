@@ -23,40 +23,37 @@ type MediaType = "camera" | "display" | "none";
 
 export const useMediaStream: () => [
     MediaStream | undefined,
-    (type: MediaType, constraints?: MediaStreamConstraints) => Promise<void>
+    (constraints?: MediaStreamConstraints) => Promise<void>,
+    () => void
 ] = () => {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined);
-    const setMediaStream = useCallback(
+    const enableMediaStream = useCallback(
         async (
-            type: MediaType,
             constraints: MediaStreamConstraints = defaultConstraints
         ) => {
-            try {
-                if (type === "camera") {
+            if (!stream) {
+                try {
                     const stream = await navigator.mediaDevices.getUserMedia(
                         constraints
                     );
                     setStream(stream);
-                } else if (type === "display") {
-                    const stream = await navigator.mediaDevices.getDisplayMedia(
-                        constraints
-                    );
-                    setStream(stream);
-                } else {
+                } catch (e) {
                     setStream(undefined);
                 }
-            } catch (e) {
-                setStream(undefined);
             }
         },
         []
     );
 
+    const disableMediaStream = useCallback(() => {
+        setStream(undefined);
+    }, []);
+
     useEffect(() => {
-        setMediaStream("camera");
+        enableMediaStream();
         return () => {
-            setMediaStream("none");
+            disableMediaStream();
         };
-    }, [setMediaStream]);
-    return [stream, setMediaStream];
+    }, [enableMediaStream]);
+    return [stream, enableMediaStream, disableMediaStream];
 };
