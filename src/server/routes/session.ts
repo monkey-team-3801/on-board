@@ -22,9 +22,9 @@ import {
     GetCanvasResponseType,
     BreakoutRoomData,
     UserDataResponseType,
+    UserData,
 } from "../../types";
 import { VideoSession } from "../database/schema/VideoSession";
-import { io } from "../server";
 
 export const router = express.Router();
 
@@ -173,7 +173,11 @@ router.post(
         } else if (req.body.roomType === RoomType.CLASS) {
             await ClassroomSession.findByIdAndDelete(req.body.id);
             await VideoSession.findOneAndDelete({ sessionId: req.body.id });
+            await BreakoutSession.deleteMany({
+                parentSessionId: req.body.id,
+            });
         }
+        await SessionUsers.deleteOne({ sessionId: req.body.id });
         res.status(200).end();
     })
 );
@@ -269,7 +273,7 @@ router.post(
         { rooms: Array<string> },
         {},
         {
-            amount: number;
+            rooms: Array<string>;
             sessionId: string;
         }
     >(async (req, res) => {
@@ -277,27 +281,42 @@ router.post(
         if (session) {
             const breakoutRooms: Array<string> = (
                 await Promise.all(
-                    Array.from({ length: req.body.amount }).map(
-                        async (_, i) => {
-                            const breakoutSession = await BreakoutSession.create(
-                                {
-                                    name: `${session.name} - Breakout Room ${
-                                        i + 1
-                                    }`,
-                                    messages: [],
-                                    description: session.description,
-                                    roomType: RoomType.PRIVATE,
-                                    courseCode: session?.courseCode,
-                                    parentSessionId: session?._id,
-                                }
-                            );
-                            await SessionUsers.create({
+                    req.body.rooms.map(async (roomId, i) => {
+                        const breakoutSession = await BreakoutSession.findOneAndUpdate(
+                            {
+                                _id: roomId,
+                            },
+                            {
+                                name: `${session.name} - Breakout Room ${
+                                    i + 1
+                                }`,
+                                messages: [],
+                                description: session.description,
+                                roomType: RoomType.PRIVATE,
+                                courseCode: session?.courseCode,
+                                parentSessionId: session?._id,
+                            },
+                            {
+                                upsert: true,
+                                new: true,
+                                setDefaultsOnInsert: true,
+                            }
+                        );
+                        await SessionUsers.findOneAndUpdate(
+                            {
+                                sessionId: breakoutSession._id,
+                            },
+                            {
                                 sessionId: breakoutSession._id,
                                 userReferenceMap: new Map(),
-                            });
-                            return breakoutSession;
-                        }
-                    )
+                            },
+                            {
+                                upsert: true,
+                                new: true,
+                            }
+                        );
+                        return breakoutSession;
+                    })
                 )
             ).map((room) => {
                 return room._id;
@@ -311,6 +330,54 @@ router.post(
                 rooms: [],
             });
         }
+        res.end();
+    })
+);
+
+router.post(
+    "/getBreakoutRooms",
+    asyncHandler<
+        { rooms: Array<{ roomId: string; users: Array<UserData> }> },
+        {},
+        { sessionId: string }
+    >(async (req, res) => {
+        const breakoutRooms = await BreakoutSession.find({
+            parentSessionId: req.body.sessionId,
+        }).lean();
+
+        const rooms = await Promise.all(
+            breakoutRooms.map(async (room) => {
+                const sessionUsers = await SessionUsers.findOne({
+                    sessionId: room._id,
+                });
+                const users = await Promise.all(
+                    Array.from(sessionUsers?.userReferenceMap.keys() || []).map(
+                        async (key) => {
+                            const user = await User.findById(key);
+                            return {
+                                id: user!.id,
+                                username: user!.username,
+                                userType: user!.userType,
+                            };
+                        }
+                    )
+                );
+                return {
+                    roomId: room._id,
+                    users,
+                };
+            })
+        );
+        res.json({
+            rooms,
+        });
+    })
+);
+
+router.post(
+    "/deleteBreakoutRoom",
+    asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
+        await BreakoutSession.findByIdAndDelete(req.body.sessionId);
         res.end();
     })
 );
