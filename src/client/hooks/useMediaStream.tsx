@@ -46,7 +46,9 @@ export const useMediaStream: () => [
     );
 
     const disableMediaStream = useCallback(() => {
-        setStream(undefined);
+        stream?.getTracks().forEach(track => {
+            track.stop();
+        });
     }, []);
 
     useEffect(() => {
