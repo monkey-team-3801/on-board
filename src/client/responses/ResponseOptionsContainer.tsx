@@ -17,15 +17,14 @@ type Props = {
 export const ResponseOptionsContainer = (props: Props) => {
     const [checkedOption, setOption] = React.useState<string>("mc");
     const [question, setQuestion] = React.useState<string>("");
-    const [, uploadForm] = useDynamicFetch<any, any>(
-        "/response-handler/submitSaForm",
+    const [, uploadForm] = useDynamicFetch<
         undefined,
-        false
-    );
+        { [key: string]: string }
+    >("/response-handler/submitSaForm", undefined, false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log("test");
-        uploadForm({
+        await uploadForm({
             sessionID: props.sid,
             question: question,
         });

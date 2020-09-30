@@ -20,16 +20,12 @@ export const MultipleChoiceContainer = (props: Props) => {
         { [key: string]: string }
     >("/response-handler/submitMcForm", undefined, false);
 
-    const submitForm = (event: React.FormEvent<HTMLElement>) => {
+    const submitForm = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
-        // Fails silently for now.
-        if (!props.question) {
-            return;
-        }
         const data = options.toObject();
         data["question"] = props.question;
         data["sessionID"] = props.sessionID;
-        uploadForm(data);
+        await uploadForm(data);
         props.closeModal();
     };
 
