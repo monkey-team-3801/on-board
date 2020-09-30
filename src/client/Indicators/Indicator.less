@@ -1,0 +1,30 @@
+@import "../styles/Colours.less";
+
+.indicator {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 5px;
+    width: 400px;
+    min-height: 80px;
+    border-radius: 6px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid @primary;
+    z-index: 3;
+    .close-button {
+        position: absolute;
+        top: 0px;
+        right: 5px;
+        cursor: pointer;
+    }
+    .join-button {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    p {
+        margin: 0;
+    }
+}
