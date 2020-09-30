@@ -46,15 +46,16 @@ const peerServer = ExpressPeerServer(server, {
 app.use("/peerServer", peerServer);
 
 io.on("connect", (socket: SocketIO.Socket) => {
-    socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
-        socket.join(data.sessionId);
-    });
+    // socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
+    //     socket.join(data.sessionId);
+    // });
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
         socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
+
     socket.on(
-        RoomEvent.CLASSROOM_JOIN,
+        RoomEvent.SESSION_JOIN,
         async (data: PrivateVideoRoomJoinData) => {
             const { sessionId, userId } = data;
             const session = await SessionUsers.findOne({
@@ -73,16 +74,19 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 session.userReferenceMap.set(userId, 1);
                 await session.save();
                 socket.join(sessionId);
-                io.in(sessionId).emit(RoomEvent.CLASSROOM_JOIN);
+                io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
             }
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
                 const currentReference =
                     session.userReferenceMap.get(userId) ?? 1;
+                console.log("User disconnect", userId);
                 if (currentReference - 1 === 0) {
                     session.userReferenceMap.delete(userId);
                     await session.save();
-                    io.in(sessionId).emit(RoomEvent.CLASSROOM_LEAVE);
+                    socket.leave(userId);
+                    socket.leave(sessionId);
+                    io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
                     console.log("User", userId, "leaving", sessionId);
                 } else {
                     session.userReferenceMap.set(
