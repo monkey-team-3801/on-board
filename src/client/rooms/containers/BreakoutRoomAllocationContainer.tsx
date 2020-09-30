@@ -1,83 +1,115 @@
+import { OrderedMap } from "immutable";
 import React from "react";
-import { Container, Col, Row, Button } from "react-bootstrap";
-import { UserDataResponseType } from "../../../types";
-import { UserDisplay } from "../components";
-import { OrderedMap, List } from "immutable";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { v4 } from "uuid";
 import { UserData } from "../types";
 import { RoomGroupingContainer } from "./RoomGroupingContainer";
+import { useDynamicFetch } from "../../hooks";
 
 type Props = {
     amount: number;
     users: Array<UserData>;
-    setParentRooms: (rooms: List<OrderedMap<string, UserData>>) => void;
+    rooms: OrderedMap<string, OrderedMap<string, UserData>>;
+    setRooms: React.Dispatch<
+        React.SetStateAction<OrderedMap<string, OrderedMap<string, UserData>>>
+    >;
 };
 
 export const BreakoutRoomAllocationContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setParentRooms } = props;
-    const [rooms, setRooms] = React.useState<
-        List<OrderedMap<string, UserData>>
-    >(
-        List([
-            OrderedMap(
-                props.users.map((user) => {
-                    return [user.id, user];
-                })
-            ),
-            ...Array.from({ length: props.amount }).map(() => {
-                return OrderedMap<string, UserData>();
-            }),
-        ])
-    );
+    const { rooms, setRooms } = props;
+
+    const [, deleteBreakoutRoom] = useDynamicFetch<
+        undefined,
+        { sessionId: string }
+    >("/session/deleteBreakoutRoom", undefined, false);
 
     const allocateUser = React.useCallback(
-        (roomIndex: number, currentRoomIndex: number, userId: string) => {
+        (
+            roomId: string | "main",
+            currentRoomId: string | "main",
+            userId: string
+        ) => {
             setRooms((prev) => {
-                const currentRoom = prev.get(currentRoomIndex)!;
-                const newRoom = prev.get(roomIndex)!;
+                const currentRoom = prev.get(currentRoomId)!;
+                const newRoom = prev.get(roomId)!;
                 const userData = currentRoom.get(userId)!;
                 return prev
-                    .set(currentRoomIndex, currentRoom.delete(userId))
-                    .set(roomIndex, newRoom.set(userId, userData));
+                    .set(currentRoomId, currentRoom.delete(userId))
+                    .set(roomId, newRoom.set(userId, userData));
             });
         },
-        []
+        [setRooms]
     );
 
-    React.useEffect(() => {
-        setParentRooms(rooms);
-    }, [rooms, setParentRooms]);
+    const deleteRoom = React.useCallback(
+        (roomId: string) => {
+            setRooms((prev) => {
+                return prev.delete(roomId);
+            });
+            deleteBreakoutRoom({
+                sessionId: roomId,
+            });
+        },
+        [setRooms, deleteBreakoutRoom]
+    );
 
     return (
         <Container className="allocation">
             <Row>
+                <Col>
+                    <Button
+                        variant="success"
+                        size="sm"
+                        onClick={() => {
+                            setRooms(rooms.set(v4(), OrderedMap()));
+                        }}
+                    >
+                        Add Room
+                    </Button>
+                </Col>
+            </Row>
+            <Row>
                 <Col lg={6}>
                     <Container fluid>
-                        {rooms.shift()?.map((_, i) => {
-                            return (
-                                <Row>
-                                    <Container key={i} fluid>
-                                        <RoomGroupingContainer
-                                            roomIndex={i + 1}
-                                            roomAmount={props.amount}
-                                            users={Array.from(
-                                                rooms.get(i + 1)?.values() || []
-                                            )}
-                                            allocateUser={allocateUser}
-                                        />
-                                    </Container>
-                                </Row>
-                            );
-                        })}
+                        {Array.from(rooms.delete("main").entries() || []).map(
+                            ([key, room], i) => {
+                                return (
+                                    <Row key={key}>
+                                        <Container
+                                            key={key}
+                                            fluid
+                                            className="room-group-container"
+                                        >
+                                            <RoomGroupingContainer
+                                                roomId={key}
+                                                otherRooms={Array.from(
+                                                    rooms.delete(key).keys()
+                                                )}
+                                                roomIndex={i}
+                                                users={Array.from(
+                                                    room.values()
+                                                )}
+                                                allocateUser={allocateUser}
+                                                deleteRoom={deleteRoom}
+                                            />
+                                        </Container>
+                                    </Row>
+                                );
+                            }
+                        )}
                     </Container>
                 </Col>
                 <Col lg={6}>
                     <Container fluid>
                         <RoomGroupingContainer
+                            roomId={"main"}
+                            otherRooms={Array.from(rooms.delete("main").keys())}
                             roomIndex={0}
-                            roomAmount={props.amount}
-                            users={Array.from(rooms.get(0)?.values() || [])}
+                            users={Array.from(
+                                rooms.get("main")?.values() || []
+                            )}
                             allocateUser={allocateUser}
                         />
                     </Container>

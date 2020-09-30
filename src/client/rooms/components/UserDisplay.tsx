@@ -1,45 +1,49 @@
 import React from "react";
 import { UserDataResponseType } from "../../../types";
 import { Button, Dropdown } from "react-bootstrap";
+import { UserData } from "../types";
 
-type Props = Omit<UserDataResponseType, "courses"> & {
+type Props = UserData & {
     allocateUser: (
-        roomIndex: number,
-        currentRoomIndex: number,
+        roomId: string | "main",
+        currentRoomId: string | "main",
         userId: string
     ) => void;
-    currentRoomIndex: number;
-    roomAmount: number;
+    otherRooms: Array<string>;
+    currentRoomId: string;
 };
 
 export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <div className="user-display">
             <Dropdown>
-                <Dropdown.Toggle variant="info" size="sm">
+                <Dropdown.Toggle
+                    variant="info"
+                    size="sm"
+                    disabled={props.allocated}
+                >
                     Allocate
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {Array.from({ length: props.roomAmount + 1 }).map(
-                        (_, i) => {
-                            if (props.currentRoomIndex !== i) {
-                                return (
-                                    <Dropdown.Item
-                                        onClick={() => {
-                                            props.allocateUser(
-                                                i,
-                                                props.currentRoomIndex,
-                                                props.id
-                                            );
-                                        }}
-                                    >
-                                        {i === 0 ? "Main" : `Room ${i}`}
-                                    </Dropdown.Item>
-                                );
-                            }
-                            return <></>;
+                    {props.otherRooms.map((key, i) => {
+                        if (props.currentRoomId !== key) {
+                            return (
+                                <Dropdown.Item
+                                    key={i}
+                                    onClick={() => {
+                                        props.allocateUser(
+                                            key,
+                                            props.currentRoomId,
+                                            props.id
+                                        );
+                                    }}
+                                >
+                                    {key === "main" ? "Main" : `Room ${i + 1}`}
+                                </Dropdown.Item>
+                            );
                         }
-                    )}
+                        return <></>;
+                    })}
                 </Dropdown.Menu>
             </Dropdown>
             <img src={`/filehandler/getPfp/${props.id}`} />
