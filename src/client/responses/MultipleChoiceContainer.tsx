@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useDynamicFetch } from "../hooks";
 
 type Props = {
-    q: string;
+    question: string;
+    sessionID: string;
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
@@ -22,11 +23,12 @@ export const MultipleChoiceContainer = (props: Props) => {
     const submitForm = (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
         // Fails silently for now.
-        if (!props.q) {
+        if (!props.question) {
             return;
         }
         const data = options.toObject();
-        data["question"] = props.q;
+        data["question"] = props.question;
+        data["sessionID"] = props.sessionID;
         uploadForm(data);
     };
 
@@ -66,7 +68,7 @@ export const MultipleChoiceContainer = (props: Props) => {
                 );
             })}
             <Button type="submit">Submit</Button>
-            {props.q ? null : (
+            {props.question ? null : (
                 <div style={{ color: "red" }}>
                     please fill out the question field.
                 </div>

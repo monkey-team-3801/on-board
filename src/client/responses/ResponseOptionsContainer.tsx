@@ -8,7 +8,11 @@ import {
 } from "react-bootstrap";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
-export const ResponseOptionsContainer = () => {
+type Props = {
+    sid: string;
+};
+
+export const ResponseOptionsContainer = (props: Props) => {
     const [checkedOption, setOption] = React.useState<string>("mc");
     const [question, setQuestion] = React.useState<string>("");
 
@@ -53,7 +57,10 @@ export const ResponseOptionsContainer = () => {
             </InputGroup>
             <div>
                 {checkedOption === "mc" ? (
-                    <MultipleChoiceContainer q={question} />
+                    <MultipleChoiceContainer
+                        question={question}
+                        sessionID={props.sid}
+                    />
                 ) : (
                     <Button type="submit">Submit</Button>
                 )}
