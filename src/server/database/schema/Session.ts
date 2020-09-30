@@ -8,6 +8,7 @@ interface ISession extends mongoose.Document {
     description: string;
     roomType: RoomType;
     courseCode?: string;
+    responsesID?: Array<string>;
 }
 
 // interface PrivateRoom extends ISession {
@@ -26,6 +27,7 @@ const SessionSchema = new mongoose.Schema<ISession>({
     messages: { type: Array, default: [] },
     files: { type: Map, default: new Map() },
     roomType: { type: Number },
+    responsesID: { type: Array, default: [] },
 });
 
 export const Session = mongoose.model<ISession>("Session", SessionSchema);
