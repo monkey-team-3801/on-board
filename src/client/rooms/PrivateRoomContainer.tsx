@@ -9,7 +9,7 @@ import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
 import { useFetch } from "../hooks";
 import { socket } from "../io";
-import { ResponseOptionsContainer } from "../responses/ResponseOptionsContainer";
+import { ResponseTest } from "../responses/ResponseTest";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 
@@ -47,7 +47,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                     <DrawingCanvas sessionId={sessionResponse.data.id} />
                 </Col>
                 <Col>
-                    <ResponseOptionsContainer sid={sessionResponse.data.id} />
+                    <ResponseTest sid={sessionResponse.data.id} />
                 </Col>
             </Row>
             <Row>

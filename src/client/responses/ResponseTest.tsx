@@ -1,9 +1,37 @@
 import React from "react";
+import { Button, Modal } from "react-bootstrap";
+import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 
-export const ResponseTest = () => {
+type Props = {
+    sid: string;
+};
+
+export const ResponseTest = (props: Props) => {
+    const [show, setShow] = React.useState(false);
+
+    const handleOpen = () => {
+        setShow(true);
+    };
+
+    const handleClose = () => {
+        setShow(false);
+    };
+
     return (
         <div>
-            <h1>Test</h1>
+            <Button variant="primary" onClick={handleOpen}>
+                Ask a question
+            </Button>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Body>
+                    <ResponseOptionsContainer sid={props.sid} />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };
