@@ -7,6 +7,7 @@ export type SessionInfo = {
     name: string;
     description: string;
     courseCode?: string;
+    parentSessionId?: string;
 };
 
 export type MessageData = {

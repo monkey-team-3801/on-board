@@ -10,16 +10,16 @@ import {
 } from "../../types";
 import { ColourPicker } from "../colour";
 import { useDynamicFetch, useFetch } from "../hooks";
-import { socket } from "../io";
 import { requestIsLoaded, throttle } from "../utils";
 import "./Canvas.less";
 
 type Props = {
     sessionId: string;
+    socket: SocketIOClient.Socket;
 };
 
 export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
-    const { sessionId } = props;
+    const { sessionId, socket } = props;
     const canvasRef: React.MutableRefObject<
         HTMLCanvasElement | undefined
     > = React.useRef<HTMLCanvasElement>();
@@ -219,6 +219,9 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                 canvasRef.current?.height || 0
             );
         });
+        return () => {
+            socket.off(CanvasEvent.CHANGE).off(CanvasEvent.CLEAR);
+        };
     }, [drawLine]);
 
     React.useEffect(() => {

@@ -6,18 +6,16 @@ import { ClassEvent } from "../events";
 import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
-import { ClassOpenIndicator } from "./components";
 import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
+import { ClassOpenIndicator } from "./Indicators";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
-import { Calendar } from "./timetable/calendar/Calendar";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
-import { VideoContainer } from "./video/VideoContainer";
 import { VideoRoomLobby } from "./video/VideoRoomLobby";
 
 type Props = RouteComponentProps;
@@ -110,6 +108,21 @@ export const AppProtectedRoutes = (props: Props) => {
                                 <PrivateRoomContainer
                                     {...routerProps}
                                     userData={{ username, id, courses }}
+                                    roomType={"private"}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/breakout/:roomId"
+                        render={(
+                            routerProps: RouteComponentProps<{ roomId: string }>
+                        ) => {
+                            return (
+                                <PrivateRoomContainer
+                                    {...routerProps}
+                                    userData={{ username, id, courses }}
+                                    roomType={"breakout"}
                                 />
                             );
                         }}

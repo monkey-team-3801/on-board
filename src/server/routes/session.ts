@@ -24,6 +24,7 @@ import {
     UserDataResponseType,
 } from "../../types";
 import { VideoSession } from "../database/schema/VideoSession";
+import { io } from "../server";
 
 export const router = express.Router();
 
@@ -36,6 +37,10 @@ router.post(
                 await SessionCanvas.create({
                     sessionId: session._id,
                     strokes: [],
+                });
+                await SessionUsers.create({
+                    sessionId: session._id,
+                    userReferenceMap: new Map(),
                 });
                 console.log("Session created:", session.name);
             }
@@ -98,6 +103,29 @@ router.post(
                     description: session.description,
                     courseCode: session.courseCode,
                     messages: session.messages,
+                });
+            }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        }
+    })
+);
+
+router.post(
+    "/getBreakoutSession",
+    asyncHandler<SessionData, {}, { id: string }>(async (req, res, next) => {
+        try {
+            const session = await BreakoutSession.findById(req.body.id);
+            if (session) {
+                res.json({
+                    id: session._id,
+                    name: session.name,
+                    description: session.description,
+                    courseCode: session.courseCode,
+                    messages: session.messages,
+                    parentSessionId: session.parentSessionId,
                 });
             }
         } catch (e) {
@@ -229,8 +257,6 @@ router.post(
                 userType: user.userType,
             };
         });
-
-        console.log(users, ids);
         res.json({
             users,
         });
@@ -240,37 +266,41 @@ router.post(
 router.post(
     "/createBreakoutRooms",
     asyncHandler<
-        { rooms: Array<Omit<BreakoutRoomData, "description">> },
+        { rooms: Array<string> },
         {},
-        { amount: number; sessionId: string }
+        {
+            amount: number;
+            sessionId: string;
+        }
     >(async (req, res) => {
-        const session = await Session.findById(req.body.sessionId);
+        const session = await ClassroomSession.findById(req.body.sessionId);
         if (session) {
-            const breakoutRooms: Array<Omit<
-                BreakoutRoomData,
-                "description"
-            >> = (
+            const breakoutRooms: Array<string> = (
                 await Promise.all(
                     Array.from({ length: req.body.amount }).map(
                         async (_, i) => {
-                            return await BreakoutSession.create({
-                                name: `${session.name} - Breakout Room ${
-                                    i + 1
-                                }`,
-                                messages: [],
-                                description: session.description,
-                                roomType: RoomType.PRIVATE,
-                                courseCode: session?.courseCode,
-                                parentSessionId: session?._id,
+                            const breakoutSession = await BreakoutSession.create(
+                                {
+                                    name: `${session.name} - Breakout Room ${
+                                        i + 1
+                                    }`,
+                                    messages: [],
+                                    description: session.description,
+                                    roomType: RoomType.PRIVATE,
+                                    courseCode: session?.courseCode,
+                                    parentSessionId: session?._id,
+                                }
+                            );
+                            await SessionUsers.create({
+                                sessionId: breakoutSession._id,
+                                userReferenceMap: new Map(),
                             });
+                            return breakoutSession;
                         }
                     )
                 )
             ).map((room) => {
-                return {
-                    name: room.name,
-                    roomId: room._id,
-                };
+                return room._id;
             });
 
             res.json({
