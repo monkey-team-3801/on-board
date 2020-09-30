@@ -148,6 +148,25 @@ io.on("connect", (socket: SocketIO.Socket) => {
         }
     );
 
+    socket.on(
+        RoomEvent.BREAKOUT_ROOM_ALLOCATE,
+        (
+            users: Array<string>,
+            roomId: string,
+            roomIndex: number,
+            sessionId: string
+        ) => {
+            socket
+                .to(sessionId)
+                .emit(
+                    RoomEvent.BREAKOUT_ROOM_ALLOCATE,
+                    users,
+                    roomIndex,
+                    roomId
+                );
+        }
+    );
+
     // socket.on(
     //     VideoEvent.USER_LEAVE_ROOM,
     //     async ({ sessionId, peerId, userId }) => {
