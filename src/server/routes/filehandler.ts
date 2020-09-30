@@ -94,23 +94,27 @@ router.post(
 router.get(
     "/getPfp/:userId",
     asyncHandler<undefined, { userId: string }>(async (req, res) => {
-        const user = await User.findById(req.params.userId);
-        if (user) {
-            const pfp = user.pfp;
-            res.contentType("image/jpeg");
-            if (pfp.byteLength !== 0) {
-                res.end(pfp, "binary");
-            } else {
-                readFile("public/default_user.jpg", (err, data) => {
-                    if (err) {
-                        console.log(err);
-                        res.end();
-                    } else {
-                        res.end(data, "binary");
-                    }
-                });
+        try {
+            const user = await User.findById(req.params.userId);
+            if (user) {
+                const pfp = user.pfp;
+                res.contentType("image/jpeg");
+                if (pfp.byteLength !== 0) {
+                    res.end(pfp, "binary");
+                    return;
+                }
             }
+        } catch {
+            //
         }
+        readFile("public/default_user.jpg", (err, data) => {
+            if (err) {
+                console.log(err);
+                res.end();
+            } else {
+                res.end(data, "binary");
+            }
+        });
     })
 );
 
