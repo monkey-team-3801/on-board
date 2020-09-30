@@ -84,7 +84,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 if (currentReference - 1 === 0) {
                     session.userReferenceMap.delete(userId);
                     await session.save();
-                    socket.leave(userId);
                     socket.leave(sessionId);
                     io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
                     console.log("User", userId, "leaving", sessionId);

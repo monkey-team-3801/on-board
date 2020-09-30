@@ -78,14 +78,16 @@ router.post(
     "/getFiles",
     asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
         async (req, res) => {
-            const session = await Session.findById(req.body.sid);
-            if (session) {
-                const files = session.files;
-                if (files) {
-                    res.json(Object.fromEntries(files)).status(200).end();
-                }
-            }
-            res.status(500).end();
+            // TODO MOVE THIS TO SEPARATE FILE SCHEMA
+            res.json({});
+            // const session = await Session.findById(req.body.sid);
+            // if (session) {
+            //     const files = session.files;
+            //     if (files) {
+            //         res.json(Object.fromEntries(files)).status(200).end();
+            //     }
+            // }
+            // res.status(500).end();
         }
     )
 );
