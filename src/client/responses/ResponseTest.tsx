@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
+import { DisplayContainer } from "./DisplayContainer";
 import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 
 type Props = {
@@ -8,30 +9,67 @@ type Props = {
 
 // Test modal, remove this file when no longer needed.
 export const ResponseTest = (props: Props) => {
-    const [show, setShow] = React.useState(false);
-
-    const handleOpen = () => {
-        setShow(true);
-    };
-
-    const handleClose = () => {
-        setShow(false);
-    };
+    const [showForm, setShowForm] = React.useState(false);
+    const [showResult, setShowResult] = React.useState(false);
 
     return (
         <div>
-            <Button variant="primary" onClick={handleOpen}>
+            <Button
+                variant="primary"
+                onClick={() => {
+                    setShowForm(true);
+                }}
+            >
                 Ask a question
             </Button>
-            <Modal show={show} onHide={handleClose}>
+            <Modal
+                show={showForm}
+                onHide={() => {
+                    setShowForm(false);
+                }}
+            >
                 <Modal.Body>
                     <ResponseOptionsContainer
                         sid={props.sid}
-                        closeFunc={handleClose}
+                        closeFunc={setShowForm}
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            setShowForm(false);
+                        }}
+                    >
+                        close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Button
+                variant="primary"
+                onClick={() => {
+                    setShowResult(true);
+                }}
+            >
+                See existing responses
+            </Button>
+            <Modal
+                show={showResult}
+                onHide={() => {
+                    setShowResult(false);
+                }}
+            >
+                <Modal.Body>
+                    <DisplayContainer />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            setShowResult(false);
+                        }}
+                    >
                         close
                     </Button>
                 </Modal.Footer>
