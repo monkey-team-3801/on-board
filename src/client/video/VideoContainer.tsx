@@ -116,10 +116,6 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                         });
                     });
                 }
-
-                // setPeerCalls((prev) => {
-                //     return prev.set(call.peer, call);
-                // });
                 myPeer.on("call", (call: MediaConnection) => {
                     console.log("Receiving call from", call.peer);
                     call.answer(myStream);
@@ -152,11 +148,6 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
             console.log("Peer", peerId, "hung up.");
             return prev.delete(theirUserId);
         });
-        // if (call) {
-        //     setPeerCalls((prev) => omit(prev, peerId));
-        //     call.close();
-
-        // }
     }, []);
 
     useEffect(() => {
@@ -194,64 +185,10 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
         };
     }, []);
 
-    // Listen to calls
-    useEffect(() => {
-        // console.log(myStream, myPeer);
-        // if (myPeer && myPeerId) {
-        //     console.log("My stream exists");
-        //     socket.emit(VideoEvent.USER_JOIN_ROOM, {
-        //         sessionId,
-        //         userId: myPeerId,
-        //     });
-        //     myPeer.on("call", (call: MediaConnection) => {
-        //         console.log("Receiving call from", call.peer);
-        //         call.answer(myStream);
-        //         // if (myStream) {
-        //         // }
-        //         setPeerCalls((prev) => ({ ...prev, [call.peer]: call }));
-        //         call.on("stream", (stream) => {
-        //             console.log("Receiving stream from", call.peer);
-        //             setPeerStreams((prev) => ({
-        //                 ...prev,
-        //                 [call.peer]: stream,
-        //             }));
-        //         });
-        //     });
-        // } else {
-        //     if (myPeerId) {
-        //         console.log("disconnected");
-        //         socket.emit(VideoEvent.USER_LEAVE_ROOM, {
-        //             sessionId,
-        //             userId,
-        //             myPeerId
-        //         });
-        //     }
-        // }
-    }, [myStream, myPeer, myPeerId]);
-
     const onSocketUpdateUsers = useCallback(
         (userPeer: UserPeer) => {
             console.log("new peer", userPeer.peerId);
             addPeer(userPeer);
-            // console.log(myPeerId, newPeerId);
-            // if (newPeer !== myPeerId) {
-
-            // }
-            // addPeer(newPeer);
-            // console.log("updating users", updatedPeers);
-            // const currentPeers = keys(peerCalls);
-            // const removedPeers = difference(currentPeers, updatedPeers);
-            // const addedPeers = difference(updatedPeers, currentPeers);
-            // for (const addedPeer of addedPeers) {
-            //     if (addedPeer === myPeerId) {
-            //         continue;
-            //     }
-            //     addPeer(addedPeer);
-            // }
-            // for (const removedPeer of removedPeers) {
-            //     removePeer(removedPeer);
-            // }
-            // console.log(peerStreams);
         },
         [addPeer]
     );
