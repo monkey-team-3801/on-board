@@ -201,3 +201,8 @@ export type Stroke = {
     colour: string;
     size: number;
 };
+
+export enum ResponseFormType {
+    SHORT_ANSWER,
+    MULTIPLE_CHOICE,
+}

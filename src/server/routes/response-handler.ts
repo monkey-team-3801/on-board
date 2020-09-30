@@ -1,6 +1,10 @@
 import express from "express";
 import { version } from "uuid";
-import { ResponseForm } from "../database/schema/ResponseForm";
+import { ResponseFormType } from "../../types";
+import {
+    MultipleChoiceResponseForm,
+    ShortAnswerResponseForm,
+} from "../database/schema/ResponseForm";
 
 export const router = express.Router();
 
@@ -28,13 +32,14 @@ router.post("/submitMcForm", async (req, res) => {
     });
     if (question && sid) {
         try {
-            await ResponseForm.create({
+            await MultipleChoiceResponseForm.create({
                 sessionID: sid,
                 question: question,
+                type: ResponseFormType.MULTIPLE_CHOICE,
                 options: options,
                 count: responses,
             });
-            res.status(500).end();
+            res.status(200).end();
         } catch (e) {
             res.status(500);
             new Error(
@@ -45,5 +50,23 @@ router.post("/submitMcForm", async (req, res) => {
 });
 
 router.post("/submitSaForm", async (req, res) => {
-    console.log(req.body);
+    const formOptions = new Map<string, string>(Object.entries(req.body));
+    const question = formOptions.get("question");
+    const sid = formOptions.get("sessionID");
+
+    if (question && sid) {
+        try {
+            await ShortAnswerResponseForm.create({
+                sessionID: sid,
+                question: question,
+                type: ResponseFormType.SHORT_ANSWER,
+            });
+            res.status(200).end();
+        } catch (e) {
+            res.status(500);
+            new Error(
+                "An unexpected error has occured. Your form was not created."
+            );
+        }
+    }
 });
