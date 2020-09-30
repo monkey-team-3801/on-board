@@ -85,6 +85,8 @@ export const createNewClassroomSession = async (
         sessionId: session._id,
         userPeerMap: new Map(),
         userReferenceMap: new Map(),
+        numScreensAllowed: 1,
+        sharingUsers: []
     });
     return session;
 };

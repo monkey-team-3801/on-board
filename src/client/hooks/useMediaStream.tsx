@@ -49,6 +49,7 @@ export const useMediaStream: () => [
         stream?.getTracks().forEach(track => {
             track.stop();
         });
+        setStream(undefined);
     }, []);
 
     useEffect(() => {
