@@ -221,3 +221,5 @@ export type BreakoutRoomData = {
     roomId: string;
     description: string;
 };
+
+export type UserData = Omit<UserDataResponseType, "courses">;

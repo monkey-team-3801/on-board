@@ -38,6 +38,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
+    _id: { type: String, required: true },
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
     files: { type: Map, default: new Map() },
