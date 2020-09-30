@@ -40,14 +40,16 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     return (
         <Container fluid>
             <Row>
-                <h1>Private Room</h1>
+                <Col>
+                    <h1>Private Room</h1>
+                </Col>
+                <Col>
+                    <ResponseTest sid={sessionResponse.data.id} />
+                </Col>
             </Row>
             <Row>
                 <Col>
                     <DrawingCanvas sessionId={sessionResponse.data.id} />
-                </Col>
-                <Col>
-                    <ResponseTest sid={sessionResponse.data.id} />
                 </Col>
             </Row>
             <Row>

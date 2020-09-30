@@ -7,6 +7,7 @@ import { useDynamicFetch } from "../hooks";
 type Props = {
     question: string;
     sessionID: string;
+    closeModal: Function;
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
@@ -30,6 +31,7 @@ export const MultipleChoiceContainer = (props: Props) => {
         data["question"] = props.question;
         data["sessionID"] = props.sessionID;
         uploadForm(data);
+        props.closeModal();
     };
 
     return (

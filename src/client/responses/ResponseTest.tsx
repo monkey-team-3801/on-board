@@ -24,7 +24,10 @@ export const ResponseTest = (props: Props) => {
             </Button>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Body>
-                    <ResponseOptionsContainer sid={props.sid} />
+                    <ResponseOptionsContainer
+                        sid={props.sid}
+                        closeFunc={handleClose}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleClose}>

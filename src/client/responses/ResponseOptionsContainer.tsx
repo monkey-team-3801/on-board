@@ -10,6 +10,7 @@ import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
     sid: string;
+    closeFunc: Function;
 };
 
 export const ResponseOptionsContainer = (props: Props) => {
@@ -60,9 +61,17 @@ export const ResponseOptionsContainer = (props: Props) => {
                     <MultipleChoiceContainer
                         question={question}
                         sessionID={props.sid}
+                        closeModal={props.closeFunc}
                     />
                 ) : (
-                    <Button type="submit">Submit</Button>
+                    <Button
+                        type="submit"
+                        onClick={() => {
+                            props.closeFunc();
+                        }}
+                    >
+                        Submit
+                    </Button>
                 )}
             </div>
         </div>
