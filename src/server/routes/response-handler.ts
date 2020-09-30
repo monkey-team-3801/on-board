@@ -5,6 +5,7 @@ import {
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
+import { asyncHandler } from "../utils";
 
 export const router = express.Router();
 
@@ -70,3 +71,21 @@ router.post("/submitSaForm", async (req, res) => {
         }
     }
 });
+
+router.post(
+    "/getFormsBySession",
+    asyncHandler<Array<Array<string>>, {}, { sid: string }>(
+        async (req, res) => {
+            const sid = req.body.sid;
+            const MCFormQuery = await MultipleChoiceResponseForm.find({
+                sessionID: sid,
+            });
+            const SAFormQuery = await ShortAnswerResponseForm.find({
+                sessionID: sid,
+            });
+            const MCForms = MCFormQuery.map((x) => x.id);
+            const SAForms = SAFormQuery.map((x) => x.id);
+            res.send([MCForms, SAForms]).status(200).end();
+        }
+    )
+);

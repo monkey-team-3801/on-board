@@ -1,9 +1,39 @@
 import React from "react";
+import { useDynamicFetch } from "../hooks";
+import { requestIsLoaded } from "../utils";
 
-export const DisplayContainer = () => {
+type Props = {
+    sessionID: string;
+};
+export const DisplayContainer = (props: Props) => {
+    const [forms, getForms] = useDynamicFetch<
+        Array<Array<string>>,
+        { sid: string }
+    >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
+
+    if (!requestIsLoaded(forms)) {
+        return <div>loading forms...</div>;
+    }
+
+    const MultipleChoiceForms = forms.data[0];
+    const ShortAnswerForms = forms.data[1];
+
+    const test = () => {
+        getForms({
+            sid: props.sessionID,
+        });
+        console.log(ShortAnswerForms);
+    };
+
     return (
         <div>
-            <h1>display test</h1>
+            <button
+                onClick={() => {
+                    test();
+                }}
+            >
+                click
+            </button>
         </div>
     );
 };
