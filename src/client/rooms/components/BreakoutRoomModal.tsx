@@ -1,16 +1,16 @@
+import { OrderedMap } from "immutable";
 import React from "react";
-import { Modal, Button, Form, Col } from "react-bootstrap";
-import { CreateBreakoutRoomForm } from "./CreateBreakoutRoomForm";
-import { useDynamicFetch } from "../../hooks";
-import { BreakoutRoomAllocationContainer } from "../containers/";
-import { UserDataResponseType, UserType } from "../../../types";
-
-import "../breakoutAllocation.less";
-import { socket } from "../../io";
-import { List, OrderedMap } from "immutable";
-import { UserData } from "../types";
-import { requestIsLoaded } from "../../utils";
+import { Button, Modal } from "react-bootstrap";
+import { v4 } from "uuid";
 import { RoomEvent } from "../../../events";
+import { UserDataResponseType, UserType } from "../../../types";
+import { useDynamicFetch, useFetch } from "../../hooks";
+import { socket } from "../../io";
+import { requestIsLoaded } from "../../utils";
+import "../breakoutAllocation.less";
+import { BreakoutRoomAllocationContainer } from "../containers/";
+import { UserData } from "../types";
+import { CreateBreakoutRoomForm } from "./CreateBreakoutRoomForm";
 
 type Props = {
     visible: boolean;
@@ -22,43 +22,97 @@ type Props = {
 export const BreakoutRoomModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { visible, handleClose, sessionId } = props;
+    const { visible, handleClose, sessionId, userData } = props;
 
     const [createBreakoutRoomsResponse, createBreakoutRooms] = useDynamicFetch<
         { rooms: Array<string> },
         {
-            amount: number;
+            rooms: Array<string>;
             sessionId: string;
         }
     >("/session/createBreakoutRooms", undefined, false);
+
+    const [breakoutRoomResponse] = useFetch<
+        { rooms: Array<{ roomId: string; users: Array<UserData> }> },
+        { sessionId: string }
+    >("/session/getBreakoutRooms", { sessionId });
 
     const [creationStage, setCreationStage] = React.useState<number>(0);
 
     const [roomAmount, setRoomAmount] = React.useState<number>(1);
 
-    const roomsRef = React.useRef<List<OrderedMap<string, UserData>>>(List([]));
+    const [rooms, setRooms] = React.useState<
+        OrderedMap<string, OrderedMap<string, UserData>>
+    >(
+        OrderedMap([
+            [
+                "main",
+                OrderedMap(
+                    props.userData.map((user) => {
+                        return [user.id, user];
+                    })
+                ),
+            ],
+        ] as [string, OrderedMap<string, UserData>][])
+    );
 
-    const setRooms = (rooms: List<OrderedMap<string, UserData>>) => {
-        roomsRef.current = rooms;
-    };
+    const userExists = React.useCallback(
+        (userId: string) => {
+            return Array.from(rooms.values()).some((userMap) => {
+                return userMap.has(userId);
+            });
+        },
+        [rooms]
+    );
+
+    React.useEffect(() => {
+        if (requestIsLoaded(breakoutRoomResponse)) {
+            breakoutRoomResponse.data.rooms.forEach((room) => {
+                // console.log(rooms);
+
+                setRooms((prev) => {
+                    let currentRoom = rooms.get(room.roomId) || OrderedMap();
+                    room.users.forEach((user) => {
+                        currentRoom = currentRoom?.set(user.id, {
+                            ...user,
+                            allocated: true,
+                        });
+                    });
+                    return prev.set(room.roomId, currentRoom);
+                });
+            });
+        }
+    }, [breakoutRoomResponse]);
+
+    React.useEffect(() => {
+        userData.forEach((user) => {
+            setRooms((prev) => {
+                if (userExists(user.id)) {
+                    return prev;
+                }
+                const mainRoom = prev.get("main")!;
+                return prev.set("main", mainRoom.set(user.id, user));
+            });
+        });
+    }, [userData, userExists]);
 
     React.useEffect(() => {
         if (
             requestIsLoaded(createBreakoutRoomsResponse) &&
             createBreakoutRoomsResponse.data
         ) {
-            const rooms = createBreakoutRoomsResponse.data.rooms;
-            roomsRef.current.shift().forEach((userMap, i) => {
+            const roomIds = createBreakoutRoomsResponse.data.rooms;
+            Array.from(rooms.delete("main").values()).forEach((userMap, i) => {
                 socket.emit(
                     RoomEvent.BREAKOUT_ROOM_ALLOCATE,
                     Array.from(userMap.keys()),
-                    rooms[i],
+                    roomIds[i],
                     i + 1,
                     sessionId
                 );
             });
         }
-    }, [createBreakoutRoomsResponse, sessionId]);
+    }, [createBreakoutRoomsResponse, sessionId, rooms]);
 
     return (
         <Modal
@@ -83,16 +137,9 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                 {creationStage === 1 && (
                     <BreakoutRoomAllocationContainer
                         amount={roomAmount}
-                        users={props.userData.concat(
-                            Array.from({ length: 10 }).map((_, i) => {
-                                return {
-                                    id: i.toString(),
-                                    username: "user " + i,
-                                    userType: UserType.STUDENT,
-                                };
-                            })
-                        )}
-                        setParentRooms={setRooms}
+                        users={props.userData}
+                        rooms={rooms}
+                        setRooms={setRooms}
                     />
                 )}
             </Modal.Body>
@@ -111,25 +158,9 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                     variant="success"
                     onClick={async () => {
                         await createBreakoutRooms({
-                            amount: roomAmount,
+                            rooms: Array.from(rooms.delete("main").keys()),
                             sessionId: props.sessionId,
                         });
-
-                        //     userRoomMap: roomsRef.current
-                        //         .shift()
-                        //         .map((room) => {
-                        //             return Array.from(room.values()).map(
-                        //                 (user) => {
-                        //                     return user.id;
-                        //                 }
-                        //             );
-                        //         })
-                        //         .toArray(),
-                        // }
-                        // roomsRef.current.shift().forEach((roomMap) => {
-                        //     console.log(roomMap.toJSON());
-                        // });
-                        // socket.emit("");
                     }}
                 >
                     Continue
