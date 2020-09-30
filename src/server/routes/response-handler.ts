@@ -1,4 +1,5 @@
 import express from "express";
+import { version } from "uuid";
 import { ResponseForm } from "../database/schema/ResponseForm";
 
 export const router = express.Router();
@@ -19,12 +20,15 @@ router.post("/submitMcForm", async (req, res) => {
         if (key === "sessionID" || key === "question") {
             return;
         }
+        if (!version(key)) {
+            res.status(500).end();
+        }
         options.set(key, value);
         responses.push(0);
     });
     if (question && sid) {
         try {
-            const response = await ResponseForm.create({
+            await ResponseForm.create({
                 sessionID: sid,
                 question: question,
                 options: options,

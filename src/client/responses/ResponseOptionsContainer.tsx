@@ -17,9 +17,9 @@ export const ResponseOptionsContainer = (props: Props) => {
     const [checkedOption, setOption] = React.useState<string>("mc");
     const [question, setQuestion] = React.useState<string>("");
 
-    const test = (option: string) => {
+    const handleSubmit = () => {
         console.log("test");
-        setOption(option);
+        props.closeFunc();
     };
 
     return (
@@ -67,7 +67,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                     <Button
                         type="submit"
                         onClick={() => {
-                            props.closeFunc();
+                            handleSubmit();
                         }}
                     >
                         Submit
