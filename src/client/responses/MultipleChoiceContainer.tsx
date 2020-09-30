@@ -15,11 +15,10 @@ export const MultipleChoiceContainer = (props: Props) => {
     const x = OrderedMap<string, string>(g);
     const [options, setOptions] = React.useState<OrderedMap<string, string>>(x);
 
-    const [, uploadForm] = useDynamicFetch<any, any>(
-        "/response-handler/submitMcForm",
+    const [, uploadForm] = useDynamicFetch<
         undefined,
-        false
-    );
+        { [key: string]: string }
+    >("/response-handler/submitMcForm", undefined, false);
 
     const submitForm = (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
@@ -69,12 +68,9 @@ export const MultipleChoiceContainer = (props: Props) => {
                     </Form.Group>
                 );
             })}
-            <Button type="submit">Submit</Button>
-            {props.question ? null : (
-                <div style={{ color: "red" }}>
-                    please fill out the question field.
-                </div>
-            )}
+            <Button type="submit" disabled={!props.question}>
+                Submit
+            </Button>
         </Form>
     );
 };

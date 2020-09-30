@@ -6,6 +6,7 @@ type Props = {
     sid: string;
 };
 
+// Test modal, remove this file when no longer needed.
 export const ResponseTest = (props: Props) => {
     const [show, setShow] = React.useState(false);
 

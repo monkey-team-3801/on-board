@@ -6,6 +6,7 @@ import {
     FormGroup,
     InputGroup,
 } from "react-bootstrap";
+import { useDynamicFetch } from "../hooks";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
@@ -16,9 +17,18 @@ type Props = {
 export const ResponseOptionsContainer = (props: Props) => {
     const [checkedOption, setOption] = React.useState<string>("mc");
     const [question, setQuestion] = React.useState<string>("");
+    const [, uploadForm] = useDynamicFetch<any, any>(
+        "/response-handler/submitSaForm",
+        undefined,
+        false
+    );
 
     const handleSubmit = () => {
         console.log("test");
+        uploadForm({
+            sessionID: props.sid,
+            question: question,
+        });
         props.closeFunc();
     };
 
@@ -69,9 +79,15 @@ export const ResponseOptionsContainer = (props: Props) => {
                         onClick={() => {
                             handleSubmit();
                         }}
+                        disabled={!question}
                     >
                         Submit
                     </Button>
+                )}
+                {question ? null : (
+                    <div style={{ color: "red" }}>
+                        please fill out the question field.
+                    </div>
                 )}
             </div>
         </div>
