@@ -24,13 +24,12 @@ export const ResponseOptionsContainer = (props: Props) => {
     >("/response-handler/submitSaForm", undefined, false);
 
     const handleSubmit = async () => {
-        console.log("test");
         await uploadForm({
             sessionID: props.sid,
             question: question,
             uid: props.userid,
         });
-        props.closeFunc();
+        props.closeFunc(false);
     };
 
     return (

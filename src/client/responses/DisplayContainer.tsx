@@ -107,6 +107,8 @@ export const DisplayContainer = (props: Props) => {
                     formType === ResponseFormType.SHORT_ANSWER && (
                         <ShortAnswerDisplay
                             formID={formID}
+                            q={displayQuestion}
+                            uid={props.uid}
                         ></ShortAnswerDisplay>
                     )}
             </div>

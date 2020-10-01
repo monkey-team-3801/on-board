@@ -22,10 +22,19 @@ export const MultipleChoiceDisplay = (props: Props) => {
         false
     );
 
+    const [userAnswered] = useDynamicFetch<
+        { found: boolean },
+        { userID: string; formID: string }
+    >(
+        "/response-handler/checkAnswered",
+        { userID: props.uid, formID: props.formID },
+        true
+    );
+
     const [checked, setChecked] = React.useState<number>(-1);
     const [option, setOption] = React.useState<string>("");
 
-    if (!requestIsLoaded(form)) {
+    if (!requestIsLoaded(form) || !requestIsLoaded(userAnswered)) {
         return <div>loading...</div>;
     }
 
@@ -34,7 +43,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
         console.log(option);
-        submitForm({
+        await submitForm({
             formID: props.formID,
             userID: props.uid,
             option: option,
@@ -65,12 +74,20 @@ export const MultipleChoiceDisplay = (props: Props) => {
                             onChange={() => {
                                 handleCheck(x, i);
                             }}
+                            disabled={userAnswered.data.found}
                         ></Form.Check>
                     ))}
                 </Form.Group>
-                <Button type="submit" disabled={checked < 0}>
-                    submit
-                </Button>
+                {!userAnswered.data.found && (
+                    <Button type="submit" disabled={checked < 0}>
+                        submit
+                    </Button>
+                )}
+                {userAnswered.data.found && (
+                    <div style={{ color: "red" }}>
+                        You have already answered.
+                    </div>
+                )}
             </Form>
         </div>
     );

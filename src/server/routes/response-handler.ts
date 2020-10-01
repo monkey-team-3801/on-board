@@ -51,13 +51,14 @@ router.post("/submitMcForm", async (req, res) => {
             );
         }
     }
+    res.status(500).end();
 });
 
 router.post("/submitSaForm", async (req, res) => {
     const formOptions = new Map<string, string>(Object.entries(req.body));
     const question = formOptions.get("question");
     const sid = formOptions.get("sessionID");
-    const uid = formOptions.get("userID");
+    const uid = formOptions.get("uid");
 
     if (question && sid && uid) {
         try {
@@ -68,6 +69,7 @@ router.post("/submitSaForm", async (req, res) => {
                 answered: [],
                 owner: uid,
             });
+
             res.status(200).end();
         } catch (e) {
             res.status(500);
@@ -76,6 +78,7 @@ router.post("/submitSaForm", async (req, res) => {
             );
         }
     }
+    res.status(500).end();
 });
 
 router.post(
@@ -126,20 +129,52 @@ router.post(
 );
 
 router.post(
+    "/checkAnswered",
+    asyncHandler<{ found: boolean }, {}, { userID: string; formID: string }>(
+        async (req, res) => {
+            console.log("test");
+            const query = await MultipleChoiceResponseForm.findById(
+                req.body.formID
+            );
+            if (query) {
+                if (query.answered.includes(req.body.userID)) {
+                    res.send({ found: true }).status(200).end();
+                }
+            } else {
+                const query2 = await ShortAnswerResponseForm.findById(
+                    req.body.formID
+                );
+                if (query2) {
+                    if (query2.answered.includes(req.body.userID)) {
+                        res.send({ found: true }).status(200).end();
+                    }
+                }
+            }
+            res.send({ found: false }).status(200).end();
+        }
+    )
+);
+
+router.post(
     "/answerMultipleChoice",
     asyncHandler(async (req, res) => {
         const options = new Map<string, string>(Object.entries(req.body));
         const formID = options.get("formID");
         const choice = options.get("option");
+        const userID = options.get("userID");
 
         const query = await MultipleChoiceResponseForm.findById(formID);
 
-        if (choice && query) {
+        if (choice && query && userID) {
+            if (query.answered.includes(userID)) {
+                res.status(500).end();
+                return;
+            }
             const currentValue = query?.count?.get(choice);
-            console.log(currentValue);
             if (currentValue !== undefined) {
                 query.count?.set(choice, currentValue + 1);
-                query.save();
+                query.answered.push(userID);
+                await query.save();
                 res.status(200).end();
             }
         }
