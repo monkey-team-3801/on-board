@@ -47,7 +47,7 @@ export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
             </Dropdown>
             <img src={`/filehandler/getPfp/${props.id}`} alt="profile" />
             <div className="username">
-                <p>{props.username}</p>
+                <p className="text-truncate">{props.username}</p>
             </div>
         </div>
     );
