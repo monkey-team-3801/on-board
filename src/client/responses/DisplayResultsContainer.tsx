@@ -11,22 +11,38 @@ type Props = {
 };
 
 export const DisplayResultsContainer = (props: Props) => {
-    const [resultsData] = useDynamicFetch<
+    const [mcResultsData] = useDynamicFetch<
         Array<Array<string>>,
-        { formID: string; formType: ResponseFormType }
+        { formID: string }
     >(
-        "/response-handler/getResults",
-        { formID: props.formID, formType: props.formType },
-        true
+        "/response-handler/getMCResults",
+        { formID: props.formID },
+        props.formType === ResponseFormType.MULTIPLE_CHOICE
     );
 
-    if (!requestIsLoaded(resultsData)) {
+    const [saResultsData] = useDynamicFetch<
+        Array<Array<string>>,
+        { formID: string }
+    >(
+        "/response-handler/getSAResults",
+        { formID: props.formID },
+        props.formType === ResponseFormType.SHORT_ANSWER
+    );
+
+    if (!requestIsLoaded(mcResultsData) || !requestIsLoaded(saResultsData)) {
         return <div>loading...</div>;
     }
 
-    const values = resultsData.data[0];
-    const options = resultsData.data[1];
+    let options: Array<string> = [];
+    let values: Array<string> = [];
 
+    if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
+        values = mcResultsData.data[0];
+        options = mcResultsData.data[1];
+    } else {
+        values = saResultsData.data[0];
+        options = saResultsData.data[1];
+    }
     return (
         <div>
             <Button
@@ -44,9 +60,12 @@ export const DisplayResultsContainer = (props: Props) => {
                         </div>
                     </div>
                 ))}
-            {props.formType === ResponseFormType.SHORT_ANSWER && (
-                <div>Short answer</div>
-            )}
+            {props.formType === ResponseFormType.SHORT_ANSWER &&
+                values.map((x, i) => (
+                    <div key={i}>
+                        <div>{x}</div>
+                    </div>
+                ))}
         </div>
     );
 };

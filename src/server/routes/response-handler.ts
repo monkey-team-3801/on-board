@@ -231,13 +231,9 @@ router.post(
 );
 
 router.post(
-    "/getResults",
-    asyncHandler<
-        Array<Array<string>>,
-        {},
-        { formID: string; formType: ResponseFormType }
-    >(async (req, res) => {
-        if (req.body.formType === ResponseFormType.MULTIPLE_CHOICE) {
+    "/getMCResults",
+    asyncHandler<Array<Array<string>>, {}, { formID: string }>(
+        async (req, res) => {
             const query = await MultipleChoiceResponseForm.findById(
                 req.body.formID
             );
@@ -251,11 +247,20 @@ router.post(
                         Array.from(options.values()),
                     ];
                     res.send(dataArray).status(200).end();
+                } else {
+                    res.status(500).end();
                 }
             } else {
                 res.status(500).end();
             }
-        } else if (req.body.formType === ResponseFormType.SHORT_ANSWER) {
+        }
+    )
+);
+
+router.post(
+    "/getSAResults",
+    asyncHandler<Array<Array<string>>, {}, { formID: string }>(
+        async (req, res) => {
             const query = await ShortAnswerResponseForm.findById(
                 req.body.formID
             );
@@ -279,9 +284,7 @@ router.post(
                     }
                     res.send(dataArray).status(200).end();
                 }
-            } else {
-                res.status(500).end();
             }
         }
-    })
+    )
 );
