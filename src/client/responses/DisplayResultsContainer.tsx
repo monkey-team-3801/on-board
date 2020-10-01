@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
+import { ShortAnswerDisplayContainer } from "./ShortAnswerDisplayContainer";
 
 type Props = {
     formID: string;
@@ -35,14 +36,15 @@ export const DisplayResultsContainer = (props: Props) => {
 
     let options: Array<string> = [];
     let values: Array<string> = [];
+    let saValues: Array<Array<string>> = [];
 
     if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
         values = mcResultsData.data[0];
         options = mcResultsData.data[1];
     } else {
-        values = saResultsData.data[0];
-        options = saResultsData.data[1];
+        saValues = saResultsData.data;
     }
+
     return (
         <div>
             <Button
@@ -61,9 +63,9 @@ export const DisplayResultsContainer = (props: Props) => {
                     </div>
                 ))}
             {props.formType === ResponseFormType.SHORT_ANSWER &&
-                values.map((x, i) => (
+                saValues.map((x, i) => (
                     <div key={i}>
-                        <div>{x}</div>
+                        <ShortAnswerDisplayContainer user={x[0]} text={x[1]} />
                     </div>
                 ))}
         </div>

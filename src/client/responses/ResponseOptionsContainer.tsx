@@ -34,7 +34,6 @@ export const ResponseOptionsContainer = (props: Props) => {
 
     return (
         <div>
-            <h1>response options container test</h1>
             <Form>
                 <FormGroup>
                     <Form.Check
@@ -66,6 +65,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                     required={true}
                 />
             </InputGroup>
+            <br></br>
             <div>
                 {checkedOption === "mc" ? (
                     <MultipleChoiceContainer

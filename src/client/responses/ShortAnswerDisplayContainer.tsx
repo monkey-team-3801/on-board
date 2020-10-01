@@ -8,7 +8,9 @@ type Props = {
 export const ShortAnswerDisplayContainer = (props: Props) => {
     return (
         <div>
-            <h1>test</h1>
+            <h2>{props.user}'s response:</h2>
+            <p className="text-break">{props.text}</p>
+            <hr></hr>
         </div>
     );
 };

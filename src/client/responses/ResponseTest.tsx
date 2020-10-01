@@ -10,15 +10,26 @@ type Props = {
 
 // Test modal, remove this file when no longer needed.
 export const ResponseTest = (props: Props) => {
-    const [showForm, setShowForm] = React.useState(false);
-    const [showResult, setShowResult] = React.useState(false);
+    const [showForm, setShowForm] = React.useState<boolean>(false);
+    const [showResult, setShowResult] = React.useState<boolean>(false);
+    const [title, setTitle] = React.useState<string>("");
+
+    const handleShow = (header: string, show: boolean) => {
+        setShowForm(show);
+        setTitle(header);
+    };
+
+    const handleShowResult = (header: string, show: boolean) => {
+        setShowResult(show);
+        setTitle(header);
+    };
 
     return (
         <div>
             <Button
                 variant="primary"
                 onClick={() => {
-                    setShowForm(true);
+                    handleShow("Ask a Question", true);
                 }}
             >
                 Ask a question
@@ -28,7 +39,11 @@ export const ResponseTest = (props: Props) => {
                 onHide={() => {
                     setShowForm(false);
                 }}
+                size="xl"
+                scrollable={true}
+                centered={true}
             >
+                <Modal.Header>{title}</Modal.Header>
                 <Modal.Body>
                     <ResponseOptionsContainer
                         sid={props.sid}
@@ -51,7 +66,7 @@ export const ResponseTest = (props: Props) => {
             <Button
                 variant="primary"
                 onClick={() => {
-                    setShowResult(true);
+                    handleShowResult("Responses", true);
                 }}
             >
                 See responses
@@ -61,7 +76,11 @@ export const ResponseTest = (props: Props) => {
                 onHide={() => {
                     setShowResult(false);
                 }}
+                size="xl"
+                scrollable={true}
+                centered={true}
             >
+                <Modal.Header>{title}</Modal.Header>
                 <Modal.Body>
                     <DisplayContainer
                         sessionID={props.sid}
