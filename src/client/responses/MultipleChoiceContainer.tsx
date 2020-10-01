@@ -38,7 +38,7 @@ export const MultipleChoiceContainer = (props: Props) => {
             }}
         >
             <Form.Group>
-                <button
+                <Button
                     disabled={options.size > 5}
                     onClick={() => {
                         const key = uuidv4();
@@ -46,7 +46,7 @@ export const MultipleChoiceContainer = (props: Props) => {
                     }}
                 >
                     +
-                </button>
+                </Button>
             </Form.Group>
 
             {Array.from(options.entries()).map(([key, value], i) => {
@@ -98,13 +98,13 @@ const Input = ({
                 required={true}
             />
             {index >= 1 && (
-                <button
+                <Button
                     onClick={() => {
                         onDelete(optionKey);
                     }}
                 >
                     x
-                </button>
+                </Button>
             )}
         </div>
     );
