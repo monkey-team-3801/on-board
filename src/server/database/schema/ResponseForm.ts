@@ -7,6 +7,7 @@ export interface IResponseForm extends mongoose.Document {
     options?: Map<string, string>;
     count?: Array<number>;
     type: ResponseFormType;
+    answered: Array<string>;
 }
 
 const MultipleChoiceFormSchema = new mongoose.Schema<IResponseForm>({
@@ -15,6 +16,7 @@ const MultipleChoiceFormSchema = new mongoose.Schema<IResponseForm>({
     type: { type: ResponseFormType, required: true },
     options: { type: Map, default: new Map() },
     count: { type: Array, default: [] },
+    answered: { type: Array, default: [] },
 });
 
 export const MultipleChoiceResponseForm = mongoose.model<IResponseForm>(
@@ -26,6 +28,7 @@ const ShortAnswerFormSchema = new mongoose.Schema<IResponseForm>({
     sessionID: { type: String, required: true },
     question: { type: String, required: true },
     type: { type: ResponseFormType, required: true },
+    answered: { type: Array, default: [] },
 });
 
 export const ShortAnswerResponseForm = mongoose.model<IResponseForm>(

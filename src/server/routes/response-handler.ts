@@ -40,6 +40,7 @@ router.post("/submitMcForm", async (req, res) => {
                 type: ResponseFormType.MULTIPLE_CHOICE,
                 options: options,
                 count: responses,
+                answered: [],
             });
             res.status(200).end();
         } catch (e) {
@@ -62,6 +63,7 @@ router.post("/submitSaForm", async (req, res) => {
                 sessionID: sid,
                 question: question,
                 type: ResponseFormType.SHORT_ANSWER,
+                answered: [],
             });
             res.status(200).end();
         } catch (e) {
@@ -88,7 +90,6 @@ router.post(
             sessionID: sid,
         });
 
-        // Probably a better/shorter way to do this...
         const MCForms = MCFormQuery.map((x) => x.id);
         const SAForms = SAFormQuery.map((x) => x.id);
         const MCFormQuestions = MCFormQuery.map((x) => x.question);
@@ -108,7 +109,15 @@ router.post(
 
 router.post(
     "/getMCFormByID",
-    asyncHandler<any, {}, { formID: string }>(async (req, res) => {
-        console.log(req.body.formID);
-    })
+    asyncHandler<{ [optionID: string]: string }, {}, { formID: string }>(
+        async (req, res) => {
+            const query = await MultipleChoiceResponseForm.findById(
+                req.body.formID
+            );
+            if (query?.options) {
+                res.json(Object.fromEntries(query.options)).status(200).end();
+            }
+            res.status(500).end();
+        }
+    )
 );

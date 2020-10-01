@@ -14,9 +14,11 @@ export const DisplayContainer = (props: Props) => {
         { [formType: string]: Array<Array<string>> },
         { sid: string }
     >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
+
     const [displayStage, setDisplayStage] = React.useState<number>(0);
     const [formID, setFormID] = React.useState<string>("");
     const [formType, setFormType] = React.useState<ResponseFormType>();
+    const [displayQuestion, setQuestion] = React.useState<string>("");
 
     if (!requestIsLoaded(forms)) {
         return <div>loading forms...</div>;
@@ -31,10 +33,15 @@ export const DisplayContainer = (props: Props) => {
         });
     };
 
-    const displayForm = (id: string, type: ResponseFormType) => {
+    const displayForm = (
+        id: string,
+        type: ResponseFormType,
+        question: string
+    ) => {
         setFormID(id);
         setFormType(type);
         setDisplayStage(1);
+        setQuestion(question);
     };
 
     return (
@@ -50,11 +57,12 @@ export const DisplayContainer = (props: Props) => {
                                     onClick={() => {
                                         displayForm(
                                             x[0],
-                                            ResponseFormType.MULTIPLE_CHOICE
+                                            ResponseFormType.MULTIPLE_CHOICE,
+                                            x[1]
                                         );
                                     }}
                                 >
-                                    click
+                                    Answer Question
                                 </Button>
                             </ButtonGroup>
                         </div>
@@ -69,11 +77,12 @@ export const DisplayContainer = (props: Props) => {
                                     onClick={() => {
                                         displayForm(
                                             x[0],
-                                            ResponseFormType.SHORT_ANSWER
+                                            ResponseFormType.SHORT_ANSWER,
+                                            x[1]
                                         );
                                     }}
                                 >
-                                    click
+                                    Answer Question
                                 </Button>
                             </ButtonGroup>
                         </div>
@@ -84,6 +93,8 @@ export const DisplayContainer = (props: Props) => {
                     formType === ResponseFormType.MULTIPLE_CHOICE && (
                         <MultipleChoiceDisplay
                             formID={formID}
+                            q={displayQuestion}
+                            back={setDisplayStage}
                         ></MultipleChoiceDisplay>
                     )}
             </div>
