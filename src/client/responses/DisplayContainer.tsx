@@ -109,6 +109,7 @@ export const DisplayContainer = (props: Props) => {
                             formID={formID}
                             q={displayQuestion}
                             uid={props.uid}
+                            back={setDisplayStage}
                         ></ShortAnswerDisplay>
                     )}
             </div>

@@ -9,6 +9,7 @@ export interface IResponseForm extends mongoose.Document {
     type: ResponseFormType;
     answered: Array<string>;
     owner: string;
+    responseID?: Array<string>;
 }
 
 const MultipleChoiceFormSchema = new mongoose.Schema<IResponseForm>({
@@ -32,6 +33,7 @@ const ShortAnswerFormSchema = new mongoose.Schema<IResponseForm>({
     type: { type: ResponseFormType, required: true },
     answered: { type: Array, default: [] },
     owner: { type: String, required: true },
+    responseID: { type: Array, default: [] },
 });
 
 export const ShortAnswerResponseForm = mongoose.model<IResponseForm>(

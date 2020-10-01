@@ -16,11 +16,10 @@ export const MultipleChoiceDisplay = (props: Props) => {
         { formID: string }
     >("/response-handler/getMCFormByID", { formID: props.formID }, true);
 
-    const [, submitForm] = useDynamicFetch<any, any>(
-        "/response-handler/answerMultipleChoice",
+    const [, submitForm] = useDynamicFetch<
         undefined,
-        false
-    );
+        { formID: string; userID: string; option: string }
+    >("/response-handler/answerMultipleChoice", undefined, false);
 
     const [userAnswered] = useDynamicFetch<
         { found: boolean },
@@ -58,6 +57,13 @@ export const MultipleChoiceDisplay = (props: Props) => {
 
     return (
         <div>
+            <Button
+                onClick={() => {
+                    props.back(0);
+                }}
+            >
+                Back
+            </Button>
             <Form
                 onSubmit={(e) => {
                     handleSubmit(e);

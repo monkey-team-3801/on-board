@@ -1,6 +1,7 @@
 import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
+import { Response } from "../database/schema/Response";
 import {
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
@@ -28,6 +29,7 @@ router.post("/submitMcForm", async (req, res) => {
         }
         if (!version(key)) {
             res.status(500).end();
+            return;
         }
         options.set(key, value);
         responses.set(key, 0);
@@ -44,6 +46,7 @@ router.post("/submitMcForm", async (req, res) => {
                 owner: uid,
             });
             res.status(200).end();
+            return;
         } catch (e) {
             res.status(500);
             new Error(
@@ -68,9 +71,11 @@ router.post("/submitSaForm", async (req, res) => {
                 type: ResponseFormType.SHORT_ANSWER,
                 answered: [],
                 owner: uid,
+                responseID: [],
             });
 
             res.status(200).end();
+            return;
         } catch (e) {
             res.status(500);
             new Error(
@@ -122,6 +127,7 @@ router.post(
             );
             if (query?.options) {
                 res.json(Object.fromEntries(query.options)).status(200).end();
+                return;
             }
             res.status(500).end();
         }
@@ -132,13 +138,13 @@ router.post(
     "/checkAnswered",
     asyncHandler<{ found: boolean }, {}, { userID: string; formID: string }>(
         async (req, res) => {
-            console.log("test");
             const query = await MultipleChoiceResponseForm.findById(
                 req.body.formID
             );
             if (query) {
                 if (query.answered.includes(req.body.userID)) {
                     res.send({ found: true }).status(200).end();
+                    return;
                 }
             } else {
                 const query2 = await ShortAnswerResponseForm.findById(
@@ -147,6 +153,7 @@ router.post(
                 if (query2) {
                     if (query2.answered.includes(req.body.userID)) {
                         res.send({ found: true }).status(200).end();
+                        return;
                     }
                 }
             }
@@ -157,7 +164,11 @@ router.post(
 
 router.post(
     "/answerMultipleChoice",
-    asyncHandler(async (req, res) => {
+    asyncHandler<
+        undefined,
+        {},
+        { formID: string; userID: string; option: string }
+    >(async (req, res) => {
         const options = new Map<string, string>(Object.entries(req.body));
         const formID = options.get("formID");
         const choice = options.get("option");
@@ -176,8 +187,44 @@ router.post(
                 query.answered.push(userID);
                 await query.save();
                 res.status(200).end();
+                return;
             }
         }
         res.status(500).end();
+    })
+);
+
+router.post(
+    "/answerShortAnswer",
+    asyncHandler<
+        undefined,
+        {},
+        {
+            userID: string;
+            userResponse: string;
+            formID: string;
+        }
+    >(async (req, res) => {
+        const formQuery = await ShortAnswerResponseForm.findById(
+            req.body.formID
+        );
+
+        if (formQuery) {
+            if (formQuery.answered.includes(req.body.userID)) {
+                res.status(500).end();
+                return;
+            }
+            const query = await Response.create({
+                userID: req.body.userID,
+                formID: req.body.formID,
+                userResponse: req.body.userResponse,
+            });
+            formQuery.responseID?.push(query.id);
+            formQuery.answered.push(req.body.userID);
+            await formQuery.save();
+            res.status(200).end();
+        } else {
+            res.status(500).end();
+        }
     })
 );
