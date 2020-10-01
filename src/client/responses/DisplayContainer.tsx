@@ -8,6 +8,7 @@ import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 
 type Props = {
     sessionID: string;
+    uid: string;
 };
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
@@ -97,6 +98,7 @@ export const DisplayContainer = (props: Props) => {
                             formID={formID}
                             q={displayQuestion}
                             back={setDisplayStage}
+                            uid={props.uid}
                         ></MultipleChoiceDisplay>
                     )}
             </div>

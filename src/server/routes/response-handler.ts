@@ -20,7 +20,7 @@ router.post("/submitMcForm", async (req, res) => {
     }
 
     let options: Map<string, string> = new Map();
-    let responses: Array<number> = [];
+    let responses: Map<string, number> = new Map();
 
     formOptions.forEach((value, key) => {
         if (key === "sessionID" || key === "question" || key === "userID") {
@@ -30,7 +30,7 @@ router.post("/submitMcForm", async (req, res) => {
             res.status(500).end();
         }
         options.set(key, value);
-        responses.push(0);
+        responses.set(key, 0);
     });
     if (question && sid && uid) {
         try {
@@ -128,6 +128,21 @@ router.post(
 router.post(
     "/answerMultipleChoice",
     asyncHandler(async (req, res) => {
-        console.log(req.body);
+        const options = new Map<string, string>(Object.entries(req.body));
+        const formID = options.get("formID");
+        const choice = options.get("option");
+
+        const query = await MultipleChoiceResponseForm.findById(formID);
+
+        if (choice && query) {
+            const currentValue = query?.count?.get(choice);
+            console.log(currentValue);
+            if (currentValue !== undefined) {
+                query.count?.set(choice, currentValue + 1);
+                query.save();
+                res.status(200).end();
+            }
+        }
+        res.status(500).end();
     })
 );

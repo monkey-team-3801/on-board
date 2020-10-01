@@ -7,6 +7,7 @@ type Props = {
     formID: string;
     q: string;
     back: Function;
+    uid: string;
 };
 
 export const MultipleChoiceDisplay = (props: Props) => {
@@ -33,7 +34,11 @@ export const MultipleChoiceDisplay = (props: Props) => {
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
         console.log(option);
-        submitForm(undefined);
+        submitForm({
+            formID: props.formID,
+            userID: props.uid,
+            option: option,
+        });
         props.back(0);
     };
 

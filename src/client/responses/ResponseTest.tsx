@@ -63,7 +63,10 @@ export const ResponseTest = (props: Props) => {
                 }}
             >
                 <Modal.Body>
-                    <DisplayContainer sessionID={props.sid} />
+                    <DisplayContainer
+                        sessionID={props.sid}
+                        uid={props.userid}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
