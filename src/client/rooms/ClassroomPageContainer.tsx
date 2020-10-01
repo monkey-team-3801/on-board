@@ -69,7 +69,6 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, []);
 
     React.useEffect(() => {
-        console.log("test");
         socket
             .connect()
             .on(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
