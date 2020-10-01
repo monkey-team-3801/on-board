@@ -64,6 +64,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
             if (!session) {
                 return;
             }
+            socket.join(sessionId);
             if (session.userReferenceMap.has(userId)) {
                 session.userReferenceMap.set(
                     userId,
@@ -73,7 +74,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
             } else {
                 session.userReferenceMap.set(userId, 1);
                 await session.save();
-                socket.join(sessionId);
                 io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
             }
             console.log("User", userId, "joining", sessionId);
