@@ -45,7 +45,15 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                             </Row>
                         )}
                         <Row>
-                            <h1>Private Room</h1>
+                            <Col>
+                                <h1>Private Room</h1>
+                            </Col>
+                            <Col>
+                                <ResponseTest
+                                    sid={roomId}
+                                    userid={props.userData.id}
+                                ></ResponseTest>
+                            </Col>
                         </Row>
                         <Row>
                             <DrawingCanvas
