@@ -1,4 +1,3 @@
-import { AnyNaptrRecord } from "dns";
 import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
@@ -14,6 +13,7 @@ router.post("/submitMcForm", async (req, res) => {
     const formOptions = new Map<string, string>(Object.entries(req.body));
     const question = formOptions.get("question");
     const sid = formOptions.get("sessionID");
+    const uid = formOptions.get("userID");
 
     if (formOptions.size > 8 || formOptions.size < 3) {
         res.status(500).end();
@@ -23,7 +23,7 @@ router.post("/submitMcForm", async (req, res) => {
     let responses: Array<number> = [];
 
     formOptions.forEach((value, key) => {
-        if (key === "sessionID" || key === "question") {
+        if (key === "sessionID" || key === "question" || key === "userID") {
             return;
         }
         if (!version(key)) {
@@ -32,7 +32,7 @@ router.post("/submitMcForm", async (req, res) => {
         options.set(key, value);
         responses.push(0);
     });
-    if (question && sid) {
+    if (question && sid && uid) {
         try {
             await MultipleChoiceResponseForm.create({
                 sessionID: sid,
@@ -41,6 +41,7 @@ router.post("/submitMcForm", async (req, res) => {
                 options: options,
                 count: responses,
                 answered: [],
+                owner: uid,
             });
             res.status(200).end();
         } catch (e) {
@@ -56,14 +57,16 @@ router.post("/submitSaForm", async (req, res) => {
     const formOptions = new Map<string, string>(Object.entries(req.body));
     const question = formOptions.get("question");
     const sid = formOptions.get("sessionID");
+    const uid = formOptions.get("userID");
 
-    if (question && sid) {
+    if (question && sid && uid) {
         try {
             await ShortAnswerResponseForm.create({
                 sessionID: sid,
                 question: question,
                 type: ResponseFormType.SHORT_ANSWER,
                 answered: [],
+                owner: uid,
             });
             res.status(200).end();
         } catch (e) {
@@ -120,4 +123,11 @@ router.post(
             res.status(500).end();
         }
     )
+);
+
+router.post(
+    "/answerMultipleChoice",
+    asyncHandler(async (req, res) => {
+        console.log(req.body);
+    })
 );

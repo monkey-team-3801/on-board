@@ -47,12 +47,12 @@ export const DisplayContainer = (props: Props) => {
     return (
         <div>
             <div>
-                {displayStage === 0 && <div>Multiple Choice Forms:</div>}
+                {displayStage === 0 && <strong>Multiple Choice Forms:</strong>}
                 {displayStage === 0 &&
                     MultipleChoiceForms.map((x, i) => (
                         <div key={i}>
+                            <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup>
-                                <div>{x[1]}</div>
                                 <Button
                                     onClick={() => {
                                         displayForm(
@@ -65,14 +65,16 @@ export const DisplayContainer = (props: Props) => {
                                     Answer Question
                                 </Button>
                             </ButtonGroup>
+                            <br></br>
                         </div>
                     ))}
-                {displayStage === 0 && <div>Short Answer Forms:</div>}
+                <br></br>
+                {displayStage === 0 && <strong>Short Answer Forms:</strong>}
                 {displayStage === 0 &&
                     ShortAnswerForms.map((x, i) => (
                         <div key={i}>
+                            <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup>
-                                <div>{x[1]}</div>
                                 <Button
                                     onClick={() => {
                                         displayForm(

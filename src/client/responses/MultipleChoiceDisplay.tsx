@@ -15,6 +15,12 @@ export const MultipleChoiceDisplay = (props: Props) => {
         { formID: string }
     >("/response-handler/getMCFormByID", { formID: props.formID }, true);
 
+    const [, submitForm] = useDynamicFetch<any, any>(
+        "/response-handler/answerMultipleChoice",
+        undefined,
+        false
+    );
+
     const [checked, setChecked] = React.useState<number>(-1);
     const [option, setOption] = React.useState<string>("");
 
@@ -27,6 +33,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
         console.log(option);
+        submitForm(undefined);
         props.back(0);
     };
 

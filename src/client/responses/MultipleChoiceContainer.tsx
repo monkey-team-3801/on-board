@@ -8,6 +8,7 @@ type Props = {
     question: string;
     sessionID: string;
     closeModal: Function;
+    uid: string;
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
@@ -25,6 +26,7 @@ export const MultipleChoiceContainer = (props: Props) => {
         const data = options.toObject();
         data["question"] = props.question;
         data["sessionID"] = props.sessionID;
+        data["userID"] = props.uid;
         await uploadForm(data);
         props.closeModal();
     };

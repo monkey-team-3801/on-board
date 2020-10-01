@@ -5,6 +5,7 @@ import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 
 type Props = {
     sid: string;
+    userid: string;
 };
 
 // Test modal, remove this file when no longer needed.
@@ -32,6 +33,7 @@ export const ResponseTest = (props: Props) => {
                     <ResponseOptionsContainer
                         sid={props.sid}
                         closeFunc={setShowForm}
+                        userid={props.userid}
                     />
                 </Modal.Body>
                 <Modal.Footer>

@@ -12,6 +12,7 @@ import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 type Props = {
     sid: string;
     closeFunc: Function;
+    userid: string;
 };
 
 export const ResponseOptionsContainer = (props: Props) => {
@@ -27,6 +28,7 @@ export const ResponseOptionsContainer = (props: Props) => {
         await uploadForm({
             sessionID: props.sid,
             question: question,
+            uid: props.userid,
         });
         props.closeFunc();
     };
@@ -71,6 +73,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                         question={question}
                         sessionID={props.sid}
                         closeModal={props.closeFunc}
+                        uid={props.userid}
                     />
                 ) : (
                     <Button
