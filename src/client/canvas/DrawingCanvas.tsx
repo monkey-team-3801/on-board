@@ -121,7 +121,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                 });
             }
         },
-        [sessionId]
+        [sessionId, socket]
     );
 
     const onMouseDown = React.useCallback(
@@ -222,7 +222,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
         return () => {
             socket.off(CanvasEvent.CHANGE).off(CanvasEvent.CLEAR);
         };
-    }, [drawLine]);
+    }, [drawLine, socket]);
 
     React.useEffect(() => {
         const strokes = canvasDataResponse.data?.strokes;

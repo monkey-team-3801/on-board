@@ -1,30 +1,28 @@
 import express from "express";
-
-import { asyncHandler, createNewSession } from "../utils";
 import {
-    Session,
-    ClassroomSession,
-    SessionCanvas,
-    SessionUsers,
-    BreakoutSession,
-    User,
-} from "../database";
-import {
-    SessionResponseType,
-    SessionInfo,
-    SessionData,
-    SessionRequestType,
     ClassroomSessionData,
-    SessionDeleteRequestType,
-    RoomType,
-    SaveCanvasRequestType,
     GetCanvasRequestType,
     GetCanvasResponseType,
-    BreakoutRoomData,
-    UserDataResponseType,
+    RoomType,
+    SaveCanvasRequestType,
+    SessionData,
+    SessionDeleteRequestType,
+    SessionInfo,
+    SessionRequestType,
+    SessionResponseType,
     UserData,
+    UserDataResponseType,
 } from "../../types";
+import {
+    BreakoutSession,
+    ClassroomSession,
+    Session,
+    SessionCanvas,
+    SessionUsers,
+    User,
+} from "../database";
 import { VideoSession } from "../database/schema/VideoSession";
+import { asyncHandler, createNewSession } from "../utils";
 
 export const router = express.Router();
 

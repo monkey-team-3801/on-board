@@ -16,7 +16,6 @@ import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
-import { VideoRoomLobby } from "./video/VideoRoomLobby";
 
 type Props = RouteComponentProps;
 
@@ -140,27 +139,6 @@ export const AppProtectedRoutes = (props: Props) => {
                             return <Timetable />;
                         }}
                     />
-                    <SecuredRoute
-                        path="/video-test"
-                        exact
-                        render={(routerProps: RouteComponentProps) => {
-                            return <VideoRoomLobby />;
-                        }}
-                        component={VideoRoomLobby}
-                    />
-                    {/* <SecuredRoute
-                        path="/video-test/:roomId"
-                        exact
-                        render={(
-                            routerProps: RouteComponentProps<{ roomId: string }>
-                        ) => {
-                            return (
-                                <VideoContainer
-                                    roomId={props.match.params.roomId}
-                                />
-                            );
-                        }}
-                    /> */}
                 </Switch>
             </Container>
         </>

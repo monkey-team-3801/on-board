@@ -1,6 +1,5 @@
 import React from "react";
-import { UserDataResponseType } from "../../../types";
-import { Button, Dropdown } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { UserData } from "../types";
 
 type Props = UserData & {
@@ -46,7 +45,7 @@ export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
                     })}
                 </Dropdown.Menu>
             </Dropdown>
-            <img src={`/filehandler/getPfp/${props.id}`} />
+            <img src={`/filehandler/getPfp/${props.id}`} alt="profile" />
             <div className="username">
                 <p>{props.username}</p>
             </div>

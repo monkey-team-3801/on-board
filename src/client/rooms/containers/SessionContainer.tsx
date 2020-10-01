@@ -1,16 +1,9 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { RouteComponentProps } from "react-router-dom";
 import { RoomEvent } from "../../../events";
-import { FileUploadType, SessionData } from "../../../types";
-import { DrawingCanvas } from "../../canvas";
-import { ChatContainer } from "../../chat";
-import { FileContainer } from "../../filehandler/FileContainer";
-import { UploadContainer } from "../../filehandler/UploadContainer";
+import { SessionData } from "../../../types";
 import { useFetch } from "../../hooks";
-// import { socket } from "../../io";
-import { TopLayerContainerProps } from "../../types";
 import { requestIsLoaded } from "../../utils";
 
 type Props = {

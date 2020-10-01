@@ -16,8 +16,8 @@ const defaultConstraints: MediaStreamConstraints = {
     },
     audio: {
         noiseSuppression: true,
-        echoCancellation: true
-    }
+        echoCancellation: true,
+    },
 };
 type MediaType = "camera" | "display" | "none";
 

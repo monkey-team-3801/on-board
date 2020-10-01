@@ -1,16 +1,12 @@
 import React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { RoomEvent } from "../../events";
-import { FileUploadType, SessionData, RoomType } from "../../types";
+import { FileUploadType, SessionData } from "../../types";
 import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
-import { useFetch } from "../hooks";
-import { socket } from "../io";
 import { TopLayerContainerProps } from "../types";
-import { requestIsLoaded } from "../utils";
 import { SessionContainer } from "./containers";
 
 type Props = RouteComponentProps<{ roomId: string }> &

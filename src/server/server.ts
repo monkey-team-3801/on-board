@@ -1,38 +1,34 @@
-import express, { Request, Response, NextFunction, Express } from "express";
-import { createServer, Server } from "http";
-import socketIO from "socket.io";
-import { ExpressPeerServer } from "peer";
-import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import express, { Express, NextFunction, Request, Response } from "express";
 import fileUpload from "express-fileupload";
-
-import { asyncHandler } from "./utils";
-import { Database, SessionUsers } from "./database";
+import { createServer, Server } from "http";
+import { ExpressPeerServer } from "peer";
+import socketIO from "socket.io";
 import {
-    RoomEvent,
-    PrivateRoomJoinData,
-    ChatEvent,
-    ChatMessageSendType,
-    VideoEvent,
-    PrivateVideoRoomJoinData,
-    PrivateVideoRoomLeaveData,
     AnnouncementEvent,
     CanvasEvent,
+    ChatEvent,
+    ChatMessageSendType,
+    PrivateVideoRoomJoinData,
+    RoomEvent,
+    VideoEvent,
 } from "../events";
-
-import {
-    healthCheckRoute,
-    chatRoute,
-    sessionRoute,
-    courseRoute,
-    authRoute,
-    videoRoute,
-    jobRoute,
-    fileRoute,
-} from "./routes";
-import { userRoute } from "./routes";
-import { ScheduleHandler } from "./jobs";
+import { Database, SessionUsers } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
+import { ScheduleHandler } from "./jobs";
+import {
+    authRoute,
+    chatRoute,
+    courseRoute,
+    fileRoute,
+    healthCheckRoute,
+    jobRoute,
+    sessionRoute,
+    userRoute,
+    videoRoute,
+} from "./routes";
+import { asyncHandler } from "./utils";
 
 dotenv.config();
 

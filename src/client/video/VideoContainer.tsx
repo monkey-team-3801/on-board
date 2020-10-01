@@ -1,22 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { MediaConnection } from "peerjs";
 import { Map } from "immutable";
-import socketIOClient from "socket.io-client";
-
-import { Video } from "./Video";
-import { PeerId, useMyPeer } from "../hooks/useMyPeer";
+import { MediaConnection } from "peerjs";
+import React, { useCallback, useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import { VideoEvent } from "../../events";
-import { RouteComponentProps } from "react-router-dom";
-import omit from "lodash/omit";
-import keys from "lodash/keys";
-import difference from "lodash/difference";
-import { socket } from "../io";
-import { useMediaStream } from "../hooks/useMediaStream";
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { UserPeer, VideoPeersResponseType } from "../../types";
 import { useFetch } from "../hooks";
+import { useMyPeer } from "../hooks/useMyPeer";
+import { socket } from "../io";
 import { requestIsLoaded } from "../utils";
+import { Video } from "./Video";
 import "./VideoContainer.less";
-import { VideoPeersResponseType, UserPeer } from "../../types";
 
 type Props = { sessionId: string; userId: string; myStream?: MediaStream };
 type PeerCalls = {
@@ -29,7 +22,6 @@ type VideoStreamData = {
     userId: string;
     stream: MediaStream;
 };
-
 
 // const socket: SocketIOClient.Socket = socketIOClient("/").connect();
 
@@ -58,10 +50,8 @@ type VideoStreamData = {
 
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId, myStream } = props;
-    const [myPeer, myPeerId, setupPeer] = useMyPeer();
-    const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
-        Map()
-    );
+    const [myPeer, myPeerId] = useMyPeer();
+    const [, setPeerCalls] = useState<Map<string, MediaConnection>>(Map());
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
     );
@@ -74,12 +64,12 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     // myStream?.getTracks().forEach(track => {
     //     console.log(track, track.getCapabilities());
     // });
-    myStream?.getVideoTracks().forEach(track => {
+    myStream?.getVideoTracks().forEach((track) => {
         console.log("video track settings:", track.getSettings());
     });
     const addPeer = useCallback(
         (userPeer: UserPeer) => {
-            const { userId: theirUserId, peerId } = userPeer;
+            const { peerId } = userPeer;
             if (myPeer) {
                 if (myStream) {
                     console.log("My stream:", myStream);
@@ -138,7 +128,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 });
             }
         },
-        [myStream, myPeer, peerStreams]
+        [myStream, myPeer]
     );
     const removePeer = useCallback((userPeer: UserPeer) => {
         const { userId: theirUserId, peerId } = userPeer;
@@ -167,7 +157,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                 }
             });
         }
-    }, [response, myPeerId]);
+    }, [response, myPeerId, addPeer]);
 
     useEffect(() => {
         if (myPeerId) {

@@ -1,8 +1,7 @@
 import React from "react";
-
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { ClassOpenEventData } from "../types";
+import { Button, Col } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { ClassOpenEventData } from "../types";
 import { Indicator } from "./Indicator";
 
 type Props = RouteComponentProps & {

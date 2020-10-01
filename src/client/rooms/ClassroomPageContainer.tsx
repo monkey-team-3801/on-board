@@ -21,6 +21,8 @@ const socket = socketIOClient("/");
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { id: userId } = props.userData;
+    const { classroomId: sessionId } = props.match.params;
     const [
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
@@ -49,32 +51,33 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
     const onBreakoutRoomAllocate = React.useCallback(
         (users: Array<string>, roomIndex: number, roomId: string) => {
-            if (users.includes(props.userData.id)) {
+            if (users.includes(userId)) {
                 setBreakoutAllocationEventData({
                     id: roomId,
                     roomIndex,
                 });
             }
         },
-        []
+        [userId]
     );
 
     const fetchSessionUsers = useDebouncedCallback(fetchUsers, 1000);
 
-    const onUserJoinOrLeave = () => {
-        console.log("join");
+    const onUserJoinOrLeave = React.useCallback(() => {
         fetchSessionUsers.callback();
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     React.useEffect(() => {
+        console.log("test");
         socket
             .connect()
             .on(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
             .on(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
             .on(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
             .emit(RoomEvent.SESSION_JOIN, {
-                userId: props.userData.id,
-                sessionId: props.match.params.classroomId,
+                userId,
+                sessionId,
             });
         fetchSessionUsers.callback();
         return () => {
@@ -84,6 +87,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 .off(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
                 .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!requestIsLoaded(sessionResponse)) {
@@ -114,7 +118,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     return (
                         <div key={user.id}>
                             {user.username}
-                            <img src={`/filehandler/getPfp/${user.id}`}></img>
+                            <img
+                                src={`/filehandler/getPfp/${user.id}`}
+                                alt="profile"
+                            ></img>
                         </div>
                     );
                 })}
@@ -127,12 +134,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutRoomModalVisible(false);
                 }}
             />
-            {/* <Container>
+            <Container>
                 <StreamSelectorWrapper
                     sessionId={props.match.params.classroomId}
                     userId={props.userData.id}
                 />
-            </Container> */}
+            </Container>
             <BreakoutRoomAllocateIndicator
                 {...props}
                 event={breakoutAllocationEventData}

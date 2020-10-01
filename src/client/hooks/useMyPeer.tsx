@@ -33,6 +33,7 @@ export const useMyPeer: () => [Peer | undefined, PeerId, () => void] = () => {
         if (!myPeer) {
             setMyPeer(new Peer(options));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
