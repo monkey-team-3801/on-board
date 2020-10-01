@@ -16,8 +16,8 @@ export const DayHeading: React.FunctionComponent<Props> = (props) => {
                 "Friday",
                 "Saturday",
                 "Sunday",
-            ].map((day: string) => (
-                <div>{day}</div>
+            ].map((day: string, i) => (
+                <div key={i}>{day}</div>
             ))}
         </div>
     );

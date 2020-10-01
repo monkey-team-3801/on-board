@@ -41,8 +41,9 @@ export const WeekContainer: React.FunctionComponent<Props> = ({
     );
     return (
         <div className="timetable-week-container">
-            {range(1, 8).map((isoDay) => (
+            {range(1, 8).map((isoDay, i) => (
                 <WeekDay
+                    key={i}
                     dayStartTime={dayStartTime}
                     dayEndTime={dayEndTime}
                     activities={dayActivities}

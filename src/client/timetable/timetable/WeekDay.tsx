@@ -21,8 +21,9 @@ export const WeekDay: React.FunctionComponent<Props> = ({
             {range(dayStartTime, dayEndTime).map((hour) => (
                 <TimeSlot key={hour} />
             ))}
-            {activities.map((activity) => (
+            {activities.map((activity, i) => (
                 <Activity
+                    key={i}
                     details={activity}
                     dayStartTime={dayStartTime}
                     dayEndTime={dayEndTime}
