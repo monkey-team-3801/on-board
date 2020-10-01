@@ -46,3 +46,10 @@ export type ClassOpenEventData =
           roomName: string;
       }
     | undefined;
+
+export type BreakoutAllocationEventData =
+    | {
+          id: string;
+          roomIndex: number;
+      }
+    | undefined;
