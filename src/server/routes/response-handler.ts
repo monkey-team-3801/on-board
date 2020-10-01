@@ -1,3 +1,4 @@
+import { AnyNaptrRecord } from "dns";
 import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
@@ -74,18 +75,40 @@ router.post("/submitSaForm", async (req, res) => {
 
 router.post(
     "/getFormsBySession",
-    asyncHandler<Array<Array<string>>, {}, { sid: string }>(
-        async (req, res) => {
-            const sid = req.body.sid;
-            const MCFormQuery = await MultipleChoiceResponseForm.find({
-                sessionID: sid,
-            });
-            const SAFormQuery = await ShortAnswerResponseForm.find({
-                sessionID: sid,
-            });
-            const MCForms = MCFormQuery.map((x) => x.id);
-            const SAForms = SAFormQuery.map((x) => x.id);
-            res.send([MCForms, SAForms]).status(200).end();
-        }
-    )
+    asyncHandler<
+        { [formType: string]: Array<Array<string>> },
+        {},
+        { sid: string }
+    >(async (req, res) => {
+        const sid = req.body.sid;
+        const MCFormQuery = await MultipleChoiceResponseForm.find({
+            sessionID: sid,
+        });
+        const SAFormQuery = await ShortAnswerResponseForm.find({
+            sessionID: sid,
+        });
+
+        // Probably a better/shorter way to do this...
+        const MCForms = MCFormQuery.map((x) => x.id);
+        const SAForms = SAFormQuery.map((x) => x.id);
+        const MCFormQuestions = MCFormQuery.map((x) => x.question);
+        const SAFormQuestions = SAFormQuery.map((x) => x.question);
+
+        let MCFormData: Map<string, string> = new Map();
+        let SAFormData: Map<string, string> = new Map();
+
+        MCForms.forEach((key, i) => MCFormData.set(key, MCFormQuestions[i]));
+        SAForms.forEach((key, i) => SAFormData.set(key, SAFormQuestions[i]));
+
+        res.send({ MC: Array.from(MCFormData), SA: Array.from(SAFormData) })
+            .status(200)
+            .end();
+    })
+);
+
+router.post(
+    "/getFormByID",
+    asyncHandler<any, {}, { formID: string }>(async (req, res) => {
+        //console.log(req.body.formID);
+    })
 );
