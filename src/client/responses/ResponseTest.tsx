@@ -52,7 +52,7 @@ export const ResponseTest = (props: Props) => {
                     setShowResult(true);
                 }}
             >
-                See existing responses
+                See responses
             </Button>
             <Modal
                 show={showResult}

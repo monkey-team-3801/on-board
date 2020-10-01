@@ -107,8 +107,8 @@ router.post(
 );
 
 router.post(
-    "/getFormByID",
+    "/getMCFormByID",
     asyncHandler<any, {}, { formID: string }>(async (req, res) => {
-        //console.log(req.body.formID);
+        console.log(req.body.formID);
     })
 );
