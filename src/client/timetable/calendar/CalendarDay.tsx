@@ -1,5 +1,5 @@
 import React from "react";
-import { CourseActivityResponseType } from "../../types";
+import { CourseActivityResponseType } from "../../../types";
 import "./CalendarDay.less";
 import { startOfDay } from "date-fns";
 
@@ -16,7 +16,7 @@ export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
         date.getMonth() === chosenMonth && date.getFullYear() === chosenYear;
     return (
         <div
-            className={`calendar-date 
+            className={`calendar-date
             ${!dateInChosenRange ? "outside-range" : ""}
             ${
                 startOfDay(date).getTime() === startOfDay(new Date()).getTime()

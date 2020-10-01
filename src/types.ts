@@ -7,6 +7,7 @@ export type SessionInfo = {
     name: string;
     description: string;
     courseCode?: string;
+    parentSessionId?: string;
 };
 
 export type MessageData = {
@@ -41,7 +42,7 @@ export type CourseActivityRequestFilterType = Partial<CourseActivityUnique> & {
 };
 
 export type CourseActivityResponseType = CourseActivityUnique & {
-    time: string;
+    time: number;
     startDate: Date;
     duration: number;
     day_of_week: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Monday->Sunday in ISO week
@@ -201,6 +202,27 @@ export type Stroke = {
     colour: string;
     size: number;
 };
+
+export type VideoSessionResponseType = {
+    sessionId: string;
+};
+
+export type UserPeer = {
+    userId: string;
+    peerId: string;
+};
+
+export type VideoPeersResponseType = {
+    peers: Array<UserPeer>;
+};
+
+export type BreakoutRoomData = {
+    name: string;
+    roomId: string;
+    description: string;
+};
+
+export type UserData = Omit<UserDataResponseType, "courses">;
 
 export enum ResponseFormType {
     SHORT_ANSWER,

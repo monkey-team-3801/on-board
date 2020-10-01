@@ -1,18 +1,20 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import { RouteComponentProps, Switch } from "react-router-dom";
+import Switch from "react-bootstrap/esm/Switch";
+import { RouteComponentProps } from "react-router-dom";
 import { ClassEvent } from "../events";
 import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
-import { ClassOpenIndicator } from "./components";
 import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
+import { ClassOpenIndicator } from "./Indicators";
 import { Navbar } from "./navbar";
 import { ResponseOptionsContainer } from "./responses/ResponseOptionsContainer";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
+import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
 
@@ -106,6 +108,21 @@ export const AppProtectedRoutes = (props: Props) => {
                                 <PrivateRoomContainer
                                     {...routerProps}
                                     userData={{ username, id, courses }}
+                                    roomType={"private"}
+                                />
+                            );
+                        }}
+                    />
+                    <SecuredRoute
+                        path="/breakout/:roomId"
+                        render={(
+                            routerProps: RouteComponentProps<{ roomId: string }>
+                        ) => {
+                            return (
+                                <PrivateRoomContainer
+                                    {...routerProps}
+                                    userData={{ username, id, courses }}
+                                    roomType={"breakout"}
                                 />
                             );
                         }}
@@ -114,6 +131,13 @@ export const AppProtectedRoutes = (props: Props) => {
                         path="/upload"
                         render={() => {
                             return <UploadTest userId={userData.id!} />;
+                        }}
+                    />
+
+                    <SecuredRoute
+                        path="/timetable-test"
+                        render={(routerProps: RouteComponentProps) => {
+                            return <Timetable />;
                         }}
                     />
                 </Switch>

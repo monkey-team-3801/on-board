@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { io } from "../server";
 import { FileStorageType } from "../../types";
 import { FileUploadEvent } from "../../events";
+import { readFile } from "fs";
 
 export const router = express.Router();
 
@@ -77,14 +78,16 @@ router.post(
     "/getFiles",
     asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
         async (req, res) => {
-            const session = await Session.findById(req.body.sid);
-            if (session) {
-                const files = session.files;
-                if (files) {
-                    res.json(Object.fromEntries(files)).status(200).end();
-                }
-            }
-            res.status(500).end();
+            // TODO MOVE THIS TO SEPARATE FILE SCHEMA
+            res.json({});
+            // const session = await Session.findById(req.body.sid);
+            // if (session) {
+            //     const files = session.files;
+            //     if (files) {
+            //         res.json(Object.fromEntries(files)).status(200).end();
+            //     }
+            // }
+            // res.status(500).end();
         }
     )
 );
@@ -93,14 +96,27 @@ router.post(
 router.get(
     "/getPfp/:userId",
     asyncHandler<undefined, { userId: string }>(async (req, res) => {
-        const user = await User.findById(req.params.userId);
-        if (user) {
-            const pfp = user.pfp;
-            if (pfp) {
-                res.end(pfp, "binary");
+        try {
+            const user = await User.findById(req.params.userId);
+            if (user) {
+                const pfp = user.pfp;
+                res.contentType("image/jpeg");
+                if (pfp.byteLength !== 0) {
+                    res.end(pfp, "binary");
+                    return;
+                }
             }
+        } catch {
+            //
         }
-        res.end();
+        readFile("public/default_user.jpg", (err, data) => {
+            if (err) {
+                console.log(err);
+                res.end();
+            } else {
+                res.end(data, "binary");
+            }
+        });
     })
 );
 
