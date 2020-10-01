@@ -3,6 +3,7 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
+import { DisplayResultsContainer } from "./DisplayResultsContainer";
 import { MultipleChoiceDisplay } from "./MultipleChoiceDisplay";
 import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 
@@ -18,7 +19,9 @@ export const DisplayContainer = (props: Props) => {
 
     const [displayStage, setDisplayStage] = React.useState<number>(0);
     const [formID, setFormID] = React.useState<string>("");
-    const [formType, setFormType] = React.useState<ResponseFormType>();
+    const [formType, setFormType] = React.useState<ResponseFormType>(
+        ResponseFormType.MULTIPLE_CHOICE
+    );
     const [displayQuestion, setQuestion] = React.useState<string>("");
 
     if (!requestIsLoaded(forms)) {
@@ -45,6 +48,12 @@ export const DisplayContainer = (props: Props) => {
         setQuestion(question);
     };
 
+    const displayResults = (id: string, type: ResponseFormType) => {
+        setDisplayStage(2);
+        setFormID(id);
+        setFormType(type);
+    };
+
     return (
         <div>
             <div>
@@ -63,7 +72,17 @@ export const DisplayContainer = (props: Props) => {
                                         );
                                     }}
                                 >
-                                    Answer Question
+                                    Answer
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        displayResults(
+                                            x[0],
+                                            ResponseFormType.MULTIPLE_CHOICE
+                                        );
+                                    }}
+                                >
+                                    View results
                                 </Button>
                             </ButtonGroup>
                             <br></br>
@@ -85,7 +104,17 @@ export const DisplayContainer = (props: Props) => {
                                         );
                                     }}
                                 >
-                                    Answer Question
+                                    Answer
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        displayResults(
+                                            x[0],
+                                            ResponseFormType.SHORT_ANSWER
+                                        );
+                                    }}
+                                >
+                                    View responses
                                 </Button>
                             </ButtonGroup>
                         </div>
@@ -99,7 +128,7 @@ export const DisplayContainer = (props: Props) => {
                             q={displayQuestion}
                             back={setDisplayStage}
                             uid={props.uid}
-                        ></MultipleChoiceDisplay>
+                        />
                     )}
             </div>
             <div>
@@ -110,8 +139,17 @@ export const DisplayContainer = (props: Props) => {
                             q={displayQuestion}
                             uid={props.uid}
                             back={setDisplayStage}
-                        ></ShortAnswerDisplay>
+                        />
                     )}
+            </div>
+            <div>
+                {displayStage === 2 && (
+                    <DisplayResultsContainer
+                        formID={formID}
+                        formType={formType}
+                        back={setDisplayStage}
+                    />
+                )}
             </div>
         </div>
     );

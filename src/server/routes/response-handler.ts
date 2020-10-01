@@ -1,6 +1,7 @@
 import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
+import { User } from "../database";
 import { Response } from "../database/schema/Response";
 import {
     MultipleChoiceResponseForm,
@@ -225,6 +226,62 @@ router.post(
             res.status(200).end();
         } else {
             res.status(500).end();
+        }
+    })
+);
+
+router.post(
+    "/getResults",
+    asyncHandler<
+        Array<Array<string>>,
+        {},
+        { formID: string; formType: ResponseFormType }
+    >(async (req, res) => {
+        if (req.body.formType === ResponseFormType.MULTIPLE_CHOICE) {
+            const query = await MultipleChoiceResponseForm.findById(
+                req.body.formID
+            );
+            if (query) {
+                const count = query.count;
+                const options = query.options;
+
+                if (count && options) {
+                    const dataArray = [
+                        Array.from(count.values()).map(String),
+                        Array.from(options.values()),
+                    ];
+                    res.send(dataArray).status(200).end();
+                }
+            } else {
+                res.status(500).end();
+            }
+        } else if (req.body.formType === ResponseFormType.SHORT_ANSWER) {
+            const query = await ShortAnswerResponseForm.findById(
+                req.body.formID
+            );
+            if (query) {
+                if (query.responseID) {
+                    const responseIDs = query.responseID;
+                    let dataArray: Array<Array<string>> = [];
+
+                    for (let id of responseIDs) {
+                        const response = await Response.findById(id);
+
+                        if (response) {
+                            const user = await User.findById(response.userID);
+                            if (user) {
+                                dataArray.push([
+                                    user.username,
+                                    response.userResponse,
+                                ]);
+                            }
+                        }
+                    }
+                    res.send(dataArray).status(200).end();
+                }
+            } else {
+                res.status(500).end();
+            }
         }
     })
 );
