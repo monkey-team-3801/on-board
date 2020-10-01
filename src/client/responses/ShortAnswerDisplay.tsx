@@ -66,6 +66,7 @@ export const ShortAnswerDisplay = (props: Props) => {
                     onChange={(e) => {
                         setUserResponse(e.target.value);
                     }}
+                    disabled={userAnswered.data.found}
                 />
                 <br></br>
                 {!userAnswered.data.found && (

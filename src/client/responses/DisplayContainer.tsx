@@ -57,12 +57,12 @@ export const DisplayContainer = (props: Props) => {
     return (
         <div>
             <div>
-                {displayStage === 0 && <strong>Multiple Choice Forms:</strong>}
+                {displayStage === 0 && <h4>Multiple Choice Forms:</h4>}
                 {displayStage === 0 &&
                     MultipleChoiceForms.map((x, i) => (
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
-                            <ButtonGroup>
+                            <ButtonGroup style={{ float: "right" }}>
                                 <Button
                                     onClick={() => {
                                         displayForm(
@@ -71,6 +71,7 @@ export const DisplayContainer = (props: Props) => {
                                             x[1]
                                         );
                                     }}
+                                    size="sm"
                                 >
                                     Answer
                                 </Button>
@@ -81,20 +82,22 @@ export const DisplayContainer = (props: Props) => {
                                             ResponseFormType.MULTIPLE_CHOICE
                                         );
                                     }}
+                                    size="sm"
                                 >
                                     View results
                                 </Button>
                             </ButtonGroup>
                             <br></br>
+                            <br></br>
                         </div>
                     ))}
                 <br></br>
-                {displayStage === 0 && <strong>Short Answer Forms:</strong>}
+                {displayStage === 0 && <h4>Short Answer Forms:</h4>}
                 {displayStage === 0 &&
                     ShortAnswerForms.map((x, i) => (
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
-                            <ButtonGroup>
+                            <ButtonGroup style={{ float: "right" }}>
                                 <Button
                                     onClick={() => {
                                         displayForm(
@@ -103,6 +106,7 @@ export const DisplayContainer = (props: Props) => {
                                             x[1]
                                         );
                                     }}
+                                    size="sm"
                                 >
                                     Answer
                                 </Button>
@@ -113,10 +117,13 @@ export const DisplayContainer = (props: Props) => {
                                             ResponseFormType.SHORT_ANSWER
                                         );
                                     }}
+                                    size="sm"
                                 >
                                     View responses
                                 </Button>
                             </ButtonGroup>
+                            <br></br>
+                            <br></br>
                         </div>
                     ))}
             </div>

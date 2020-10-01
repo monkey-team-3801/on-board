@@ -43,7 +43,9 @@ export const ResponseTest = (props: Props) => {
                 scrollable={true}
                 centered={true}
             >
-                <Modal.Header>{title}</Modal.Header>
+                <Modal.Header closeButton>
+                    <Modal.Title>{title}</Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
                     <ResponseOptionsContainer
                         sid={props.sid}
@@ -80,7 +82,9 @@ export const ResponseTest = (props: Props) => {
                 scrollable={true}
                 centered={true}
             >
-                <Modal.Header>{title}</Modal.Header>
+                <Modal.Header closeButton>
+                    <Modal.Title>{title}</Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
                     <DisplayContainer
                         sessionID={props.sid}
