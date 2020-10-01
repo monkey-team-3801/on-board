@@ -1,16 +1,14 @@
 import { OrderedMap } from "immutable";
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
-import { v4 } from "uuid";
 import { RoomEvent } from "../../../events";
-import { UserDataResponseType, UserType } from "../../../types";
-import { useDynamicFetch, useFetch } from "../../hooks";
+import { UserDataResponseType } from "../../../types";
+import { useDynamicFetch } from "../../hooks";
 import { socket } from "../../io";
 import { requestIsLoaded } from "../../utils";
 import "../breakoutAllocation.less";
 import { BreakoutRoomAllocationContainer } from "../containers/";
 import { UserData } from "../types";
-import { CreateBreakoutRoomForm } from "./CreateBreakoutRoomForm";
 
 type Props = {
     visible: boolean;
@@ -32,14 +30,14 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
         }
     >("/session/createBreakoutRooms", undefined, false);
 
-    const [breakoutRoomResponse] = useFetch<
+    const [breakoutRoomResponse, fetchBreakoutRoomData] = useDynamicFetch<
         { rooms: Array<{ roomId: string; users: Array<UserData> }> },
         { sessionId: string }
     >("/session/getBreakoutRooms", { sessionId });
 
-    const [creationStage, setCreationStage] = React.useState<number>(0);
-
-    const [roomAmount, setRoomAmount] = React.useState<number>(1);
+    const [allocationComplete, setAllocationComplete] = React.useState<boolean>(
+        false
+    );
 
     const [rooms, setRooms] = React.useState<
         OrderedMap<string, OrderedMap<string, UserData>>
@@ -68,8 +66,6 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
     React.useEffect(() => {
         if (requestIsLoaded(breakoutRoomResponse)) {
             breakoutRoomResponse.data.rooms.forEach((room) => {
-                // console.log(rooms);
-
                 setRooms((prev) => {
                     let currentRoom = rooms.get(room.roomId) || OrderedMap();
                     room.users.forEach((user) => {
@@ -78,11 +74,33 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                             allocated: true,
                         });
                     });
-                    return prev.set(room.roomId, currentRoom);
+                    return prev
+                        .map((mapping) => {
+                            return mapping.deleteAll(
+                                room.users.map((user) => {
+                                    return user.id;
+                                })
+                            );
+                        })
+                        .set(room.roomId, currentRoom);
                 });
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [breakoutRoomResponse]);
+
+    React.useEffect(() => {
+        console.log("running");
+        if (visible) {
+            setRooms((prev) => {
+                return prev.map((mapping) => {
+                    return mapping.clear();
+                });
+            });
+            fetchBreakoutRoomData({ sessionId });
+            setAllocationComplete(false);
+        }
+    }, [visible, fetchBreakoutRoomData, sessionId]);
 
     React.useEffect(() => {
         userData.forEach((user) => {
@@ -126,44 +144,39 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                 <Modal.Title>Breakout Rooms Management</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {creationStage === 0 && (
-                    <CreateBreakoutRoomForm
-                        onCreate={(amount) => {
-                            setRoomAmount(amount);
-                            setCreationStage(1);
-                        }}
-                    />
-                )}
-                {creationStage === 1 && (
-                    <BreakoutRoomAllocationContainer
-                        amount={roomAmount}
-                        users={props.userData}
-                        rooms={rooms}
-                        setRooms={setRooms}
-                    />
+                {requestIsLoaded(createBreakoutRoomsResponse) ? (
+                    !allocationComplete ? (
+                        <BreakoutRoomAllocationContainer
+                            users={props.userData}
+                            rooms={rooms}
+                            setRooms={setRooms}
+                        />
+                    ) : (
+                        <div>complete</div>
+                    )
+                ) : (
+                    <div>loading</div>
                 )}
             </Modal.Body>
             <Modal.Footer>
-                {creationStage !== 0 && (
-                    <Button
-                        variant="secondary"
-                        onClick={() => {
-                            setCreationStage(creationStage - 1);
-                        }}
-                    >
-                        Back
-                    </Button>
-                )}
                 <Button
                     variant="success"
+                    disabled={
+                        !requestIsLoaded(createBreakoutRoomsResponse) ||
+                        allocationComplete
+                    }
                     onClick={async () => {
                         await createBreakoutRooms({
                             rooms: Array.from(rooms.delete("main").keys()),
                             sessionId: props.sessionId,
                         });
+                        setAllocationComplete(true);
+                        setTimeout(() => {
+                            handleClose();
+                        }, 500);
                     }}
                 >
-                    Continue
+                    Create
                 </Button>
             </Modal.Footer>
         </Modal>
