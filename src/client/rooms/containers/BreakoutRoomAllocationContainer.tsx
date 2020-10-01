@@ -7,7 +7,6 @@ import { RoomGroupingContainer } from "./RoomGroupingContainer";
 import { useDynamicFetch } from "../../hooks";
 
 type Props = {
-    amount: number;
     users: Array<UserData>;
     rooms: OrderedMap<string, OrderedMap<string, UserData>>;
     setRooms: React.Dispatch<
@@ -57,7 +56,7 @@ export const BreakoutRoomAllocationContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container className="allocation">
-            <Row>
+            <Row className="header-row">
                 <Col>
                     <Button
                         variant="success"
