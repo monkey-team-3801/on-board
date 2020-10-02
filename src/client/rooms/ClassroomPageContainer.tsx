@@ -151,6 +151,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 sid={sessionId}
                 userid={props.userData.id}
                 userType={props.userData.userType}
+                sock={socket}
             ></ResponseTest>
         </div>
     );

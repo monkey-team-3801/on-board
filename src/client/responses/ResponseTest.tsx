@@ -8,6 +8,7 @@ type Props = {
     sid: string;
     userid: string;
     userType: UserType;
+    sock: SocketIOClient.Socket;
 };
 
 // Test modal, remove this file when no longer needed.
@@ -60,6 +61,7 @@ export const ResponseTest = (props: Props) => {
                         sid={props.sid}
                         closeFunc={setShowForm}
                         userid={props.userid}
+                        sock={props.sock}
                     />
                 </Modal.Body>
                 <Modal.Footer>
@@ -99,6 +101,7 @@ export const ResponseTest = (props: Props) => {
                         sessionID={props.sid}
                         uid={props.userid}
                         userType={props.userType}
+                        sock={props.sock}
                     />
                 </Modal.Body>
                 <Modal.Footer>

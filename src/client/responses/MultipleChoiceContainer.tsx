@@ -2,6 +2,7 @@ import { OrderedMap } from "immutable";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
+import { ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
     sessionID: string;
     closeModal: Function;
     uid: string;
+    sock: SocketIOClient.Socket;
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
@@ -28,6 +30,7 @@ export const MultipleChoiceContainer = (props: Props) => {
         data["sessionID"] = props.sessionID;
         data["userID"] = props.uid;
         await uploadForm(data);
+        props.sock.emit(ResponseFormEvent.NEW_FORM, props.sessionID);
         props.closeModal();
     };
 

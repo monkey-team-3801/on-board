@@ -11,6 +11,7 @@ import {
     ChatEvent,
     ChatMessageSendType,
     PrivateVideoRoomJoinData,
+    ResponseFormEvent,
     RoomEvent,
     VideoEvent,
 } from "../events";
@@ -190,11 +191,17 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+
     socket.on(CanvasEvent.DRAW, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
     });
+
     socket.on(CanvasEvent.CLEAR, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CLEAR);
+    });
+
+    socket.on(ResponseFormEvent.NEW_FORM, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_FORM);
     });
 });
 

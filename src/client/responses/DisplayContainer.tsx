@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
 import { ResponseFormType, UserType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
@@ -11,7 +12,9 @@ type Props = {
     sessionID: string;
     uid: string;
     userType: UserType;
+    sock: SocketIOClient.Socket;
 };
+
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
         { [formType: string]: Array<Array<string>> },
@@ -25,18 +28,17 @@ export const DisplayContainer = (props: Props) => {
     );
     const [displayQuestion, setQuestion] = React.useState<string>("");
 
+    props.sock.on(ResponseFormEvent.NEW_FORM, () => {
+        getForms({ sid: props.sessionID });
+        props.sock.off(ResponseFormEvent.NEW_FORM);
+    });
+
     if (!requestIsLoaded(forms)) {
         return <div>loading forms...</div>;
     }
 
     const MultipleChoiceForms = forms.data.MC;
     const ShortAnswerForms = forms.data.SA;
-
-    const updateForms = () => {
-        getForms({
-            sid: props.sessionID,
-        });
-    };
 
     const displayForm = (
         id: string,

@@ -6,6 +6,7 @@ import {
     FormGroup,
     InputGroup,
 } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
@@ -13,6 +14,7 @@ type Props = {
     sid: string;
     closeFunc: Function;
     userid: string;
+    sock: SocketIOClient.Socket;
 };
 
 export const ResponseOptionsContainer = (props: Props) => {
@@ -29,6 +31,7 @@ export const ResponseOptionsContainer = (props: Props) => {
             question: question,
             uid: props.userid,
         });
+        props.sock.emit(ResponseFormEvent.NEW_FORM, props.sid);
         props.closeFunc(false);
     };
 
@@ -73,6 +76,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                         sessionID={props.sid}
                         closeModal={props.closeFunc}
                         uid={props.userid}
+                        sock={props.sock}
                     />
                 ) : (
                     <Button
