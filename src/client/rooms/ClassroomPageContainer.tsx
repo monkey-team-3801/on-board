@@ -12,6 +12,7 @@ import { StreamSelectorWrapper } from "../video/StreamSelectorWrapper";
 import { RoomEvent } from "../../events";
 import { BreakoutRoomModal } from "./components/";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
+import { ResponseTest } from "../responses/ResponseTest";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -146,6 +147,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutAllocationEventData(undefined);
                 }}
             />
+            <ResponseTest
+                sid={sessionId}
+                userid={props.userData.id}
+            ></ResponseTest>
         </div>
     );
 };
