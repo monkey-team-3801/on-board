@@ -11,7 +11,6 @@ import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { ClassOpenIndicator } from "./Indicators";
 import { Navbar } from "./navbar";
-import { ResponseOptionsContainer } from "./responses/ResponseOptionsContainer";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
@@ -33,6 +32,7 @@ export const AppProtectedRoutes = (props: Props) => {
             username: data?.username,
             id: data?.id,
             courses: data?.courses,
+            userType: data?.userType,
         };
     }, [data]);
 
@@ -40,7 +40,7 @@ export const AppProtectedRoutes = (props: Props) => {
         ClassEvent.OPEN,
         undefined
     );
-    const { username, id, courses } = userData;
+    const { username, id, courses, userType } = userData;
 
     React.useEffect(() => {
         setEventData(event);
@@ -50,7 +50,7 @@ export const AppProtectedRoutes = (props: Props) => {
         return <div>Loading</div>;
     }
 
-    if (!username || !id || !courses) {
+    if (!username || !id || !courses || userType === undefined) {
         props.history.push("/");
         return <></>;
     }
@@ -73,7 +73,12 @@ export const AppProtectedRoutes = (props: Props) => {
                             return (
                                 <UserHomeContainer
                                     {...routerProps}
-                                    userData={{ username, id, courses }}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
                                 />
                             );
                         }}
@@ -94,7 +99,12 @@ export const AppProtectedRoutes = (props: Props) => {
                             return (
                                 <ClassroomPageContainer
                                     {...routerProps}
-                                    userData={{ username, id, courses }}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
                                 />
                             );
                         }}
@@ -107,7 +117,12 @@ export const AppProtectedRoutes = (props: Props) => {
                             return (
                                 <PrivateRoomContainer
                                     {...routerProps}
-                                    userData={{ username, id, courses }}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
                                     roomType={"private"}
                                 />
                             );
@@ -121,7 +136,12 @@ export const AppProtectedRoutes = (props: Props) => {
                             return (
                                 <PrivateRoomContainer
                                     {...routerProps}
-                                    userData={{ username, id, courses }}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
                                     roomType={"breakout"}
                                 />
                             );

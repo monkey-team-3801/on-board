@@ -1,3 +1,5 @@
+import { UserType } from "../types";
+
 export enum RequestState {
     LOADING,
     LOADED,
@@ -31,6 +33,7 @@ export type TopLayerContainerProps = {
         username: string;
         id: string;
         courses: Array<string>;
+        userType: UserType;
     };
 };
 
