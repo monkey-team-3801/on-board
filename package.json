@@ -5,6 +5,7 @@
     "proxy": "http://localhost:5000",
     "dependencies": {
         "@babel/core": "7.9.0",
+        "@react-hook/throttle": "^2.2.0",
         "@svgr/webpack": "4.3.3",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",

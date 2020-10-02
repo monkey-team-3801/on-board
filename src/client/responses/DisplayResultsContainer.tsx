@@ -1,3 +1,4 @@
+import { useThrottle, useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
 import { Button } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
@@ -32,18 +33,34 @@ export const DisplayResultsContainer = (props: Props) => {
         props.formType === ResponseFormType.SHORT_ANSWER
     );
 
-    const [shortAnswerData, setShortAnswerData] = React.useState<
+    const [shortAnswerData, setShortAnswerData] = useThrottle<
         Array<Array<string>>
     >([]);
-    const [multipleChoiceData, setMultipleChoiceData] = React.useState<
+    const [multipleChoiceData, setMultipleChoiceData] = useThrottle<
         Array<Array<string>>
     >([]);
 
+    const throttleFetchMc = useThrottleCallback(
+        () => {
+            getMcResults({ formID: props.formID });
+        },
+        1,
+        true
+    );
+
+    const throttleFetchSa = useThrottleCallback(
+        () => {
+            getSaResults({ formID: props.formID });
+        },
+        1,
+        true
+    );
+
     props.sock.on(ResponseFormEvent.NEW_RESPONSE, () => {
         if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
-            getMcResults({ formID: props.formID });
+            throttleFetchMc();
         } else {
-            getSaResults({ formID: props.formID });
+            throttleFetchSa();
         }
         props.sock.off(ResponseFormEvent.NEW_RESPONSE);
     });
@@ -59,7 +76,13 @@ export const DisplayResultsContainer = (props: Props) => {
                 setShortAnswerData(saResultsData.data);
             }
         }
-    }, [mcResultsData, saResultsData, props.formType]);
+    }, [
+        mcResultsData,
+        saResultsData,
+        props.formType,
+        setMultipleChoiceData,
+        setShortAnswerData,
+    ]);
 
     // TODO: Consider splitting this component up into seperate ones.
     const values =
