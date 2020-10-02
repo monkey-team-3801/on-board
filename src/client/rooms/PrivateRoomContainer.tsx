@@ -52,6 +52,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 <ResponseTest
                                     sid={roomId}
                                     userid={props.userData.id}
+                                    userType={props.userData.userType}
                                 ></ResponseTest>
                             </Col>
                         </Row>

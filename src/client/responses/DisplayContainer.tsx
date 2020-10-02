@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
-import { ResponseFormType } from "../../types";
+import { ResponseFormType, UserType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { DisplayResultsContainer } from "./DisplayResultsContainer";
@@ -10,6 +10,7 @@ import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 type Props = {
     sessionID: string;
     uid: string;
+    userType: UserType;
 };
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
@@ -63,29 +64,33 @@ export const DisplayContainer = (props: Props) => {
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup style={{ float: "right" }}>
-                                <Button
-                                    onClick={() => {
-                                        displayForm(
-                                            x[0],
-                                            ResponseFormType.MULTIPLE_CHOICE,
-                                            x[1]
-                                        );
-                                    }}
-                                    size="sm"
-                                >
-                                    Answer
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        displayResults(
-                                            x[0],
-                                            ResponseFormType.MULTIPLE_CHOICE
-                                        );
-                                    }}
-                                    size="sm"
-                                >
-                                    View results
-                                </Button>
+                                {props.userType === UserType.STUDENT && (
+                                    <Button
+                                        onClick={() => {
+                                            displayForm(
+                                                x[0],
+                                                ResponseFormType.MULTIPLE_CHOICE,
+                                                x[1]
+                                            );
+                                        }}
+                                        size="sm"
+                                    >
+                                        Answer
+                                    </Button>
+                                )}
+                                {props.userType !== UserType.STUDENT && (
+                                    <Button
+                                        onClick={() => {
+                                            displayResults(
+                                                x[0],
+                                                ResponseFormType.MULTIPLE_CHOICE
+                                            );
+                                        }}
+                                        size="sm"
+                                    >
+                                        View results
+                                    </Button>
+                                )}
                             </ButtonGroup>
                             <br></br>
                             <br></br>
@@ -98,29 +103,33 @@ export const DisplayContainer = (props: Props) => {
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup style={{ float: "right" }}>
-                                <Button
-                                    onClick={() => {
-                                        displayForm(
-                                            x[0],
-                                            ResponseFormType.SHORT_ANSWER,
-                                            x[1]
-                                        );
-                                    }}
-                                    size="sm"
-                                >
-                                    Answer
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        displayResults(
-                                            x[0],
-                                            ResponseFormType.SHORT_ANSWER
-                                        );
-                                    }}
-                                    size="sm"
-                                >
-                                    View responses
-                                </Button>
+                                {props.userType === UserType.STUDENT && (
+                                    <Button
+                                        onClick={() => {
+                                            displayForm(
+                                                x[0],
+                                                ResponseFormType.SHORT_ANSWER,
+                                                x[1]
+                                            );
+                                        }}
+                                        size="sm"
+                                    >
+                                        Answer
+                                    </Button>
+                                )}
+                                {props.userType !== UserType.STUDENT && (
+                                    <Button
+                                        onClick={() => {
+                                            displayResults(
+                                                x[0],
+                                                ResponseFormType.SHORT_ANSWER
+                                            );
+                                        }}
+                                        size="sm"
+                                    >
+                                        View responses
+                                    </Button>
+                                )}
                             </ButtonGroup>
                             <br></br>
                             <br></br>

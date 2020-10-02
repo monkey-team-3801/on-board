@@ -150,6 +150,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             <ResponseTest
                 sid={sessionId}
                 userid={props.userData.id}
+                userType={props.userData.userType}
             ></ResponseTest>
         </div>
     );

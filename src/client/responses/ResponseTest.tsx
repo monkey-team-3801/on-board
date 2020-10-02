@@ -1,15 +1,21 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
+import { UserType } from "../../types";
 import { DisplayContainer } from "./DisplayContainer";
 import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 
 type Props = {
     sid: string;
     userid: string;
+    userType: UserType;
 };
 
 // Test modal, remove this file when no longer needed.
 export const ResponseTest = (props: Props) => {
+    const textDisplay =
+        props.userType === UserType.STUDENT
+            ? "Answer Questions"
+            : "See Responses";
     const [showForm, setShowForm] = React.useState<boolean>(false);
     const [showResult, setShowResult] = React.useState<boolean>(false);
     const [title, setTitle] = React.useState<string>("");
@@ -26,14 +32,17 @@ export const ResponseTest = (props: Props) => {
 
     return (
         <div>
-            <Button
-                variant="primary"
-                onClick={() => {
-                    handleShow("Ask a Question", true);
-                }}
-            >
-                Ask a question
-            </Button>
+            {(props.userType === UserType.COORDINATOR ||
+                props.userType === UserType.TUTOR) && (
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        handleShow("Ask a Question", true);
+                    }}
+                >
+                    Ask a question
+                </Button>
+            )}
             <Modal
                 show={showForm}
                 onHide={() => {
@@ -71,7 +80,7 @@ export const ResponseTest = (props: Props) => {
                     handleShowResult("Responses", true);
                 }}
             >
-                See responses
+                {textDisplay}
             </Button>
             <Modal
                 show={showResult}
@@ -89,6 +98,7 @@ export const ResponseTest = (props: Props) => {
                     <DisplayContainer
                         sessionID={props.sid}
                         uid={props.userid}
+                        userType={props.userType}
                     />
                 </Modal.Body>
                 <Modal.Footer>
