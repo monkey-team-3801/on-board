@@ -84,7 +84,7 @@ export const DisplayResultsContainer = (props: Props) => {
         setShortAnswerData,
     ]);
 
-    // TODO: Consider splitting this component up into seperate ones.
+    // TODO: Consider splitting this file up into seperate ones.
     const values =
         props.formType === ResponseFormType.MULTIPLE_CHOICE
             ? multipleChoiceData[0]
