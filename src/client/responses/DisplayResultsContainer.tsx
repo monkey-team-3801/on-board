@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
@@ -9,10 +10,11 @@ type Props = {
     formID: string;
     formType: ResponseFormType;
     back: Function;
+    sock: SocketIOClient.Socket;
 };
 
 export const DisplayResultsContainer = (props: Props) => {
-    const [mcResultsData] = useDynamicFetch<
+    const [mcResultsData, getMcResults] = useDynamicFetch<
         Array<Array<string>>,
         { formID: string }
     >(
@@ -21,7 +23,7 @@ export const DisplayResultsContainer = (props: Props) => {
         props.formType === ResponseFormType.MULTIPLE_CHOICE
     );
 
-    const [saResultsData] = useDynamicFetch<
+    const [saResultsData, getSaResults] = useDynamicFetch<
         Array<Array<string>>,
         { formID: string }
     >(
@@ -30,20 +32,48 @@ export const DisplayResultsContainer = (props: Props) => {
         props.formType === ResponseFormType.SHORT_ANSWER
     );
 
-    if (!requestIsLoaded(mcResultsData) || !requestIsLoaded(saResultsData)) {
-        return <div>loading...</div>;
-    }
+    const [shortAnswerData, setShortAnswerData] = React.useState<
+        Array<Array<string>>
+    >([]);
+    const [multipleChoiceData, setMultipleChoiceData] = React.useState<
+        Array<Array<string>>
+    >([]);
 
-    let options: Array<string> = [];
-    let values: Array<string> = [];
-    let saValues: Array<Array<string>> = [];
+    props.sock.on(ResponseFormEvent.NEW_RESPONSE, () => {
+        if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
+            getMcResults({ formID: props.formID });
+        } else {
+            getSaResults({ formID: props.formID });
+        }
+        props.sock.off(ResponseFormEvent.NEW_RESPONSE);
+    });
 
-    if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
-        values = mcResultsData.data[0];
-        options = mcResultsData.data[1];
-    } else {
-        saValues = saResultsData.data;
-    }
+    React.useEffect(() => {
+        if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
+            if (requestIsLoaded(mcResultsData)) {
+                setMultipleChoiceData(mcResultsData.data);
+            }
+        }
+        if (props.formType === ResponseFormType.SHORT_ANSWER) {
+            if (requestIsLoaded(saResultsData)) {
+                setShortAnswerData(saResultsData.data);
+            }
+        }
+    }, [mcResultsData, saResultsData, props.formType]);
+
+    // TODO: Consider splitting this component up into seperate ones.
+    const values =
+        props.formType === ResponseFormType.MULTIPLE_CHOICE
+            ? multipleChoiceData[0]
+            : undefined;
+    const options =
+        props.formType === ResponseFormType.MULTIPLE_CHOICE
+            ? multipleChoiceData[1]
+            : undefined;
+    const saValues =
+        props.formType === ResponseFormType.SHORT_ANSWER
+            ? shortAnswerData
+            : undefined;
 
     return (
         <div>
@@ -55,15 +85,15 @@ export const DisplayResultsContainer = (props: Props) => {
                 Back
             </Button>
             {props.formType === ResponseFormType.MULTIPLE_CHOICE &&
-                options.map((x, i) => (
+                options?.map((x, i) => (
                     <div key={i}>
                         <div>
-                            {x}: {values[i]}
+                            {x}: {values?.[i]}
                         </div>
                     </div>
                 ))}
             {props.formType === ResponseFormType.SHORT_ANSWER &&
-                saValues.map((x, i) => (
+                saValues?.map((x, i) => (
                     <div key={i}>
                         <ShortAnswerDisplayContainer user={x[0]} text={x[1]} />
                     </div>

@@ -90,7 +90,7 @@ router.post("/submitSaForm", async (req, res) => {
 router.post(
     "/getFormsBySession",
     asyncHandler<
-        { [formType: string]: Array<Array<string>> },
+        { MC: Array<Array<string>>; SA: Array<Array<string>> },
         {},
         { sid: string }
     >(async (req, res) => {

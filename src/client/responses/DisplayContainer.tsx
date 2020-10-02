@@ -17,7 +17,7 @@ type Props = {
 
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
-        { [formType: string]: Array<Array<string>> },
+        { MC: Array<Array<string>>; SA: Array<Array<string>> },
         { sid: string }
     >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
 
@@ -28,17 +28,21 @@ export const DisplayContainer = (props: Props) => {
     );
     const [displayQuestion, setQuestion] = React.useState<string>("");
 
+    const [data, setData] = React.useState<{
+        MC: Array<Array<string>>;
+        SA: Array<Array<string>>;
+    }>({ MC: [], SA: [] });
+
     props.sock.on(ResponseFormEvent.NEW_FORM, () => {
         getForms({ sid: props.sessionID });
         props.sock.off(ResponseFormEvent.NEW_FORM);
     });
 
-    if (!requestIsLoaded(forms)) {
-        return <div>loading forms...</div>;
-    }
-
-    const MultipleChoiceForms = forms.data.MC;
-    const ShortAnswerForms = forms.data.SA;
+    React.useEffect(() => {
+        if (requestIsLoaded(forms)) {
+            setData(forms.data);
+        }
+    }, [forms]);
 
     const displayForm = (
         id: string,
@@ -62,7 +66,7 @@ export const DisplayContainer = (props: Props) => {
             <div>
                 {displayStage === 0 && <h4>Multiple Choice Forms:</h4>}
                 {displayStage === 0 &&
-                    MultipleChoiceForms.map((x, i) => (
+                    data.MC.map((x, i) => (
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup style={{ float: "right" }}>
@@ -101,7 +105,7 @@ export const DisplayContainer = (props: Props) => {
                 <br></br>
                 {displayStage === 0 && <h4>Short Answer Forms:</h4>}
                 {displayStage === 0 &&
-                    ShortAnswerForms.map((x, i) => (
+                    data.SA.map((x, i) => (
                         <div key={i}>
                             <div style={{ display: "inline" }}>{x[1]}</div>
                             <ButtonGroup style={{ float: "right" }}>
@@ -146,6 +150,8 @@ export const DisplayContainer = (props: Props) => {
                             q={displayQuestion}
                             back={setDisplayStage}
                             uid={props.uid}
+                            sock={props.sock}
+                            sid={props.sessionID}
                         />
                     )}
             </div>
@@ -157,6 +163,8 @@ export const DisplayContainer = (props: Props) => {
                             q={displayQuestion}
                             uid={props.uid}
                             back={setDisplayStage}
+                            sock={props.sock}
+                            sid={props.sessionID}
                         />
                     )}
             </div>
@@ -166,6 +174,7 @@ export const DisplayContainer = (props: Props) => {
                         formID={formID}
                         formType={formType}
                         back={setDisplayStage}
+                        sock={props.sock}
                     />
                 )}
             </div>

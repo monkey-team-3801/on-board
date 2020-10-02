@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Form } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
@@ -8,6 +9,8 @@ type Props = {
     q: string;
     uid: string;
     back: Function;
+    sock: SocketIOClient.Socket;
+    sid: string;
 };
 
 export const ShortAnswerDisplay = (props: Props) => {
@@ -42,6 +45,7 @@ export const ShortAnswerDisplay = (props: Props) => {
             userResponse: userResponse,
             formID: props.formID,
         });
+        props.sock.emit(ResponseFormEvent.NEW_RESPONSE, props.sid);
         props.back(0);
     };
 

@@ -203,6 +203,10 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(ResponseFormEvent.NEW_FORM, (data) => {
         socket.to(data).emit(ResponseFormEvent.NEW_FORM);
     });
+
+    socket.on(ResponseFormEvent.NEW_RESPONSE, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_RESPONSE);
+    });
 });
 
 app.use(bodyParser.json());

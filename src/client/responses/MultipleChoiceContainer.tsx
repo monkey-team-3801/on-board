@@ -48,7 +48,7 @@ export const MultipleChoiceContainer = (props: Props) => {
                         setOptions(options.set(key, ""));
                     }}
                 >
-                    +
+                    Add Option
                 </Button>
             </Form.Group>
 

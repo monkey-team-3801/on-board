@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Form } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
@@ -8,6 +9,8 @@ type Props = {
     q: string;
     back: Function;
     uid: string;
+    sock: SocketIOClient.Socket;
+    sid: string;
 };
 
 export const MultipleChoiceDisplay = (props: Props) => {
@@ -47,6 +50,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
             userID: props.uid,
             option: option,
         });
+        props.sock.emit(ResponseFormEvent.NEW_RESPONSE, props.sid);
         props.back(0);
     };
 
