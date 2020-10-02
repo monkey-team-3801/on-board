@@ -19,22 +19,30 @@ router.post("/submitMcForm", async (req, res) => {
 
     if (formOptions.size > 8 || formOptions.size < 3) {
         res.status(500).end();
+        return;
     }
 
     let options: Map<string, string> = new Map();
     let responses: Map<string, number> = new Map();
+    let invalidKey: boolean = false;
 
     formOptions.forEach((value, key) => {
         if (key === "sessionID" || key === "question" || key === "userID") {
             return;
         }
         if (!version(key)) {
-            res.status(500).end();
+            invalidKey = true;
             return;
         }
         options.set(key, value);
         responses.set(key, 0);
     });
+
+    if (invalidKey) {
+        res.status(500).end();
+        return;
+    }
+
     if (question && sid && uid) {
         try {
             await MultipleChoiceResponseForm.create({
