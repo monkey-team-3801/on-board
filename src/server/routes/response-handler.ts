@@ -50,7 +50,7 @@ router.post("/submitMcForm", async (req, res) => {
             return;
         } catch (e) {
             res.status(500);
-            new Error(
+            throw new Error(
                 "An unexpected error has occured. Your form was not created."
             );
         }
@@ -79,7 +79,7 @@ router.post("/submitSaForm", async (req, res) => {
             return;
         } catch (e) {
             res.status(500);
-            new Error(
+            throw new Error(
                 "An unexpected error has occured. Your form was not created."
             );
         }
@@ -182,7 +182,7 @@ router.post(
                 res.status(500).end();
                 return;
             }
-            const currentValue = query?.count?.get(choice);
+            const currentValue = query.count?.get(choice);
             if (currentValue !== undefined) {
                 query.count?.set(choice, currentValue + 1);
                 query.answered.push(userID);
