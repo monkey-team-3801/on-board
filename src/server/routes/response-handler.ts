@@ -11,45 +11,45 @@ import { asyncHandler } from "../utils";
 
 export const router = express.Router();
 
-router.post("/submitMcForm", async (req, res) => {
-    const formOptions = new Map<string, string>(Object.entries(req.body));
-    const question = formOptions.get("question");
-    const sid = formOptions.get("sessionID");
-    const uid = formOptions.get("userID");
+router.post(
+    "/submitMcForm",
+    asyncHandler<
+        undefined,
+        {},
+        {
+            options: { [key: string]: string };
+            question: string;
+            sessionID: string;
+            userID: string;
+        }
+    >(async (req, res) => {
+        const formOptions = new Map<string, string>(
+            Object.entries(req.body.options)
+        );
+        const question = req.body.question;
+        const sid = req.body.sessionID;
+        const uid = req.body.userID;
 
-    if (formOptions.size > 8 || formOptions.size < 3) {
-        res.status(500).end();
-        return;
-    }
-
-    let options: Map<string, string> = new Map();
-    let responses: Map<string, number> = new Map();
-    let invalidKey: boolean = false;
-
-    formOptions.forEach((value, key) => {
-        if (key === "sessionID" || key === "question" || key === "userID") {
+        if (formOptions.size > 6 || formOptions.size < 1) {
+            res.status(500).end();
             return;
         }
-        if (!version(key)) {
-            invalidKey = true;
-            return;
+
+        let responses: Map<string, number> = new Map();
+        for (let key of Array.from(formOptions.keys())) {
+            if (!version(key)) {
+                res.status(500).end();
+                return;
+            }
+            responses.set(key, 0);
         }
-        options.set(key, value);
-        responses.set(key, 0);
-    });
 
-    if (invalidKey) {
-        res.status(500).end();
-        return;
-    }
-
-    if (question && sid && uid) {
         try {
             await MultipleChoiceResponseForm.create({
                 sessionID: sid,
                 question: question,
                 type: ResponseFormType.MULTIPLE_CHOICE,
-                options: options,
+                options: formOptions,
                 count: responses,
                 answered: [],
                 owner: uid,
@@ -62,9 +62,8 @@ router.post("/submitMcForm", async (req, res) => {
                 "An unexpected error has occured. Your form was not created."
             );
         }
-    }
-    res.status(500).end();
-});
+    })
+);
 
 router.post("/submitSaForm", async (req, res) => {
     const formOptions = new Map<string, string>(Object.entries(req.body));

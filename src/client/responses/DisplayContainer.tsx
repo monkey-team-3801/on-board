@@ -33,10 +33,17 @@ export const DisplayContainer = (props: Props) => {
         SA: Array<Array<string>>;
     }>({ MC: [], SA: [] });
 
-    props.sock.on(ResponseFormEvent.NEW_FORM, () => {
+    const updateForms = React.useCallback(() => {
         getForms({ sid: props.sessionID });
-        props.sock.off(ResponseFormEvent.NEW_FORM);
-    });
+    }, [getForms, props.sessionID]);
+
+    React.useEffect(() => {
+        props.sock.on(ResponseFormEvent.NEW_FORM, updateForms);
+        return () => {
+            props.sock.off(ResponseFormEvent.NEW_FORM, updateForms);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     React.useEffect(() => {
         if (requestIsLoaded(forms)) {
@@ -66,17 +73,19 @@ export const DisplayContainer = (props: Props) => {
             <div>
                 {displayStage === 0 && <h4>Multiple Choice Forms:</h4>}
                 {displayStage === 0 &&
-                    data.MC.map((x, i) => (
-                        <div key={i}>
-                            <div style={{ display: "inline" }}>{x[1]}</div>
+                    data.MC.map((dataPair, index) => (
+                        <div key={index}>
+                            <div style={{ display: "inline" }}>
+                                {dataPair[1]}
+                            </div>
                             <ButtonGroup style={{ float: "right" }}>
                                 {props.userType === UserType.STUDENT && (
                                     <Button
                                         onClick={() => {
                                             displayForm(
-                                                x[0],
+                                                dataPair[0],
                                                 ResponseFormType.MULTIPLE_CHOICE,
-                                                x[1]
+                                                dataPair[1]
                                             );
                                         }}
                                         size="sm"
@@ -88,7 +97,7 @@ export const DisplayContainer = (props: Props) => {
                                     <Button
                                         onClick={() => {
                                             displayResults(
-                                                x[0],
+                                                dataPair[0],
                                                 ResponseFormType.MULTIPLE_CHOICE
                                             );
                                         }}
@@ -105,17 +114,19 @@ export const DisplayContainer = (props: Props) => {
                 <br></br>
                 {displayStage === 0 && <h4>Short Answer Forms:</h4>}
                 {displayStage === 0 &&
-                    data.SA.map((x, i) => (
-                        <div key={i}>
-                            <div style={{ display: "inline" }}>{x[1]}</div>
+                    data.SA.map((dataPair, index) => (
+                        <div key={index}>
+                            <div style={{ display: "inline" }}>
+                                {dataPair[1]}
+                            </div>
                             <ButtonGroup style={{ float: "right" }}>
                                 {props.userType === UserType.STUDENT && (
                                     <Button
                                         onClick={() => {
                                             displayForm(
-                                                x[0],
+                                                dataPair[0],
                                                 ResponseFormType.SHORT_ANSWER,
-                                                x[1]
+                                                dataPair[1]
                                             );
                                         }}
                                         size="sm"
@@ -127,7 +138,7 @@ export const DisplayContainer = (props: Props) => {
                                     <Button
                                         onClick={() => {
                                             displayResults(
-                                                x[0],
+                                                dataPair[0],
                                                 ResponseFormType.SHORT_ANSWER
                                             );
                                         }}

@@ -33,10 +33,10 @@ export const DisplayResultsContainer = (props: Props) => {
         props.formType === ResponseFormType.SHORT_ANSWER
     );
 
-    const [shortAnswerData, setShortAnswerData] = useThrottle<
+    const [shortAnswerData, setShortAnswerData] = React.useState<
         Array<Array<string>>
     >([]);
-    const [multipleChoiceData, setMultipleChoiceData] = useThrottle<
+    const [multipleChoiceData, setMultipleChoiceData] = React.useState<
         Array<Array<string>>
     >([]);
 
@@ -56,14 +56,21 @@ export const DisplayResultsContainer = (props: Props) => {
         true
     );
 
-    props.sock.on(ResponseFormEvent.NEW_RESPONSE, () => {
+    const updateResponses = React.useCallback(() => {
         if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
             throttleFetchMc();
         } else {
             throttleFetchSa();
         }
-        props.sock.off(ResponseFormEvent.NEW_RESPONSE);
-    });
+    }, [props.formType, throttleFetchMc, throttleFetchSa]);
+
+    React.useEffect(() => {
+        props.sock.on(ResponseFormEvent.NEW_RESPONSE, updateResponses);
+        return () => {
+            props.sock.off(ResponseFormEvent.NEW_RESPONSE, updateResponses);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     React.useEffect(() => {
         if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {

@@ -14,21 +14,30 @@ type Props = {
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
-    const g: [string, string][] = [[uuidv4(), ""]];
-    const x = OrderedMap<string, string>(g);
-    const [options, setOptions] = React.useState<OrderedMap<string, string>>(x);
+    const initialValues: [string, string][] = [[uuidv4(), ""]];
+    const initialMap = OrderedMap<string, string>(initialValues);
+    const [options, setOptions] = React.useState<OrderedMap<string, string>>(
+        initialMap
+    );
 
     const [, uploadForm] = useDynamicFetch<
         undefined,
-        { [key: string]: string }
+        {
+            options: { [key: string]: string };
+            question: string;
+            sessionID: string;
+            userID: string;
+        }
     >("/response-handler/submitMcForm", undefined, false);
 
     const submitForm = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
-        const data = options.toObject();
-        data["question"] = props.question;
-        data["sessionID"] = props.sessionID;
-        data["userID"] = props.uid;
+        const data = {
+            options: options.toObject(),
+            question: props.question,
+            sessionID: props.sessionID,
+            userID: props.uid,
+        };
         await uploadForm(data);
         props.sock.emit(ResponseFormEvent.NEW_FORM, props.sessionID);
         props.closeModal();
