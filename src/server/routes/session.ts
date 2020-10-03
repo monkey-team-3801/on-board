@@ -21,6 +21,10 @@ import {
     SessionUsers,
     User,
 } from "../database";
+import {
+    MultipleChoiceResponseForm,
+    ShortAnswerResponseForm,
+} from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
 import { asyncHandler, createNewSession } from "../utils";
 
@@ -168,11 +172,23 @@ router.post(
         if (req.body.roomType === RoomType.PRIVATE) {
             await Session.findByIdAndDelete(req.body.id);
             await SessionCanvas.findOneAndDelete({ sessionId: req.body.id });
+            await MultipleChoiceResponseForm.deleteMany({
+                sessionID: req.body.id,
+            });
+            await ShortAnswerResponseForm.deleteMany({
+                sessionID: req.body.id,
+            });
         } else if (req.body.roomType === RoomType.CLASS) {
             await ClassroomSession.findByIdAndDelete(req.body.id);
             await VideoSession.findOneAndDelete({ sessionId: req.body.id });
             await BreakoutSession.deleteMany({
                 parentSessionId: req.body.id,
+            });
+            await MultipleChoiceResponseForm.deleteMany({
+                sessionID: req.body.id,
+            });
+            await ShortAnswerResponseForm.deleteMany({
+                sessionID: req.body.id,
             });
         }
         await SessionUsers.deleteOne({ sessionId: req.body.id });
