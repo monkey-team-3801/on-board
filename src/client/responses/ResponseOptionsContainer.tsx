@@ -91,7 +91,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                         onClick={() => {
                             handleSubmit();
                         }}
-                        disabled={!question}
+                        disabled={question === ""}
                     >
                         Submit
                     </Button>

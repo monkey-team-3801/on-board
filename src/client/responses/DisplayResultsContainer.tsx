@@ -1,4 +1,4 @@
-import { useThrottle, useThrottleCallback } from "@react-hook/throttle";
+import { useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
 import { Button } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";

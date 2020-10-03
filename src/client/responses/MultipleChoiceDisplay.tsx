@@ -87,12 +87,11 @@ export const MultipleChoiceDisplay = (props: Props) => {
                         ></Form.Check>
                     ))}
                 </Form.Group>
-                {!userAnswered.data.found && (
+                {!userAnswered.data.found ? (
                     <Button type="submit" disabled={checked < 0}>
                         submit
                     </Button>
-                )}
-                {userAnswered.data.found && (
+                ) : (
                     <div style={{ color: "red" }}>
                         You have already answered.
                     </div>
