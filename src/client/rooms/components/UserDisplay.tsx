@@ -1,54 +1,40 @@
 import React from "react";
-import { Dropdown } from "react-bootstrap";
 import { UserData } from "../types";
+import { UserType } from "../../../types";
 
-type Props = UserData & {
-    allocateUser: (
-        roomId: string | "main",
-        currentRoomId: string | "main",
-        userId: string
-    ) => void;
-    otherRooms: Array<string>;
-    currentRoomId: string;
+type Props = Omit<UserData, "allocated"> & {
+    children?: React.ReactNode;
+};
+
+const userTypeToClass = (userType: UserType) => {
+    switch (userType) {
+        case UserType.STUDENT:
+            return "student";
+        case UserType.TUTOR:
+            return "tutor";
+        case UserType.COORDINATOR:
+            return "coordinator";
+    }
 };
 
 export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
+    const { userType, id, username } = props;
+
+    const additionalClass = React.useMemo(() => {
+        return userTypeToClass(userType);
+    }, [userType]);
+
     return (
         <div className="user-display">
-            <Dropdown>
-                <Dropdown.Toggle
-                    variant="info"
-                    size="sm"
-                    disabled={props.allocated}
-                >
-                    Allocate
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {props.otherRooms.map((key, i) => {
-                        if (props.currentRoomId !== key) {
-                            return (
-                                <Dropdown.Item
-                                    key={i}
-                                    onClick={() => {
-                                        props.allocateUser(
-                                            key,
-                                            props.currentRoomId,
-                                            props.id
-                                        );
-                                    }}
-                                >
-                                    {key === "main" ? "Main" : `Room ${i + 1}`}
-                                </Dropdown.Item>
-                            );
-                        }
-                        return <></>;
-                    })}
-                </Dropdown.Menu>
-            </Dropdown>
-            <img src={`/filehandler/getPfp/${props.id}`} alt="profile" />
+            <img
+                src={`/filehandler/getPfp/${id}`}
+                alt="profile"
+                className={additionalClass}
+            />
             <div className="username">
-                <p className="text-truncate">{props.username}</p>
+                <p className="text-truncate">{username}</p>
             </div>
+            {props.children}
         </div>
     );
 };

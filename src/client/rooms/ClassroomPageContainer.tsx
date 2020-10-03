@@ -1,18 +1,20 @@
+import { List } from "immutable";
 import React from "react";
-import socketIOClient from "socket.io-client";
+import { Button, Container } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
-
-import { TopLayerContainerProps, BreakoutAllocationEventData } from "../types";
-import { requestIsLoaded } from "../utils";
-import { useFetch } from "../hooks";
-import { ClassroomSessionData, UserDataResponseType } from "../../types";
-import { Container, Button } from "react-bootstrap";
-import { StreamSelectorWrapper } from "../video/StreamSelectorWrapper";
 import { RoomEvent } from "../../events";
-import { BreakoutRoomModal } from "./components/";
+import { ClassroomSessionData, UserDataResponseType } from "../../types";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponseTest } from "../responses/ResponseTest";
+import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
+import { requestIsLoaded } from "../utils";
+import "./classroom.less";
+import { BreakoutRoomModal } from "./components/";
+import { ParticipantsContainer } from "./containers";
+// import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -45,6 +47,50 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         false
     );
 
+    const handRaisedRef = React.useRef<boolean>(false);
+
+    const [raisedHandUsers, setRaisedHandUsers] = React.useState<List<string>>(
+        List([])
+    );
+
+    const [, addRaisedHand] = useDynamicFetch<
+        undefined,
+        { sessionId: string; userId: string }
+    >("/session/addRaisedHandUser", undefined, false);
+
+    const [, removeRaisedHand] = useDynamicFetch<
+        undefined,
+        { sessionId: string; userId: string }
+    >("/session/removeRaisedHandUser", undefined, false);
+
+    const [raisedHandUsersResponse, getRaisedHandUsers] = useFetch<
+        { raisedHandUsers: Array<string> },
+        { sessionId: string }
+    >("/session/getRaisedHandUsers");
+
+    const setRaisedHandStatus = useDebouncedCallback(
+        async (remove: boolean) => {
+            if (!remove) {
+                await addRaisedHand({ sessionId, userId });
+            } else {
+                await removeRaisedHand({ sessionId, userId });
+            }
+            socket.emit(RoomEvent.USER_HAND_STATUS_CHANGED, sessionId);
+        },
+        1000
+    );
+
+    React.useEffect(() => {
+        if (requestIsLoaded(raisedHandUsersResponse)) {
+            const raisedHandUsers =
+                raisedHandUsersResponse.data.raisedHandUsers;
+            setRaisedHandUsers(List(raisedHandUsers));
+            if (raisedHandUsers.includes(userId)) {
+                handRaisedRef.current = true;
+            }
+        }
+    }, [raisedHandUsersResponse, userId]);
+
     const [
         breakoutAllocationEventData,
         setBreakoutAllocationEventData,
@@ -64,10 +110,15 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
     const fetchSessionUsers = useDebouncedCallback(fetchUsers, 1000);
 
+    const fetchRaisedHandUsers = useDebouncedCallback(getRaisedHandUsers, 1000);
+
     const onUserJoinOrLeave = React.useCallback(() => {
         fetchSessionUsers.callback();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchSessionUsers]);
+
+    const onUserHandStatusChange = React.useCallback(() => {
+        fetchRaisedHandUsers.callback();
+    }, [fetchRaisedHandUsers]);
 
     React.useEffect(() => {
         socket
@@ -75,6 +126,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             .on(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
             .on(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
             .on(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+            .on(RoomEvent.USER_HAND_STATUS_CHANGED, onUserHandStatusChange)
             .emit(RoomEvent.SESSION_JOIN, {
                 userId,
                 sessionId,
@@ -85,7 +137,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 .disconnect()
                 .off(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
                 .off(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
-                .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate);
+                .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+                .off(
+                    RoomEvent.USER_HAND_STATUS_CHANGED,
+                    onUserHandStatusChange
+                );
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -114,18 +170,36 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 </Button>
             </Container>
             <Container>
-                {sessionUsersResponse.data?.users.map((user) => {
-                    return (
-                        <div key={user.id}>
-                            {user.username}
-                            <img
-                                src={`/filehandler/getPfp/${user.id}`}
-                                alt="profile"
-                            ></img>
-                        </div>
-                    );
-                })}
+                <Button
+                    onClick={async () => {
+                        if (handRaisedRef.current) {
+                            setRaisedHandUsers(
+                                raisedHandUsers.splice(
+                                    raisedHandUsers.indexOf(userId),
+                                    1
+                                )
+                            );
+                        } else {
+                            setRaisedHandUsers(
+                                raisedHandUsers.concat([userId])
+                            );
+                        }
+                        setRaisedHandStatus.callback(handRaisedRef.current);
+                        handRaisedRef.current = !handRaisedRef.current;
+                    }}
+                >
+                    Raise Hand
+                </Button>
             </Container>
+            {sessionUsersResponse.data?.users ? (
+                <ParticipantsContainer
+                    users={sessionUsersResponse.data.users}
+                    raisedHandUsers={raisedHandUsers.toArray()}
+                />
+            ) : (
+                <div>loading</div>
+            )}
+
             <BreakoutRoomModal
                 userData={sessionUsersResponse.data?.users || []}
                 visible={createBreakoutRoomModalVisible}
@@ -134,12 +208,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutRoomModalVisible(false);
                 }}
             />
-            <Container>
-                <StreamSelectorWrapper
-                    sessionId={props.match.params.classroomId}
-                    userId={props.userData.id}
-                />
-            </Container>
+            {/* <StreamSelectorWrapper
+                sessionId={props.match.params.classroomId}
+                userId={props.userData.id}
+            /> */}
             <BreakoutRoomAllocateIndicator
                 {...props}
                 event={breakoutAllocationEventData}

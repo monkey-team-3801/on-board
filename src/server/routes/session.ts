@@ -396,3 +396,63 @@ router.post(
         res.end();
     })
 );
+
+router.post(
+    "/addRaisedHandUser",
+    asyncHandler<undefined, {}, { sessionId: string; userId: string }>(
+        async (req, res) => {
+            try {
+                await ClassroomSession.findByIdAndUpdate(req.body.sessionId, {
+                    $push: {
+                        raisedHandUsers: req.body.userId,
+                    },
+                }).lean();
+                res.status(200);
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/removeRaisedHandUser",
+    asyncHandler<undefined, {}, { sessionId: string; userId: string }>(
+        async (req, res) => {
+            try {
+                await ClassroomSession.findByIdAndUpdate(req.body.sessionId, {
+                    $pull: {
+                        raisedHandUsers: req.body.userId,
+                    },
+                }).lean();
+                res.status(200);
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/getRaisedHandUsers",
+    asyncHandler<{ raisedHandUsers: Array<string> }, {}, { sessionId: string }>(
+        async (req, res) => {
+            try {
+                const session = await ClassroomSession.findOne({
+                    sessionId: req.body.sessionId,
+                }).lean();
+                res.json({
+                    raisedHandUsers: session?.raisedHandUsers || [],
+                });
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
+);

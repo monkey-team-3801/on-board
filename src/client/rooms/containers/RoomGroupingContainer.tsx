@@ -1,7 +1,7 @@
 import React from "react";
 import { UserData } from "../types";
 import { Col, Container, Row, Button } from "react-bootstrap";
-import { UserDisplay } from "../components";
+import { UserDisplayAllocation } from "../components";
 
 type Props = {
     roomId: string | "main";
@@ -51,7 +51,7 @@ export const RoomGroupingContainer: React.FunctionComponent<Props> = (
                     {props.users.map((user) => {
                         return (
                             <Col xs={props.minColSize ?? 2} key={user.id}>
-                                <UserDisplay
+                                <UserDisplayAllocation
                                     {...user}
                                     currentRoomId={props.roomId}
                                     allocateUser={props.allocateUser}

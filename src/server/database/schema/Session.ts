@@ -14,6 +14,7 @@ interface IClassroomSession extends ISession {
     courseCode: string;
     startTime: string;
     endTime: string;
+    raisedHandUsers: Array<string>;
 }
 
 interface IBreakoutSession extends ISession {
@@ -35,6 +36,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     courseCode: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
+    raisedHandUsers: { type: Array, default: [] },
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
