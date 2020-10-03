@@ -75,6 +75,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             .on(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
             .on(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
             .on(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+            .on(RoomEvent.USER_HAND_STATUS_CHANGED, onUserHandStatusChange)
             .emit(RoomEvent.SESSION_JOIN, {
                 userId,
                 sessionId,
@@ -85,7 +86,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 .disconnect()
                 .off(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
                 .off(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
-                .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate);
+                .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+                .off(
+                    RoomEvent.USER_HAND_STATUS_CHANGED,
+                    onUserHandStatusChange
+                );
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

@@ -164,6 +164,10 @@ io.on("connect", (socket: SocketIO.Socket) => {
         }
     );
 
+    socket.on(RoomEvent.USER_HAND_STATUS_CHANGED, (sessionId) => {
+        socket.to(sessionId).emit(RoomEvent.USER_HAND_STATUS_CHANGED);
+    });
+
     // socket.on(
     //     VideoEvent.USER_LEAVE_ROOM,
     //     async ({ sessionId, peerId, userId }) => {
