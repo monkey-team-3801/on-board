@@ -6,7 +6,7 @@ import { requestIsLoaded } from "../utils";
 
 type Props = {
     formID: string;
-    q: string;
+    question: string;
     back: Function;
     uid: string;
     sock: SocketIOClient.Socket;
@@ -72,7 +72,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
                     handleSubmit(e);
                 }}
             >
-                <h1>{props.q}</h1>
+                <h1>{props.question}</h1>
                 <Form.Group>
                     {Object.keys(data).map((x, i) => (
                         <Form.Check

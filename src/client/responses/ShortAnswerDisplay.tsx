@@ -6,7 +6,7 @@ import { requestIsLoaded } from "../utils";
 
 type Props = {
     formID: string;
-    q: string;
+    question: string;
     uid: string;
     back: Function;
     sock: SocketIOClient.Socket;
@@ -58,7 +58,7 @@ export const ShortAnswerDisplay = (props: Props) => {
             >
                 Back
             </Button>
-            <h1>{props.q}</h1>
+            <h1>{props.question}</h1>
             <Form
                 onSubmit={(e) => {
                     submit(e);
@@ -73,16 +73,15 @@ export const ShortAnswerDisplay = (props: Props) => {
                     disabled={userAnswered.data.found}
                 />
                 <br></br>
-                {!userAnswered.data.found && (
+                {!userAnswered.data.found ? (
                     <Button type="submit">submit</Button>
-                )}
-                {!userAnswered.data.found && !userResponse && (
-                    <div style={{ color: "red" }}>Please enter a response</div>
-                )}
-                {userAnswered.data.found && (
+                ) : (
                     <div style={{ color: "red" }}>
                         You have already answered.
                     </div>
+                )}
+                {!userAnswered.data.found && !userResponse && (
+                    <div style={{ color: "red" }}>Please enter a response</div>
                 )}
             </Form>
         </div>

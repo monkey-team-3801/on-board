@@ -158,7 +158,7 @@ export const DisplayContainer = (props: Props) => {
                     formType === ResponseFormType.MULTIPLE_CHOICE && (
                         <MultipleChoiceDisplay
                             formID={formID}
-                            q={displayQuestion}
+                            question={displayQuestion}
                             back={setDisplayStage}
                             uid={props.uid}
                             sock={props.sock}
@@ -171,7 +171,7 @@ export const DisplayContainer = (props: Props) => {
                     formType === ResponseFormType.SHORT_ANSWER && (
                         <ShortAnswerDisplay
                             formID={formID}
-                            q={displayQuestion}
+                            question={displayQuestion}
                             uid={props.uid}
                             back={setDisplayStage}
                             sock={props.sock}

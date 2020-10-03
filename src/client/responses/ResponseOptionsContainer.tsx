@@ -25,7 +25,7 @@ export const ResponseOptionsContainer = (props: Props) => {
     const [question, setQuestion] = React.useState<string>("");
     const [, uploadForm] = useDynamicFetch<
         undefined,
-        { [key: string]: string }
+        { sessionID: string; question: string; uid: string }
     >("/response-handler/submitSaForm", undefined, false);
 
     const handleSubmit = async () => {
