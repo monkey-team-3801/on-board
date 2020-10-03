@@ -80,6 +80,7 @@ export const createNewClassroomSession = async (
         courseCode,
         startTime,
         endTime,
+        raisedHandUsers: [],
     });
     await SessionUsers.create({
         sessionId: session._id,
