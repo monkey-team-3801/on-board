@@ -65,34 +65,35 @@ router.post(
     })
 );
 
-router.post("/submitSaForm", async (req, res) => {
-    const formOptions = new Map<string, string>(Object.entries(req.body));
-    const question = formOptions.get("question");
-    const sid = formOptions.get("sessionID");
-    const uid = formOptions.get("uid");
+router.post(
+    "/submitSaForm",
+    asyncHandler<{}, {}, { sessionID: string; question: string; uid: string }>(
+        async (req, res) => {
+            const question = req.body.question;
+            const sid = req.body.sessionID;
+            const uid = req.body.uid;
 
-    if (question && sid && uid) {
-        try {
-            await ShortAnswerResponseForm.create({
-                sessionID: sid,
-                question: question,
-                type: ResponseFormType.SHORT_ANSWER,
-                answered: [],
-                owner: uid,
-                responseID: [],
-            });
+            try {
+                await ShortAnswerResponseForm.create({
+                    sessionID: sid,
+                    question: question,
+                    type: ResponseFormType.SHORT_ANSWER,
+                    answered: [],
+                    owner: uid,
+                    responseID: [],
+                });
 
-            res.status(200).end();
-            return;
-        } catch (e) {
-            res.status(500);
-            throw new Error(
-                "An unexpected error has occured. Your form was not created."
-            );
+                res.status(200).end();
+                return;
+            } catch (e) {
+                res.status(500);
+                throw new Error(
+                    "An unexpected error has occured. Your form was not created."
+                );
+            }
         }
-    }
-    res.status(500).end();
-});
+    )
+);
 
 router.post(
     "/getFormsBySession",
