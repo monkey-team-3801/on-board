@@ -7,6 +7,7 @@ import {
     InputGroup,
 } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
+import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
@@ -18,7 +19,9 @@ type Props = {
 };
 
 export const ResponseOptionsContainer = (props: Props) => {
-    const [checkedOption, setOption] = React.useState<string>("mc");
+    const [checkedOption, setOption] = React.useState<ResponseFormType>(
+        ResponseFormType.MULTIPLE_CHOICE
+    );
     const [question, setQuestion] = React.useState<string>("");
     const [, uploadForm] = useDynamicFetch<
         undefined,
@@ -43,18 +46,22 @@ export const ResponseOptionsContainer = (props: Props) => {
                         type={"radio"}
                         label={"Multiple Choice"}
                         inline
-                        checked={checkedOption === "mc"}
+                        checked={
+                            checkedOption === ResponseFormType.MULTIPLE_CHOICE
+                        }
                         onChange={() => {
-                            setOption("mc");
+                            setOption(ResponseFormType.MULTIPLE_CHOICE);
                         }}
                     />
                     <Form.Check
                         type={"radio"}
                         label={"Short Answer"}
                         inline
-                        checked={checkedOption === "sa"}
+                        checked={
+                            checkedOption === ResponseFormType.SHORT_ANSWER
+                        }
                         onChange={() => {
-                            setOption("sa");
+                            setOption(ResponseFormType.SHORT_ANSWER);
                         }}
                     />
                 </FormGroup>
@@ -70,7 +77,7 @@ export const ResponseOptionsContainer = (props: Props) => {
             </InputGroup>
             <br></br>
             <div>
-                {checkedOption === "mc" ? (
+                {checkedOption === ResponseFormType.MULTIPLE_CHOICE ? (
                     <MultipleChoiceContainer
                         question={question}
                         sessionID={props.sid}

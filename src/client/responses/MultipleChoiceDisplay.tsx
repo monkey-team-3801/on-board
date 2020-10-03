@@ -44,7 +44,6 @@ export const MultipleChoiceDisplay = (props: Props) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
-        console.log(option);
         await submitForm({
             formID: props.formID,
             userID: props.uid,
