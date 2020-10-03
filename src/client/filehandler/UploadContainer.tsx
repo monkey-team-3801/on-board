@@ -53,7 +53,6 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         // Handle error. Someone will need to implement this.
         if (!checkValid(acceptedFiles)) {
             // Note: You can access rejected files through the variable "fileRejections" as below.
-            console.log(fileRejections);
             console.log("Some files failed to upload.");
             return;
         }
