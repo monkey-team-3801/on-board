@@ -17,18 +17,14 @@ export const ResponseTest = (props: Props) => {
         props.userType === UserType.STUDENT
             ? "Answer Questions"
             : "See Responses";
-    const [showForm, setShowForm] = React.useState<boolean>(false);
-    const [showResult, setShowResult] = React.useState<boolean>(false);
+    const [show, setShow] = React.useState<boolean>(false);
+    const [displayStage, setDisplayStage] = React.useState<number>(-1);
     const [title, setTitle] = React.useState<string>("");
 
-    const handleShow = (header: string, show: boolean) => {
-        setShowForm(show);
+    const handleShow = (header: string, show: boolean, stage: number) => {
+        setShow(show);
         setTitle(header);
-    };
-
-    const handleShowResult = (header: string, show: boolean) => {
-        setShowResult(show);
-        setTitle(header);
+        setDisplayStage(stage);
     };
 
     return (
@@ -38,16 +34,16 @@ export const ResponseTest = (props: Props) => {
                 <Button
                     variant="primary"
                     onClick={() => {
-                        handleShow("Ask a Question", true);
+                        handleShow("Ask a Question", true, 0);
                     }}
                 >
                     Ask a question
                 </Button>
             )}
             <Modal
-                show={showForm}
+                show={show}
                 onHide={() => {
-                    setShowForm(false);
+                    setShow(false);
                 }}
                 size="xl"
                 scrollable={true}
@@ -57,18 +53,28 @@ export const ResponseTest = (props: Props) => {
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ResponseOptionsContainer
-                        sid={props.sid}
-                        closeFunc={setShowForm}
-                        userid={props.userid}
-                        sock={props.sock}
-                    />
+                    {displayStage === 0 && (
+                        <ResponseOptionsContainer
+                            sid={props.sid}
+                            closeFunc={setShow}
+                            userid={props.userid}
+                            sock={props.sock}
+                        />
+                    )}
+                    {displayStage === 1 && (
+                        <DisplayContainer
+                            sessionID={props.sid}
+                            uid={props.userid}
+                            userType={props.userType}
+                            sock={props.sock}
+                        />
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
                         variant="primary"
                         onClick={() => {
-                            setShowForm(false);
+                            setShow(false);
                         }}
                     >
                         close
@@ -79,42 +85,11 @@ export const ResponseTest = (props: Props) => {
             <Button
                 variant="primary"
                 onClick={() => {
-                    handleShowResult("Responses", true);
+                    handleShow("Responses", true, 1);
                 }}
             >
                 {textDisplay}
             </Button>
-            <Modal
-                show={showResult}
-                onHide={() => {
-                    setShowResult(false);
-                }}
-                size="xl"
-                scrollable={true}
-                centered={true}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>{title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <DisplayContainer
-                        sessionID={props.sid}
-                        uid={props.userid}
-                        userType={props.userType}
-                        sock={props.sock}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        onClick={() => {
-                            setShowResult(false);
-                        }}
-                    >
-                        close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
         </div>
     );
 };
