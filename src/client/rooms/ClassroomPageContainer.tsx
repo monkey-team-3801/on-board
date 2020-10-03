@@ -14,7 +14,7 @@ import { requestIsLoaded } from "../utils";
 import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
 import { ParticipantsContainer } from "./containers";
-import { StreamSelectorWrapper } from "../video";
+// import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};

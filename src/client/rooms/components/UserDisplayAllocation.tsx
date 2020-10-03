@@ -44,7 +44,7 @@ export const UserDisplayAllocation: React.FunctionComponent<Props> = (
                                 </Dropdown.Item>
                             );
                         }
-                        return <></>;
+                        return <div key={key} />;
                     })}
                 </Dropdown.Menu>
             </Dropdown>
