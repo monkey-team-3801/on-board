@@ -60,3 +60,8 @@ export enum CanvasEvent {
     DRAW = "CANVAS_DRAW",
     CLEAR = "CANVAS_CLEAR",
 }
+
+export enum ResponseFormEvent {
+    NEW_FORM = "NEW_FORM",
+    NEW_RESPONSE = "NEW_RESPONSE",
+}

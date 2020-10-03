@@ -223,3 +223,8 @@ export type BreakoutRoomData = {
 };
 
 export type UserData = Omit<UserDataResponseType, "courses">;
+
+export enum ResponseFormType {
+    SHORT_ANSWER,
+    MULTIPLE_CHOICE,
+}

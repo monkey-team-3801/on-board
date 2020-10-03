@@ -6,6 +6,7 @@ import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
+import { ResponseTest } from "../responses/ResponseTest";
 import { TopLayerContainerProps } from "../types";
 import { SessionContainer } from "./containers";
 
@@ -42,7 +43,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                             </Row>
                         )}
                         <Row>
-                            <h1>Private Room</h1>
+                            <Col>
+                                <h1>Private Room</h1>
+                            </Col>
+                            <Col>
+                                <ResponseTest
+                                    sid={roomId}
+                                    userid={props.userData.id}
+                                    userType={props.userData.userType}
+                                    sock={socket}
+                                ></ResponseTest>
+                            </Col>
                         </Row>
                         <Row>
                             <DrawingCanvas

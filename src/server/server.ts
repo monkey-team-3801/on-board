@@ -11,6 +11,7 @@ import {
     ChatEvent,
     ChatMessageSendType,
     PrivateVideoRoomJoinData,
+    ResponseFormEvent,
     RoomEvent,
     VideoEvent,
 } from "../events";
@@ -24,6 +25,7 @@ import {
     fileRoute,
     healthCheckRoute,
     jobRoute,
+    responseRoute,
     sessionRoute,
     userRoute,
     videoRoute,
@@ -189,11 +191,21 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+
     socket.on(CanvasEvent.DRAW, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
     });
+
     socket.on(CanvasEvent.CLEAR, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CLEAR);
+    });
+
+    socket.on(ResponseFormEvent.NEW_FORM, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_FORM);
+    });
+
+    socket.on(ResponseFormEvent.NEW_RESPONSE, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_RESPONSE);
     });
 });
 
@@ -248,7 +260,11 @@ app.use("/auth", authRoute);
 // Job routes.
 app.use("/job", jobRoute);
 
+// File routes.
 app.use("/filehandler", fileRoute);
+
+// Response collection routes.
+app.use("/response-handler", responseRoute);
 
 // TODO API Routes
 app.use(

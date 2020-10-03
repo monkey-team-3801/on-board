@@ -21,6 +21,11 @@ import {
     SessionUsers,
     User,
 } from "../database";
+import { Response } from "../database/schema/Response";
+import {
+    MultipleChoiceResponseForm,
+    ShortAnswerResponseForm,
+} from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
 import { asyncHandler, createNewSession } from "../utils";
 
@@ -175,6 +180,18 @@ router.post(
                 parentSessionId: req.body.id,
             });
         }
+        await MultipleChoiceResponseForm.deleteMany({
+            sessionID: req.body.id,
+        });
+        const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
+            sessionID: req.body.id,
+        });
+        for (let form of shortAnswerResponseIDs) {
+            await Response.deleteMany({ formID: form.id });
+        }
+        await ShortAnswerResponseForm.deleteMany({
+            sessionID: req.body.id,
+        });
         await SessionUsers.deleteOne({ sessionId: req.body.id });
         res.status(200).end();
     })
