@@ -1,14 +1,13 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-
-import { useFetch } from "../hooks";
-import { LoginContainer } from "../user/LoginContainer";
-import { RegisterContainer } from "../user/RegisterContainer";
-import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
-import "../styles/Login.less";
+import { useFetch } from "../hooks";
 import { ParticlesContainer } from "../particles/ParticlesContainer";
+import { LocalStorageKey, RequestState } from "../types";
+import { LoginContainer } from "../user/LoginContainer";
+import { RegisterContainer } from "../user/RegisterContainer";
+import "./Login.less";
 
 type Props = RouteComponentProps;
 

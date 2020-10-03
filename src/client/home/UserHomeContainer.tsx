@@ -16,7 +16,7 @@ import { useDynamicFetch, useFetch, useSocket } from "../hooks";
 import { CreateRoomForm } from "../rooms/CreateRoomForm";
 import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
 import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
-import "../styles/Homepage.less";
+import "./Homepage.less";
 import { Calendar } from "../timetable";
 import { RequestState, TopLayerContainerProps } from "../types";
 import { ClassesContainer } from "./ClassesContainer";

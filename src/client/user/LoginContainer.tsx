@@ -1,10 +1,8 @@
 import React from "react";
-import { Form, Button, Col, Row, Container } from "react-bootstrap";
-
-import { useDynamicFetch } from "../hooks";
-import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import "../styles/Login.less";
+import { LoginSuccessResponseType, LoginUserRequestType } from "../../types";
+import { useDynamicFetch } from "../hooks";
 import { requestIsUnauthorised } from "../utils";
 
 type Props = RouteComponentProps & {
