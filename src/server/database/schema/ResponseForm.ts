@@ -4,15 +4,23 @@ import { ResponseFormType } from "../../../types";
 export interface IResponseForm extends mongoose.Document {
     sessionID: string;
     question: string;
-    options?: Map<string, string>;
-    count?: Map<string, number>;
     type: ResponseFormType;
     answered: Array<string>;
     owner: string;
-    responseID?: Array<string>;
 }
 
-const MultipleChoiceFormSchema = new mongoose.Schema<IResponseForm>({
+export interface IMultipleChoiceResponseForm extends IResponseForm {
+    options: Map<string, string>;
+    count: Map<string, number>;
+}
+
+export interface IShortAnswerResponseForm extends IResponseForm {
+    responseID: Array<string>;
+}
+
+const MultipleChoiceFormSchema = new mongoose.Schema<
+    IMultipleChoiceResponseForm
+>({
     sessionID: { type: String, required: true },
     question: { type: String, required: true },
     type: { type: ResponseFormType, required: true },
@@ -22,12 +30,11 @@ const MultipleChoiceFormSchema = new mongoose.Schema<IResponseForm>({
     owner: { type: String, required: true },
 });
 
-export const MultipleChoiceResponseForm = mongoose.model<IResponseForm>(
-    "MultipleChoiceForm",
-    MultipleChoiceFormSchema
-);
+export const MultipleChoiceResponseForm = mongoose.model<
+    IMultipleChoiceResponseForm
+>("MultipleChoiceForm", MultipleChoiceFormSchema);
 
-const ShortAnswerFormSchema = new mongoose.Schema<IResponseForm>({
+const ShortAnswerFormSchema = new mongoose.Schema<IMultipleChoiceResponseForm>({
     sessionID: { type: String, required: true },
     question: { type: String, required: true },
     type: { type: ResponseFormType, required: true },
@@ -36,7 +43,7 @@ const ShortAnswerFormSchema = new mongoose.Schema<IResponseForm>({
     responseID: { type: Array, default: [] },
 });
 
-export const ShortAnswerResponseForm = mongoose.model<IResponseForm>(
+export const ShortAnswerResponseForm = mongoose.model<IShortAnswerResponseForm>(
     "ShortAnswerForm",
     ShortAnswerFormSchema
 );
