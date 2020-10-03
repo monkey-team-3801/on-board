@@ -145,30 +145,24 @@ router.post(
 
 router.post(
     "/checkAnswered",
-    asyncHandler<{ found: boolean }, {}, { userID: string; formID: string }>(
-        async (req, res) => {
-            const query = await MultipleChoiceResponseForm.findById(
-                req.body.formID
-            );
-            if (query) {
-                if (query.answered.includes(req.body.userID)) {
-                    res.send({ found: true }).status(200).end();
-                    return;
-                }
-            } else {
-                const query2 = await ShortAnswerResponseForm.findById(
-                    req.body.formID
-                );
-                if (query2) {
-                    if (query2.answered.includes(req.body.userID)) {
-                        res.send({ found: true }).status(200).end();
-                        return;
-                    }
-                }
+    asyncHandler<
+        { found: boolean },
+        {},
+        { userID: string; formID: string; formType: ResponseFormType }
+    >(async (req, res) => {
+        const query =
+            req.body.formType === ResponseFormType.MULTIPLE_CHOICE
+                ? await MultipleChoiceResponseForm.findById(req.body.formID)
+                : await ShortAnswerResponseForm.findById(req.body.formID);
+
+        if (query) {
+            if (query.answered.includes(req.body.userID)) {
+                res.send({ found: true }).status(200).end();
+                return;
             }
-            res.send({ found: false }).status(200).end();
         }
-    )
+        res.send({ found: false }).status(200).end();
+    })
 );
 
 router.post(
@@ -178,14 +172,13 @@ router.post(
         {},
         { formID: string; userID: string; option: string }
     >(async (req, res) => {
-        const options = new Map<string, string>(Object.entries(req.body));
-        const formID = options.get("formID");
-        const choice = options.get("option");
-        const userID = options.get("userID");
+        const formID = req.body.formID;
+        const choice = req.body.userID;
+        const userID = req.body.option;
 
         const query = await MultipleChoiceResponseForm.findById(formID);
 
-        if (choice && query && userID) {
+        if (query) {
             if (query.answered.includes(userID)) {
                 res.status(500).end();
                 return;
@@ -275,21 +268,24 @@ router.post(
             if (query) {
                 if (query.responseID) {
                     const responseIDs = query.responseID;
-                    let dataArray: Array<Array<string>> = [];
 
-                    for (let id of responseIDs) {
-                        const response = await Response.findById(id);
-
-                        if (response) {
-                            const user = await User.findById(response.userID);
-                            if (user) {
-                                dataArray.push([
-                                    user.username,
-                                    response.userResponse,
-                                ]);
-                            }
-                        }
-                    }
+                    const dataArray = (
+                        await Promise.all(
+                            responseIDs.map(async (id) => {
+                                const response = await Response.findById(id);
+                                const user = await User.findById(
+                                    response?.userID
+                                );
+                                return [
+                                    user?.username,
+                                    response?.userResponse,
+                                ] as [string | undefined, string | undefined];
+                            })
+                        )
+                    ).filter(
+                        (x): x is [string, string] =>
+                            x[0] !== undefined && x[1] !== undefined
+                    );
                     res.send(dataArray).status(200).end();
                 }
             }

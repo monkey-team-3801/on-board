@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
+import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
@@ -11,6 +12,7 @@ type Props = {
     uid: string;
     sock: SocketIOClient.Socket;
     sid: string;
+    formType: ResponseFormType;
 };
 
 export const MultipleChoiceDisplay = (props: Props) => {
@@ -26,10 +28,10 @@ export const MultipleChoiceDisplay = (props: Props) => {
 
     const [userAnswered] = useDynamicFetch<
         { found: boolean },
-        { userID: string; formID: string }
+        { userID: string; formID: string; formType: ResponseFormType }
     >(
         "/response-handler/checkAnswered",
-        { userID: props.uid, formID: props.formID },
+        { userID: props.uid, formID: props.formID, formType: props.formType },
         true
     );
 

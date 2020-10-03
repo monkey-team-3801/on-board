@@ -163,6 +163,7 @@ export const DisplayContainer = (props: Props) => {
                             uid={props.uid}
                             sock={props.sock}
                             sid={props.sessionID}
+                            formType={ResponseFormType.MULTIPLE_CHOICE}
                         />
                     )}
             </div>
@@ -176,6 +177,7 @@ export const DisplayContainer = (props: Props) => {
                             back={setDisplayStage}
                             sock={props.sock}
                             sid={props.sessionID}
+                            formType={ResponseFormType.SHORT_ANSWER}
                         />
                     )}
             </div>
