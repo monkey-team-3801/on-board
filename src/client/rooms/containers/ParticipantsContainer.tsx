@@ -1,7 +1,7 @@
 import React from "react";
-import { Container, Col, Form } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import { UserDataResponseType } from "../../../types";
-import { UserDisplay, Participants } from "../components";
+import { Participants } from "../components";
 
 type Props = {
     users: Array<Omit<UserDataResponseType, "courses">>;
