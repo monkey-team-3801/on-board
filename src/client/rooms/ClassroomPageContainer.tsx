@@ -208,10 +208,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutRoomModalVisible(false);
                 }}
             />
-            <StreamSelectorWrapper
+            {/* <StreamSelectorWrapper
                 sessionId={props.match.params.classroomId}
                 userId={props.userData.id}
-            />
+            /> */}
             <BreakoutRoomAllocateIndicator
                 {...props}
                 event={breakoutAllocationEventData}
