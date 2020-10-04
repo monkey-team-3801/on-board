@@ -1,11 +1,12 @@
 import { OrderedMap } from "immutable";
 import React from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
 import { RoomEvent } from "../../../events";
 import { UserDataResponseType } from "../../../types";
+import { ButtonWithLoadingProp, Loader } from "../../components";
 import { useDynamicFetch } from "../../hooks";
 import { socket } from "../../io";
-import { requestIsLoaded } from "../../utils";
+import { requestIsLoaded, requestIsLoading } from "../../utils";
 import "../breakoutAllocation.less";
 import { BreakoutRoomAllocationContainer } from "../containers/";
 import { UserData } from "../types";
@@ -143,27 +144,32 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                 <Modal.Title>Breakout Rooms Management</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {requestIsLoaded(createBreakoutRoomsResponse) ? (
-                    !allocationComplete ? (
-                        <BreakoutRoomAllocationContainer
-                            users={props.userData}
-                            rooms={rooms}
-                            setRooms={setRooms}
-                        />
-                    ) : (
-                        <div>complete</div>
-                    )
+                {!requestIsLoading(createBreakoutRoomsResponse) ? (
+                    <>
+                        {!allocationComplete ? (
+                            <BreakoutRoomAllocationContainer
+                                users={props.userData}
+                                rooms={rooms}
+                                setRooms={setRooms}
+                            />
+                        ) : (
+                            <Alert variant="success">
+                                Successfully created breakout rooms
+                            </Alert>
+                        )}
+                    </>
                 ) : (
-                    <div>loading</div>
+                    <Loader className="pt-4 pb-4" />
                 )}
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    variant="success"
+                <ButtonWithLoadingProp
                     disabled={
-                        !requestIsLoaded(createBreakoutRoomsResponse) ||
+                        requestIsLoading(createBreakoutRoomsResponse) ||
                         allocationComplete
                     }
+                    loading={requestIsLoading(createBreakoutRoomsResponse)}
+                    invertLoader
                     onClick={async () => {
                         await createBreakoutRooms({
                             rooms: Array.from(rooms.delete("main").keys()),
@@ -172,11 +178,11 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                         setAllocationComplete(true);
                         setTimeout(() => {
                             handleClose();
-                        }, 500);
+                        }, 1000);
                     }}
                 >
                     Create
-                </Button>
+                </ButtonWithLoadingProp>
             </Modal.Footer>
         </Modal>
     );
