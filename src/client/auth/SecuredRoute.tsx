@@ -6,14 +6,15 @@ import {
     RouteComponentProps,
 } from "react-router-dom";
 
-import { useFetch } from "../hooks";
-import { RequestState } from "../types";
+import { RequestState, BaseResponseType } from "../types";
+import { Loader } from "../components";
 
-export const SecuredRoute: React.FunctionComponent<RouteProps> = ({
-    component,
-    ...props
-}) => {
-    const [data] = useFetch("/auth");
+export const SecuredRoute: React.FunctionComponent<
+    RouteProps & {
+        authData: BaseResponseType<never>;
+    }
+> = ({ component, ...props }) => {
+    const { authData: data } = props;
 
     return (
         <Route
@@ -22,7 +23,7 @@ export const SecuredRoute: React.FunctionComponent<RouteProps> = ({
                 if (data.state === RequestState.UNAUTHORISED) {
                     return <Redirect to="/" />;
                 } else if (data.state === RequestState.LOADING) {
-                    return <div>Loading</div>;
+                    return <Loader full />;
                 } else {
                     return props.render?.(componentProps);
                 }
