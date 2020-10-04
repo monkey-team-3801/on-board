@@ -1,14 +1,15 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
+import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
 type Props = {
     formID: string;
     question: string;
-    back: Function;
+    back: () => void;
     uid: string;
     sock: SocketIOClient.Socket;
     sid: string;
@@ -38,12 +39,6 @@ export const MultipleChoiceDisplay = (props: Props) => {
     const [checked, setChecked] = React.useState<number>(-1);
     const [option, setOption] = React.useState<string>("");
 
-    if (!requestIsLoaded(form) || !requestIsLoaded(userAnswered)) {
-        return <div>loading...</div>;
-    }
-
-    const data = form.data;
-
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
         await submitForm({
@@ -52,7 +47,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
             option: option,
         });
         props.sock.emit(ResponseFormEvent.NEW_RESPONSE, props.sid);
-        props.back(0);
+        props.back();
     };
 
     const handleCheck = (hash: string, index: number) => {
@@ -60,16 +55,19 @@ export const MultipleChoiceDisplay = (props: Props) => {
         setChecked(index);
     };
 
+    if (!requestIsLoaded(form) || !requestIsLoaded(userAnswered)) {
+        return <Loader />;
+    }
+
+    const data = form.data;
+
     return (
         <div>
-            <Button
-                onClick={() => {
-                    props.back(0);
-                }}
-            >
-                Back
-            </Button>
+            {userAnswered.data.found && (
+                <Alert variant="danger">You have already answered</Alert>
+            )}
             <Form
+                className="mt-3"
                 onSubmit={(e) => {
                     handleSubmit(e);
                 }}
@@ -89,15 +87,21 @@ export const MultipleChoiceDisplay = (props: Props) => {
                         ></Form.Check>
                     ))}
                 </Form.Group>
-                {!userAnswered.data.found ? (
-                    <Button type="submit" disabled={checked < 0}>
-                        submit
-                    </Button>
-                ) : (
-                    <div style={{ color: "red" }}>
-                        You have already answered.
-                    </div>
-                )}
+
+                <Button
+                    type="submit"
+                    disabled={checked < 0 || userAnswered.data.found}
+                >
+                    Submit
+                </Button>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        props.back();
+                    }}
+                >
+                    Back
+                </Button>
             </Form>
         </div>
     );

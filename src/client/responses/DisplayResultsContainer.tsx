@@ -1,27 +1,32 @@
 import { useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
+import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { ShortAnswerDisplayContainer } from "./ShortAnswerDisplayContainer";
 
 type Props = {
-    formID: string;
-    formType: ResponseFormType;
-    back: Function;
+    formData: {
+        formID: string;
+        question: string;
+        formType: ResponseFormType;
+    };
+    back: () => void;
     sock: SocketIOClient.Socket;
 };
 
 export const DisplayResultsContainer = (props: Props) => {
+    const { formID, formType } = props.formData;
     const [mcResultsData, getMcResults] = useDynamicFetch<
         Array<Array<string>>,
         { formID: string }
     >(
         "/response-handler/getMCResults",
-        { formID: props.formID },
-        props.formType === ResponseFormType.MULTIPLE_CHOICE
+        { formID },
+        formType === ResponseFormType.MULTIPLE_CHOICE
     );
 
     const [saResultsData, getSaResults] = useDynamicFetch<
@@ -29,8 +34,8 @@ export const DisplayResultsContainer = (props: Props) => {
         { formID: string }
     >(
         "/response-handler/getSAResults",
-        { formID: props.formID },
-        props.formType === ResponseFormType.SHORT_ANSWER
+        { formID },
+        formType === ResponseFormType.SHORT_ANSWER
     );
 
     const [shortAnswerData, setShortAnswerData] = React.useState<
@@ -42,7 +47,7 @@ export const DisplayResultsContainer = (props: Props) => {
 
     const throttleFetchMc = useThrottleCallback(
         () => {
-            getMcResults({ formID: props.formID });
+            getMcResults({ formID });
         },
         1,
         true
@@ -50,19 +55,19 @@ export const DisplayResultsContainer = (props: Props) => {
 
     const throttleFetchSa = useThrottleCallback(
         () => {
-            getSaResults({ formID: props.formID });
+            getSaResults({ formID });
         },
         1,
         true
     );
 
     const updateResponses = React.useCallback(() => {
-        if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
+        if (formType === ResponseFormType.MULTIPLE_CHOICE) {
             throttleFetchMc();
         } else {
             throttleFetchSa();
         }
-    }, [props.formType, throttleFetchMc, throttleFetchSa]);
+    }, [formType, throttleFetchMc, throttleFetchSa]);
 
     React.useEffect(() => {
         props.sock.on(ResponseFormEvent.NEW_RESPONSE, updateResponses);
@@ -73,12 +78,12 @@ export const DisplayResultsContainer = (props: Props) => {
     }, []);
 
     React.useEffect(() => {
-        if (props.formType === ResponseFormType.MULTIPLE_CHOICE) {
+        if (formType === ResponseFormType.MULTIPLE_CHOICE) {
             if (requestIsLoaded(mcResultsData)) {
                 setMultipleChoiceData(mcResultsData.data);
             }
         }
-        if (props.formType === ResponseFormType.SHORT_ANSWER) {
+        if (formType === ResponseFormType.SHORT_ANSWER) {
             if (requestIsLoaded(saResultsData)) {
                 setShortAnswerData(saResultsData.data);
             }
@@ -86,35 +91,43 @@ export const DisplayResultsContainer = (props: Props) => {
     }, [
         mcResultsData,
         saResultsData,
-        props.formType,
+        formType,
         setMultipleChoiceData,
         setShortAnswerData,
     ]);
 
+    if (
+        formType === ResponseFormType.MULTIPLE_CHOICE &&
+        !requestIsLoaded(mcResultsData)
+    ) {
+        return <Loader className="pt-4 pb-4" />;
+    }
+
+    if (
+        formType === ResponseFormType.SHORT_ANSWER &&
+        !requestIsLoaded(saResultsData)
+    ) {
+        return <Loader className="pt-4 pb-4" />;
+    }
+
     // TODO: Consider splitting this file up into seperate ones.
     const values =
-        props.formType === ResponseFormType.MULTIPLE_CHOICE
+        formType === ResponseFormType.MULTIPLE_CHOICE
             ? multipleChoiceData[0]
             : undefined;
     const options =
-        props.formType === ResponseFormType.MULTIPLE_CHOICE
+        formType === ResponseFormType.MULTIPLE_CHOICE
             ? multipleChoiceData[1]
             : undefined;
     const saValues =
-        props.formType === ResponseFormType.SHORT_ANSWER
+        formType === ResponseFormType.SHORT_ANSWER
             ? shortAnswerData
             : undefined;
 
     return (
-        <div>
-            <Button
-                onClick={() => {
-                    props.back(0);
-                }}
-            >
-                Back
-            </Button>
-            {props.formType === ResponseFormType.MULTIPLE_CHOICE &&
+        <Container>
+            <h1>{props.formData.question}</h1>
+            {formType === ResponseFormType.MULTIPLE_CHOICE &&
                 options?.map((x, i) => (
                     <div key={i}>
                         <div>
@@ -122,12 +135,21 @@ export const DisplayResultsContainer = (props: Props) => {
                         </div>
                     </div>
                 ))}
-            {props.formType === ResponseFormType.SHORT_ANSWER &&
+            {formType === ResponseFormType.SHORT_ANSWER &&
                 saValues?.map((x, i) => (
                     <div key={i}>
                         <ShortAnswerDisplayContainer user={x[0]} text={x[1]} />
                     </div>
                 ))}
-        </div>
+            <Button
+                onClick={() => {
+                    props.back();
+                }}
+                size="sm"
+                className="mt-4"
+            >
+                Back
+            </Button>
+        </Container>
     );
 };

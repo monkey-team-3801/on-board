@@ -9,10 +9,11 @@ import {
     ClassroomSessionData,
     UserDataResponseType,
     RoomType,
+    UserType,
 } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
-import { ResponseTest } from "../responses/ResponseTest";
+import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import "./classroom.less";
@@ -36,6 +37,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
     ] = React.useState<boolean>(false);
+    const [responsesModalStatus, setResponsesModalStatus] = React.useState<{
+        visible: boolean;
+        type: "ask" | "result";
+    }>({
+        visible: false,
+        type: "result",
+    });
+
     const [sessionResponse] = useFetch<ClassroomSessionData, { id: string }>(
         "/session/getClassroomSession",
         {
@@ -226,6 +235,32 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     </Button>
                                     <Button>Camera off</Button>
                                     <Button>Mic off</Button>
+                                    <Button
+                                        onClick={() => {
+                                            setResponsesModalStatus({
+                                                visible: true,
+                                                type: "result",
+                                            });
+                                        }}
+                                    >
+                                        {props.userData.userType ===
+                                        UserType.STUDENT
+                                            ? "View Questions"
+                                            : "View Results"}
+                                    </Button>
+                                    {props.userData.userType ===
+                                        UserType.COORDINATOR && (
+                                        <Button
+                                            onClick={() => {
+                                                setResponsesModalStatus({
+                                                    visible: true,
+                                                    type: "ask",
+                                                });
+                                            }}
+                                        >
+                                            Ask Questions
+                                        </Button>
+                                    )}
                                 </Container>
                             </Col>
                         </Row>
@@ -290,12 +325,22 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutAllocationEventData(undefined);
                 }}
             />
-            {/* <ResponseTest
+            <ResponsesModal
                 sid={sessionId}
                 userid={props.userData.id}
                 userType={props.userData.userType}
                 sock={socket}
-            ></ResponseTest> */}
+                modalVisible={responsesModalStatus.visible}
+                closeModal={() => {
+                    setResponsesModalStatus((prev) => {
+                        return {
+                            ...prev,
+                            visible: false,
+                        };
+                    });
+                }}
+                modalType={responsesModalStatus.type}
+            ></ResponsesModal>
         </Container>
     );
 };

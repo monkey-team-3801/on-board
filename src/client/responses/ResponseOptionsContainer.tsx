@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Button,
+    Container,
     Form,
     FormControl,
     FormGroup,
@@ -8,14 +8,16 @@ import {
 } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
+import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
+import { requestIsLoading } from "../utils";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
     sid: string;
-    closeFunc: Function;
     userid: string;
     sock: SocketIOClient.Socket;
+    closeModal: () => void;
 };
 
 export const ResponseOptionsContainer = (props: Props) => {
@@ -23,7 +25,7 @@ export const ResponseOptionsContainer = (props: Props) => {
         ResponseFormType.MULTIPLE_CHOICE
     );
     const [question, setQuestion] = React.useState<string>("");
-    const [, uploadForm] = useDynamicFetch<
+    const [uploadFormResponse, uploadForm] = useDynamicFetch<
         undefined,
         { sessionID: string; question: string; uid: string }
     >("/response-handler/submitSaForm", undefined, false);
@@ -35,73 +37,77 @@ export const ResponseOptionsContainer = (props: Props) => {
             uid: props.userid,
         });
         props.sock.emit(ResponseFormEvent.NEW_FORM, props.sid);
-        props.closeFunc(false);
+        setTimeout(() => {
+            props.closeModal();
+        }, 500);
     };
 
     return (
-        <div>
-            <Form>
+        <Container>
+            <Form onSubmit={handleSubmit}>
                 <FormGroup>
-                    <Form.Check
-                        type={"radio"}
-                        label={"Multiple Choice"}
-                        inline
-                        checked={
-                            checkedOption === ResponseFormType.MULTIPLE_CHOICE
-                        }
-                        onChange={() => {
-                            setOption(ResponseFormType.MULTIPLE_CHOICE);
-                        }}
-                    />
-                    <Form.Check
-                        type={"radio"}
-                        label={"Short Answer"}
-                        inline
-                        checked={
-                            checkedOption === ResponseFormType.SHORT_ANSWER
-                        }
-                        onChange={() => {
-                            setOption(ResponseFormType.SHORT_ANSWER);
-                        }}
-                    />
+                    <Form.Row>
+                        <Form.Label className="mr-4 mb-0">
+                            Question Type:
+                        </Form.Label>
+                        <Form.Check
+                            type={"radio"}
+                            label={"Multiple Choice"}
+                            inline
+                            checked={
+                                checkedOption ===
+                                ResponseFormType.MULTIPLE_CHOICE
+                            }
+                            onChange={() => {
+                                setOption(ResponseFormType.MULTIPLE_CHOICE);
+                            }}
+                        />
+                        <Form.Check
+                            type={"radio"}
+                            label={"Short Answer"}
+                            inline
+                            checked={
+                                checkedOption === ResponseFormType.SHORT_ANSWER
+                            }
+                            onChange={() => {
+                                setOption(ResponseFormType.SHORT_ANSWER);
+                            }}
+                        />
+                    </Form.Row>
                 </FormGroup>
+                <InputGroup>
+                    <FormControl
+                        placeholder="Question"
+                        onChange={(e) => {
+                            setQuestion(e.target.value);
+                        }}
+                        required
+                    />
+                </InputGroup>
+                {checkedOption === ResponseFormType.SHORT_ANSWER && (
+                    <ButtonWithLoadingProp
+                        type="submit"
+                        className={"mt-2"}
+                        disabled={question === ""}
+                        invertLoader
+                        loading={requestIsLoading(uploadFormResponse)}
+                    >
+                        Submit
+                    </ButtonWithLoadingProp>
+                )}
             </Form>
-            <InputGroup>
-                <FormControl
-                    placeholder="Question"
-                    onChange={(e) => {
-                        setQuestion(e.target.value);
-                    }}
-                    required={true}
-                />
-            </InputGroup>
-            <br></br>
+
             <div>
-                {checkedOption === ResponseFormType.MULTIPLE_CHOICE ? (
+                {checkedOption === ResponseFormType.MULTIPLE_CHOICE && (
                     <MultipleChoiceContainer
                         question={question}
                         sessionID={props.sid}
-                        closeModal={props.closeFunc}
+                        closeModal={props.closeModal}
                         uid={props.userid}
                         sock={props.sock}
                     />
-                ) : (
-                    <Button
-                        type="submit"
-                        onClick={() => {
-                            handleSubmit();
-                        }}
-                        disabled={question === ""}
-                    >
-                        Submit
-                    </Button>
-                )}
-                {question ? null : (
-                    <div style={{ color: "red" }}>
-                        please fill out the question field.
-                    </div>
                 )}
             </div>
-        </div>
+        </Container>
     );
 };

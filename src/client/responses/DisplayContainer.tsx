@@ -1,12 +1,13 @@
 import React from "react";
-import { Button, ButtonGroup } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType, UserType } from "../../types";
+import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { DisplayResultsContainer } from "./DisplayResultsContainer";
+import { FormListContainer } from "./FormListContainer";
 import { MultipleChoiceDisplay } from "./MultipleChoiceDisplay";
-import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 
 type Props = {
     sessionID: string;
@@ -17,20 +18,22 @@ type Props = {
 
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
-        { MC: Array<Array<string>>; SA: Array<Array<string>> },
+        { MC: Array<[string, string]>; SA: Array<[string, string]> },
         { sid: string }
     >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
 
-    const [displayStage, setDisplayStage] = React.useState<number>(0);
-    const [formID, setFormID] = React.useState<string>("");
-    const [formType, setFormType] = React.useState<ResponseFormType>(
-        ResponseFormType.MULTIPLE_CHOICE
-    );
-    const [displayQuestion, setQuestion] = React.useState<string>("");
+    const [formData, setFormData] = React.useState<
+        | {
+              formID: string;
+              question: string;
+              formType: ResponseFormType;
+          }
+        | undefined
+    >();
 
     const [data, setData] = React.useState<{
-        MC: Array<Array<string>>;
-        SA: Array<Array<string>>;
+        MC: Array<[string, string]>;
+        SA: Array<[string, string]>;
     }>({ MC: [], SA: [] });
 
     const updateForms = React.useCallback(() => {
@@ -51,146 +54,96 @@ export const DisplayContainer = (props: Props) => {
         }
     }, [forms]);
 
-    const displayForm = (
-        id: string,
-        type: ResponseFormType,
-        question: string
-    ) => {
-        setFormID(id);
-        setFormType(type);
-        setDisplayStage(1);
-        setQuestion(question);
-    };
+    if (!requestIsLoaded(forms)) {
+        return <Loader className="pt-4 pb-4" />;
+    }
 
-    const displayResults = (id: string, type: ResponseFormType) => {
-        setDisplayStage(2);
-        setFormID(id);
-        setFormType(type);
-    };
+    if (data.MC.length === 0 && data.SA.length === 0) {
+        return <p>There are no questions</p>;
+    }
 
     return (
-        <div>
-            <div>
-                {displayStage === 0 && <h4>Multiple Choice Forms:</h4>}
-                {displayStage === 0 &&
-                    data.MC.map((dataPair, index) => (
-                        <div key={index}>
-                            <div style={{ display: "inline" }}>
-                                {dataPair[1]}
-                            </div>
-                            <ButtonGroup style={{ float: "right" }}>
-                                {props.userType === UserType.STUDENT && (
-                                    <Button
-                                        onClick={() => {
-                                            displayForm(
-                                                dataPair[0],
-                                                ResponseFormType.MULTIPLE_CHOICE,
-                                                dataPair[1]
-                                            );
+        <Container className="pl-4 pr-4">
+            {!formData ? (
+                <>
+                    {data.MC.length > 0 && (
+                        <>
+                            <Row>
+                                <h4>Multiple Choice</h4>
+                            </Row>
+                            <Row>
+                                <Container>
+                                    <FormListContainer
+                                        data={data.MC}
+                                        userType={props.userType}
+                                        setFormDisplay={(formID, question) => {
+                                            setFormData({
+                                                formID,
+                                                question,
+                                                formType:
+                                                    ResponseFormType.MULTIPLE_CHOICE,
+                                            });
                                         }}
-                                        size="sm"
-                                    >
-                                        Answer
-                                    </Button>
-                                )}
-                                {props.userType !== UserType.STUDENT && (
-                                    <Button
-                                        onClick={() => {
-                                            displayResults(
-                                                dataPair[0],
-                                                ResponseFormType.MULTIPLE_CHOICE
-                                            );
-                                        }}
-                                        size="sm"
-                                    >
-                                        View results
-                                    </Button>
-                                )}
-                            </ButtonGroup>
-                            <br></br>
-                            <br></br>
-                        </div>
-                    ))}
-                <br></br>
-                {displayStage === 0 && <h4>Short Answer Forms:</h4>}
-                {displayStage === 0 &&
-                    data.SA.map((dataPair, index) => (
-                        <div key={index}>
-                            <div style={{ display: "inline" }}>
-                                {dataPair[1]}
-                            </div>
-                            <ButtonGroup style={{ float: "right" }}>
-                                {props.userType === UserType.STUDENT && (
-                                    <Button
-                                        onClick={() => {
-                                            displayForm(
-                                                dataPair[0],
-                                                ResponseFormType.SHORT_ANSWER,
-                                                dataPair[1]
-                                            );
-                                        }}
-                                        size="sm"
-                                    >
-                                        Answer
-                                    </Button>
-                                )}
-                                {props.userType !== UserType.STUDENT && (
-                                    <Button
-                                        onClick={() => {
-                                            displayResults(
-                                                dataPair[0],
-                                                ResponseFormType.SHORT_ANSWER
-                                            );
-                                        }}
-                                        size="sm"
-                                    >
-                                        View responses
-                                    </Button>
-                                )}
-                            </ButtonGroup>
-                            <br></br>
-                            <br></br>
-                        </div>
-                    ))}
-            </div>
-            <div>
-                {displayStage === 1 &&
-                    formType === ResponseFormType.MULTIPLE_CHOICE && (
-                        <MultipleChoiceDisplay
-                            formID={formID}
-                            question={displayQuestion}
-                            back={setDisplayStage}
-                            uid={props.uid}
-                            sock={props.sock}
-                            sid={props.sessionID}
-                            formType={ResponseFormType.MULTIPLE_CHOICE}
-                        />
+                                    />
+                                </Container>
+                            </Row>
+                        </>
                     )}
-            </div>
-            <div>
-                {displayStage === 1 &&
-                    formType === ResponseFormType.SHORT_ANSWER && (
-                        <ShortAnswerDisplay
-                            formID={formID}
-                            question={displayQuestion}
-                            uid={props.uid}
-                            back={setDisplayStage}
-                            sock={props.sock}
-                            sid={props.sessionID}
-                            formType={ResponseFormType.SHORT_ANSWER}
-                        />
+
+                    <hr />
+                    {data.SA.length > 0 && (
+                        <>
+                            <Row>
+                                <h4>Short Answer</h4>
+                            </Row>
+                            <Row>
+                                <Container>
+                                    <FormListContainer
+                                        data={data.SA}
+                                        userType={props.userType}
+                                        setFormDisplay={(formID, question) => {
+                                            setFormData({
+                                                formID,
+                                                question,
+                                                formType:
+                                                    ResponseFormType.SHORT_ANSWER,
+                                            });
+                                        }}
+                                    />
+                                </Container>
+                            </Row>
+                        </>
                     )}
-            </div>
-            <div>
-                {displayStage === 2 && (
-                    <DisplayResultsContainer
-                        formID={formID}
-                        formType={formType}
-                        back={setDisplayStage}
-                        sock={props.sock}
-                    />
-                )}
-            </div>
-        </div>
+                </>
+            ) : (
+                <>
+                    {props.userType === UserType.STUDENT ? (
+                        <>
+                            <MultipleChoiceDisplay
+                                formID={formData.formID}
+                                question={formData.question}
+                                back={() => {
+                                    setFormData(undefined);
+                                }}
+                                uid={props.uid}
+                                sock={props.sock}
+                                sid={props.sessionID}
+                                formType={ResponseFormType.MULTIPLE_CHOICE}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <DisplayResultsContainer
+                                formData={formData}
+                                back={() => {
+                                    setFormData(undefined);
+                                }}
+                                sock={props.sock}
+                            />
+                        </>
+                    )}
+                </>
+            )}
+        </Container>
     );
 };
