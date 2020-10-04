@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { FileUploadType, SessionData } from "../../types";
+import { FileUploadType, SessionData, UserType } from "../../types";
 import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
@@ -110,15 +110,21 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         updateFiles={getFileData}
                                     ></FileContainer>
                                 </Row>
-                                <Row className="d-flex justify-content-center">
-                                    <UploadContainer
-                                        uploadType={FileUploadType.DOCUMENTS}
-                                        sessionID={roomId}
-                                        socket={socket}
-                                        userID={props.userData.id}
-                                        updateFiles={getFileData}
-                                    ></UploadContainer>
-                                </Row>
+                                {!(
+                                    props.userData.userType === UserType.STUDENT
+                                ) && (
+                                    <Row className="d-flex justify-content-center">
+                                        <UploadContainer
+                                            uploadType={
+                                                FileUploadType.DOCUMENTS
+                                            }
+                                            sessionID={roomId}
+                                            socket={socket}
+                                            userID={props.userData.id}
+                                            updateFiles={getFileData}
+                                        ></UploadContainer>
+                                    </Row>
+                                )}
                             </Col>
                         </Row>
                     </>
