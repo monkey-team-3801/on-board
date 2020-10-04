@@ -219,6 +219,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
 
     socket.on(FileUploadEvent.FILE_DELETED, (data) => {
         socket.to(data).emit(FileUploadEvent.FILE_DELETED);
+        console.log("test");
     });
 });
 

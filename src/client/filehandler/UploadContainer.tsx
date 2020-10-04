@@ -10,6 +10,7 @@ type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
+    updateFiles: Function;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -82,6 +83,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append("document", sessionID);
             await uploadFile(formData);
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
+            props.updateFiles({ sid: props.sessionID });
         }
     };
 

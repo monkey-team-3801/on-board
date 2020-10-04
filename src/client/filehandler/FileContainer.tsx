@@ -10,20 +10,15 @@ type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
+    files: Array<Array<string>>;
+    updateFiles: Function;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const [fileData, getFileData] = useDynamicFetch<
-        Array<Array<string>>,
-        { sid: string }
-    >("/filehandler/getFiles", { sid: props.sessionID }, true);
-
     const [, deleteFile] = useDynamicFetch<
         undefined,
         { sid: string; fileId: string; uid: string }
     >("/filehandler/deleteFile", undefined, false);
-
-    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
 
     // Converts bytes to be displayable.
     const sizeDisplay = (size: number): string => {
@@ -44,12 +39,14 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
             fileId: fileID,
             uid: props.userID,
         });
+        console.log("test");
         props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
+        props.updateFiles({ sid: props.sessionID });
     };
 
     const updateFileList = React.useCallback(() => {
-        getFileData({ sid: props.sessionID });
-    }, [getFileData, props.sessionID]);
+        props.updateFiles({ sid: props.sessionID });
+    }, [props]);
 
     React.useEffect(() => {
         props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
@@ -61,17 +58,11 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    React.useEffect(() => {
-        if (requestIsLoaded(fileData)) {
-            setFiles(fileData.data);
-        }
-    }, [fileData]);
-
     return (
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
-                {Object.values(files).map((file, i) => (
+                {Object.values(props.files).map((file, i) => (
                     <div className="file-bar" key={i}>
                         <div>
                             <div className="file-name">

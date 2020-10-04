@@ -6,8 +6,10 @@ import { DrawingCanvas } from "../canvas";
 import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
+import { useDynamicFetch } from "../hooks";
 import { ResponseTest } from "../responses/ResponseTest";
 import { TopLayerContainerProps } from "../types";
+import { requestIsLoaded } from "../utils";
 import { SessionContainer } from "./containers";
 
 type Props = RouteComponentProps<{ roomId: string }> &
@@ -19,6 +21,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { roomId } = props.match.params;
+
+    const [fileData, getFileData] = useDynamicFetch<
+        Array<Array<string>>,
+        { sid: string }
+    >("/filehandler/getFiles", { sid: roomId }, true);
+
+    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
+
+    React.useEffect(() => {
+        if (requestIsLoaded(fileData)) {
+            setFiles(fileData.data);
+        }
+    }, [fileData]);
 
     return (
         <SessionContainer
@@ -91,6 +106,8 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         sessionID={roomId}
                                         socket={socket}
                                         userID={props.userData.id}
+                                        files={files}
+                                        updateFiles={getFileData}
                                     ></FileContainer>
                                 </Row>
                                 <Row>
@@ -99,6 +116,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         sessionID={roomId}
                                         socket={socket}
                                         userID={props.userData.id}
+                                        updateFiles={getFileData}
                                     ></UploadContainer>
                                 </Row>
                             </Col>
