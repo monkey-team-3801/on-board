@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Button, Container, Row } from "react-bootstrap";
+import { Form, Button, Container, Row, Alert } from "react-bootstrap";
 import Select from "react-select";
 
 import { useDynamicFetch, useFetch } from "../hooks";
@@ -7,7 +7,7 @@ import {
     CourseListResponseType,
     CreateAnnouncementJobRequestType,
 } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestHasError } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
 import { SimpleDatepicker } from "../components";
@@ -134,6 +134,11 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                     Create
                 </Button>
             </Form>
+            {requestHasError(createAnnouncementResponse) && (
+                <Alert variant="danger">
+                    {createAnnouncementResponse.message}
+                </Alert>
+            )}
         </Container>
     );
 };

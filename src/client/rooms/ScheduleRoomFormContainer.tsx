@@ -11,8 +11,9 @@ import {
 import { requestIsLoaded, requestIsLoading, requestHasError } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
-import { SimpleDatepicker } from "../components";
+import { SimpleDatepicker, ButtonWithLoadingProp } from "../components";
 import { TwitterPicker } from "react-color";
+import { format } from "date-fns";
 
 const isOptionType = (option: any): option is CourseOptionType => {
     return option?.value && option?.label;
@@ -198,20 +199,26 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                         />
                     </div>
                 </Form.Group>
-                <Button
+                <ButtonWithLoadingProp
                     variant="primary"
                     type="submit"
-                    disabled={isSubmitting}
+                    loading={isSubmitting}
                     style={{
                         backgroundColor: colourCode,
                     }}
                 >
                     Create
-                </Button>
+                </ButtonWithLoadingProp>
             </Form>
             {requestHasError(createClassroomResponse) && (
                 <Alert variant="danger">
                     {createClassroomResponse.message}
+                </Alert>
+            )}
+            {requestIsLoaded(createClassroomResponse) && (
+                <Alert variant="success">
+                    Successfully scheduled class for{" "}
+                    {format(new Date(startingTime), "MM/dd hh:mm")}
                 </Alert>
             )}
         </Container>

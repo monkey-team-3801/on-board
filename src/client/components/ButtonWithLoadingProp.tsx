@@ -14,7 +14,7 @@ export const ButtonWithLoadingProp: React.FunctionComponent<Props> = (
     delete updatedProps.invertLoader;
     delete updatedProps.loading;
     return (
-        <Button {...updatedProps}>
+        <Button {...updatedProps} disabled={props.loading}>
             {props.loading ? (
                 <Loader invert={props.invertLoader} />
             ) : (

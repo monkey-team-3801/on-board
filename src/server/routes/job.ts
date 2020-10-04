@@ -28,7 +28,10 @@ router.post(
                     .end();
                 return;
             }
-            if (new Date(data.endTime) < new Date(data.startTime)) {
+            if (
+                new Date(data.endTime).getTime() <
+                new Date(data.startTime).getTime()
+            ) {
                 res.status(500)
                     .json({
                         message: "Class should not end before it starts",
