@@ -110,6 +110,13 @@ export const useDynamicFetch = <
     React.useEffect(() => {
         if (componentMounted.current || invokeImmediately) {
             fetchData(apiEndpoint, apiRequestData);
+        } else if (!invokeImmediately) {
+            setResponseType((response: BaseResponseType<T>) => {
+                return {
+                    ...response,
+                    state: RequestState.UNINITIALISED,
+                };
+            });
         } else {
             componentMounted.current = true;
             setResponseType((response: BaseResponseType<T>) => {

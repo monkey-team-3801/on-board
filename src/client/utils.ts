@@ -13,7 +13,17 @@ export const requestIsLoaded = <T>(
 };
 
 /**
- * Type guard to check if a request was loaded.
+ * Type guard to check if a request is loading.
+ * @param responseType Request response.
+ */
+export const requestIsLoading = <T>(
+    responseType: BaseResponseType<T>
+): responseType is ResponseType<T> => {
+    return responseType.state === RequestState.LOADING;
+};
+
+/**
+ * Type guard to check if a request has errored.
  * @param responseType Request response.
  */
 export const requestHasError = <T>(
@@ -23,7 +33,7 @@ export const requestHasError = <T>(
 };
 
 /**
- * Type guard to check if a request was loaded.
+ * Type guard to check if a request was unauthorised.
  * @param responseType Request response.
  */
 export const requestIsUnauthorised = <T>(

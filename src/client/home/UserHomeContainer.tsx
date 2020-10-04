@@ -30,11 +30,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
-    const [createRoomResponse, createRoom] = useDynamicFetch<
-        undefined,
-        { name: string }
-    >("session/create", undefined, false);
-
     const componentDidMount = React.useCallback(
         (socket: SocketIOClient.Socket) => {
             return socket.emit(
@@ -100,9 +95,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <CreateRoomForm
                                         setLoading={setLoading}
-                                        createRoom={async (name: string) => {
-                                            await createRoom({ name });
-                                        }}
+                                        {...props}
                                     />
                                 );
                             }}
@@ -138,7 +131,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper>
+                        <ContainerWrapper title="Course Enrolment">
                             {(setLoading) => {
                                 return (
                                     <EnrolFormContainer

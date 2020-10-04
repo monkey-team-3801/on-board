@@ -38,7 +38,11 @@ export const router = express.Router();
 
 router.post(
     "/create",
-    asyncHandler<undefined, {}, { name: string }>(async (req, res, next) => {
+    asyncHandler<
+        { id: string; name: string } | { message?: string },
+        {},
+        { name: string }
+    >(async (req, res, next) => {
         try {
             if (req.body.name && req.body.name !== "") {
                 const session = await createNewSession(req.body.name, "");
@@ -51,11 +55,19 @@ router.post(
                     userReferenceMap: new Map(),
                 });
                 console.log("Session created:", session.name);
+                res.json({
+                    id: session._id,
+                    name: session.name,
+                });
+            } else {
+                res.status(500).json({ message: "Room name cannot be empty" });
             }
-            res.status(200).end();
+            res.status(200);
         } catch (e) {
             res.status(500);
             next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
         }
     })
 );

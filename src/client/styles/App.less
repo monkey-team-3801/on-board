@@ -54,6 +54,11 @@ code {
 }
 
 .btn-primary {
-    background-color: @primary;
+    background-color: @primary !important;
     border-color: transparent !important;
+    min-height: 38px !important;
+}
+
+.btn-secondary {
+    background-color: lighten(@primary, 10%) !important;
 }
