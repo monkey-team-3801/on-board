@@ -9,6 +9,7 @@ import {
     LoginSuccessResponseType,
 } from "../../types";
 import { requestHasError } from "../utils";
+import { Loader } from "../components";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
@@ -21,6 +22,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const [userData, registerUser] = useDynamicFetch<
         LoginSuccessResponseType,
@@ -45,11 +47,13 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
+        setLoading(true);
         await registerUser({
             username,
             password,
             userType,
         });
+        setLoading(false);
     };
 
     return (
@@ -106,7 +110,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                         type="submit"
                         className="registerbtn"
                     >
-                        Register
+                        {loading ? <Loader invert /> : "Register"}
                     </Button>
                 </div>
             </Form>

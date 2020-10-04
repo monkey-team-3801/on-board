@@ -3,18 +3,21 @@ import { Container, Form, Button, Row } from "react-bootstrap";
 
 type Props = {
     createRoom: (roomName: string) => Promise<void>;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CreateRoomForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { setLoading } = props;
     const [roomName, setRoomName] = React.useState<string>("");
+
+    React.useEffect(() => {
+        setLoading(false);
+    }, [setLoading]);
 
     return (
         <Container>
-            <Row>
-                <h3>Create Private Room</h3>
-            </Row>
             <Form
                 onSubmit={async (e: React.FormEvent<HTMLDivElement>) => {
                     e.preventDefault();

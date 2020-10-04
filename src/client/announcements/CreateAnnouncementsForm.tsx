@@ -14,11 +14,13 @@ import { SimpleDatepicker } from "../components";
 
 type Props = {
     userId: string;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { setLoading } = props;
     const [createAnnouncementResponse, createAnnouncement] = useDynamicFetch<
         undefined,
         CreateAnnouncementJobRequestType
@@ -49,12 +51,9 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                 return { value: course.code, label: course.code };
             });
             setCourseCodes(options);
+            setLoading(false);
         }
-    }, [courseData]);
-
-    if (!requestIsLoaded(courseData)) {
-        return <div>loading</div>;
-    }
+    }, [courseData, setLoading]);
 
     return (
         <Container>

@@ -86,7 +86,17 @@ export const AppProtectedRoutes = (props: Props) => {
                     <SecuredRoute
                         path="/classes"
                         render={(routerProps: RouteComponentProps) => {
-                            return <ClassesPageContainer />;
+                            return (
+                                <ClassesPageContainer
+                                    {...routerProps}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
+                                />
+                            );
                         }}
                     />
                     <SecuredRoute

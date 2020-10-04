@@ -6,6 +6,7 @@ import {
     AnnouncementJob,
     ClassOpenJob,
     RoomType,
+    ClassroomData,
 } from "../types";
 import { ExecutingEvent } from "../events";
 import { Session } from "./database";
@@ -58,29 +59,23 @@ export const createNewSession = async (
     const session = await Session.create({
         name,
         messages: [],
-        roomType: RoomType.PRIVATE,
         description,
         courseCode,
     });
     return session;
 };
 
-export const createNewClassroomSession = async (
-    name: string,
-    description: string,
-    courseCode: string,
-    startTime: string,
-    endTime: string
-) => {
+export const createNewClassroomSession = async (data: ClassroomData) => {
     const session = await ClassroomSession.create({
-        name,
+        name: data.roomName,
         messages: [],
-        roomType: RoomType.CLASS,
-        description,
-        courseCode,
-        startTime,
-        endTime,
+        roomType: data.roomType,
+        description: data.description,
+        courseCode: data.courseCode,
+        startTime: data.startTime,
+        endTime: data.endTime,
         raisedHandUsers: [],
+        colourCode: data.colourCode,
     });
     await SessionUsers.create({
         sessionId: session._id,

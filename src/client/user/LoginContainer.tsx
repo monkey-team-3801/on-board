@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType, LoginUserRequestType } from "../../types";
+import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsUnauthorised } from "../utils";
 
@@ -15,6 +16,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
 ) => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     // UserID can be found through userID.data.id on login success.
     const [userData, loginUser] = useDynamicFetch<
@@ -26,7 +28,9 @@ export const LoginContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
+        setLoading(true);
         await loginUser({ username, password });
+        setLoading(false);
     };
 
     return (
@@ -86,7 +90,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                         type="submit"
                         className="loginbtn"
                     >
-                        Login
+                        {loading ? <Loader invert /> : "Login"}
                     </Button>
                 </div>
                 <div className="toggle-button">

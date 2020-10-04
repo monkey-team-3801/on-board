@@ -13,6 +13,7 @@ import { CourseOptionType } from "../types";
 import { AnnouncementEvent } from "../../events";
 
 type Props = {
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     refresh: () => void;
     userId: string;
     socket: SocketIOClient.Socket;
@@ -21,7 +22,7 @@ type Props = {
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, refresh, socket } = props;
+    const { userId, refresh, socket, setLoading } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
     const [enrolledCoursesData, refreshEnrolledCourse] = useFetch<
         UserEnrolledCoursesResponseType
@@ -64,16 +65,21 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
         }
     }, [enrolledCoursesData]);
 
+    React.useEffect(() => {
+        if (
+            requestIsLoaded(enrolledCoursesData) &&
+            requestIsLoaded(enrolCourseResponse)
+        ) {
+            setLoading(false);
+        }
+    }, [enrolledCoursesData, enrolCourseResponse, setLoading]);
+
     const isSubmitting: boolean = React.useMemo(() => {
         return (
             !requestIsLoaded(enrolCourseResponse) ||
             !requestIsLoaded(enrolledCoursesData)
         );
     }, [enrolCourseResponse, enrolledCoursesData]);
-
-    if (!requestIsLoaded(courseData)) {
-        return <div>loading</div>;
-    }
 
     return (
         <Container>

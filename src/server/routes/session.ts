@@ -12,6 +12,8 @@ import {
     SessionResponseType,
     UserData,
     UserDataResponseType,
+    ClassOpenJob,
+    UpcomingClassroomSessionData,
 } from "../../types";
 import {
     BreakoutSession,
@@ -20,6 +22,7 @@ import {
     SessionCanvas,
     SessionUsers,
     User,
+    Job,
 } from "../database";
 import { Response } from "../database/schema/Response";
 import {
@@ -28,6 +31,8 @@ import {
 } from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
 import { asyncHandler, createNewSession } from "../utils";
+import { ExecutingEvent } from "../../events";
+import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -56,40 +61,113 @@ router.post(
 );
 
 router.post(
-    "/sessions",
-    asyncHandler<SessionResponseType, {}, SessionRequestType>(
+    "/privateSessions",
+    asyncHandler<Array<SessionInfo>, {}, {}>(async (req, res, next) => {
+        try {
+            const sessions: Array<SessionInfo> = (await Session.find()).map(
+                (session) => {
+                    return {
+                        id: session._id,
+                        name: session.name,
+                        description: session.description,
+                        courseCode: session.courseCode,
+                    };
+                }
+            );
+            res.json(sessions);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        }
+    })
+);
+
+router.post(
+    "/classroomSessions",
+    asyncHandler<Array<ClassroomSessionData>, {}, {}>(
         async (req, res, next) => {
             try {
-                const sessions: Array<SessionInfo> = (await Session.find())
-                    .filter((session) => session.roomType === req.body.roomType)
-                    .map((session) => {
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                        };
-                    });
-                const classroomSessions: Array<SessionInfo> = (
-                    await ClassroomSession.find()
-                )
-                    .filter((session) => session.roomType === req.body.roomType)
-                    .map((session) => {
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                        };
-                    });
-                res.json({
-                    sessions: [...sessions, ...classroomSessions],
-                });
+                const sessions = await ClassroomSession.find();
+                if (sessions) {
+                    res.json(
+                        sessions.map((session) => {
+                            return {
+                                id: session._id,
+                                name: session.name,
+                                roomType: session.roomType,
+                                description: session.description,
+                                courseCode: session.courseCode,
+                                messages: session.messages,
+                                startTime: session.startTime,
+                                endTime: session.endTime,
+                                colourCode: session.colourCode,
+                            };
+                        })
+                    );
+                }
             } catch (e) {
                 console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
             }
+            res.end();
+        }
+    )
+);
+
+router.post(
+    "/upcomingClassroomSessions",
+    asyncHandler<Array<UpcomingClassroomSessionData>, {}, { limit?: number }>(
+        async (req, res, next) => {
+            if (req.headers.authorization) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (user) {
+                    try {
+                        const query: Array<ClassOpenJob> = (await Job.find({
+                            executingEvent: ExecutingEvent.CLASS_OPEN,
+                        })) as Array<ClassOpenJob>;
+
+                        const jobs = query
+                            .filter((job) => {
+                                return user.courses.includes(
+                                    job.data.courseCode
+                                );
+                            })
+                            .sort((a, b) => {
+                                return (
+                                    new Date(a.data.startTime).getTime() -
+                                    new Date(b.data.startTime).getTime()
+                                );
+                            });
+
+                        if (jobs) {
+                            res.json(
+                                jobs.map((job) => {
+                                    const session = job.data;
+                                    return {
+                                        name: session.roomName,
+                                        roomType: session.roomType,
+                                        description: session.description,
+                                        courseCode: session.courseCode,
+                                        startTime: session.startTime,
+                                        endTime: session.endTime,
+                                        colourCode: session.colourCode,
+                                    };
+                                })
+                            );
+                        }
+                    } catch (e) {
+                        console.log("error", e);
+                        res.status(500);
+                        next(new Error("Unexpected error has occured."));
+                    }
+                }
+            }
+
+            res.end();
         }
     )
 );
@@ -149,11 +227,13 @@ router.post(
                     res.json({
                         id: session._id,
                         name: session.name,
+                        roomType: session.roomType,
                         description: session.description,
                         courseCode: session.courseCode,
                         messages: session.messages,
                         startTime: session.startTime,
                         endTime: session.endTime,
+                        colourCode: session.colourCode,
                     });
                 }
             } catch (e) {

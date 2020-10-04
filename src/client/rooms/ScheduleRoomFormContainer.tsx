@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Button, Container, Row } from "react-bootstrap";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 import { useDynamicFetch, useFetch } from "../hooks";
 import {
@@ -11,18 +12,39 @@ import { requestIsLoaded } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
 import { SimpleDatepicker } from "../components";
+import { TwitterPicker } from "react-color";
 
 const isOptionType = (option: any): option is CourseOptionType => {
     return option?.value && option?.label;
 };
 
 type Props = {
-    userId: string;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+const baseRoomTypeOptions = [
+    {
+        value: "Lecture",
+        label: "Lecture",
+    },
+    {
+        value: "Tutorial",
+        label: "Tutorial",
+    },
+    {
+        value: "Practical",
+        label: "Practical",
+    },
+    {
+        value: "Studio",
+        label: "Studio",
+    },
+];
 
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { setLoading } = props;
     const [createClassroomResponse, createClassroom] = useDynamicFetch<
         undefined,
         CreateClassroomJobRequestType
@@ -37,9 +59,14 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
+    const [roomType, setRoomType] = React.useState<CourseOptionType>(
+        baseRoomTypeOptions[0]!
+    );
     const [startingTime, setStartingTime] = React.useState<Date>(new Date());
 
     const [endingTime, setEndingTime] = React.useState<Date>(new Date());
+
+    const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
 
     const isCourseEmpty = React.useMemo(() => {
         return selectedCourse?.value === undefined;
@@ -58,15 +85,14 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
         }
     }, [courseData]);
 
-    if (!requestIsLoaded(courseData)) {
-        return <div>loading</div>;
-    }
+    React.useEffect(() => {
+        if (requestIsLoaded(courseData)) {
+            setLoading(false);
+        }
+    }, [courseData, setLoading]);
 
     return (
         <Container>
-            <Row>
-                <h3>Create Classroom</h3>
-            </Row>
             <Form
                 onSubmit={async (e) => {
                     e.preventDefault();
@@ -77,9 +103,11 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                             data: {
                                 roomName,
                                 description,
+                                roomType: roomType.value,
                                 courseCode: selectedCourse?.value,
                                 startTime: startingTime.toISOString(),
                                 endTime: endingTime.toISOString(),
+                                colourCode,
                             },
                         });
                     }
@@ -106,6 +134,19 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     />
                 </Form.Group>
                 <Form.Group>
+                    <Form.Label>Type</Form.Label>
+                    <CreatableSelect
+                        options={baseRoomTypeOptions}
+                        value={roomType}
+                        onChange={(option) => {
+                            if (isOptionType(option)) {
+                                setRoomType(option);
+                            }
+                        }}
+                        disabled={isSubmitting}
+                    />
+                </Form.Group>
+                <Form.Group>
                     <Form.Label>Course</Form.Label>
                     <Select
                         options={courseCodes}
@@ -118,8 +159,8 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                         disabled={isSubmitting}
                         required
                         styles={{
-                            control: (x) => ({
-                                ...x,
+                            control: (style) => ({
+                                ...style,
                                 borderColor: isCourseEmpty ? "red" : "initial",
                             }),
                         }}
@@ -143,7 +184,27 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                         }}
                     />
                 </Form.Group>
-                <Button variant="primary" type="submit" disabled={isSubmitting}>
+                <Form.Group>
+                    <Form.Label>Room colour code</Form.Label>
+                    <div className="d-flex justify-content-center">
+                        <TwitterPicker
+                            triangle="hide"
+                            color={colourCode}
+                            onChangeComplete={(colour) => {
+                                console.log(colour.hex);
+                                setColourCode(colour.hex);
+                            }}
+                        />
+                    </div>
+                </Form.Group>
+                <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                    style={{
+                        backgroundColor: colourCode,
+                    }}
+                >
                     Create
                 </Button>
             </Form>
