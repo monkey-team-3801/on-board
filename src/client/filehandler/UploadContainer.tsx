@@ -101,7 +101,9 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                     <div>
                         <div>The following files failed to upload:</div>
                         {fileRejections.map((file, i) => (
-                            <div style={{ color: "red" }}>{file.file.name}</div>
+                            <div key={i} style={{ color: "red" }}>
+                                {file.file.name}
+                            </div>
                         ))}
                     </div>
                 )}
