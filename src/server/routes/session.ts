@@ -33,6 +33,7 @@ import { VideoSession } from "../database/schema/VideoSession";
 import { asyncHandler, createNewSession } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { getUserDataFromJWT } from "./utils";
+import { nextTick } from "process";
 
 export const router = express.Router();
 
@@ -261,34 +262,73 @@ router.post(
 );
 
 router.post(
-    "/delete",
-    asyncHandler<undefined, {}, SessionDeleteRequestType>(async (req, res) => {
-        console.log("Deleting session:", req.body.id);
-        if (req.body.roomType === RoomType.PRIVATE) {
-            await Session.findByIdAndDelete(req.body.id);
-            await SessionCanvas.findOneAndDelete({ sessionId: req.body.id });
-        } else if (req.body.roomType === RoomType.CLASS) {
-            await ClassroomSession.findByIdAndDelete(req.body.id);
-            await VideoSession.findOneAndDelete({ sessionId: req.body.id });
-            await BreakoutSession.deleteMany({
-                parentSessionId: req.body.id,
-            });
+    "/delete/privateRoom",
+    asyncHandler<undefined, {}, SessionDeleteRequestType>(
+        async (req, res, next) => {
+            console.log("Deleting private room:", req.body.id);
+            try {
+                await Session.findByIdAndDelete(req.body.id);
+                await SessionCanvas.findOneAndDelete({
+                    sessionId: req.body.id,
+                });
+            } catch (e) {
+                res.status(500);
+            } finally {
+                next();
+            }
         }
-        await MultipleChoiceResponseForm.deleteMany({
-            sessionID: req.body.id,
-        });
-        const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
-            sessionID: req.body.id,
-        });
-        for (let form of shortAnswerResponseIDs) {
-            await Response.deleteMany({ formID: form.id });
+    )
+);
+
+router.post(
+    "/delete/classroom",
+    asyncHandler<undefined, {}, SessionDeleteRequestType>(
+        async (req, res, next) => {
+            console.log("Deleting classroom:", req.body.id);
+            try {
+                await ClassroomSession.findByIdAndDelete(req.body.id);
+                await VideoSession.findOneAndDelete({ sessionId: req.body.id });
+                await BreakoutSession.deleteMany({
+                    parentSessionId: req.body.id,
+                });
+            } catch (e) {
+                res.status(500);
+            } finally {
+                next();
+            }
+            res.status(200).end();
         }
-        await ShortAnswerResponseForm.deleteMany({
-            sessionID: req.body.id,
-        });
-        await SessionUsers.deleteOne({ sessionId: req.body.id });
-        res.status(200).end();
-    })
+    )
+);
+
+router.post(
+    "/delete/*",
+    asyncHandler<undefined, {}, SessionDeleteRequestType>(
+        async (req, res, next) => {
+            console.log("Deleting room:", req.body.id);
+            try {
+                // await MultipleChoiceResponseForm.deleteMany({
+                //     sessionID: req.body.id,
+                // });
+                // const shortAnswerResponseIDs = await ShortAnswerResponseForm.find(
+                //     {
+                //         sessionID: req.body.id,
+                //     }
+                // );
+                // for (let form of shortAnswerResponseIDs) {
+                //     await Response.deleteMany({ formID: form.id });
+                // }
+                // await ShortAnswerResponseForm.deleteMany({
+                //     sessionID: req.body.id,
+                // });
+                // await SessionUsers.deleteOne({ sessionId: req.body.id });
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
 );
 
 router.post(

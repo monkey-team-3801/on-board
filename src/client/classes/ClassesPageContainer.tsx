@@ -18,28 +18,6 @@ type Props = RouteComponentProps & TopLayerContainerProps & {};
 export const ClassesPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { history, userData } = props;
-
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete",
-        undefined,
-        false
-    );
-
-    const onPrivateRoomJoinClick = React.useCallback(
-        (id: string) => {
-            history.push(`/room/${id}`);
-        },
-        [history]
-    );
-
-    const onClassroomJoinClick = React.useCallback(
-        (id: string) => {
-            history.push(`/classroom/${id}`);
-        },
-        [history]
-    );
-
     return (
         <div className="classes-page">
             <Row>
@@ -49,6 +27,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                             {(setLoading) => {
                                 return (
                                     <ClassroomDisplayContainer
+                                        {...props}
                                         setLoading={setLoading}
                                     />
                                 );
@@ -60,6 +39,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                             {(setLoading) => {
                                 return (
                                     <PrivateRoomDisplayContainer
+                                        {...props}
                                         setLoading={setLoading}
                                     />
                                 );

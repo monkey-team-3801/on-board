@@ -1,21 +1,39 @@
 import React from "react";
 import { Container, Row, Button, Col } from "react-bootstrap";
 
-import { SessionInfo, ClassroomSessionData } from "../../types";
-import { useFetch } from "../hooks";
+import {
+    SessionInfo,
+    ClassroomSessionData,
+    SessionDeleteRequestType,
+} from "../../types";
+import { useFetch, useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
+import { RouteComponentProps } from "react-router-dom";
 
-type Props = {
+type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
+    const { setLoading, history } = props;
 
     const [privateRoomResponse, getPrivateRooms] = useFetch<Array<SessionInfo>>(
         "session/privateSessions"
+    );
+
+    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
+        "session/delete/privateRoom",
+        undefined,
+        false
+    );
+
+    const onRoomJoinClick = React.useCallback(
+        (id: string) => {
+            history.push(`/room/${id}`);
+        },
+        [history]
     );
 
     React.useEffect(() => {
@@ -38,7 +56,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                     variant="success"
                                     size="sm"
                                     onClick={async () => {
-                                        //await props.onJoinClick(session.id);
+                                        onRoomJoinClick(session.id);
                                     }}
                                 >
                                     Join
@@ -47,7 +65,10 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                     variant="danger"
                                     size="sm"
                                     onClick={async () => {
-                                        //await props.onDeleteClick(session.id);
+                                        await deleteRoom({
+                                            id: session.id,
+                                        });
+                                        await getPrivateRooms();
                                     }}
                                 >
                                     Delete
