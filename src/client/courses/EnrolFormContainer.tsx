@@ -79,7 +79,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Form
-                className="mb-2"
+                className="mb-3"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     const data: EnrolCourseRequestType = {

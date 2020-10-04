@@ -42,7 +42,7 @@ export const CreateRoomForm: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Form
-                className="mb-2"
+                className="mb-3"
                 onSubmit={async (e: React.FormEvent<HTMLDivElement>) => {
                     e.preventDefault();
                     setRoomName("");

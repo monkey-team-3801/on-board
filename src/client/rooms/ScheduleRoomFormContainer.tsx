@@ -97,7 +97,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Form
-                className="mb-2"
+                className="mb-3"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     if (selectedCourse?.value) {
@@ -215,10 +215,13 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     {createClassroomResponse.message}
                 </Alert>
             )}
+            {new Date().getTime() > startingTime.getTime() && (
+                <Alert variant="info">This class will open immediately</Alert>
+            )}
             {requestIsLoaded(createClassroomResponse) && (
                 <Alert variant="success">
                     Successfully scheduled class for{" "}
-                    {format(new Date(startingTime), "MM/dd hh:mm")}
+                    {format(startingTime, "MM/dd hh:mm")}
                 </Alert>
             )}
         </Container>
