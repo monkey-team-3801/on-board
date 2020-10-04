@@ -38,19 +38,20 @@ router.post(
             // Files to process
             const ftp = Object.keys(req.files).map((x) => req.files![x]);
 
-            const sessionID = ftp[ftp.length - 1];
-            console.log(ftp);
+            const metaData = ftp[ftp.length - 1];
 
-            if (!Array.isArray(sessionID)) {
+            if (!Array.isArray(metaData)) {
                 // Get session ID.
-                const sid = JSON.parse(sessionID.data.toString())["sid"];
+                const sid = JSON.parse(metaData.data.toString())["sid"];
+                const uid = JSON.parse(metaData.data.toString())["uid"];
+
                 const sessionQuery = await Session.findById(sid);
 
                 if (sessionQuery) {
                     // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
                     if (ftp.length > 1 || ftp.length < 7) {
                         for (let file of ftp) {
-                            if (file === sessionID) {
+                            if (file === metaData) {
                                 break;
                             }
                             if (!Array.isArray(file)) {
@@ -59,7 +60,7 @@ router.post(
                                     size: file.size,
                                     data: file.data,
                                     extension: file.mimetype,
-                                    owner: "test",
+                                    owner: uid,
                                     sessionID: sid,
                                     fileTime: format(
                                         new Date(),
@@ -82,8 +83,36 @@ router.post(
 // Gets the files for a session
 router.post(
     "/getFiles",
-    asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
-        async (req, res) => {}
+    asyncHandler<Array<Array<string>>, {}, { sid: string }>(
+        async (req, res) => {
+            const session = await Session.findById(req.body.sid);
+
+            if (session && session.files) {
+                const data = (
+                    await Promise.all(
+                        session.files.map(async (fileId) => {
+                            const file = await File.findById(fileId);
+                            return [
+                                fileId,
+                                file?.name,
+                                file?.size.toString(),
+                                file?.fileTime,
+                            ] as [string, string, string, string];
+                        })
+                    )
+                ).filter(
+                    (data): data is [string, string, string, string] =>
+                        data[0] !== undefined &&
+                        data[1] !== undefined &&
+                        data[2] !== undefined &&
+                        data[3] !== undefined
+                );
+                console.log(data);
+                res.send(data).status(200).end();
+            } else {
+                res.status(500).end();
+            }
+        }
     )
 );
 

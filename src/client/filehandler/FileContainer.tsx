@@ -13,13 +13,11 @@ type Props = {
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
     const [fileData, getFileData] = useDynamicFetch<
-        { [key: string]: FileStorageType },
+        Array<Array<string>>,
         { sid: string }
     >("/filehandler/getFiles", { sid: props.sessionID }, true);
 
-    const [files, setFiles] = React.useState<{
-        [key: string]: FileStorageType;
-    }>({});
+    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
 
     // Converts bytes to be displayable.
     function sizeDisplay(size: number): string {
@@ -56,26 +54,31 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
-                {fileData.data &&
-                    Object.keys(fileData.data).map((file, i) => (
-                        <div className="file-bar" key={i}>
-                            <div>
-                                <a
-                                    href={`/filehandler/file/${props.sessionID}/${files}`}
-                                    target="_self"
-                                    download
-                                >
-                                    <button className="file-dl-btn">
-                                        <FaDownload />
-                                    </button>
-                                </a>
-                                <div className="file-name">
-                                    {files[file].filename}{" "}
-                                    {sizeDisplay(files[file].size)}
-                                </div>
+                {Object.keys(files).map((file, i) => (
+                    <div className="file-bar" key={i}>
+                        <div>
+                            <div className="file-name">
+                                {files[i][1]}
+                                {" - "}
+                                {sizeDisplay(parseInt(files[i][2]))}
+                                <br></br>
+                                {"At: "}
+                                {files[i][3]}
                             </div>
+                            <a
+                                href={`/filehandler/file/${props.sessionID}/${files}`}
+                                target="_self"
+                                download
+                                style={{ float: "right" }}
+                            >
+                                <button className="file-dl-btn">
+                                    <FaDownload />
+                                </button>
+                            </a>
+                            <hr></hr>
                         </div>
-                    ))}
+                    </div>
+                ))}
             </div>
         </div>
     );
