@@ -7,7 +7,7 @@ import { FileUploadEvent } from "../../events";
 
 type Props = {
     uploadType: FileUploadType;
-    sessionID?: string;
+    sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
 };
@@ -83,7 +83,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             await uploadFile(formData);
 
             if (props.socket) {
-                props.socket.emit(FileUploadEvent.NEW_FILE);
+                props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
             }
         }
     };
