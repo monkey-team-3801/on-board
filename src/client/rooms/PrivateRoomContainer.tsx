@@ -110,7 +110,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         updateFiles={getFileData}
                                     ></FileContainer>
                                 </Row>
-                                <Row>
+                                <Row className="d-flex justify-content-center">
                                     <UploadContainer
                                         uploadType={FileUploadType.DOCUMENTS}
                                         sessionID={roomId}

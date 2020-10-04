@@ -54,10 +54,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
     const onDrop = async (acceptedFiles: Array<File>) => {
         // Handle error. Someone will need to implement this.
-        if (!checkValid(acceptedFiles)) {
-            // Note: You can access rejected files through the variable "fileRejections" as below.
-            console.log(fileRejections);
-            console.log("Some files failed to upload.");
+        if (!checkValid(acceptedFiles) && fileRejections.length > 0) {
             return;
         }
 
@@ -99,15 +96,28 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     });
 
     return (
-        <div {...getRootProps()} className="dropContainer">
-            <input {...getInputProps()} />
-            {isDragActive ? (
-                <p className="dropMessage">Drop the files here ...</p>
-            ) : (
-                <p className="dropMessage">
-                    Drag 'n' drop some files here, or click here to select files
-                </p>
-            )}
+        <div>
+            <div>
+                {fileRejections.length > 0 && (
+                    <div style={{ color: "red" }}>
+                        <div>The following files failed to upload: </div>
+                        {fileRejections.map((file, i) => (
+                            <div>{file.file.name}</div>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <div {...getRootProps()} className="dropContainer">
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                    <p className="dropMessage">Drop the files here ...</p>
+                ) : (
+                    <p className="dropMessage">
+                        Drag 'n' drop some files here, or click here to select
+                        files
+                    </p>
+                )}
+            </div>
         </div>
     );
 };
