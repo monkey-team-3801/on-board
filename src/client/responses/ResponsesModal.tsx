@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
-import { ResponseFormType, UserType } from "../../types";
+import { UserType } from "../../types";
 import { DisplayContainer } from "./DisplayContainer";
 import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 

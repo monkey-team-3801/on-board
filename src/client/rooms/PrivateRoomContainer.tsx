@@ -1,17 +1,15 @@
 import React from "react";
-import { Button, Col, Row, Container } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import {
     FileUploadType,
-    SessionData,
     RoomType,
+    SessionData,
     UserDataResponseType,
 } from "../../types";
 import { DrawingCanvas } from "../canvas";
-import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
-import { ResponsesModal } from "../responses";
 import { TopLayerContainerProps } from "../types";
 import { SessionContainer, SidePanelContainer } from "./containers";
 
