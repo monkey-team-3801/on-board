@@ -66,7 +66,7 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                             <div className="file-name">
                                 {file[1]}
                                 {" - "}
-                                {sizeDisplay(parseInt(file[2]))}
+                                {sizeDisplay(Number(file[2]))}
                                 <br></br>
                                 {"At: "}
                                 {file[3]}
