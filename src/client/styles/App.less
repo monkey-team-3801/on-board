@@ -57,8 +57,20 @@ code {
     background-color: @primary !important;
     border-color: transparent !important;
     min-height: 38px !important;
+    &:hover {
+        background-color: darken(@primary, 10%) !important;
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.2rem lighten(@primary, 40%) !important;
+    }
 }
 
 .btn-secondary {
     background-color: lighten(@primary, 10%) !important;
+    &:hover {
+        background-color: lighten(@primary, 5%) !important;
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.2rem lighten(@primary, 50%) !important;
+    }
 }
