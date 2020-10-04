@@ -7,10 +7,11 @@ import {
     CourseListResponseType,
     CreateAnnouncementJobRequestType,
 } from "../../types";
-import { requestIsLoaded, requestHasError } from "../utils";
+import { requestIsLoaded, requestHasError, requestIsLoading } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
-import { SimpleDatepicker } from "../components";
+import { SimpleDatepicker, ButtonWithLoadingProp } from "../components";
+import { format } from "date-fns/esm";
 
 type Props = {
     userId: string;
@@ -42,7 +43,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     }, [courses]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return !requestIsLoaded(createAnnouncementResponse);
+        return requestIsLoading(createAnnouncementResponse);
     }, [createAnnouncementResponse]);
 
     React.useEffect(() => {
@@ -57,10 +58,8 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
 
     return (
         <Container>
-            <Row>
-                <h3>Create Announcement</h3>
-            </Row>
             <Form
+                className="mb-3"
                 onSubmit={(e) => {
                     e.preventDefault();
                     courses.forEach((option) => {
@@ -130,13 +129,31 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                         }}
                     />
                 </Form.Group>
-                <Button variant="primary" type="submit" disabled={isSubmitting}>
+                <ButtonWithLoadingProp
+                    variant="primary"
+                    type="submit"
+                    loading={isSubmitting}
+                    invertLoader
+                >
                     Create
-                </Button>
+                </ButtonWithLoadingProp>
             </Form>
             {requestHasError(createAnnouncementResponse) && (
                 <Alert variant="danger">
                     {createAnnouncementResponse.message}
+                </Alert>
+            )}
+            {new Date().getTime() > announcementTime.getTime() && (
+                <Alert variant="info">
+                    This announcement will be sent immediately
+                </Alert>
+            )}
+            {requestIsLoaded(createAnnouncementResponse) && (
+                <Alert variant="success">
+                    {`Successfully scheduled announcement for ${format(
+                        announcementTime,
+                        "MM/dd hh:mm"
+                    )}`}
                 </Alert>
             )}
         </Container>

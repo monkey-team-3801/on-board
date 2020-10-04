@@ -1,6 +1,6 @@
 import express from "express";
 
-import { asyncHandler, isClassOpenJob } from "../utils";
+import { asyncHandler, isClassOpenJob, isAnnouncementJob } from "../utils";
 import { BaseJob } from "../../types";
 import { ScheduleHandler } from "../jobs";
 
@@ -35,6 +35,25 @@ router.post(
                 res.status(500)
                     .json({
                         message: "Class should not end before it starts",
+                    })
+                    .end();
+                return;
+            }
+        }
+        if (isAnnouncementJob(job)) {
+            const data = job.data;
+            if (!data.title || data.title === "") {
+                res.status(500)
+                    .json({
+                        message: "Title should not be empty",
+                    })
+                    .end();
+                return;
+            }
+            if (!data.courseCode || data.courseCode === "") {
+                res.status(500)
+                    .json({
+                        message: "Course should not be empty",
                     })
                     .end();
                 return;

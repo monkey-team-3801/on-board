@@ -145,7 +145,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper>
+                        <ContainerWrapper title="Create Announcements">
                             {(setLoading) => {
                                 return (
                                     <CreateAnnouncementsForm
