@@ -60,7 +60,9 @@ router.post(
                     name: session.name,
                 });
             } else {
-                res.status(500).json({ message: "Room name cannot be empty" });
+                res.status(500).json({
+                    message: "Room name should not be empty",
+                });
             }
             res.status(200);
         } catch (e) {

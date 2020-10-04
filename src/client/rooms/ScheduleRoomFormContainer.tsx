@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Button, Container, Row } from "react-bootstrap";
+import { Form, Button, Container, Row, Alert } from "react-bootstrap";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
@@ -8,7 +8,7 @@ import {
     CourseListResponseType,
     CreateClassroomJobRequestType,
 } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading, requestHasError } from "../utils";
 import { ExecutingEvent } from "../../events";
 import { CourseOptionType } from "../types";
 import { SimpleDatepicker } from "../components";
@@ -64,7 +64,9 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     );
     const [startingTime, setStartingTime] = React.useState<Date>(new Date());
 
-    const [endingTime, setEndingTime] = React.useState<Date>(new Date());
+    const [endingTime, setEndingTime] = React.useState<Date>(
+        new Date(new Date().getTime() + 3600000)
+    );
 
     const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
 
@@ -73,7 +75,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     }, [selectedCourse]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return !requestIsLoaded(createClassroomResponse);
+        return requestIsLoading(createClassroomResponse);
     }, [createClassroomResponse]);
 
     React.useEffect(() => {
@@ -94,6 +96,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Form
+                className="mb-2"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     if (selectedCourse?.value) {
@@ -130,7 +133,6 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                         onChange={(e) => {
                             setDescription(e.target.value);
                         }}
-                        required
                     />
                 </Form.Group>
                 <Form.Group>
@@ -191,7 +193,6 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                             triangle="hide"
                             color={colourCode}
                             onChangeComplete={(colour) => {
-                                console.log(colour.hex);
                                 setColourCode(colour.hex);
                             }}
                         />
@@ -208,6 +209,11 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     Create
                 </Button>
             </Form>
+            {requestHasError(createClassroomResponse) && (
+                <Alert variant="danger">
+                    {createClassroomResponse.message}
+                </Alert>
+            )}
         </Container>
     );
 };

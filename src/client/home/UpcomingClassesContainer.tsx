@@ -46,10 +46,8 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
                             the right courses?
                         </p>
                     ) : (
-                        data.map((session) => {
-                            return (
-                                <UpcomingClass key={session.id} {...session} />
-                            );
+                        data.map((session, i) => {
+                            return <UpcomingClass key={i} {...session} />;
                         })
                     )}
                 </Container>

@@ -61,6 +61,7 @@ export const CreateRoomForm: React.FunctionComponent<Props> = (
                         onChange={(e) => {
                             setRoomName(e.target.value);
                         }}
+                        required
                     />
                 </Form.Group>
                 <ButtonWithLoadingProp
