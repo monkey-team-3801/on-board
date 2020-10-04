@@ -9,7 +9,7 @@ type Props = {
 
 export const Loader: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <div className={`loader-container ${props.full && "full"}`}>
+        <div className={`loader-container ${props.full ? "full" : ""}`}>
             <Spinner
                 className={`loader ${props?.invert && "invert"}`}
                 animation="grow"

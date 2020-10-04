@@ -1,11 +1,15 @@
 import { List } from "immutable";
 import React from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
 import { RoomEvent } from "../../events";
-import { ClassroomSessionData, UserDataResponseType } from "../../types";
+import {
+    ClassroomSessionData,
+    UserDataResponseType,
+    RoomType,
+} from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponseTest } from "../responses/ResponseTest";
@@ -14,6 +18,8 @@ import { requestIsLoaded } from "../utils";
 import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
 import { ParticipantsContainer } from "./containers";
+import { Loader } from "../components";
+import { ChatContainer } from "../chat";
 // import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
@@ -147,59 +153,128 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, []);
 
     if (!requestIsLoaded(sessionResponse)) {
-        return <div>Loading</div>;
+        return <Loader full />;
     }
 
     return (
-        <div>
-            <h1>
-                {sessionResponse.data.courseCode} Classroom:{" "}
-                {sessionResponse.data.name}
-            </h1>
-            <p>Description: {sessionResponse.data.description}</p>
-            <p>Start time: {sessionResponse.data.startTime}</p>
-            <p>End time: {sessionResponse.data.endTime}</p>
-            <div>id: {props.match.params.classroomId}</div>
-            <Container>
-                <Button
-                    onClick={() => {
-                        setBreakoutRoomModalVisible(true);
-                    }}
-                >
-                    Breakout Rooms
-                </Button>
-            </Container>
-            <Container>
-                <Button
-                    onClick={async () => {
-                        if (handRaisedRef.current) {
-                            setRaisedHandUsers(
-                                raisedHandUsers.splice(
-                                    raisedHandUsers.indexOf(userId),
-                                    1
-                                )
-                            );
-                        } else {
-                            setRaisedHandUsers(
-                                raisedHandUsers.concat([userId])
-                            );
-                        }
-                        setRaisedHandStatus.callback(handRaisedRef.current);
-                        handRaisedRef.current = !handRaisedRef.current;
-                    }}
-                >
-                    Raise Hand
-                </Button>
-            </Container>
-            {sessionUsersResponse.data?.users ? (
-                <ParticipantsContainer
-                    users={sessionUsersResponse.data.users}
-                    raisedHandUsers={raisedHandUsers.toArray()}
-                />
-            ) : (
-                <div>loading</div>
-            )}
-
+        <Container fluid className="classroom-container">
+            <Col md={9}>
+                <header className="d-flex">
+                    <Container fluid>
+                        <h1>
+                            {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
+                        </h1>
+                        <p>{sessionResponse.data.roomType}</p>
+                        <p>{sessionResponse.data.description}</p>
+                    </Container>
+                    <Container fluid>
+                        <p>{`Start time: ${sessionResponse.data.startTime}, end time: ${sessionResponse.data.endTime}`}</p>
+                    </Container>
+                </header>
+                <Container fluid>
+                    <div className="stream-container">
+                        <Row>
+                            <Col md={4}>
+                                <div className="dflex justify-content-center align-items-center presenter-container">
+                                    <div></div>
+                                </div>
+                            </Col>
+                            <Col md={8}>
+                                <Container className="view-control d-flex justify-content-center">
+                                    <Button>Speaker View</Button>
+                                    <Button>Participants View</Button>
+                                </Container>
+                                <Container className="video-container mt-4">
+                                    {/* <StreamSelectorWrapper
+                                        sessionId={props.match.params.classroomId}
+                                        userId={props.userData.id}
+                                    /> */}
+                                </Container>
+                                <Container className="room-control d-flex justify-content-center mt-4">
+                                    <Button
+                                        onClick={() => {
+                                            setBreakoutRoomModalVisible(true);
+                                        }}
+                                    >
+                                        Breakout Rooms
+                                    </Button>
+                                    <Button
+                                        onClick={async () => {
+                                            if (handRaisedRef.current) {
+                                                setRaisedHandUsers(
+                                                    raisedHandUsers.splice(
+                                                        raisedHandUsers.indexOf(
+                                                            userId
+                                                        ),
+                                                        1
+                                                    )
+                                                );
+                                            } else {
+                                                setRaisedHandUsers(
+                                                    raisedHandUsers.concat([
+                                                        userId,
+                                                    ])
+                                                );
+                                            }
+                                            setRaisedHandStatus.callback(
+                                                handRaisedRef.current
+                                            );
+                                            handRaisedRef.current = !handRaisedRef.current;
+                                        }}
+                                    >
+                                        Raise Hand
+                                    </Button>
+                                    <Button>Camera off</Button>
+                                    <Button>Mic off</Button>
+                                </Container>
+                            </Col>
+                        </Row>
+                    </div>
+                </Container>
+            </Col>
+            <Col md={3}>
+                <Container className="panel">
+                    <Row className="mt-4">
+                        <div className="panel-container tutors-container">
+                            <Container fluid>
+                                <h4>Tutors</h4>
+                            </Container>
+                        </div>
+                    </Row>
+                    <Row className="mt-4">
+                        <Container className="panel-container students-container d-flex flex-column">
+                            <Row>
+                                <h4>Participants</h4>
+                            </Row>
+                            {sessionUsersResponse.data?.users ? (
+                                <ParticipantsContainer
+                                    users={sessionUsersResponse.data.users}
+                                    raisedHandUsers={raisedHandUsers.toArray()}
+                                />
+                            ) : (
+                                <Loader />
+                            )}
+                        </Container>
+                    </Row>
+                    <Row className="mt-4">
+                        <div className="panel-container messages-container">
+                            <Container fluid>
+                                <h4>Chat</h4>
+                            </Container>
+                            <Container fluid>
+                                <ChatContainer
+                                    roomId={sessionId}
+                                    username={props.userData.username}
+                                    initialChatLog={
+                                        sessionResponse.data.messages
+                                    }
+                                    roomType={RoomType.CLASS}
+                                />
+                            </Container>
+                        </div>
+                    </Row>
+                </Container>
+            </Col>
             <BreakoutRoomModal
                 userData={sessionUsersResponse.data?.users || []}
                 visible={createBreakoutRoomModalVisible}
@@ -208,10 +283,6 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutRoomModalVisible(false);
                 }}
             />
-            {/* <StreamSelectorWrapper
-                sessionId={props.match.params.classroomId}
-                userId={props.userData.id}
-            /> */}
             <BreakoutRoomAllocateIndicator
                 {...props}
                 event={breakoutAllocationEventData}
@@ -219,12 +290,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     setBreakoutAllocationEventData(undefined);
                 }}
             />
-            <ResponseTest
+            {/* <ResponseTest
                 sid={sessionId}
                 userid={props.userData.id}
                 userType={props.userData.userType}
                 sock={socket}
-            ></ResponseTest>
-        </div>
+            ></ResponseTest> */}
+        </Container>
     );
 };
