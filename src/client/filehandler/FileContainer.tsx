@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/FileContainer.less";
+import "./FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { useDynamicFetch, useSocket } from "../hooks";
 import { FileStorageType } from "../../types";

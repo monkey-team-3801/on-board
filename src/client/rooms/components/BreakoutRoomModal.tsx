@@ -90,7 +90,6 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
     }, [breakoutRoomResponse]);
 
     React.useEffect(() => {
-        console.log("running");
         if (visible) {
             setRooms((prev) => {
                 return prev.map((mapping) => {

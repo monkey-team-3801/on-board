@@ -1,18 +1,19 @@
 import React from "react";
-import { Form, Button, Container, Row } from "react-bootstrap";
+import { Alert, Button, Container, Form } from "react-bootstrap";
 import Select from "react-select";
-
-import { useDynamicFetch, useFetch } from "../hooks";
+import { AnnouncementEvent } from "../../events";
 import {
     CourseListResponseType,
-    UserEnrolledCoursesResponseType,
     EnrolCourseRequestType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
-import { AnnouncementEvent } from "../../events";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     refresh: () => void;
     userId: string;
     socket: SocketIOClient.Socket;
@@ -21,7 +22,7 @@ type Props = {
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, refresh, socket } = props;
+    const { userId, refresh, socket, setLoading } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
     const [enrolledCoursesData, refreshEnrolledCourse] = useFetch<
         UserEnrolledCoursesResponseType
@@ -64,23 +65,20 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
         }
     }, [enrolledCoursesData]);
 
-    const isSubmitting: boolean = React.useMemo(() => {
-        return (
-            !requestIsLoaded(enrolCourseResponse) ||
-            !requestIsLoaded(enrolledCoursesData)
-        );
-    }, [enrolCourseResponse, enrolledCoursesData]);
+    React.useEffect(() => {
+        if (requestIsLoaded(enrolledCoursesData)) {
+            setLoading(false);
+        }
+    }, [enrolledCoursesData, setLoading]);
 
-    if (!requestIsLoaded(courseData)) {
-        return <div>loading</div>;
-    }
+    const isSubmitting: boolean = React.useMemo(() => {
+        return requestIsLoading(enrolCourseResponse);
+    }, [enrolCourseResponse]);
 
     return (
         <Container>
-            <Row>
-                <h3>Course Enrolment</h3>
-            </Row>
             <Form
+                className="mb-3"
                 onSubmit={async (e) => {
                     e.preventDefault();
                     const data: EnrolCourseRequestType = {
@@ -111,31 +109,32 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                         }}
                         isMulti
                         closeMenuOnSelect={false}
-                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <Form.Row>
-                    <Button
+                    <ButtonWithLoadingProp
                         variant="primary"
                         type="submit"
-                        disabled={isSubmitting}
+                        invertLoader
+                        loading={isSubmitting}
                     >
                         Enrol
-                    </Button>
-                </Form.Row>
-                <Form.Row>
+                    </ButtonWithLoadingProp>
                     <Button
                         variant="light"
                         size="sm"
-                        disabled={isSubmitting}
+                        className="mu-1 ml-1"
                         onClick={() => {
                             setEnrolledCourses(initialCoursesRef.current);
                         }}
                     >
-                        clear
+                        Reset Changes
                     </Button>
                 </Form.Row>
             </Form>
+            {requestIsLoaded(enrolCourseResponse) && (
+                <Alert variant="success">Successfully enrolled</Alert>
+            )}
         </Container>
     );
 };

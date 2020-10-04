@@ -6,6 +6,7 @@ import { ClassEvent } from "../events";
 import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
+import { Loader } from "./components";
 import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
@@ -27,6 +28,8 @@ export const AppProtectedRoutes = (props: Props) => {
     const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
     const { data } = userDataResponse;
 
+    const [authData] = useFetch<never>("/auth");
+
     const userData = React.useMemo(() => {
         return {
             username: data?.username,
@@ -47,7 +50,7 @@ export const AppProtectedRoutes = (props: Props) => {
     }, [event]);
 
     if (!requestIsLoaded(userDataResponse)) {
-        return <div>Loading</div>;
+        return <Loader full />;
     }
 
     if (!username || !id || !courses || userType === undefined) {
@@ -69,6 +72,7 @@ export const AppProtectedRoutes = (props: Props) => {
                 <Switch>
                     <SecuredRoute
                         path="/home"
+                        authData={authData}
                         render={(routerProps: RouteComponentProps) => {
                             return (
                                 <UserHomeContainer
@@ -85,12 +89,24 @@ export const AppProtectedRoutes = (props: Props) => {
                     />
                     <SecuredRoute
                         path="/classes"
+                        authData={authData}
                         render={(routerProps: RouteComponentProps) => {
-                            return <ClassesPageContainer />;
+                            return (
+                                <ClassesPageContainer
+                                    {...routerProps}
+                                    userData={{
+                                        username,
+                                        id,
+                                        courses,
+                                        userType,
+                                    }}
+                                />
+                            );
                         }}
                     />
                     <SecuredRoute
                         path="/classroom/:classroomId"
+                        authData={authData}
                         render={(
                             routerProps: RouteComponentProps<{
                                 classroomId: string;
@@ -111,6 +127,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     />
                     <SecuredRoute
                         path="/room/:roomId"
+                        authData={authData}
                         render={(
                             routerProps: RouteComponentProps<{ roomId: string }>
                         ) => {
@@ -130,6 +147,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     />
                     <SecuredRoute
                         path="/breakout/:roomId"
+                        authData={authData}
                         render={(
                             routerProps: RouteComponentProps<{ roomId: string }>
                         ) => {
@@ -149,6 +167,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     />
                     <SecuredRoute
                         path="/upload"
+                        authData={authData}
                         render={() => {
                             return <UploadTest userId={userData.id!} />;
                         }}
@@ -156,6 +175,7 @@ export const AppProtectedRoutes = (props: Props) => {
 
                     <SecuredRoute
                         path="/timetable-test"
+                        authData={authData}
                         render={(routerProps: RouteComponentProps) => {
                             return <Timetable />;
                         }}

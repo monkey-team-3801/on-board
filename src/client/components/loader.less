@@ -1,0 +1,19 @@
+@import "../styles/Colours.less";
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .loader {
+        color: @primary !important;
+        height: 16px;
+        width: 16px;
+        &.invert {
+            color: white !important;
+        }
+    }
+    &.full {
+        width: 100vw;
+        height: 100vh;
+    }
+}

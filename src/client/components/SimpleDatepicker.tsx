@@ -16,7 +16,11 @@ export const SimpleDatepicker: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Form.Control
-            value={format(props.time, "yyyy-MM-dd'T'HH:mm")}
+            defaultValue={
+                props.time.toString() !== "Invalid Date"
+                    ? format(props.time, "yyyy-MM-dd'T'HH:mm")
+                    : undefined
+            }
             type="datetime-local"
             onChange={(e) => {
                 props.onChange(
