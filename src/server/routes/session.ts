@@ -21,6 +21,7 @@ import {
     SessionUsers,
     User,
 } from "../database";
+import { File } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
     MultipleChoiceResponseForm,
@@ -180,6 +181,8 @@ router.post(
                 parentSessionId: req.body.id,
             });
         }
+        await File.deleteMany({ sessionID: req.body.id });
+
         await MultipleChoiceResponseForm.deleteMany({
             sessionID: req.body.id,
         });
