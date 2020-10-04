@@ -185,7 +185,6 @@ router.post(
                 return;
             }
             const currentValue = query.count?.get(choice);
-            console.log(currentValue, choice);
             if (currentValue !== undefined) {
                 query.count?.set(choice, currentValue + 1);
                 query.answered.push(userID);
