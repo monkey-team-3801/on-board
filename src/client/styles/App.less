@@ -46,7 +46,12 @@ code {
 
 #root {
     background-color: #f1f1f1;
+    overflow-x: hidden;
     min-height: 100vh;
+}
+
+#root,
+#root ~ .modal {
     .btn-primary {
         background-color: @primary;
         border-color: transparent;
@@ -75,6 +80,10 @@ code {
         &:active {
             background-color: lighten(@primary, 5%);
         }
+    }
+
+    .btn-sm {
+        min-height: 31px;
     }
 }
 

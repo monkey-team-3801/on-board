@@ -173,14 +173,15 @@ router.post(
         { formID: string; userID: string; option: string }
     >(async (req, res) => {
         const formID = req.body.formID;
-        const choice = req.body.userID;
-        const userID = req.body.option;
+        const choice = req.body.option;
+        const userID = req.body.userID;
 
         const query = await MultipleChoiceResponseForm.findById(formID);
 
         if (query) {
             if (query.answered.includes(userID)) {
                 res.status(500).end();
+
                 return;
             }
             const currentValue = query.count?.get(choice);

@@ -36,7 +36,9 @@ export type UpcomingClassroomSessionData = Omit<
     id?: string;
 };
 
-export type NewMessageRequestType = Omit<MessageData, "sentTime">;
+export type NewMessageRequestType = Omit<MessageData, "sentTime"> & {
+    roomType: RoomType;
+};
 
 export type CourseActivityUnique = {
     code: string;
