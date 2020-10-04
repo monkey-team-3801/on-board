@@ -56,7 +56,7 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
-            <Navbar {...props} username={data?.username} />
+            <Navbar {...props} username={data?.username} userid={data?.id} />
             <ClassOpenIndicator
                 {...props}
                 event={eventData}

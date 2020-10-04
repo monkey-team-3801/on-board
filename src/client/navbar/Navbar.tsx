@@ -8,6 +8,7 @@ import { LocalStorageKey } from "../types";
 
 type Props = RouteComponentProps & {
     username?: string;
+    userid?: string;
 };
 
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
@@ -42,7 +43,9 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
             </div>
             <div className="nav-control right">
                 <div className="welcome">
-                    <p>Welcome {props.username}</p>
+                    <p>
+                        Welcome {props.username} ({props.userid})
+                    </p>
                 </div>
                 <Dropdown className="dropdown-override">
                     <Dropdown.Toggle>
