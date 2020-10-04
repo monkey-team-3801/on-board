@@ -47,30 +47,37 @@ code {
 #root {
     background-color: #f1f1f1;
     min-height: 100vh;
+    .btn-primary {
+        background-color: @primary;
+        border-color: transparent;
+        min-height: 38px;
+        &:hover {
+            background-color: darken(@primary, 10%);
+        }
+        &:focus {
+            background-color: @primary;
+            box-shadow: 0 0 0 0.2rem lighten(@primary, 40%);
+        }
+        &:active {
+            background-color: darken(@primary, 10%);
+        }
+    }
+
+    .btn-secondary {
+        background-color: lighten(@primary, 10%);
+        &:hover {
+            background-color: lighten(@primary, 5%);
+        }
+        &:focus {
+            background-color: @primary;
+            box-shadow: 0 0 0 0.2rem lighten(@primary, 50%);
+        }
+        &:active {
+            background-color: lighten(@primary, 5%);
+        }
+    }
 }
 
 .content-loader {
     padding: 20px;
-}
-
-.btn-primary {
-    background-color: @primary !important;
-    border-color: transparent !important;
-    min-height: 38px !important;
-    &:hover {
-        background-color: darken(@primary, 10%) !important;
-    }
-    &:focus {
-        box-shadow: 0 0 0 0.2rem lighten(@primary, 40%) !important;
-    }
-}
-
-.btn-secondary {
-    background-color: lighten(@primary, 10%) !important;
-    &:hover {
-        background-color: lighten(@primary, 5%) !important;
-    }
-    &:focus {
-        box-shadow: 0 0 0 0.2rem lighten(@primary, 50%) !important;
-    }
 }
