@@ -1,16 +1,17 @@
 import { List } from "immutable";
 import React from "react";
-import { Button, Container, Col, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
 import { RoomEvent } from "../../events";
 import {
     ClassroomSessionData,
-    UserDataResponseType,
     RoomType,
+    UserDataResponseType,
     UserType,
 } from "../../types";
+import { Loader } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponsesModal } from "../responses";
@@ -18,9 +19,8 @@ import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
-import { ParticipantsContainer } from "./containers";
-import { Loader } from "../components";
-import { ChatContainer } from "../chat";
+import { SidePanelContainer } from "./containers";
+import "./room.less";
 // import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
@@ -268,47 +268,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 </Container>
             </Col>
             <Col md={3}>
-                <Container className="panel">
-                    <Row className="mt-4">
-                        <div className="panel-container tutors-container">
-                            <Container fluid>
-                                <h4>Tutors</h4>
-                            </Container>
-                        </div>
-                    </Row>
-                    <Row className="mt-4">
-                        <Container className="panel-container students-container d-flex flex-column">
-                            <Row>
-                                <h4>Participants</h4>
-                            </Row>
-                            {sessionUsersResponse.data?.users ? (
-                                <ParticipantsContainer
-                                    users={sessionUsersResponse.data.users}
-                                    raisedHandUsers={raisedHandUsers.toArray()}
-                                />
-                            ) : (
-                                <Loader />
-                            )}
-                        </Container>
-                    </Row>
-                    <Row className="mt-4">
-                        <div className="panel-container messages-container">
-                            <Container fluid>
-                                <h4>Chat</h4>
-                            </Container>
-                            <Container fluid>
-                                <ChatContainer
-                                    roomId={sessionId}
-                                    username={props.userData.username}
-                                    initialChatLog={
-                                        sessionResponse.data.messages
-                                    }
-                                    roomType={RoomType.CLASS}
-                                />
-                            </Container>
-                        </div>
-                    </Row>
-                </Container>
+                <SidePanelContainer
+                    sessionId={sessionId}
+                    username={props.userData.username}
+                    initialChatLog={sessionResponse.data.messages}
+                    users={sessionUsersResponse.data?.users}
+                    raisedHandUsers={raisedHandUsers.toArray()}
+                    roomType={RoomType.CLASS}
+                />
             </Col>
             <BreakoutRoomModal
                 userData={sessionUsersResponse.data?.users || []}
