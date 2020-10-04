@@ -12,7 +12,7 @@ router.post(
         const job = req.body;
         if (isClassOpenJob(job)) {
             const data = job.data;
-            if (!data.roomName || data.roomName === "") {
+            if (!data.roomName) {
                 res.status(500)
                     .json({
                         message: "Room name should not be empty",
@@ -20,7 +20,7 @@ router.post(
                     .end();
                 return;
             }
-            if (!data.courseCode || data.courseCode === "") {
+            if (!data.courseCode) {
                 res.status(500)
                     .json({
                         message: "Course should not be empty",
@@ -42,7 +42,7 @@ router.post(
         }
         if (isAnnouncementJob(job)) {
             const data = job.data;
-            if (!data.title || data.title === "") {
+            if (!data.title) {
                 res.status(500)
                     .json({
                         message: "Title should not be empty",
@@ -50,7 +50,7 @@ router.post(
                     .end();
                 return;
             }
-            if (!data.courseCode || data.courseCode === "") {
+            if (!data.courseCode) {
                 res.status(500)
                     .json({
                         message: "Course should not be empty",
