@@ -61,6 +61,7 @@ export const createNewSession = async (
         roomType: RoomType.PRIVATE,
         description,
         courseCode,
+        files: [],
     });
     return session;
 };
@@ -81,6 +82,7 @@ export const createNewClassroomSession = async (
         startTime,
         endTime,
         raisedHandUsers: [],
+        files: [],
     });
     await SessionUsers.create({
         sessionId: session._id,
