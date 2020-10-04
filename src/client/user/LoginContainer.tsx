@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType, LoginUserRequestType } from "../../types";
-import { Loader } from "../components";
+import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsUnauthorised } from "../utils";
 
@@ -85,13 +85,15 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                             )}
                         </div>
                     </Container>
-                    <Button
+                    <ButtonWithLoadingProp
                         variant="primary"
                         type="submit"
                         className="loginbtn"
+                        loading={loading}
+                        invertLoader
                     >
-                        {loading ? <Loader invert /> : "Login"}
-                    </Button>
+                        Login
+                    </ButtonWithLoadingProp>
                 </div>
                 <div className="toggle-button">
                     <Button

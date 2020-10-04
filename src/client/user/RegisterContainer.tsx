@@ -9,7 +9,7 @@ import {
     LoginSuccessResponseType,
 } from "../../types";
 import { requestHasError } from "../utils";
-import { Loader } from "../components";
+import { Loader, ButtonWithLoadingProp } from "../components";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;
@@ -105,13 +105,15 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                             )}
                         </div>
                     </Container>
-                    <Button
+                    <ButtonWithLoadingProp
                         variant="primary"
                         type="submit"
                         className="registerbtn"
+                        loading={loading}
+                        invertLoader
                     >
-                        {loading ? <Loader invert /> : "Register"}
-                    </Button>
+                        Register
+                    </ButtonWithLoadingProp>
                 </div>
             </Form>
             <div className="toggle-button">
