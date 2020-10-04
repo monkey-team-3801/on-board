@@ -110,9 +110,8 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         updateFiles={getFileData}
                                     ></FileContainer>
                                 </Row>
-                                {!(
-                                    props.userData.userType === UserType.STUDENT
-                                ) && (
+                                {props.userData.userType !==
+                                    UserType.STUDENT && (
                                     <Row className="d-flex justify-content-center">
                                         <UploadContainer
                                             uploadType={
