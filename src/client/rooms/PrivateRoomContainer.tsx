@@ -89,12 +89,15 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 <Row>
                                     <FileContainer
                                         sessionID={roomId}
+                                        socket={socket}
                                     ></FileContainer>
                                 </Row>
                                 <Row>
                                     <UploadContainer
                                         uploadType={FileUploadType.DOCUMENTS}
                                         sessionID={roomId}
+                                        socket={socket}
+                                        userID={props.userData.id}
                                     ></UploadContainer>
                                 </Row>
                             </Col>

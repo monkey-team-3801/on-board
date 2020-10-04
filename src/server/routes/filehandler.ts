@@ -2,11 +2,10 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
-import { v4 as uuidv4 } from "uuid";
-import { io } from "../server";
 import { FileStorageType } from "../../types";
-import { FileUploadEvent } from "../../events";
 import { readFile } from "fs";
+import { File } from "../database/schema/File";
+import { format } from "date-fns";
 
 export const router = express.Router();
 
@@ -14,18 +13,18 @@ router.get(
     "/file/:sessionId/:fileId",
     asyncHandler<{}, { sessionId: string; fileId: string }>(
         async (req, res) => {
-            const session = await Session.findById(req.params.sessionId);
-            const file = session?.files?.get(req.params.fileId);
-            const contents = file?.file;
+            // const session = await Session.findById(req.params.sessionId);
+            // const file = session?.files?.get(req.params.fileId);
+            // const contents = file?.file;
 
-            if (contents && file) {
-                res.set(
-                    "Content-disposition",
-                    `attachment; filename=${file.filename}`
-                );
-                res.set("Content-Type", file.fileExtension);
-                res.status(200).end(contents.buffer);
-            }
+            // if (contents && file) {
+            //     res.set(
+            //         "Content-disposition",
+            //         `attachment; filename=${file.filename}`
+            //     );
+            //     res.set("Content-Type", file.fileExtension);
+            //     res.status(200).end(contents.buffer);
+            // }
             res.status(500).end();
         }
     )
@@ -34,12 +33,14 @@ router.get(
 // Upload documents
 router.post(
     "/uploadFiles",
-    asyncHandler(async (req, res) => {
+    asyncHandler<undefined, {}, FormData>(async (req, res) => {
         if (req.files) {
             // Files to process
             const ftp = Object.keys(req.files).map((x) => req.files![x]);
 
             const sessionID = ftp[ftp.length - 1];
+            console.log(ftp);
+
             if (!Array.isArray(sessionID)) {
                 // Get session ID.
                 const sid = JSON.parse(sessionID.data.toString())["sid"];
@@ -48,22 +49,27 @@ router.post(
                 if (sessionQuery) {
                     // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
                     if (ftp.length > 1 || ftp.length < 7) {
-                        // Maybe a better way to foreach through ftp?
-                        let x: number = 0;
-                        while (x < ftp.length - 1) {
-                            const file = ftp[x];
-                            if (!Array.isArray(file)) {
-                                sessionQuery.files?.set(uuidv4(), {
-                                    filename: file.name,
-                                    fileExtension: file.mimetype,
-                                    size: file.size,
-                                    file: file.data,
-                                });
+                        for (let file of ftp) {
+                            if (file === sessionID) {
+                                break;
                             }
-                            x += 1;
+                            if (!Array.isArray(file)) {
+                                const newFile = await File.create({
+                                    name: file.name,
+                                    size: file.size,
+                                    data: file.data,
+                                    extension: file.mimetype,
+                                    owner: "test",
+                                    sessionID: sid,
+                                    fileTime: format(
+                                        new Date(),
+                                        "dd/MM hh:mm a"
+                                    ),
+                                });
+                                sessionQuery.files?.push(newFile.id);
+                            }
                         }
                         await sessionQuery.save();
-                        io.in(sid).emit(FileUploadEvent.NEW_FILE);
                         res.status(200).end();
                     }
                 }
@@ -77,18 +83,7 @@ router.post(
 router.post(
     "/getFiles",
     asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
-        async (req, res) => {
-            // TODO MOVE THIS TO SEPARATE FILE SCHEMA
-            res.json({});
-            // const session = await Session.findById(req.body.sid);
-            // if (session) {
-            //     const files = session.files;
-            //     if (files) {
-            //         res.json(Object.fromEntries(files)).status(200).end();
-            //     }
-            // }
-            // res.status(500).end();
-        }
+        async (req, res) => {}
     )
 );
 

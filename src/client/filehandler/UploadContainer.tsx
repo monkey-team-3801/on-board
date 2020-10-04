@@ -3,11 +3,13 @@ import { useDropzone } from "react-dropzone";
 import "../styles/UploadContainer.less";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadType } from "../../types";
+import { FileUploadEvent } from "../../events";
 
-// To differentiate between documents and profile pictures.
 type Props = {
     uploadType: FileUploadType;
     sessionID?: string;
+    socket: SocketIOClient.Socket;
+    userID: string;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -69,15 +71,20 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             // Append session ID at the end of the form data.
             const obj = {
                 sid: props.sessionID,
+                uid: props.userID,
             };
 
             const json = JSON.stringify(obj);
-            const blob = new Blob([json], {
+            const sessionID = new Blob([json], {
                 type: "application/json",
             });
 
-            formData.append("document", blob);
+            formData.append("document", sessionID);
             await uploadFile(formData);
+
+            if (props.socket) {
+                props.socket.emit(FileUploadEvent.NEW_FILE);
+            }
         }
     };
 

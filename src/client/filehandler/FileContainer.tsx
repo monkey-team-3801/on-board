@@ -1,25 +1,25 @@
 import React from "react";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
-import { useDynamicFetch, useSocket } from "../hooks";
+import { useDynamicFetch } from "../hooks";
 import { FileStorageType } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { FileUploadEvent } from "../../events";
 
 type Props = {
     sessionID: string;
+    socket: SocketIOClient.Socket;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const [fileData, getFiles] = useDynamicFetch<
+    const [fileData, getFileData] = useDynamicFetch<
         { [key: string]: FileStorageType },
         { sid: string }
     >("/filehandler/getFiles", { sid: props.sessionID }, true);
 
-    // Updates the list of files displayed.
-    useSocket(FileUploadEvent.NEW_FILE, undefined, undefined, () => {
-        getFiles({ sid: props.sessionID });
-    });
+    const [files, setFiles] = React.useState<{
+        [key: string]: FileStorageType;
+    }>({});
 
     // Converts bytes to be displayable.
     function sizeDisplay(size: number): string {
@@ -34,16 +34,30 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     }
 
-    if (!requestIsLoaded(fileData)) {
-        return <div>loading files...</div>;
-    }
+    const updateFileList = React.useCallback(() => {
+        getFileData({ sid: props.sessionID });
+    }, [getFileData, props.sessionID]);
+
+    React.useEffect(() => {
+        props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
+        return () => {
+            props.socket.off(FileUploadEvent.NEW_FILE, updateFileList);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    React.useEffect(() => {
+        if (requestIsLoaded(fileData)) {
+            setFiles(fileData.data);
+        }
+    }, [fileData]);
 
     return (
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
                 {fileData.data &&
-                    Object.keys(fileData.data).map((files, i) => (
+                    Object.keys(fileData.data).map((file, i) => (
                         <div className="file-bar" key={i}>
                             <div>
                                 <a
@@ -56,8 +70,8 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                     </button>
                                 </a>
                                 <div className="file-name">
-                                    {fileData.data[files].filename}{" "}
-                                    {sizeDisplay(fileData.data[files].size)}
+                                    {files[file].filename}{" "}
+                                    {sizeDisplay(files[file].size)}
                                 </div>
                             </div>
                         </div>
