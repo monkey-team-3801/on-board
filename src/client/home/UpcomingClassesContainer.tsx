@@ -1,16 +1,9 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import "./Classes.less";
-import {
-    SessionInfo,
-    SessionResponseType,
-    SessionRequestType,
-    RoomType,
-    ClassroomSessionData,
-    UpcomingClassroomSessionData,
-} from "../../types";
+import { Container, Row } from "react-bootstrap";
+import { UpcomingClassroomSessionData } from "../../types";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
+import "./Classes.less";
 import { UpcomingClass } from "./UpcomingClass";
 
 type Props = {

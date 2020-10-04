@@ -1,17 +1,16 @@
 import React from "react";
-import { Form, Button, Container, Row, Alert } from "react-bootstrap";
+import { Alert, Button, Container, Form } from "react-bootstrap";
 import Select from "react-select";
-
-import { useDynamicFetch, useFetch } from "../hooks";
+import { AnnouncementEvent } from "../../events";
 import {
     CourseListResponseType,
-    UserEnrolledCoursesResponseType,
     EnrolCourseRequestType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
-import { requestIsLoaded, requestIsLoading } from "../utils";
-import { CourseOptionType } from "../types";
-import { AnnouncementEvent } from "../../events";
 import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch, useFetch } from "../hooks";
+import { CourseOptionType } from "../types";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;

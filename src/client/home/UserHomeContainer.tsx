@@ -2,22 +2,16 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
-import {
-    RoomType,
-    SessionDeleteRequestType,
-    SessionRequestType,
-    SessionResponseType,
-} from "../../types";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
-import { useDynamicFetch, useFetch, useSocket } from "../hooks";
+import { useSocket } from "../hooks";
 import { CreateRoomForm } from "../rooms/CreateRoomForm";
 import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
-import "./Homepage.less";
 import { Calendar } from "../timetable";
-import { RequestState, TopLayerContainerProps } from "../types";
+import { TopLayerContainerProps } from "../types";
+import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
@@ -25,7 +19,7 @@ type Props = RouteComponentProps & TopLayerContainerProps & {};
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { history, userData } = props;
+    const { userData } = props;
     const { courses } = userData;
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);

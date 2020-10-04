@@ -1,19 +1,18 @@
+import { format } from "date-fns";
 import React from "react";
-import { Form, Button, Container, Row, Alert } from "react-bootstrap";
+import { Alert, Container, Form } from "react-bootstrap";
+import { TwitterPicker } from "react-color";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-
-import { useDynamicFetch, useFetch } from "../hooks";
+import { ExecutingEvent } from "../../events";
 import {
     CourseListResponseType,
     CreateClassroomJobRequestType,
 } from "../../types";
-import { requestIsLoaded, requestIsLoading, requestHasError } from "../utils";
-import { ExecutingEvent } from "../../events";
+import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
-import { SimpleDatepicker, ButtonWithLoadingProp } from "../components";
-import { TwitterPicker } from "react-color";
-import { format } from "date-fns";
+import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 
 const isOptionType = (option: any): option is CourseOptionType => {
     return option?.value && option?.label;

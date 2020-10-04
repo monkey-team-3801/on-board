@@ -1,15 +1,14 @@
 import React from "react";
+import { Button, Container, Form } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { Form, Button, Container } from "react-bootstrap";
-
-import { useDynamicFetch } from "../hooks";
 import {
-    UserType,
     CreateUserRequestType,
     LoginSuccessResponseType,
+    UserType,
 } from "../../types";
+import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
 import { requestHasError } from "../utils";
-import { Loader, ButtonWithLoadingProp } from "../components";
 
 type Props = RouteComponentProps & {
     onFetchSuccess: (response: LoginSuccessResponseType) => void;

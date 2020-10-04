@@ -1,14 +1,13 @@
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
-import { NextFunction, RequestHandler, Request, Response } from "express";
+import { ExecutingEvent } from "../events";
 import {
+    AnnouncementJob,
     AnyObjectMap,
     BaseJob,
-    AnnouncementJob,
     ClassOpenJob,
-    RoomType,
     ClassroomData,
 } from "../types";
-import { ExecutingEvent } from "../events";
 import { Session } from "./database";
 import { ClassroomSession, SessionUsers } from "./database/schema";
 import { VideoSession } from "./database/schema/VideoSession";

@@ -1,17 +1,14 @@
+import format from "date-fns/format";
 import React from "react";
 import {
-    Container,
-    Row,
-    Col,
     Button,
+    Col,
+    Container,
     OverlayTrigger,
+    Row,
     Tooltip,
 } from "react-bootstrap";
-import {
-    ClassroomSessionData,
-    UpcomingClassroomSessionData,
-} from "../../types";
-import format from "date-fns/format";
+import { UpcomingClassroomSessionData } from "../../types";
 
 type Props = UpcomingClassroomSessionData;
 

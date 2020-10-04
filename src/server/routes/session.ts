@@ -1,5 +1,7 @@
 import express from "express";
+import { ExecutingEvent } from "../../events";
 import {
+    ClassOpenJob,
     ClassroomSessionData,
     GetCanvasRequestType,
     GetCanvasResponseType,
@@ -8,32 +10,22 @@ import {
     SessionData,
     SessionDeleteRequestType,
     SessionInfo,
-    SessionRequestType,
-    SessionResponseType,
+    UpcomingClassroomSessionData,
     UserData,
     UserDataResponseType,
-    ClassOpenJob,
-    UpcomingClassroomSessionData,
 } from "../../types";
 import {
     BreakoutSession,
     ClassroomSession,
+    Job,
     Session,
     SessionCanvas,
     SessionUsers,
     User,
-    Job,
 } from "../database";
-import { Response } from "../database/schema/Response";
-import {
-    MultipleChoiceResponseForm,
-    ShortAnswerResponseForm,
-} from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
 import { asyncHandler, createNewSession } from "../utils";
-import { ExecutingEvent } from "../../events";
 import { getUserDataFromJWT } from "./utils";
-import { nextTick } from "process";
 
 export const router = express.Router();
 

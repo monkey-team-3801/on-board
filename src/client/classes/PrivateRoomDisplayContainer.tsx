@@ -1,14 +1,9 @@
 import React from "react";
-import { Container, Row, Button, Col } from "react-bootstrap";
-
-import {
-    SessionInfo,
-    ClassroomSessionData,
-    SessionDeleteRequestType,
-} from "../../types";
-import { useFetch, useDynamicFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { SessionDeleteRequestType, SessionInfo } from "../../types";
+import { useDynamicFetch, useFetch } from "../hooks";
+import { requestIsLoaded } from "../utils";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;

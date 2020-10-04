@@ -6,6 +6,7 @@ import { ClassEvent } from "../events";
 import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
+import { Loader } from "./components";
 import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
@@ -14,9 +15,8 @@ import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
-import { ClassOpenEventData, BaseResponseType } from "./types";
+import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
-import { Loader } from "./components";
 
 type Props = RouteComponentProps;
 
