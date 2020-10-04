@@ -11,7 +11,7 @@ type Props = {
 
 export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     return (
-        <Row>
+        <Row className="mt-2">
             {props.users.map((user) => {
                 return (
                     <Col key={user.id} xs={4}>

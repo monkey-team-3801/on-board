@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
+import { FileStorageType, MessageData } from "../../../types";
 import { MessageData, RoomType } from "../../../types";
 
 interface ISession extends mongoose.Document {
     name: string;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;
-    roomType: RoomType;
     courseCode?: string;
     files?: Array<string>;
 }
 interface IClassroomSession extends ISession {
-    roomType: RoomType.CLASS;
     courseCode: string;
     startTime: string;
     endTime: string;
     raisedHandUsers: Array<string>;
+    roomType: string;
+    colourCode: string;
 }
 
 interface IBreakoutSession extends ISession {
@@ -31,13 +32,14 @@ const SessionSchema = new mongoose.Schema<ISession>({
 const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
-    roomType: { type: Number },
+    roomType: { type: String },
     description: { type: String },
     courseCode: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     raisedHandUsers: { type: Array, default: [] },
     files: { type: Array, default: [] },
+    colourCode: { type: String },
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({

@@ -1,9 +1,13 @@
 import React from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { FileUploadType, SessionData, UserType } from "../../types";
+import {
+    FileUploadType,
+    RoomType,
+    SessionData,
+    UserDataResponseType,
+} from "../../types";
 import { DrawingCanvas } from "../canvas";
-import { ChatContainer } from "../chat";
 import { FileContainer } from "../filehandler/FileContainer";
 import { UploadContainer } from "../filehandler/UploadContainer";
 import { useDynamicFetch } from "../hooks";
@@ -11,6 +15,7 @@ import { ResponseTest } from "../responses/ResponseTest";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import { SessionContainer } from "./containers";
+import { SessionContainer, SidePanelContainer } from "./containers";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {
@@ -41,7 +46,11 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             roomId={roomId}
             userId={props.userData.id}
         >
-            {(sessionData: SessionData, socket: SocketIOClient.Socket) => {
+            {(
+                sessionData: SessionData,
+                users: Array<Omit<UserDataResponseType, "courses">> | undefined,
+                socket: SocketIOClient.Socket
+            ) => {
                 return (
                     <>
                         {props.roomType === "breakout" && (
@@ -57,75 +66,53 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 </Button>
                             </Row>
                         )}
-                        <Row>
-                            <Col>
-                                <h1>Private Room</h1>
-                            </Col>
-                            <Col>
-                                <ResponseTest
-                                    sid={roomId}
-                                    userid={props.userData.id}
-                                    userType={props.userData.userType}
-                                    sock={socket}
-                                ></ResponseTest>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <DrawingCanvas
-                                sessionId={sessionData.id}
-                                socket={socket}
-                            />
-                        </Row>
-                        <Row>
-                            <Col>
-                                <p>Room ID: {roomId}</p>
-                            </Col>
-                            <Col>
-                                <Button
-                                    size="sm"
-                                    variant="light"
-                                    onClick={() => {
-                                        props.history.push("/home");
-                                    }}
-                                >
-                                    Back
-                                </Button>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <ChatContainer
-                                    roomId={roomId}
-                                    username={props.userData.username}
-                                    initialChatLog={sessionData.messages}
-                                />
-                            </Col>
-                            <Col>
-                                <Row>
-                                    <FileContainer
-                                        sessionID={roomId}
-                                        socket={socket}
-                                        userID={props.userData.id}
-                                        files={files}
-                                        updateFiles={getFileData}
-                                    ></FileContainer>
-                                </Row>
-                                {props.userData.userType !==
-                                    UserType.STUDENT && (
-                                    <Row className="d-flex justify-content-center">
-                                        <UploadContainer
-                                            uploadType={
-                                                FileUploadType.DOCUMENTS
-                                            }
-                                            sessionID={roomId}
-                                            socket={socket}
-                                            userID={props.userData.id}
-                                            updateFiles={getFileData}
-                                        ></UploadContainer>
-                                    </Row>
-                                )}
-                            </Col>
-                        </Row>
+                        <Container fluid className="private-room-container">
+                            <Row>
+                                <Col md={9}>
+                                    <header className="d-flex">
+                                        <Container fluid>
+                                            <h1>{`${sessionData.name}`}</h1>
+                                            <p>{sessionData.description}</p>
+                                        </Container>
+                                    </header>
+                                    <Container fluid>
+                                        <Row>
+                                            <DrawingCanvas
+                                                sessionId={sessionData.id}
+                                                socket={socket}
+                                            />
+                                        </Row>
+                                        <Container>
+                                            <Row>
+                                                <Row>
+                                                    <FileContainer
+                                                        sessionID={roomId}
+                                                    ></FileContainer>
+                                                </Row>
+                                                <Row>
+                                                    <UploadContainer
+                                                        uploadType={
+                                                            FileUploadType.DOCUMENTS
+                                                        }
+                                                        sessionID={roomId}
+                                                    ></UploadContainer>
+                                                </Row>
+                                            </Row>
+                                        </Container>
+                                    </Container>
+                                </Col>
+                                <Col md={3}>
+                                    <SidePanelContainer
+                                        sessionId={roomId}
+                                        username={props.userData.username}
+                                        initialChatLog={sessionData.messages}
+                                        users={users}
+                                        raisedHandUsers={[]}
+                                        roomType={RoomType.PRIVATE}
+                                    />
+                                </Col>
+                            </Row>
+                        </Container>
                     </>
                 );
             }}

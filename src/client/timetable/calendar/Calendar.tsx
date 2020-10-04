@@ -16,7 +16,7 @@ import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 
 type Props = {
     sessions: Array<CourseActivityResponseType>;
-    setShowLoader: React.Dispatch<React.SetStateAction<boolean>>;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type State = {
@@ -24,7 +24,10 @@ export type State = {
     chosenYear: number;
 };
 
-export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
+export const Calendar: React.FunctionComponent<Props> = ({
+    sessions,
+    setLoading,
+}) => {
     const [{ chosenMonth, chosenYear }, setTimeFrame] = React.useState<State>({
         chosenMonth: new Date().getMonth(),
         chosenYear: new Date().getFullYear(),
@@ -47,6 +50,9 @@ export const Calendar: React.FunctionComponent<Props> = ({ sessions }) => {
         start: lastDayOfMonth,
         end: lastDayShown,
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
+    React.useEffect(() => {
+        setLoading(false);
+    }, [setLoading]);
     return (
         <>
             <Row>

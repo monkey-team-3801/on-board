@@ -1,14 +1,16 @@
 import { OrderedMap } from "immutable";
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 import { ResponseFormEvent } from "../../events";
+import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     question: string;
     sessionID: string;
-    closeModal: Function;
+    closeModal: () => void;
     uid: string;
     sock: SocketIOClient.Socket;
 };
@@ -20,7 +22,7 @@ export const MultipleChoiceContainer = (props: Props) => {
         initialMap
     );
 
-    const [, uploadForm] = useDynamicFetch<
+    const [uploadFormResponse, uploadForm] = useDynamicFetch<
         undefined,
         {
             options: { [key: string]: string };
@@ -40,48 +42,63 @@ export const MultipleChoiceContainer = (props: Props) => {
         };
         await uploadForm(data);
         props.sock.emit(ResponseFormEvent.NEW_FORM, props.sessionID);
-        props.closeModal();
+        setTimeout(() => {
+            props.closeModal();
+        }, 1000);
     };
 
     return (
-        <Form
-            onSubmit={(e) => {
-                submitForm(e);
-            }}
-        >
-            <Form.Group>
-                <Button
-                    disabled={options.size > 5}
-                    onClick={() => {
-                        const key = uuidv4();
-                        setOptions(options.set(key, ""));
-                    }}
-                >
-                    Add Option
-                </Button>
-            </Form.Group>
+        <>
+            <Form onSubmit={submitForm} className="mb-3">
+                <Form.Group>
+                    <Button
+                        disabled={
+                            options.size > 5 ||
+                            requestIsLoading(uploadFormResponse)
+                        }
+                        onClick={() => {
+                            const key = uuidv4();
+                            setOptions(options.set(key, ""));
+                        }}
+                        className="btn-secondary mt-2"
+                        size="sm"
+                    >
+                        Add Option
+                    </Button>
+                </Form.Group>
 
-            {Array.from(options.entries()).map(([key, value], i) => {
-                return (
-                    <Form.Group key={key}>
-                        <Input
-                            optionKey={key}
-                            index={i}
-                            value={value}
-                            onChange={(key, value) => {
-                                setOptions(options.set(key, value));
-                            }}
-                            onDelete={(key) => {
-                                setOptions(options.delete(key));
-                            }}
-                        />
-                    </Form.Group>
-                );
-            })}
-            <Button type="submit" disabled={!props.question}>
-                Submit
-            </Button>
-        </Form>
+                {Array.from(options.entries()).map(([key, value], i) => {
+                    return (
+                        <Form.Group key={key}>
+                            <Input
+                                optionKey={key}
+                                index={i}
+                                value={value}
+                                onChange={(key, value) => {
+                                    setOptions(options.set(key, value));
+                                }}
+                                onDelete={(key) => {
+                                    setOptions(options.delete(key));
+                                }}
+                            />
+                        </Form.Group>
+                    );
+                })}
+                <ButtonWithLoadingProp
+                    type="submit"
+                    disabled={props.question === ""}
+                    invertLoader
+                    loading={requestIsLoading(uploadFormResponse)}
+                >
+                    Submit
+                </ButtonWithLoadingProp>
+            </Form>
+            {requestIsLoaded(uploadFormResponse) && (
+                <Alert variant="success">
+                    Successfully created question form
+                </Alert>
+            )}
+        </>
     );
 };
 
@@ -100,8 +117,21 @@ const Input = ({
 }) => {
     return (
         <div style={{ display: "block " }}>
-            <p>Option {index + 1}</p>
-            <input
+            <Form.Label>Option {index + 1}</Form.Label>
+
+            {index >= 1 && (
+                <Button
+                    onClick={() => {
+                        onDelete(optionKey);
+                    }}
+                    size="sm"
+                    variant="danger"
+                    className="ml-4"
+                >
+                    Delete
+                </Button>
+            )}
+            <Form.Control
                 type="text"
                 value={value}
                 onChange={(e) => {
@@ -109,15 +139,6 @@ const Input = ({
                 }}
                 required={true}
             />
-            {index >= 1 && (
-                <Button
-                    onClick={() => {
-                        onDelete(optionKey);
-                    }}
-                >
-                    x
-                </Button>
-            )}
         </div>
     );
 };

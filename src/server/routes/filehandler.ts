@@ -129,7 +129,6 @@ router.get(
         }
         readFile("public/default_user.jpg", (err, data) => {
             if (err) {
-                console.log(err);
                 res.end();
             } else {
                 res.end(data, "binary");

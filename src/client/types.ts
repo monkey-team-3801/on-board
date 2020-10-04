@@ -5,6 +5,7 @@ export enum RequestState {
     LOADED,
     ERROR,
     UNAUTHORISED,
+    UNINITIALISED,
 }
 
 export interface BaseResponseType<T> {

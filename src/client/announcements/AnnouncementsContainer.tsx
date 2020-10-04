@@ -12,13 +12,13 @@ import { AnnouncementEntry } from "./AnnouncementEntry";
 type Props = {
     userId: string;
     refreshKey: number;
-    setShowLoader: React.Dispatch<React.SetStateAction<boolean>>;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, refreshKey } = props;
+    const { userId, refreshKey, setLoading } = props;
 
     const apiData = React.useMemo(() => {
         return {
@@ -35,21 +35,28 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
         refresh();
     }, [refreshKey, refresh]);
 
-    if (!requestIsLoaded(announcementsData)) {
-        return <div>loading</div>;
-    }
+    React.useEffect(() => {
+        if (requestIsLoaded(announcementsData)) {
+            setLoading(false);
+        }
+    }, [announcementsData, setLoading]);
 
     return (
         <>
             <div className="announcement-list">
-                {announcementsData.data.announcements.map((announcement, i) => {
-                    return (
-                        <Row className="announcement" key={i}>
-                            <AnnouncementEntry announcement={announcement} />
-                            <hr />
-                        </Row>
-                    );
-                })}
+                {announcementsData.data &&
+                    announcementsData.data.announcements.map(
+                        (announcement, i) => {
+                            return (
+                                <Row className="announcement" key={i}>
+                                    <AnnouncementEntry
+                                        announcement={announcement}
+                                    />
+                                    <hr />
+                                </Row>
+                            );
+                        }
+                    )}
             </div>
         </>
     );

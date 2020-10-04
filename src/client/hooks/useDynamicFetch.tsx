@@ -115,7 +115,7 @@ export const useDynamicFetch = <
             setResponseType((response: BaseResponseType<T>) => {
                 return {
                     ...response,
-                    state: RequestState.LOADED,
+                    state: RequestState.UNINITIALISED,
                 };
             });
         }

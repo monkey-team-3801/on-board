@@ -27,13 +27,7 @@ const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
 
 const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
     console.log("Running class job", job);
-    const session = await createNewClassroomSession(
-        job.data.roomName,
-        job.data.description,
-        job.data.courseCode,
-        job.data.startTime,
-        job.data.endTime
-    );
+    const session = await createNewClassroomSession(job.data);
     io.in(`${job.data.courseCode}_ANNOUNCEMENT`).emit(ClassEvent.OPEN, {
         id: session._id,
         course: job.data.courseCode,

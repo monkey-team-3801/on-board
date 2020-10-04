@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/FileContainer.less";
+import "./FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";

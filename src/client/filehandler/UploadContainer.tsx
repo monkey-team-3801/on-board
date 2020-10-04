@@ -1,9 +1,9 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import "../styles/UploadContainer.less";
-import { useDynamicFetch } from "../hooks";
 import { FileUploadType } from "../../types";
 import { FileUploadEvent } from "../../events";
+import { useDynamicFetch } from "../hooks";
+import "./UploadContainer.less";
 
 type Props = {
     uploadType: FileUploadType;
@@ -84,12 +84,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     };
 
     // File size is checked automatically by react-dropzone through the maxSize property seen below.
-    const {
-        getRootProps,
-        getInputProps,
-        isDragActive,
-        fileRejections,
-    } = useDropzone({
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         maxSize: mfs,
     });

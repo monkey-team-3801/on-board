@@ -23,11 +23,22 @@ export type SessionData = SessionInfo & {
 
 export type ClassroomSessionData = SessionData & {
     courseCode: string;
+    roomType: string;
     startTime: string;
     endTime: string;
+    colourCode: string;
 };
 
-export type NewMessageRequestType = Omit<MessageData, "sentTime">;
+export type UpcomingClassroomSessionData = Omit<
+    ClassroomSessionData,
+    "messages" | "id"
+> & {
+    id?: string;
+};
+
+export type NewMessageRequestType = Omit<MessageData, "sentTime"> & {
+    roomType: RoomType;
+};
 
 export type CourseActivityUnique = {
     code: string;
@@ -125,9 +136,11 @@ export type UserDataResponseType = {
 export type ClassroomData = {
     roomName: string;
     description: string;
+    roomType: string;
     courseCode: string;
     startTime: string;
     endTime: string;
+    colourCode: string;
 };
 
 export interface BaseJob<T = any> {
