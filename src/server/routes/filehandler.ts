@@ -10,24 +10,19 @@ import { format } from "date-fns";
 export const router = express.Router();
 
 router.get(
-    "/file/:sessionId/:fileId",
-    asyncHandler<{}, { sessionId: string; fileId: string }>(
-        async (req, res) => {
-            // const session = await Session.findById(req.params.sessionId);
-            // const file = session?.files?.get(req.params.fileId);
-            // const contents = file?.file;
+    "/file/:fileId",
+    asyncHandler<{}, { fileId: string }>(async (req, res) => {
+        //const session = await Session.findById(req.params.sessionId);
+        const file = await File.findById(req.params.fileId);
+        const contents = file?.data;
 
-            // if (contents && file) {
-            //     res.set(
-            //         "Content-disposition",
-            //         `attachment; filename=${file.filename}`
-            //     );
-            //     res.set("Content-Type", file.fileExtension);
-            //     res.status(200).end(contents.buffer);
-            // }
-            res.status(500).end();
+        if (contents && file) {
+            res.set("Content-disposition", `attachment; filename=${file.name}`);
+            res.set("Content-Type", file.extension);
+            res.status(200).end(contents);
         }
-    )
+        res.status(500).end();
+    })
 );
 
 // Upload documents

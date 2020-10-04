@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { useDynamicFetch } from "../hooks";
-import { FileStorageType } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { FileUploadEvent } from "../../events";
 
@@ -54,19 +53,19 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
-                {Object.keys(files).map((file, i) => (
+                {Object.values(files).map((file, i) => (
                     <div className="file-bar" key={i}>
                         <div>
                             <div className="file-name">
-                                {files[i][1]}
+                                {file[1]}
                                 {" - "}
-                                {sizeDisplay(parseInt(files[i][2]))}
+                                {sizeDisplay(parseInt(file[2]))}
                                 <br></br>
                                 {"At: "}
-                                {files[i][3]}
+                                {file[3]}
                             </div>
                             <a
-                                href={`/filehandler/file/${props.sessionID}/${files}`}
+                                href={`/filehandler/file/${file[0]}`}
                                 target="_self"
                                 download
                                 style={{ float: "right" }}
