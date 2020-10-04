@@ -90,6 +90,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                     <FileContainer
                                         sessionID={roomId}
                                         socket={socket}
+                                        userID={props.userData.id}
                                     ></FileContainer>
                                 </Row>
                                 <Row>

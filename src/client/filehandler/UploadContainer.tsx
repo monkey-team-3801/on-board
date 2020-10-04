@@ -81,10 +81,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
             formData.append("document", sessionID);
             await uploadFile(formData);
-
-            if (props.socket) {
-                props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
-            }
+            props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
         }
     };
 

@@ -2,7 +2,6 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session } from "../database/schema";
-import { FileStorageType } from "../../types";
 import { readFile } from "fs";
 import { File } from "../database/schema/File";
 import { format } from "date-fns";
@@ -12,7 +11,6 @@ export const router = express.Router();
 router.get(
     "/file/:fileId",
     asyncHandler<{}, { fileId: string }>(async (req, res) => {
-        //const session = await Session.findById(req.params.sessionId);
         const file = await File.findById(req.params.fileId);
         const contents = file?.data;
 
@@ -36,14 +34,14 @@ router.post(
             const metaData = ftp[ftp.length - 1];
 
             if (!Array.isArray(metaData)) {
-                // Get session ID.
+                // Session and User ID.
                 const sid = JSON.parse(metaData.data.toString())["sid"];
                 const uid = JSON.parse(metaData.data.toString())["uid"];
 
                 const sessionQuery = await Session.findById(sid);
 
                 if (sessionQuery) {
-                    // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
+                    // Limits. Always add 1 to the length.
                     if (ftp.length > 1 || ftp.length < 7) {
                         for (let file of ftp) {
                             if (file === metaData) {
@@ -92,17 +90,18 @@ router.post(
                                 file?.name,
                                 file?.size.toString(),
                                 file?.fileTime,
-                            ] as [string, string, string, string];
+                                file?.owner,
+                            ] as [string, string, string, string, string];
                         })
                     )
                 ).filter(
-                    (data): data is [string, string, string, string] =>
+                    (data): data is [string, string, string, string, string] =>
                         data[0] !== undefined &&
                         data[1] !== undefined &&
                         data[2] !== undefined &&
-                        data[3] !== undefined
+                        data[3] !== undefined &&
+                        data[4] !== undefined
                 );
-                console.log(data);
                 res.send(data).status(200).end();
             } else {
                 res.status(500).end();
@@ -174,6 +173,32 @@ router.post(
         }
         res.status(500).end();
     })
+);
+
+router.post(
+    "/deleteFile",
+    asyncHandler<undefined, {}, { sid: string; fileId: string; uid: string }>(
+        async (req, res) => {
+            const fileQuery = await File.findById(req.body.fileId);
+            const sessionQuery = await Session.findById(req.body.sid);
+
+            if (fileQuery && sessionQuery) {
+                if (fileQuery.owner !== req.body.uid) {
+                    res.status(500).end();
+                } else if (!sessionQuery.files?.includes(fileQuery.id)) {
+                    res.status(500).end();
+                } else if (fileQuery.sessionID !== sessionQuery.id) {
+                    res.status(500).end();
+                } else {
+                    await sessionQuery.updateOne({
+                        $pull: { files: fileQuery.id },
+                    });
+                    await fileQuery.deleteOne();
+                    await sessionQuery.save();
+                }
+            }
+        }
+    )
 );
 
 // Currently only accepts jpg and png file types for images. Add more later if needed.

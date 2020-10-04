@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
+import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { FileUploadEvent } from "../../events";
@@ -8,6 +9,7 @@ import { FileUploadEvent } from "../../events";
 type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
+    userID: string;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -16,10 +18,15 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         { sid: string }
     >("/filehandler/getFiles", { sid: props.sessionID }, true);
 
+    const [, deleteFile] = useDynamicFetch<
+        undefined,
+        { sid: string; fileId: string; uid: string }
+    >("/filehandler/deleteFile", undefined, false);
+
     const [files, setFiles] = React.useState<Array<Array<string>>>([]);
 
     // Converts bytes to be displayable.
-    function sizeDisplay(size: number): string {
+    const sizeDisplay = (size: number): string => {
         if (size === 0) {
             return "0 Bytes";
         }
@@ -29,7 +36,16 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         const i = Math.floor(Math.log(size) / Math.log(k));
 
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-    }
+    };
+
+    const handleFileDeletion = async (fileID: string) => {
+        await deleteFile({
+            sid: props.sessionID,
+            fileId: fileID,
+            uid: props.userID,
+        });
+        props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
+    };
 
     const updateFileList = React.useCallback(() => {
         getFileData({ sid: props.sessionID });
@@ -37,8 +53,10 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
 
     React.useEffect(() => {
         props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
+        props.socket.on(FileUploadEvent.FILE_DELETED, updateFileList);
         return () => {
             props.socket.off(FileUploadEvent.NEW_FILE, updateFileList);
+            props.socket.off(FileUploadEvent.FILE_DELETED, updateFileList);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -74,6 +92,17 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                     <FaDownload />
                                 </button>
                             </a>
+                            {props.userID === file[4] && (
+                                <button
+                                    style={{ float: "right" }}
+                                    className="file-del-btn"
+                                    onClick={() => {
+                                        handleFileDeletion(file[0]);
+                                    }}
+                                >
+                                    <RiDeleteBin2Fill />
+                                </button>
+                            )}
                             <hr></hr>
                         </div>
                     </div>
