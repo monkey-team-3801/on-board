@@ -29,19 +29,19 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     );
 
     // Values are in bytes
-    function maxFileSize(): number {
+    const maxFileSize = (): number => {
         if (props.uploadType === FileUploadType.DOCUMENTS) {
             return 10000000;
         } else {
             return 1000000;
         }
-    }
+    };
 
     // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
-    function checkValid(files: Array<File>): boolean {
+    const checkValid = (files: Array<File>): boolean => {
         if (props.uploadType === FileUploadType.PROFILE) {
             return files.length === 1;
         }
@@ -50,10 +50,9 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             return files.length > 0 && files.length < 6;
         }
         return false;
-    }
+    };
 
     const onDrop = async (acceptedFiles: Array<File>) => {
-        // Handle error. Someone will need to implement this.
         if (!checkValid(acceptedFiles) && fileRejections.length > 0) {
             return;
         }
@@ -66,19 +65,19 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
-            // Append session ID at the end of the form data.
-            const obj = {
+            const IdObj = {
                 sid: props.sessionID,
                 uid: props.userID,
             };
 
-            const json = JSON.stringify(obj);
-            const sessionID = new Blob([json], {
+            const json = JSON.stringify(IdObj);
+            const IdData = new Blob([json], {
                 type: "application/json",
             });
 
-            formData.append("document", sessionID);
+            formData.append("document", IdData);
             await uploadFile(formData);
+
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
             props.updateFiles({ sid: props.sessionID });
         }
