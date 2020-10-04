@@ -3,7 +3,6 @@ import "../styles/FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
 import { FileUploadEvent } from "../../events";
 
 type Props = {
@@ -39,7 +38,6 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
             fileId: fileID,
             uid: props.userID,
         });
-        console.log("test");
         props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
         props.updateFiles({ sid: props.sessionID });
     };
