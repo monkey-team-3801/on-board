@@ -4,6 +4,7 @@ import { ResponseFormType } from "../../types";
 import { User } from "../database";
 import { Response } from "../database/schema/Response";
 import {
+    FileForm,
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
@@ -97,13 +98,39 @@ router.post(
 
 router.post(
     "/submitFileForm",
-    asyncHandler<{}, {}, {}>(async (req, res) => {})
+    asyncHandler<
+        undefined,
+        {},
+        { sid: string; uid: string; question: string; desc: string }
+    >(async (req, res) => {
+        try {
+            await FileForm.create({
+                sessionID: req.body.sid,
+                question: req.body.question,
+                owner: req.body.uid,
+                type: ResponseFormType.FILE,
+                answered: [],
+                description: req.body.desc,
+                files: [],
+            });
+            res.status(200).end();
+        } catch (error) {
+            res.status(500);
+            throw new Error(
+                "An unexpected error has occured. Your form was not created."
+            );
+        }
+    })
 );
 
 router.post(
     "/getFormsBySession",
     asyncHandler<
-        { MC: Array<Array<string>>; SA: Array<Array<string>> },
+        {
+            MC: Array<[string, string]>;
+            SA: Array<[string, string]>;
+            FF: Array<[string, string, string]>;
+        },
         {},
         { sid: string }
     >(async (req, res) => {
@@ -114,19 +141,46 @@ router.post(
         const SAFormQuery = await ShortAnswerResponseForm.find({
             sessionID: sid,
         });
+        const FileFormQuery = await FileForm.find({
+            sessionID: sid,
+        });
 
-        const MCForms = MCFormQuery.map((x) => x.id);
-        const SAForms = SAFormQuery.map((x) => x.id);
-        const MCFormQuestions = MCFormQuery.map((x) => x.question);
-        const SAFormQuestions = SAFormQuery.map((x) => x.question);
+        const MCForms = MCFormQuery.map((form) => form.id);
+        const SAForms = SAFormQuery.map((form) => form.id);
+
+        const MCFormQuestions = MCFormQuery.map((form) => form.question);
+        const SAFormQuestions = SAFormQuery.map((form) => form.question);
 
         let MCFormData: Map<string, string> = new Map();
         let SAFormData: Map<string, string> = new Map();
+        const FileFormData = (
+            await Promise.all(
+                FileFormQuery.map(async (form) => {
+                    const question = form.question;
+                    const id = form.id;
+                    const description = form.description;
+                    return [id, question, description] as [
+                        string | undefined,
+                        string | undefined,
+                        string | undefined
+                    ];
+                })
+            )
+        ).filter(
+            (data): data is [string, string, string] =>
+                data[0] !== undefined &&
+                data[1] !== undefined &&
+                data[2] !== undefined
+        );
 
         MCForms.forEach((key, i) => MCFormData.set(key, MCFormQuestions[i]));
         SAForms.forEach((key, i) => SAFormData.set(key, SAFormQuestions[i]));
 
-        res.send({ MC: Array.from(MCFormData), SA: Array.from(SAFormData) })
+        res.send({
+            MC: Array.from(MCFormData),
+            SA: Array.from(SAFormData),
+            FF: FileFormData,
+        })
             .status(200)
             .end();
     })

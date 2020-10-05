@@ -18,7 +18,11 @@ type Props = {
 
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
-        { MC: Array<[string, string]>; SA: Array<[string, string]> },
+        {
+            MC: Array<[string, string]>;
+            SA: Array<[string, string]>;
+            FF: Array<[string, string, string]>;
+        },
         { sid: string }
     >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
 
@@ -34,7 +38,8 @@ export const DisplayContainer = (props: Props) => {
     const [data, setData] = React.useState<{
         MC: Array<[string, string]>;
         SA: Array<[string, string]>;
-    }>({ MC: [], SA: [] });
+        FF: Array<[string, string, string]>;
+    }>({ MC: [], SA: [], FF: [] });
 
     const updateForms = React.useCallback(() => {
         getForms({ sid: props.sessionID });

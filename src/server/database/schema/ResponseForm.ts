@@ -9,6 +9,11 @@ export interface IResponseForm extends mongoose.Document {
     owner: string;
 }
 
+export interface IFileForm extends IResponseForm {
+    description: string;
+    files: Array<string>;
+}
+
 export interface IMultipleChoiceResponseForm extends IResponseForm {
     options: Map<string, string>;
     count: Map<string, number>;
@@ -47,3 +52,15 @@ export const ShortAnswerResponseForm = mongoose.model<IShortAnswerResponseForm>(
     "ShortAnswerForm",
     ShortAnswerFormSchema
 );
+
+const FileFormSchema = new mongoose.Schema<IFileForm>({
+    sessionID: { type: String, required: true },
+    question: { type: String, required: true },
+    type: { type: ResponseFormType, required: true },
+    answered: { type: Array, default: [] },
+    owner: { type: String, required: true },
+    description: { type: String, default: "" },
+    files: { type: Array, default: [] },
+});
+
+export const FileForm = mongoose.model<IFileForm>("FileForm", FileFormSchema);

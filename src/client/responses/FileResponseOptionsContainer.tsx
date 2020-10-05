@@ -1,5 +1,9 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Alert, Button, Form } from "react-bootstrap";
+import { ResponseFormEvent } from "../../events";
+import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     question: string;
@@ -10,10 +14,27 @@ type Props = {
 };
 
 export const FileResponseOptionsContainer = (props: Props) => {
+    const [uploadFormResponse, submitForm] = useDynamicFetch<
+        undefined,
+        { sid: string; uid: string; question: string; desc: string }
+    >("/response-handler/submitFileForm", undefined, false);
+
     const [description, setDescription] = React.useState<string>("");
 
-    const handleSubmit = (event: React.FormEvent<HTMLElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
+
+        await submitForm({
+            sid: props.sessionID,
+            uid: props.uid,
+            question: props.question,
+            desc: description,
+        });
+
+        props.sock.emit(ResponseFormEvent.NEW_FORM, props.sessionID);
+        setTimeout(() => {
+            props.closeModal();
+        }, 1000);
     };
 
     return (
@@ -34,14 +55,18 @@ export const FileResponseOptionsContainer = (props: Props) => {
                         }}
                     />
                 </Form.Group>
-                <Button
-                    variant="primary"
+                <ButtonWithLoadingProp
                     type="submit"
                     disabled={props.question === ""}
+                    invertLoader
+                    loading={requestIsLoading(uploadFormResponse)}
                 >
                     Submit
-                </Button>
+                </ButtonWithLoadingProp>
             </Form>
+            {requestIsLoaded(uploadFormResponse) && (
+                <Alert variant="success">Successfully created file form</Alert>
+            )}
         </div>
     );
 };
