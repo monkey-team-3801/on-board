@@ -7,6 +7,7 @@ import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { MultipleChoiceResultsChart } from "./MultipleChoiceResultsChart";
+import { ShortAnswerResultsTable } from "./ShortAnswerResultsTable";
 
 type Props = {
     formData: {
@@ -132,6 +133,11 @@ export const DisplayResultsContainer = (props: Props) => {
                     data={options.map((option, i) => {
                         return { name: option, value: Number(values?.[i]) };
                     })}
+                />
+            )}
+            {formType === ResponseFormType.SHORT_ANSWER && saValues && (
+                <ShortAnswerResultsTable
+                    data={saValues as Array<[string, string]>}
                 />
             )}
             <Button
