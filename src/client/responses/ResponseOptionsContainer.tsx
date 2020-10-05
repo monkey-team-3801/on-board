@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    Alert,
     Container,
     Form,
     FormControl,
@@ -10,7 +11,7 @@ import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoading } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 import { FileResponseOptionsContainer } from "./FileResponseOptionsContainer";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
@@ -31,7 +32,8 @@ export const ResponseOptionsContainer = (props: Props) => {
         { sessionID: string; question: string; uid: string }
     >("/response-handler/submitSaForm", undefined, false);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event: React.FormEvent<HTMLElement>) => {
+        event.preventDefault();
         await uploadForm({
             sessionID: props.sid,
             question: question,
@@ -45,7 +47,11 @@ export const ResponseOptionsContainer = (props: Props) => {
 
     return (
         <Container>
-            <Form onSubmit={handleSubmit}>
+            <Form
+                onSubmit={(e) => {
+                    handleSubmit(e);
+                }}
+            >
                 <FormGroup>
                     <Form.Row>
                         <Form.Label className="mr-4 mb-0">
@@ -108,6 +114,11 @@ export const ResponseOptionsContainer = (props: Props) => {
                     >
                         Submit
                     </ButtonWithLoadingProp>
+                )}
+                {requestIsLoaded(uploadFormResponse) && (
+                    <Alert variant="success">
+                        Successfully created question form
+                    </Alert>
                 )}
             </Form>
 
