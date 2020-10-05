@@ -10,7 +10,7 @@ type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    updateFiles: Function;
+    updateFiles?: Function;
     roomType: RoomType;
 };
 
@@ -63,28 +63,34 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append(file.name, file, file.name);
         });
 
+        const IdObj = {
+            sid: props.sessionID,
+            uid: props.userID,
+            roomType: props.roomType,
+            uploadType: props.uploadType,
+        };
+        const json = JSON.stringify(IdObj);
+        const IdData = new Blob([json], {
+            type: "application/json",
+        });
+
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
-            const IdObj = {
-                sid: props.sessionID,
-                uid: props.userID,
-                roomType: props.roomType,
-            };
-
-            const json = JSON.stringify(IdObj);
-            const IdData = new Blob([json], {
-                type: "application/json",
-            });
-
             formData.append("document", IdData);
             await uploadFile(formData);
 
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
-            props.updateFiles({
-                sid: props.sessionID,
-                roomType: props.roomType,
-            });
+            if (props.updateFiles) {
+                props.updateFiles({
+                    sid: props.sessionID,
+                    roomType: props.roomType,
+                });
+            }
+        } else if (props.uploadType === FileUploadType.RESPONSE) {
+            formData.append("document", IdData);
+            console.log("test");
+            //await uploadFile(formData);
         }
     };
 

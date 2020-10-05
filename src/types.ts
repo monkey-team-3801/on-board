@@ -185,6 +185,7 @@ export type CreateClassroomJobRequestType = ClassOpenJob;
 export enum FileUploadType {
     PROFILE,
     DOCUMENTS,
+    RESPONSE,
 }
 
 export type FileStorageType = {
