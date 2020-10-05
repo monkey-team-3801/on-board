@@ -3,9 +3,10 @@ import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
 import { User, Session, ClassroomSession } from "../database/schema";
 import { readFile } from "fs";
-import { File } from "../database/schema/File";
+import { File, FileResponse } from "../database/schema/File";
 import { format } from "date-fns";
-import { RoomType } from "../../types";
+import { FileUploadType, RoomType } from "../../types";
+import { FileForm } from "../database/schema/ResponseForm";
 
 export const router = express.Router();
 
@@ -41,13 +42,16 @@ router.post(
                 const roomType = JSON.parse(metaData.data.toString())[
                     "roomType"
                 ];
+                const uploadType = JSON.parse(metaData.data.toString())[
+                    "uploadType"
+                ];
 
                 const sessionQuery =
                     roomType === RoomType.CLASS
                         ? await ClassroomSession.findById(sid)
                         : await Session.findById(sid);
 
-                if (sessionQuery) {
+                if (sessionQuery && uploadType !== FileUploadType.RESPONSE) {
                     // Limits. Always add 1 to the length.
                     if (ftp.length > 1 || ftp.length < 7) {
                         for (let file of ftp) {
@@ -72,6 +76,44 @@ router.post(
                         }
                         await sessionQuery.save();
                         res.status(200).end();
+                    }
+                } else if (
+                    sessionQuery &&
+                    uploadType === FileUploadType.RESPONSE
+                ) {
+                    const formID = JSON.parse(metaData.data.toString())[
+                        "formID"
+                    ];
+
+                    const formQuery = await FileForm.findById(formID);
+                    if (formQuery) {
+                        console.log(formQuery);
+                        if (ftp.length <= 2 && ftp.length > 0) {
+                            for (let file of ftp) {
+                                if (file === metaData) {
+                                    break;
+                                }
+                                if (!Array.isArray(file)) {
+                                    const newFile = await FileResponse.create({
+                                        name: file.name,
+                                        size: file.size,
+                                        data: file.data,
+                                        extension: file.mimetype,
+                                        owner: uid,
+                                        sessionID: sid,
+                                        fileTime: format(
+                                            new Date(),
+                                            "dd/MM hh:mm a"
+                                        ),
+                                        formID: formID,
+                                    });
+                                    formQuery.files.push(newFile.id);
+                                    formQuery.answered.push(uid);
+                                }
+                            }
+                            await formQuery.save();
+                            res.status(200).end();
+                        }
                     }
                 }
             }

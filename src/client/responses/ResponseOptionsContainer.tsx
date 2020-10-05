@@ -6,7 +6,6 @@ import {
     FormControl,
     FormGroup,
     InputGroup,
-    Alert,
 } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";

@@ -12,6 +12,7 @@ type Props = {
     userID: string;
     updateFiles?: Function;
     roomType: RoomType;
+    formID?: string;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -43,7 +44,10 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
     // Check files are of appropriate length.
     const checkValid = (files: Array<File>): boolean => {
-        if (props.uploadType === FileUploadType.PROFILE) {
+        if (
+            props.uploadType === FileUploadType.PROFILE ||
+            props.uploadType === FileUploadType.RESPONSE
+        ) {
             return files.length === 1;
         }
         // Limit amount of files uploaded at once to 5 for now.
@@ -63,12 +67,21 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append(file.name, file, file.name);
         });
 
-        const IdObj = {
-            sid: props.sessionID,
-            uid: props.userID,
-            roomType: props.roomType,
-            uploadType: props.uploadType,
-        };
+        const IdObj =
+            props.uploadType === FileUploadType.RESPONSE
+                ? {
+                      sid: props.sessionID,
+                      uid: props.userID,
+                      roomType: props.roomType,
+                      uploadType: props.uploadType,
+                      formID: props.formID,
+                  }
+                : {
+                      sid: props.sessionID,
+                      uid: props.userID,
+                      roomType: props.roomType,
+                      uploadType: props.uploadType,
+                  };
         const json = JSON.stringify(IdObj);
         const IdData = new Blob([json], {
             type: "application/json",
@@ -89,8 +102,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             }
         } else if (props.uploadType === FileUploadType.RESPONSE) {
             formData.append("document", IdData);
-            console.log("test");
-            //await uploadFile(formData);
+            await uploadFile(formData);
         }
     };
 

@@ -42,11 +42,22 @@ export const FileDisplay = (props: Props) => {
                 <h1>No description was provided</h1>
             )}
             <hr></hr>
+            <p>
+                Note: Only 1 file is accepted, resubmissions are allowed, but
+                you can only upload 1 file.
+            </p>
             <UploadContainer
                 {...props}
                 roomType={RoomType.CLASS}
                 uploadType={FileUploadType.RESPONSE}
+                formID={props.formID}
             ></UploadContainer>
+            {userAnswered.data?.found && (
+                <div style={{ color: "red" }}>
+                    You have already answered, new submissions will overwrite
+                    your old one.
+                </div>
+            )}
         </div>
     );
 };

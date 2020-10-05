@@ -151,7 +151,7 @@ export const DisplayContainer = (props: Props) => {
                     {props.userType === UserType.STUDENT ? (
                         <>
                             {formData.formType ===
-                            ResponseFormType.MULTIPLE_CHOICE ? (
+                                ResponseFormType.MULTIPLE_CHOICE && (
                                 <MultipleChoiceDisplay
                                     formID={formData.formID}
                                     question={formData.question}
@@ -163,7 +163,9 @@ export const DisplayContainer = (props: Props) => {
                                     sid={props.sessionID}
                                     formType={ResponseFormType.MULTIPLE_CHOICE}
                                 />
-                            ) : (
+                            )}
+                            {formData.formType ===
+                                ResponseFormType.SHORT_ANSWER && (
                                 <ShortAnswerDisplay
                                     formID={formData.formID}
                                     question={formData.question}
@@ -174,6 +176,19 @@ export const DisplayContainer = (props: Props) => {
                                     sock={props.sock}
                                     sid={props.sessionID}
                                     formType={ResponseFormType.SHORT_ANSWER}
+                                />
+                            )}
+                            {formData.formType === ResponseFormType.FILE && (
+                                <FileDisplay
+                                    formID={formData.formID}
+                                    question={formData.question}
+                                    back={() => {
+                                        setFormData(undefined);
+                                    }}
+                                    userID={props.uid}
+                                    socket={props.sock}
+                                    sessionID={props.sessionID}
+                                    formType={ResponseFormType.FILE}
                                 />
                             )}
                         </>
