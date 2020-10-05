@@ -1,68 +1,76 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
-import { User, Session } from "../database/schema";
-import { v4 as uuidv4 } from "uuid";
-import { io } from "../server";
-import { FileStorageType } from "../../types";
-import { FileUploadEvent } from "../../events";
+import { User, Session, ClassroomSession } from "../database/schema";
+import { readFile } from "fs";
+import { File } from "../database/schema/File";
+import { format } from "date-fns";
+import { RoomType } from "../../types";
 
 export const router = express.Router();
 
 router.get(
-    "/file/:sessionId/:fileId",
-    asyncHandler<{}, { sessionId: string; fileId: string }>(
-        async (req, res) => {
-            const session = await Session.findById(req.params.sessionId);
-            const file = session?.files?.get(req.params.fileId);
-            const contents = file?.file;
+    "/file/:fileId",
+    asyncHandler<{}, { fileId: string }>(async (req, res) => {
+        const file = await File.findById(req.params.fileId);
+        const contents = file?.data;
 
-            if (contents && file) {
-                res.set(
-                    "Content-disposition",
-                    `attachment; filename=${file.filename}`
-                );
-                res.set("Content-Type", file.fileExtension);
-                res.status(200).end(contents.buffer);
-            }
-            res.status(500).end();
+        if (contents && file) {
+            res.set("Content-disposition", `attachment; filename=${file.name}`);
+            res.set("Content-Type", file.extension);
+            res.status(200).end(contents);
         }
-    )
+        res.status(500).end();
+    })
 );
 
 // Upload documents
 router.post(
     "/uploadFiles",
-    asyncHandler(async (req, res) => {
+    asyncHandler<undefined, {}, FormData>(async (req, res) => {
         if (req.files) {
             // Files to process
             const ftp = Object.keys(req.files).map((x) => req.files![x]);
 
-            const sessionID = ftp[ftp.length - 1];
-            if (!Array.isArray(sessionID)) {
-                // Get session ID.
-                const sid = JSON.parse(sessionID.data.toString())["sid"];
-                const sessionQuery = await Session.findById(sid);
+            const metaData = ftp[ftp.length - 1];
+
+            if (!Array.isArray(metaData)) {
+                // extract meta data
+                const sid = JSON.parse(metaData.data.toString())["sid"];
+                const uid = JSON.parse(metaData.data.toString())["uid"];
+                const roomType = JSON.parse(metaData.data.toString())[
+                    "roomType"
+                ];
+
+                const sessionQuery =
+                    roomType === RoomType.CLASS
+                        ? await ClassroomSession.findById(sid)
+                        : await Session.findById(sid);
 
                 if (sessionQuery) {
-                    // Remember to add 1 to all limits since sessionID is always appended to the end of the formdata.
+                    // Limits. Always add 1 to the length.
                     if (ftp.length > 1 || ftp.length < 7) {
-                        // Maybe a better way to foreach through ftp?
-                        let x: number = 0;
-                        while (x < ftp.length - 1) {
-                            const file = ftp[x];
-                            if (!Array.isArray(file)) {
-                                sessionQuery.files?.set(uuidv4(), {
-                                    filename: file.name,
-                                    fileExtension: file.mimetype,
-                                    size: file.size,
-                                    file: file.data,
-                                });
+                        for (let file of ftp) {
+                            if (file === metaData) {
+                                break;
                             }
-                            x += 1;
+                            if (!Array.isArray(file)) {
+                                const newFile = await File.create({
+                                    name: file.name,
+                                    size: file.size,
+                                    data: file.data,
+                                    extension: file.mimetype,
+                                    owner: uid,
+                                    sessionID: sid,
+                                    fileTime: format(
+                                        new Date(),
+                                        "dd/MM hh:mm a"
+                                    ),
+                                });
+                                sessionQuery.files?.push(newFile.id);
+                            }
                         }
                         await sessionQuery.save();
-                        io.in(sid).emit(FileUploadEvent.NEW_FILE);
                         res.status(200).end();
                     }
                 }
@@ -75,16 +83,42 @@ router.post(
 // Gets the files for a session
 router.post(
     "/getFiles",
-    asyncHandler<{ [key: string]: FileStorageType }, {}, { sid: string }>(
+    asyncHandler<Array<Array<string>>, {}, { sid: string; roomType: RoomType }>(
         async (req, res) => {
-            const session = await Session.findById(req.body.sid);
-            if (session) {
-                const files = session.files;
-                if (files) {
-                    res.json(Object.fromEntries(files)).status(200).end();
-                }
+            const roomType = req.body.roomType;
+
+            const session =
+                roomType === RoomType.CLASS
+                    ? await ClassroomSession.findById(req.body.sid)
+                    : await Session.findById(req.body.sid);
+
+            if (session && session.files) {
+                const data = (
+                    await Promise.all(
+                        session.files.map(async (fileId) => {
+                            const file = await File.findById(fileId);
+                            return [
+                                fileId,
+                                file?.name,
+                                file?.size.toString(),
+                                file?.fileTime,
+                                file?.owner,
+                            ] as [string, string, string, string, string];
+                        })
+                    )
+                ).filter(
+                    (data): data is [string, string, string, string, string] =>
+                        data[0] !== undefined &&
+                        data[1] !== undefined &&
+                        data[2] !== undefined &&
+                        data[3] !== undefined &&
+                        data[4] !== undefined
+                );
+
+                res.send(data).status(200).end();
+            } else {
+                res.status(500).end();
             }
-            res.status(500).end();
         }
     )
 );
@@ -93,14 +127,26 @@ router.post(
 router.get(
     "/getPfp/:userId",
     asyncHandler<undefined, { userId: string }>(async (req, res) => {
-        const user = await User.findById(req.params.userId);
-        if (user) {
-            const pfp = user.pfp;
-            if (pfp) {
-                res.end(pfp, "binary");
+        try {
+            const user = await User.findById(req.params.userId);
+            if (user) {
+                const pfp = user.pfp;
+                res.contentType("image/jpeg");
+                if (pfp.byteLength !== 0) {
+                    res.end(pfp, "binary");
+                    return;
+                }
             }
+        } catch {
+            //
         }
-        res.end();
+        readFile("public/default_user.jpg", (err, data) => {
+            if (err) {
+                res.end();
+            } else {
+                res.end(data, "binary");
+            }
+        });
     })
 );
 
@@ -139,6 +185,33 @@ router.post(
         }
         res.status(500).end();
     })
+);
+
+router.post(
+    "/deleteFile",
+    asyncHandler<undefined, {}, { sid: string; fileId: string; uid: string }>(
+        async (req, res) => {
+            const fileQuery = await File.findById(req.body.fileId);
+            const sessionQuery = await Session.findById(req.body.sid);
+
+            if (fileQuery && sessionQuery) {
+                if (fileQuery.owner !== req.body.uid) {
+                    res.status(500).end();
+                } else if (!sessionQuery.files?.includes(fileQuery.id)) {
+                    res.status(500).end();
+                } else if (fileQuery.sessionID !== sessionQuery.id) {
+                    res.status(500).end();
+                } else {
+                    await sessionQuery.updateOne({
+                        $pull: { files: fileQuery.id },
+                    });
+                    await fileQuery.deleteOne();
+                    await sessionQuery.save();
+                    res.status(200).end();
+                }
+            }
+        }
+    )
 );
 
 // Currently only accepts jpg and png file types for images. Add more later if needed.

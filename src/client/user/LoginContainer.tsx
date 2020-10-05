@@ -1,10 +1,9 @@
 import React from "react";
-import { Form, Button, Col, Row, Container } from "react-bootstrap";
-
-import { useDynamicFetch } from "../hooks";
-import { LoginUserRequestType, LoginSuccessResponseType } from "../../types";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import "../styles/Login.less";
+import { LoginSuccessResponseType, LoginUserRequestType } from "../../types";
+import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
 import { requestIsUnauthorised } from "../utils";
 
 type Props = RouteComponentProps & {
@@ -17,6 +16,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
 ) => {
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     // UserID can be found through userID.data.id on login success.
     const [userData, loginUser] = useDynamicFetch<
@@ -28,7 +28,9 @@ export const LoginContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
+        setLoading(true);
         await loginUser({ username, password });
+        setLoading(false);
     };
 
     return (
@@ -83,13 +85,15 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                             )}
                         </div>
                     </Container>
-                    <Button
+                    <ButtonWithLoadingProp
                         variant="primary"
                         type="submit"
                         className="loginbtn"
+                        loading={loading}
+                        invertLoader
                     >
                         Login
-                    </Button>
+                    </ButtonWithLoadingProp>
                 </div>
                 <div className="toggle-button">
                     <Button

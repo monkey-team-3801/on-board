@@ -7,6 +7,7 @@ export type SessionInfo = {
     name: string;
     description: string;
     courseCode?: string;
+    parentSessionId?: string;
 };
 
 export type MessageData = {
@@ -22,11 +23,22 @@ export type SessionData = SessionInfo & {
 
 export type ClassroomSessionData = SessionData & {
     courseCode: string;
+    roomType: string;
     startTime: string;
     endTime: string;
+    colourCode: string;
 };
 
-export type NewMessageRequestType = Omit<MessageData, "sentTime">;
+export type UpcomingClassroomSessionData = Omit<
+    ClassroomSessionData,
+    "messages" | "id"
+> & {
+    id?: string;
+};
+
+export type NewMessageRequestType = Omit<MessageData, "sentTime"> & {
+    roomType: RoomType;
+};
 
 export type CourseActivityUnique = {
     code: string;
@@ -41,7 +53,7 @@ export type CourseActivityRequestFilterType = Partial<CourseActivityUnique> & {
 };
 
 export type CourseActivityResponseType = CourseActivityUnique & {
-    time: string;
+    time: number;
     startDate: Date;
     duration: number;
     day_of_week: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Monday->Sunday in ISO week
@@ -84,6 +96,7 @@ export enum UserType {
 export enum RoomType {
     CLASS,
     PRIVATE,
+    BREAKOUT,
 }
 
 export type SessionRequestType = {
@@ -124,9 +137,11 @@ export type UserDataResponseType = {
 export type ClassroomData = {
     roomName: string;
     description: string;
+    roomType: string;
     courseCode: string;
     startTime: string;
     endTime: string;
+    colourCode: string;
 };
 
 export interface BaseJob<T = any> {
@@ -201,3 +216,29 @@ export type Stroke = {
     colour: string;
     size: number;
 };
+
+export type VideoSessionResponseType = {
+    sessionId: string;
+};
+
+export type UserPeer = {
+    userId: string;
+    peerId: string;
+};
+
+export type VideoPeersResponseType = {
+    peers: Array<UserPeer>;
+};
+
+export type BreakoutRoomData = {
+    name: string;
+    roomId: string;
+    description: string;
+};
+
+export type UserData = Omit<UserDataResponseType, "courses">;
+
+export enum ResponseFormType {
+    SHORT_ANSWER,
+    MULTIPLE_CHOICE,
+}

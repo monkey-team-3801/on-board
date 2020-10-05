@@ -11,10 +11,31 @@ export type ChatMessageReceiveType = MessageData;
 
 export enum RoomEvent {
     PRIVATE_ROOM_JOIN = "PRIVATE_ROOM_JOIN",
+    SESSION_JOIN = "SESSION_JOIN",
+    SESSION_LEAVE = "SESSION_LEAVE",
+    BREAKOUT_ROOM_ALLOCATE = "BREAKOUT_ROOM_ALLOCATE",
+    USER_HAND_STATUS_CHANGED = "USER_HAND_STATUS_CHANGED",
 }
 
 export type PrivateRoomJoinData = {
     sessionId: string;
+};
+
+export enum VideoEvent {
+    USER_JOIN_ROOM = "USER_JOIN_ROOM",
+    USER_LEAVE_ROOM = "USER_LEAVE_ROOM",
+    UPDATE_USERS = "USER_CHANGED",
+}
+
+export type PrivateVideoRoomJoinData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
+
+export type PrivateVideoRoomLeaveData = {
+    sessionId: string;
+    userId: string;
 };
 
 export enum ExecutingEvent {
@@ -33,10 +54,16 @@ export enum ClassEvent {
 
 export enum FileUploadEvent {
     NEW_FILE = "NEW_FILE",
+    FILE_DELETED = "FILE_DELETED",
 }
 
 export enum CanvasEvent {
     CHANGE = "CANVAS_CHANGE",
     DRAW = "CANVAS_DRAW",
     CLEAR = "CANVAS_CLEAR",
+}
+
+export enum ResponseFormEvent {
+    NEW_FORM = "NEW_FORM",
+    NEW_RESPONSE = "NEW_RESPONSE",
 }

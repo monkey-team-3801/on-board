@@ -188,7 +188,7 @@ router.post(
             return;
         }
         course.activities = [...course.activities, req.body];
-        course.save();
+        await course.save();
         res.status(200).json(req.body);
     })
 );
@@ -215,7 +215,7 @@ router.delete(
                 activity.code === req.body.code &&
                 activity.type === req.body.type
         );
-        course.save();
+        await course.save();
         res.status(200).json(removed);
     })
 );

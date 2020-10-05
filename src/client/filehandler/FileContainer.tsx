@@ -1,28 +1,28 @@
 import React from "react";
-import "../styles/FileContainer.less";
+import "./FileContainer.less";
 import { FaDownload } from "react-icons/fa";
-import { useDynamicFetch, useSocket } from "../hooks";
-import { FileStorageType } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { RiDeleteBin2Fill } from "react-icons/ri";
+import { useDynamicFetch } from "../hooks";
 import { FileUploadEvent } from "../../events";
+import { RoomType } from "../../types";
 
 type Props = {
     sessionID: string;
+    socket: SocketIOClient.Socket;
+    userID: string;
+    files: Array<Array<string>>;
+    updateFiles: Function;
+    roomType: RoomType;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const [fileData, getFiles] = useDynamicFetch<
-        { [key: string]: FileStorageType },
-        { sid: string }
-    >("/filehandler/getFiles", { sid: props.sessionID }, true);
-
-    // Updates the list of files displayed.
-    useSocket(FileUploadEvent.NEW_FILE, undefined, undefined, () => {
-        getFiles({ sid: props.sessionID });
-    });
+    const [, deleteFile] = useDynamicFetch<
+        undefined,
+        { sid: string; fileId: string; uid: string }
+    >("/filehandler/deleteFile", undefined, false);
 
     // Converts bytes to be displayable.
-    function sizeDisplay(size: number): string {
+    const sizeDisplay = (size: number): string => {
         if (size === 0) {
             return "0 Bytes";
         }
@@ -32,36 +32,72 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
         const i = Math.floor(Math.log(size) / Math.log(k));
 
         return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-    }
+    };
 
-    if (!requestIsLoaded(fileData)) {
-        return <div>loading files...</div>;
-    }
+    const handleFileDeletion = async (fileID: string) => {
+        await deleteFile({
+            sid: props.sessionID,
+            fileId: fileID,
+            uid: props.userID,
+        });
+        props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
+        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
+    };
+
+    const updateFileList = React.useCallback(() => {
+        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
+    }, [props]);
+
+    React.useEffect(() => {
+        props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
+        props.socket.on(FileUploadEvent.FILE_DELETED, updateFileList);
+        return () => {
+            props.socket.off(FileUploadEvent.NEW_FILE, updateFileList);
+            props.socket.off(FileUploadEvent.FILE_DELETED, updateFileList);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="file-container">
             <h1 className="file-list-header">Uploaded Files</h1>
             <div>
-                {fileData.data &&
-                    Object.keys(fileData.data).map((files, i) => (
-                        <div className="file-bar" key={i}>
-                            <div>
-                                <a
-                                    href={`/filehandler/file/${props.sessionID}/${files}`}
-                                    target="_self"
-                                    download
-                                >
-                                    <button className="file-dl-btn">
-                                        <FaDownload />
-                                    </button>
-                                </a>
-                                <div className="file-name">
-                                    {fileData.data[files].filename}{" "}
-                                    {sizeDisplay(fileData.data[files].size)}
-                                </div>
+                {Object.values(props.files).map((file, i) => (
+                    <div className="file-bar" key={i}>
+                        <div>
+                            <div className="file-name">
+                                {file[1]}
+                                {" - "}
+                                {sizeDisplay(Number(file[2]))}
+                                <br></br>
+                                {"At: "}
+                                {file[3]}
                             </div>
+                            <a
+                                href={`/filehandler/file/${file[0]}`}
+                                target="_self"
+                                download
+                                style={{ float: "right" }}
+                            >
+                                <button className="file-dl-btn">
+                                    <FaDownload />
+                                </button>
+                            </a>
+                            {props.userID === file[4] && (
+                                <button
+                                    style={{ float: "right" }}
+                                    className="file-del-btn"
+                                    onClick={() => {
+                                        handleFileDeletion(file[0]);
+                                    }}
+                                >
+                                    <RiDeleteBin2Fill />
+                                </button>
+                            )}
+                            <hr></hr>
                         </div>
-                    ))}
+                    </div>
+                ))}
             </div>
         </div>
     );

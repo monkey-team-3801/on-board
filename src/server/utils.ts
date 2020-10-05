@@ -1,15 +1,16 @@
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
-import { NextFunction, RequestHandler, Request, Response } from "express";
+import { ExecutingEvent } from "../events";
 import {
+    AnnouncementJob,
     AnyObjectMap,
     BaseJob,
-    AnnouncementJob,
     ClassOpenJob,
-    RoomType,
+    ClassroomData,
 } from "../types";
-import { ExecutingEvent } from "../events";
 import { Session } from "./database";
-import { ClassroomSession } from "./database/schema";
+import { ClassroomSession, SessionUsers } from "./database/schema";
+import { VideoSession } from "./database/schema/VideoSession";
 
 /**
  * T: Response data type.
@@ -57,28 +58,37 @@ export const createNewSession = async (
     const session = await Session.create({
         name,
         messages: [],
-        roomType: RoomType.PRIVATE,
         description,
         courseCode,
+        files: [],
     });
     return session;
 };
 
-export const createNewClassroomSession = async (
-    name: string,
-    description: string,
-    courseCode: string,
-    startTime: string,
-    endTime: string
-) => {
+export const createNewClassroomSession = async (data: ClassroomData) => {
     const session = await ClassroomSession.create({
-        name,
+        name: data.roomName,
         messages: [],
-        roomType: RoomType.CLASS,
-        description,
-        courseCode,
-        startTime,
-        endTime,
+        roomType: data.roomType,
+        description: data.description,
+        courseCode: data.courseCode,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        raisedHandUsers: [],
+        files: [],
+        colourCode: data.colourCode,
+    });
+    await SessionUsers.create({
+        sessionId: session._id,
+        userReferenceMap: new Map(),
+    });
+    // TODO MOVE VIDEO SESSION USER REFERENCE TO SESSION USERS SCHEMA.
+    await VideoSession.create({
+        sessionId: session._id,
+        userPeerMap: new Map(),
+        userReferenceMap: new Map(),
+        numScreensAllowed: 1,
+        sharingUsers: [],
     });
     return session;
 };

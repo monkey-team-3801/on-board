@@ -1,20 +1,20 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-
-import { useFetch } from "../hooks";
-import { LoginContainer } from "../user/LoginContainer";
-import { RegisterContainer } from "../user/RegisterContainer";
-import { RequestState, LocalStorageKey } from "../types";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 import { LoginSuccessResponseType } from "../../types";
-import "../styles/Login.less";
+import { useFetch } from "../hooks";
 import { ParticlesContainer } from "../particles/ParticlesContainer";
+import { LocalStorageKey, RequestState } from "../types";
+import { LoginContainer } from "../user/LoginContainer";
+import { RegisterContainer } from "../user/RegisterContainer";
+import "./Login.less";
+import { Loader } from "../components";
 
 type Props = RouteComponentProps;
 
 export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
     const { history } = props;
-    const [data] = useFetch("/auth");
+    const [authResponse] = useFetch("/auth");
     const [showRegister, setShowRegister] = React.useState<boolean>(false);
 
     const onFetchSuccess = React.useCallback(
@@ -29,9 +29,15 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
         setShowRegister(value);
     }, []);
 
+    if (authResponse.state === RequestState.LOADING) {
+        return <Loader full />;
+    }
+
     return (
         <div className="login-page-container">
-            {data.state === RequestState.LOADED && <Redirect to="/home" />}
+            {authResponse.state === RequestState.LOADED && (
+                <Redirect to="/home" />
+            )}
             <ParticlesContainer />
             <Container className="login-section">
                 <Container className="login-container">
