@@ -195,16 +195,27 @@ export const DisplayResultsContainer = (props: Props) => {
             )}
             {formType === ResponseFormType.FILE && fileValues && (
                 <>
-                    <div>Description: {desc.data?.desc}</div>
+                    <p>
+                        Description:{" "}
+                        {desc.data?.desc
+                            ? desc.data?.desc
+                            : "No description was provided"}
+                    </p>
                     <hr></hr>
-                    <FileContainer
-                        {...props.fileContainerData}
-                        socket={props.sock}
-                        files={fileData}
-                        updateFiles={throttleFetchFile}
-                        roomType={RoomType.CLASS}
-                        containerType={FileUploadType.RESPONSE}
-                    />
+                    {fileData.length > 0 ? (
+                        <FileContainer
+                            {...props.fileContainerData}
+                            socket={props.sock}
+                            files={fileData}
+                            updateFiles={throttleFetchFile}
+                            roomType={RoomType.CLASS}
+                            containerType={FileUploadType.RESPONSE}
+                        />
+                    ) : (
+                        <>
+                            No responses have been made yet.<br></br>
+                        </>
+                    )}
                 </>
             )}
             <Button
