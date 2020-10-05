@@ -60,6 +60,7 @@ export const createNewSession = async (
         messages: [],
         description,
         courseCode,
+        files: [],
     });
     return session;
 };
@@ -74,6 +75,7 @@ export const createNewClassroomSession = async (data: ClassroomData) => {
         startTime: data.startTime,
         endTime: data.endTime,
         raisedHandUsers: [],
+        files: [],
         colourCode: data.colourCode,
     });
     await SessionUsers.create({

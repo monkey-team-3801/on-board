@@ -1,13 +1,17 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { FileUploadType } from "../../types";
+import { FileUploadType, RoomType } from "../../types";
+import { FileUploadEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import "./UploadContainer.less";
 
-// To differentiate between documents and profile pictures.
 type Props = {
     uploadType: FileUploadType;
-    sessionID?: string;
+    sessionID: string;
+    socket: SocketIOClient.Socket;
+    userID: string;
+    updateFiles: Function;
+    roomType: RoomType;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -26,19 +30,19 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     );
 
     // Values are in bytes
-    function maxFileSize(): number {
+    const maxFileSize = (): number => {
         if (props.uploadType === FileUploadType.DOCUMENTS) {
             return 10000000;
         } else {
             return 1000000;
         }
-    }
+    };
 
     // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
-    function checkValid(files: Array<File>): boolean {
+    const checkValid = (files: Array<File>): boolean => {
         if (props.uploadType === FileUploadType.PROFILE) {
             return files.length === 1;
         }
@@ -47,13 +51,10 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             return files.length > 0 && files.length < 6;
         }
         return false;
-    }
+    };
 
     const onDrop = async (acceptedFiles: Array<File>) => {
-        // Handle error. Someone will need to implement this.
-        if (!checkValid(acceptedFiles)) {
-            // Note: You can access rejected files through the variable "fileRejections" as below.
-            console.log("Some files failed to upload.");
+        if (!checkValid(acceptedFiles) && fileRejections.length > 0) {
             return;
         }
 
@@ -65,37 +66,64 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
-            // Append session ID at the end of the form data.
-            const obj = {
+            const IdObj = {
                 sid: props.sessionID,
+                uid: props.userID,
+                roomType: props.roomType,
             };
 
-            const json = JSON.stringify(obj);
-            const blob = new Blob([json], {
+            const json = JSON.stringify(IdObj);
+            const IdData = new Blob([json], {
                 type: "application/json",
             });
 
-            formData.append("document", blob);
+            formData.append("document", IdData);
             await uploadFile(formData);
+
+            props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
+            props.updateFiles({
+                sid: props.sessionID,
+                roomType: props.roomType,
+            });
         }
     };
 
     // File size is checked automatically by react-dropzone through the maxSize property seen below.
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const {
+        getRootProps,
+        getInputProps,
+        isDragActive,
+        fileRejections,
+    } = useDropzone({
         onDrop,
         maxSize: mfs,
     });
 
     return (
-        <div {...getRootProps()} className="dropContainer">
-            <input {...getInputProps()} />
-            {isDragActive ? (
-                <p className="dropMessage">Drop the files here ...</p>
-            ) : (
-                <p className="dropMessage">
-                    Drag 'n' drop some files here, or click here to select files
-                </p>
-            )}
+        <div>
+            <div style={{ textAlign: "center" }}>
+                {fileRejections.length > 0 && (
+                    <div>
+                        <div>The following files failed to upload:</div>
+                        {fileRejections.map((file, i) => (
+                            <div key={i} style={{ color: "red" }}>
+                                {file.file.name}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <div {...getRootProps()} className="dropContainer">
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                    <p className="dropMessage">Drop the files here ...</p>
+                ) : (
+                    <p className="dropMessage">
+                        Drag 'n' drop some files here, or click here to select
+                        files
+                    </p>
+                )}
+            </div>
         </div>
     );
 };

@@ -7,7 +7,6 @@ import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
 import { Loader } from "./components";
-import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { ClassOpenIndicator } from "./Indicators";
@@ -60,7 +59,7 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
-            <Navbar {...props} username={data?.username} />
+            <Navbar {...props} username={data?.username} userid={data?.id} />
             <ClassOpenIndicator
                 {...props}
                 event={eventData}
@@ -163,13 +162,6 @@ export const AppProtectedRoutes = (props: Props) => {
                                     roomType={"breakout"}
                                 />
                             );
-                        }}
-                    />
-                    <SecuredRoute
-                        path="/upload"
-                        authData={authData}
-                        render={() => {
-                            return <UploadTest userId={userData.id!} />;
                         }}
                     />
 

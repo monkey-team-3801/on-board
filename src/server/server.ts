@@ -10,6 +10,7 @@ import {
     CanvasEvent,
     ChatEvent,
     ChatMessageSendType,
+    FileUploadEvent,
     PrivateVideoRoomJoinData,
     ResponseFormEvent,
     RoomEvent,
@@ -210,6 +211,14 @@ io.on("connect", (socket: SocketIO.Socket) => {
 
     socket.on(ResponseFormEvent.NEW_RESPONSE, (data) => {
         socket.to(data).emit(ResponseFormEvent.NEW_RESPONSE);
+    });
+
+    socket.on(FileUploadEvent.NEW_FILE, (data) => {
+        socket.to(data).emit(FileUploadEvent.NEW_FILE);
+    });
+
+    socket.on(FileUploadEvent.FILE_DELETED, (data) => {
+        socket.to(data).emit(FileUploadEvent.FILE_DELETED);
     });
 });
 

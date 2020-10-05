@@ -23,6 +23,7 @@ import {
     SessionUsers,
     User,
 } from "../database";
+import { File } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
     MultipleChoiceResponseForm,
@@ -263,7 +264,22 @@ router.post(
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
             console.log("Deleting private room:", req.body.id);
+
+            // These are for deleting forms and answers for privaterooms.
+            // Remove or uncomment when we decide if we want responses in private rooms.
+
+            // await MultipleChoiceResponseForm.deleteMany({
+            //     sessionID: req.body.id,
+            // });
+            // const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
+            //     sessionID: req.body.id,
+            // });
+            // for (let form of shortAnswerResponseIDs) {
+            //     await Response.deleteMany({ formID: form.id });
+            // }
+
             try {
+                await File.deleteMany({ sessionID: req.body.id });
                 await Session.findByIdAndDelete(req.body.id);
                 await SessionCanvas.findOneAndDelete({
                     sessionId: req.body.id,
@@ -282,6 +298,17 @@ router.post(
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
             console.log("Deleting classroom:", req.body.id);
+            await File.deleteMany({ sessionID: req.body.id });
+
+            await MultipleChoiceResponseForm.deleteMany({
+                sessionID: req.body.id,
+            });
+            const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
+                sessionID: req.body.id,
+            });
+            for (let form of shortAnswerResponseIDs) {
+                await Response.deleteMany({ formID: form.id });
+            }
             try {
                 await ClassroomSession.findByIdAndDelete(req.body.id);
                 await VideoSession.findOneAndDelete({ sessionId: req.body.id });

@@ -54,6 +54,7 @@ export enum ClassEvent {
 
 export enum FileUploadEvent {
     NEW_FILE = "NEW_FILE",
+    FILE_DELETED = "FILE_DELETED",
 }
 
 export enum CanvasEvent {
