@@ -7,7 +7,6 @@ import { UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
 import { Loader } from "./components";
-import { UploadTest } from "./filehandler/UploadTest";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { ClassOpenIndicator } from "./Indicators";

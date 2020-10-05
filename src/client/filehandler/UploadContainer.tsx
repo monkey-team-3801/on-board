@@ -1,6 +1,6 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { FileUploadType } from "../../types";
+import { FileUploadType, RoomType } from "../../types";
 import { FileUploadEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import "./UploadContainer.less";
@@ -11,6 +11,7 @@ type Props = {
     socket: SocketIOClient.Socket;
     userID: string;
     updateFiles: Function;
+    roomType: RoomType;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -68,6 +69,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             const IdObj = {
                 sid: props.sessionID,
                 uid: props.userID,
+                roomType: props.roomType,
             };
 
             const json = JSON.stringify(IdObj);
@@ -79,12 +81,20 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             await uploadFile(formData);
 
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
-            props.updateFiles({ sid: props.sessionID });
+            props.updateFiles({
+                sid: props.sessionID,
+                roomType: props.roomType,
+            });
         }
     };
 
     // File size is checked automatically by react-dropzone through the maxSize property seen below.
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const {
+        getRootProps,
+        getInputProps,
+        isDragActive,
+        fileRejections,
+    } = useDropzone({
         onDrop,
         maxSize: mfs,
     });

@@ -7,11 +7,13 @@ import { useDebouncedCallback } from "use-debounce";
 import { RoomEvent } from "../../events";
 import {
     ClassroomSessionData,
+    FileUploadType,
     RoomType,
     UserDataResponseType,
     UserType,
 } from "../../types";
 import { Loader } from "../components";
+import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponsesModal } from "../responses";
@@ -161,6 +163,23 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const [fileData, getFileData] = useDynamicFetch<
+        Array<Array<string>>,
+        { sid: string; roomType: RoomType }
+    >(
+        "/filehandler/getFiles",
+        { sid: sessionId, roomType: RoomType.CLASS },
+        true
+    );
+
+    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
+
+    React.useEffect(() => {
+        if (requestIsLoaded(fileData)) {
+            setFiles(fileData.data);
+        }
+    }, [fileData]);
+
     if (!requestIsLoaded(sessionResponse)) {
         return <Loader full />;
     }
@@ -248,6 +267,15 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             ? "View Questions"
                                             : "View Results"}
                                     </Button>
+                                    <FileModal
+                                        uploadType={FileUploadType.DOCUMENTS}
+                                        socket={socket}
+                                        sessionID={sessionId}
+                                        userID={props.userData.id}
+                                        updateFiles={getFileData}
+                                        files={files}
+                                        roomType={RoomType.CLASS}
+                                    ></FileModal>
                                     {props.userData.userType ===
                                         UserType.COORDINATOR && (
                                         <Button

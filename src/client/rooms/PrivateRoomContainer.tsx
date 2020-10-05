@@ -8,13 +8,10 @@ import {
     UserDataResponseType,
 } from "../../types";
 import { DrawingCanvas } from "../canvas";
-import { FileContainer } from "../filehandler/FileContainer";
-import { UploadContainer } from "../filehandler/UploadContainer";
+import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch } from "../hooks";
-import { ResponseTest } from "../responses/ResponseTest";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
-import { SessionContainer } from "./containers";
 import { SessionContainer, SidePanelContainer } from "./containers";
 
 type Props = RouteComponentProps<{ roomId: string }> &
@@ -29,8 +26,12 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
 
     const [fileData, getFileData] = useDynamicFetch<
         Array<Array<string>>,
-        { sid: string }
-    >("/filehandler/getFiles", { sid: roomId }, true);
+        { sid: string; roomType: RoomType }
+    >(
+        "/filehandler/getFiles",
+        { sid: roomId, roomType: RoomType.PRIVATE },
+        true
+    );
 
     const [files, setFiles] = React.useState<Array<Array<string>>>([]);
 
@@ -82,23 +83,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 socket={socket}
                                             />
                                         </Row>
-                                        <Container>
-                                            <Row>
-                                                <Row>
-                                                    <FileContainer
-                                                        sessionID={roomId}
-                                                    ></FileContainer>
-                                                </Row>
-                                                <Row>
-                                                    <UploadContainer
-                                                        uploadType={
-                                                            FileUploadType.DOCUMENTS
-                                                        }
-                                                        sessionID={roomId}
-                                                    ></UploadContainer>
-                                                </Row>
-                                            </Row>
-                                        </Container>
+                                        <Row>
+                                            <FileModal
+                                                uploadType={
+                                                    FileUploadType.DOCUMENTS
+                                                }
+                                                socket={socket}
+                                                sessionID={roomId}
+                                                userID={props.userData.id}
+                                                updateFiles={getFileData}
+                                                files={files}
+                                                roomType={RoomType.PRIVATE}
+                                            ></FileModal>
+                                        </Row>
                                     </Container>
                                 </Col>
                                 <Col md={3}>

@@ -1,10 +1,11 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
-import { User, Session } from "../database/schema";
+import { User, Session, ClassroomSession } from "../database/schema";
 import { readFile } from "fs";
 import { File } from "../database/schema/File";
 import { format } from "date-fns";
+import { RoomType } from "../../types";
 
 export const router = express.Router();
 
@@ -34,11 +35,17 @@ router.post(
             const metaData = ftp[ftp.length - 1];
 
             if (!Array.isArray(metaData)) {
-                // Session and User ID.
+                // extract meta data
                 const sid = JSON.parse(metaData.data.toString())["sid"];
                 const uid = JSON.parse(metaData.data.toString())["uid"];
+                const roomType = JSON.parse(metaData.data.toString())[
+                    "roomType"
+                ];
 
-                const sessionQuery = await Session.findById(sid);
+                const sessionQuery =
+                    roomType === RoomType.CLASS
+                        ? await ClassroomSession.findById(sid)
+                        : await Session.findById(sid);
 
                 if (sessionQuery) {
                     // Limits. Always add 1 to the length.
@@ -76,9 +83,14 @@ router.post(
 // Gets the files for a session
 router.post(
     "/getFiles",
-    asyncHandler<Array<Array<string>>, {}, { sid: string }>(
+    asyncHandler<Array<Array<string>>, {}, { sid: string; roomType: RoomType }>(
         async (req, res) => {
-            const session = await Session.findById(req.body.sid);
+            const roomType = req.body.roomType;
+
+            const session =
+                roomType === RoomType.CLASS
+                    ? await ClassroomSession.findById(req.body.sid)
+                    : await Session.findById(req.body.sid);
 
             if (session && session.files) {
                 const data = (
@@ -102,6 +114,7 @@ router.post(
                         data[3] !== undefined &&
                         data[4] !== undefined
                 );
+
                 res.send(data).status(200).end();
             } else {
                 res.status(500).end();

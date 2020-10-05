@@ -4,6 +4,7 @@ import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadEvent } from "../../events";
+import { RoomType } from "../../types";
 
 type Props = {
     sessionID: string;
@@ -11,6 +12,7 @@ type Props = {
     userID: string;
     files: Array<Array<string>>;
     updateFiles: Function;
+    roomType: RoomType;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -39,11 +41,11 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
             uid: props.userID,
         });
         props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
-        props.updateFiles({ sid: props.sessionID });
+        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
     };
 
     const updateFileList = React.useCallback(() => {
-        props.updateFiles({ sid: props.sessionID });
+        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
     }, [props]);
 
     React.useEffect(() => {
