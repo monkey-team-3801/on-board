@@ -18,6 +18,7 @@ interface IClassroomSession extends ISession {
 }
 
 interface IBreakoutSession extends ISession {
+    id: string;
     parentSessionId: string;
 }
 const SessionSchema = new mongoose.Schema<ISession>({
@@ -42,7 +43,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
-    _id: { type: String, required: true },
+    id: { type: String, required: true },
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
     files: { type: Map, default: [] },

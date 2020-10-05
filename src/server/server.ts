@@ -50,7 +50,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
     // });
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
-        socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+        socket.in(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
 
     socket.on(

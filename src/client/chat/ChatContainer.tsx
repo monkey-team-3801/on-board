@@ -1,19 +1,19 @@
 import React from "react";
-import { Container, Row, Button, Col, Form } from "react-bootstrap";
-
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { ChatEvent, ChatMessageReceiveType } from "../../events";
+import { MessageData, NewMessageRequestType, RoomType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
-import { MessageData, NewMessageRequestType, RoomType } from "../../types";
-import { ChatEvent, ChatMessageReceiveType } from "../../events";
 import { RequestState } from "../types";
-import { ChatLog } from "./ChatLog";
 import "./Chat.less";
+import { ChatLog } from "./ChatLog";
 
 type Props = {
     username: string;
     roomId: string;
     initialChatLog: Array<Omit<MessageData, "sessionId">>;
     roomType: RoomType;
+    socket: SocketIOClient.Socket;
 };
 
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -31,13 +31,16 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             prev: Array<Omit<MessageData, "sessionId">> | undefined,
             data: Omit<MessageData, "sessionId">
         ) => {
+            if (data.sendUser === username) {
+                return prev;
+            }
             if (prev && data) {
                 return prev.concat([data]);
             } else {
                 return [];
             }
         },
-        []
+        [username]
     );
 
     const { data, setData, socket } = useTransformingSocket<
@@ -47,7 +50,9 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         ChatEvent.CHAT_MESSAGE_RECEIVE,
         props.initialChatLog,
         undefined,
-        transformData
+        transformData,
+        () => {},
+        props.socket
     );
 
     const onSubmit = React.useCallback(
@@ -74,7 +79,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
                 roomType,
             });
         },
-        [roomId, username, text, setData, updateChat, socket, roomType]
+        [roomId, username, text, socket, roomType, updateChat, setData]
     );
 
     if (response.state === RequestState.ERROR) {

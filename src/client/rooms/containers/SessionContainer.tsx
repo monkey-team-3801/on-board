@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce/lib";
 import { RoomEvent } from "../../../events";
-import { SessionData, UserDataResponseType } from "../../../types";
+import { SessionData, UserDataResponseType, RoomType } from "../../../types";
 import { Loader } from "../../components";
 import { useFetch } from "../../hooks";
 import { requestIsLoaded } from "../../utils";
@@ -17,7 +17,7 @@ type Props = {
         users: Array<Omit<UserDataResponseType, "courses">> | undefined,
         socket: SocketIOClient.Socket
     ) => React.ReactNode;
-    roomType: "breakout" | "private";
+    roomType: RoomType;
 };
 
 const socket = socketIOClient("/");
@@ -28,7 +28,9 @@ export const SessionContainer: React.FunctionComponent<Props> = (
     const { roomType, children, roomId, userId } = props;
     const [sessionResponse] = useFetch<SessionData, { id: string }>(
         `/session/${
-            roomType === "private" ? "getPrivateSession" : "getBreakoutSession"
+            roomType === RoomType.PRIVATE
+                ? "getPrivateSession"
+                : "getBreakoutSession"
         }`,
         {
             id: roomId,

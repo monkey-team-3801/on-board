@@ -457,9 +457,10 @@ router.post(
                     req.body.rooms.map(async (roomId, i) => {
                         const breakoutSession = await BreakoutSession.findOneAndUpdate(
                             {
-                                _id: roomId,
+                                id: roomId,
                             },
                             {
+                                id: roomId,
                                 name: `${session.name} - Breakout Room ${
                                     i + 1
                                 }`,
@@ -482,6 +483,19 @@ router.post(
                             {
                                 sessionId: breakoutSession._id,
                                 userReferenceMap: new Map(),
+                            },
+                            {
+                                upsert: true,
+                                new: true,
+                            }
+                        );
+                        await SessionCanvas.findOneAndUpdate(
+                            {
+                                sessionId: breakoutSession._id,
+                            },
+                            {
+                                sessionId: breakoutSession._id,
+                                strokes: [],
                             },
                             {
                                 upsert: true,
