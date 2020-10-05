@@ -9,11 +9,11 @@ export const router = express.Router();
 const roomTypeToSession = async (id: string, roomType: RoomType) => {
     switch (roomType) {
         case RoomType.PRIVATE:
-            return await Session.findById(id);
+            return Session.findById(id);
         case RoomType.CLASS:
-            return await ClassroomSession.findById(id);
+            return ClassroomSession.findById(id);
         case RoomType.BREAKOUT:
-            return await BreakoutSession.findById(id);
+            return BreakoutSession.findById(id);
     }
 };
 
@@ -26,14 +26,12 @@ router.post(
                     req.body.sessionId,
                     req.body.roomType
                 );
-                console.log(session, req.body.sessionId, req.body.roomType);
                 session?.messages?.push({
                     sendUser: req.body.sendUser,
                     content: req.body.content,
                     sentTime: new Date().toISOString(),
                 });
                 await session?.save();
-
                 res.status(200);
             } catch (e) {
                 console.log("error", e);
