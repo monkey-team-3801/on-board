@@ -2,6 +2,7 @@ import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
 import { User } from "../database";
+import { FileResponse } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
     FileForm,
@@ -224,11 +225,6 @@ router.post(
         {},
         { userID: string; formID: string; formType: ResponseFormType }
     >(async (req, res) => {
-        // const query =
-        //     req.body.formType === ResponseFormType.MULTIPLE_CHOICE
-        //         ? await MultipleChoiceResponseForm.findById(req.body.formID)
-        //         : await ShortAnswerResponseForm.findById(req.body.formID);
-
         let query:
             | IMultipleChoiceResponseForm
             | IShortAnswerResponseForm
@@ -380,4 +376,60 @@ router.post(
             }
         }
     )
+);
+
+router.post(
+    "/getFileResults",
+    asyncHandler<
+        Array<[string, string, string, string, string]>,
+        {},
+        { formID: string }
+    >(async (req, res) => {
+        const formQuery = await FileForm.findById(req.body.formID);
+        if (formQuery) {
+            const fileIDs = formQuery.files;
+
+            const data = (
+                await Promise.all(
+                    fileIDs.map(async (id) => {
+                        const file = await FileResponse.findById(id);
+                        return [
+                            id,
+                            file?.name,
+                            file?.size.toString(),
+                            file?.fileTime,
+                            file?.owner,
+                        ] as [
+                            string | undefined,
+                            string | undefined,
+                            string | undefined,
+                            string | undefined,
+                            string | undefined
+                        ];
+                    })
+                )
+            ).filter(
+                (data): data is [string, string, string, string, string] =>
+                    data[0] !== undefined &&
+                    data[1] !== undefined &&
+                    data[2] !== undefined &&
+                    data[3] !== undefined &&
+                    data[4] !== undefined
+            );
+            res.send(data).status(200).end();
+        }
+        res.status(500).end();
+    })
+);
+
+router.post(
+    "/getFileFormDesc",
+    asyncHandler<{ desc: string }, {}, { formID: string }>(async (req, res) => {
+        const query = await FileForm.findById(req.body.formID);
+        if (query) {
+            console.log(query.description);
+            res.send({ desc: query.description }).status(200).end();
+        }
+        res.status(500).end();
+    })
 );

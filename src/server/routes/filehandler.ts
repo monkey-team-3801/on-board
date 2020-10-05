@@ -20,6 +20,17 @@ router.get(
             res.set("Content-disposition", `attachment; filename=${file.name}`);
             res.set("Content-Type", file.extension);
             res.status(200).end(contents);
+        } else {
+            const fileResponse = await FileResponse.findById(req.params.fileId);
+            const fileResponseContents = fileResponse?.data;
+            if (fileResponse && fileResponseContents) {
+                res.set(
+                    "Content-disposition",
+                    `attachment; filename=${fileResponse.name}`
+                );
+                res.set("Content-Type", fileResponse.extension);
+                res.status(200).end(fileResponseContents);
+            }
         }
         res.status(500).end();
     })
@@ -125,44 +136,52 @@ router.post(
 // Gets the files for a session
 router.post(
     "/getFiles",
-    asyncHandler<Array<Array<string>>, {}, { sid: string; roomType: RoomType }>(
-        async (req, res) => {
-            const roomType = req.body.roomType;
+    asyncHandler<
+        Array<[string, string, string, string, string]>,
+        {},
+        { sid: string; roomType: RoomType }
+    >(async (req, res) => {
+        const roomType = req.body.roomType;
 
-            const session =
-                roomType === RoomType.CLASS
-                    ? await ClassroomSession.findById(req.body.sid)
-                    : await Session.findById(req.body.sid);
+        const session =
+            roomType === RoomType.CLASS
+                ? await ClassroomSession.findById(req.body.sid)
+                : await Session.findById(req.body.sid);
 
-            if (session && session.files) {
-                const data = (
-                    await Promise.all(
-                        session.files.map(async (fileId) => {
-                            const file = await File.findById(fileId);
-                            return [
-                                fileId,
-                                file?.name,
-                                file?.size.toString(),
-                                file?.fileTime,
-                                file?.owner,
-                            ] as [string, string, string, string, string];
-                        })
-                    )
-                ).filter(
-                    (data): data is [string, string, string, string, string] =>
-                        data[0] !== undefined &&
-                        data[1] !== undefined &&
-                        data[2] !== undefined &&
-                        data[3] !== undefined &&
-                        data[4] !== undefined
-                );
+        if (session && session.files) {
+            const data = (
+                await Promise.all(
+                    session.files.map(async (fileId) => {
+                        const file = await File.findById(fileId);
+                        return [
+                            fileId,
+                            file?.name,
+                            file?.size.toString(),
+                            file?.fileTime,
+                            file?.owner,
+                        ] as [
+                            string | undefined,
+                            string | undefined,
+                            string | undefined,
+                            string | undefined,
+                            string | undefined
+                        ];
+                    })
+                )
+            ).filter(
+                (data): data is [string, string, string, string, string] =>
+                    data[0] !== undefined &&
+                    data[1] !== undefined &&
+                    data[2] !== undefined &&
+                    data[3] !== undefined &&
+                    data[4] !== undefined
+            );
 
-                res.send(data).status(200).end();
-            } else {
-                res.status(500).end();
-            }
+            res.send(data).status(200).end();
+        } else {
+            res.status(500).end();
         }
-    )
+    })
 );
 
 // Get the user profile picture.

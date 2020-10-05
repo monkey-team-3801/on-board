@@ -2,8 +2,9 @@ import { useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
 import { Button, Container } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
-import { ResponseFormType } from "../../types";
+import { FileUploadType, ResponseFormType, RoomType } from "../../types";
 import { Loader } from "../components";
+import { FileContainer } from "../filehandler/FileContainer";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { MultipleChoiceResultsChart } from "./MultipleChoiceResultsChart";
@@ -14,6 +15,10 @@ type Props = {
         formID: string;
         question: string;
         formType: ResponseFormType;
+    };
+    fileContainerData: {
+        sessionID: string;
+        userID: string;
     };
     back: () => void;
     sock: SocketIOClient.Socket;
@@ -39,11 +44,30 @@ export const DisplayResultsContainer = (props: Props) => {
         formType === ResponseFormType.SHORT_ANSWER
     );
 
+    const [FileResultsData, getFileResults] = useDynamicFetch<
+        Array<[string, string, string, string, string]>,
+        { formID: string }
+    >(
+        "/response-handler/getFileResults",
+        { formID },
+        formType === ResponseFormType.FILE
+    );
+
+    const [desc] = useDynamicFetch<{ desc: string }, { formID: string }>(
+        "/response-handler/getFileFormDesc",
+        { formID: props.formData.formID },
+        formType === ResponseFormType.FILE
+    );
+
     const [shortAnswerData, setShortAnswerData] = React.useState<
         Array<Array<string>>
     >([]);
     const [multipleChoiceData, setMultipleChoiceData] = React.useState<
         Array<Array<string>>
+    >([]);
+
+    const [fileData, setFileData] = React.useState<
+        Array<[string, string, string, string, string]>
     >([]);
 
     const throttleFetchMc = useThrottleCallback(
@@ -62,13 +86,23 @@ export const DisplayResultsContainer = (props: Props) => {
         true
     );
 
+    const throttleFetchFile = useThrottleCallback(
+        () => {
+            getFileResults({ formID });
+        },
+        1,
+        true
+    );
+
     const updateResponses = React.useCallback(() => {
         if (formType === ResponseFormType.MULTIPLE_CHOICE) {
             throttleFetchMc();
-        } else {
+        } else if (formType === ResponseFormType.SHORT_ANSWER) {
             throttleFetchSa();
+        } else {
+            throttleFetchFile();
         }
-    }, [formType, throttleFetchMc, throttleFetchSa]);
+    }, [formType, throttleFetchMc, throttleFetchSa, throttleFetchFile]);
 
     React.useEffect(() => {
         props.sock.on(ResponseFormEvent.NEW_RESPONSE, updateResponses);
@@ -89,12 +123,19 @@ export const DisplayResultsContainer = (props: Props) => {
                 setShortAnswerData(saResultsData.data);
             }
         }
+        if (formType === ResponseFormType.FILE) {
+            if (requestIsLoaded(FileResultsData)) {
+                setFileData(FileResultsData.data);
+            }
+        }
     }, [
         mcResultsData,
         saResultsData,
+        FileResultsData,
         formType,
         setMultipleChoiceData,
         setShortAnswerData,
+        setFileData,
     ]);
 
     if (
@@ -108,6 +149,16 @@ export const DisplayResultsContainer = (props: Props) => {
         formType === ResponseFormType.SHORT_ANSWER &&
         !requestIsLoaded(saResultsData)
     ) {
+        return <Loader className="pt-4 pb-4" />;
+    }
+    if (
+        formType === ResponseFormType.FILE &&
+        !requestIsLoaded(FileResultsData)
+    ) {
+        return <Loader className="pt-4 pb-4" />;
+    }
+
+    if (formType === ResponseFormType.FILE && !requestIsLoaded(desc)) {
         return <Loader className="pt-4 pb-4" />;
     }
 
@@ -124,6 +175,8 @@ export const DisplayResultsContainer = (props: Props) => {
         formType === ResponseFormType.SHORT_ANSWER
             ? shortAnswerData
             : undefined;
+    const fileValues =
+        formType === ResponseFormType.FILE ? fileData : undefined;
 
     return (
         <Container>
@@ -139,6 +192,20 @@ export const DisplayResultsContainer = (props: Props) => {
                 <ShortAnswerResultsTable
                     data={saValues as Array<[string, string]>}
                 />
+            )}
+            {formType === ResponseFormType.FILE && fileValues && (
+                <>
+                    <div>Description: {desc.data?.desc}</div>
+                    <hr></hr>
+                    <FileContainer
+                        {...props.fileContainerData}
+                        socket={props.sock}
+                        files={fileData}
+                        updateFiles={throttleFetchFile}
+                        roomType={RoomType.CLASS}
+                        containerType={FileUploadType.RESPONSE}
+                    />
+                </>
             )}
             <Button
                 onClick={() => {

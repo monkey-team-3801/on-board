@@ -4,15 +4,16 @@ import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadEvent } from "../../events";
-import { RoomType } from "../../types";
+import { FileUploadType, RoomType } from "../../types";
 
 type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    files: Array<Array<string>>;
+    files: Array<[string, string, string, string, string]>;
     updateFiles: Function;
     roomType: RoomType;
+    containerType?: FileUploadType;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
@@ -60,7 +61,12 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <div className="file-container">
-            <h1 className="file-list-header">Uploaded Files</h1>
+            <h1 className="file-list-header">
+                {props.containerType &&
+                props.containerType === FileUploadType.RESPONSE
+                    ? null
+                    : "Uploaded Files"}
+            </h1>
             <div>
                 {Object.values(props.files).map((file, i) => (
                     <div className="file-bar" key={i}>
