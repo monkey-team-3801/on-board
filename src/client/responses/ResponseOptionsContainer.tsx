@@ -11,6 +11,7 @@ import { ResponseFormType } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoading } from "../utils";
+import { FileResponseOptionsContainer } from "./FileResponseOptionsContainer";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
@@ -73,11 +74,24 @@ export const ResponseOptionsContainer = (props: Props) => {
                                 setOption(ResponseFormType.SHORT_ANSWER);
                             }}
                         />
+                        <Form.Check
+                            type={"radio"}
+                            label={"Collect Files"}
+                            inline
+                            checked={checkedOption === ResponseFormType.FILE}
+                            onChange={() => {
+                                setOption(ResponseFormType.FILE);
+                            }}
+                        />
                     </Form.Row>
                 </FormGroup>
                 <InputGroup>
                     <FormControl
-                        placeholder="Question"
+                        placeholder={
+                            checkedOption === ResponseFormType.FILE
+                                ? "Title"
+                                : "Question"
+                        }
                         onChange={(e) => {
                             setQuestion(e.target.value);
                         }}
@@ -100,6 +114,15 @@ export const ResponseOptionsContainer = (props: Props) => {
             <div>
                 {checkedOption === ResponseFormType.MULTIPLE_CHOICE && (
                     <MultipleChoiceContainer
+                        question={question}
+                        sessionID={props.sid}
+                        closeModal={props.closeModal}
+                        uid={props.userid}
+                        sock={props.sock}
+                    />
+                )}
+                {checkedOption === ResponseFormType.FILE && (
+                    <FileResponseOptionsContainer
                         question={question}
                         sessionID={props.sid}
                         closeModal={props.closeModal}

@@ -38,23 +38,9 @@ export const FileModal = (props: Props) => {
                     <Modal.Title>File Upload</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FileContainer
-                        socket={props.socket}
-                        sessionID={props.sessionID}
-                        userID={props.userID}
-                        updateFiles={props.updateFiles}
-                        files={props.files}
-                        roomType={props.roomType}
-                    />
+                    <FileContainer {...props} />
                     <hr></hr>
-                    <UploadContainer
-                        uploadType={FileUploadType.DOCUMENTS}
-                        socket={props.socket}
-                        sessionID={props.sessionID}
-                        userID={props.userID}
-                        updateFiles={props.updateFiles}
-                        roomType={props.roomType}
-                    />
+                    <UploadContainer {...props} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button

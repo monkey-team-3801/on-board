@@ -96,6 +96,11 @@ router.post(
 );
 
 router.post(
+    "/submitFileForm",
+    asyncHandler<{}, {}, {}>(async (req, res) => {})
+);
+
+router.post(
     "/getFormsBySession",
     asyncHandler<
         { MC: Array<Array<string>>; SA: Array<Array<string>> },
