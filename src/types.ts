@@ -96,6 +96,7 @@ export enum UserType {
 export enum RoomType {
     CLASS,
     PRIVATE,
+    BREAKOUT,
 }
 
 export type SessionRequestType = {

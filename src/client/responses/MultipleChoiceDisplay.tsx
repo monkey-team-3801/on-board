@@ -2,9 +2,9 @@ import React from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
-import { Loader } from "../components";
+import { Loader, ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     formID: string;
@@ -17,12 +17,13 @@ type Props = {
 };
 
 export const MultipleChoiceDisplay = (props: Props) => {
+    const { formID } = props;
     const [form] = useDynamicFetch<
         { [optionID: string]: string },
         { formID: string }
     >("/response-handler/getMCFormByID", { formID: props.formID }, true);
 
-    const [, submitForm] = useDynamicFetch<
+    const [submitResponse, submitForm] = useDynamicFetch<
         undefined,
         { formID: string; userID: string; option: string }
     >("/response-handler/answerMultipleChoice", undefined, false);
@@ -39,15 +40,24 @@ export const MultipleChoiceDisplay = (props: Props) => {
     const [checked, setChecked] = React.useState<number>(-1);
     const [option, setOption] = React.useState<string>("");
 
+    const [submitting, setSubmitting] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        setSubmitting(false);
+    }, [formID]);
+
     const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
         e.preventDefault();
+        setSubmitting(true);
         await submitForm({
             formID: props.formID,
             userID: props.uid,
             option: option,
         });
         props.sock.emit(ResponseFormEvent.NEW_RESPONSE, props.sid);
-        props.back();
+        setTimeout(() => {
+            props.back();
+        }, 1000);
     };
 
     const handleCheck = (hash: string, index: number) => {
@@ -67,7 +77,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
                 <Alert variant="danger">You have already answered</Alert>
             )}
             <Form
-                className="mt-3"
+                className="mt-3 mb-3"
                 onSubmit={(e) => {
                     handleSubmit(e);
                 }}
@@ -83,17 +93,21 @@ export const MultipleChoiceDisplay = (props: Props) => {
                             onChange={() => {
                                 handleCheck(x, i);
                             }}
-                            disabled={userAnswered.data.found}
+                            disabled={userAnswered.data.found || submitting}
                         ></Form.Check>
                     ))}
                 </Form.Group>
 
-                <Button
+                <ButtonWithLoadingProp
                     type="submit"
-                    disabled={checked < 0 || userAnswered.data.found}
+                    disabled={
+                        checked < 0 || userAnswered.data.found || submitting
+                    }
+                    invertLoader
+                    loading={requestIsLoading(submitResponse)}
                 >
                     Submit
-                </Button>
+                </ButtonWithLoadingProp>
                 <Button
                     variant="secondary"
                     onClick={() => {
@@ -103,6 +117,9 @@ export const MultipleChoiceDisplay = (props: Props) => {
                     Back
                 </Button>
             </Form>
+            {requestIsLoaded(submitResponse) && (
+                <Alert variant="success">Successfully submitted response</Alert>
+            )}
         </div>
     );
 };

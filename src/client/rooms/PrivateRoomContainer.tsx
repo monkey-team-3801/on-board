@@ -16,7 +16,7 @@ import { SessionContainer, SidePanelContainer } from "./containers";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {
-        roomType: "private" | "breakout";
+        roomType: RoomType;
     };
 
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
@@ -54,7 +54,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             ) => {
                 return (
                     <>
-                        {props.roomType === "breakout" && (
+                        {props.roomType === RoomType.BREAKOUT && (
                             <Row>
                                 <Button
                                     onClick={() => {
@@ -93,7 +93,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 userID={props.userData.id}
                                                 updateFiles={getFileData}
                                                 files={files}
-                                                roomType={RoomType.PRIVATE}
+                                                roomType={props.roomType}
                                             ></FileModal>
                                         </Row>
                                     </Container>
@@ -105,7 +105,8 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         initialChatLog={sessionData.messages}
                                         users={users}
                                         raisedHandUsers={[]}
-                                        roomType={RoomType.PRIVATE}
+                                        roomType={props.roomType}
+                                        socket={socket}
                                     />
                                 </Col>
                             </Row>

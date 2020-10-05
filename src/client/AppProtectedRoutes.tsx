@@ -3,7 +3,7 @@ import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
 import { ClassEvent } from "../events";
-import { UserDataResponseType } from "../types";
+import { UserDataResponseType, RoomType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
 import { Loader } from "./components";
@@ -139,7 +139,7 @@ export const AppProtectedRoutes = (props: Props) => {
                                         courses,
                                         userType,
                                     }}
-                                    roomType={"private"}
+                                    roomType={RoomType.PRIVATE}
                                 />
                             );
                         }}
@@ -159,7 +159,7 @@ export const AppProtectedRoutes = (props: Props) => {
                                         courses,
                                         userType,
                                     }}
-                                    roomType={"breakout"}
+                                    roomType={RoomType.BREAKOUT}
                                 />
                             );
                         }}

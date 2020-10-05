@@ -1,5 +1,6 @@
+import format from "date-fns/format";
 import React from "react";
-import { Row, Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { MessageData } from "../../types";
 
 type Props = {
@@ -15,22 +16,26 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
         if (currentUser === sendUser) {
             return (
                 <p className="self">
-                    ({new Date(sentTime).toLocaleString()}) {sendUser}:{" "}
-                    {content}
+                    {`${sendUser}: ${content} (${format(
+                        new Date(sentTime),
+                        "MM/dd hh:mm"
+                    )})`}
                 </p>
             );
         } else {
             return (
                 <p>
-                    ({new Date(sentTime).toLocaleString()}) {sendUser}:{" "}
-                    {content}
+                    {`(${format(
+                        new Date(sentTime),
+                        "MM/dd hh:mm"
+                    )}) ${sendUser}: ${content}`}
                 </p>
             );
         }
     }, [sendUser, currentUser, sentTime, content]);
 
     return (
-        <Row className={`log ${currentUser === sendUser && "self"}`}>
+        <Row className={`log ${currentUser === sendUser ? "self" : ""}`}>
             <Col>{messageType}</Col>
         </Row>
     );

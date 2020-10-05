@@ -13,6 +13,8 @@ type Props = {
     closeModal: () => void;
     uid: string;
     sock: SocketIOClient.Socket;
+    setFormSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+    formSubmitting: boolean;
 };
 
 export const MultipleChoiceContainer = (props: Props) => {
@@ -34,6 +36,7 @@ export const MultipleChoiceContainer = (props: Props) => {
 
     const submitForm = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
+        props.setFormSubmitting(true);
         const data = {
             options: options.toObject(),
             question: props.question,
@@ -54,7 +57,8 @@ export const MultipleChoiceContainer = (props: Props) => {
                     <Button
                         disabled={
                             options.size > 5 ||
-                            requestIsLoading(uploadFormResponse)
+                            requestIsLoading(uploadFormResponse) ||
+                            props.formSubmitting
                         }
                         onClick={() => {
                             const key = uuidv4();
@@ -80,13 +84,14 @@ export const MultipleChoiceContainer = (props: Props) => {
                                 onDelete={(key) => {
                                     setOptions(options.delete(key));
                                 }}
+                                disabled={props.formSubmitting}
                             />
                         </Form.Group>
                     );
                 })}
                 <ButtonWithLoadingProp
                     type="submit"
-                    disabled={props.question === ""}
+                    disabled={props.question === "" || props.formSubmitting}
                     invertLoader
                     loading={requestIsLoading(uploadFormResponse)}
                 >
@@ -108,12 +113,14 @@ const Input = ({
     index,
     onDelete,
     onChange,
+    disabled,
 }: {
     optionKey: string;
     value: string;
     index: number;
     onDelete: (key: string) => void;
     onChange: (key: string, value: string) => void;
+    disabled: boolean;
 }) => {
     return (
         <div style={{ display: "block " }}>
@@ -127,6 +134,7 @@ const Input = ({
                     size="sm"
                     variant="danger"
                     className="ml-4"
+                    disabled={disabled}
                 >
                     Delete
                 </Button>
@@ -137,7 +145,8 @@ const Input = ({
                 onChange={(e) => {
                     onChange(optionKey, e.target.value);
                 }}
-                required={true}
+                required
+                disabled={disabled}
             />
         </div>
     );

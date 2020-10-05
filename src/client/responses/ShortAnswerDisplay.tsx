@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Alert } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
+import { Loader, ButtonWithLoadingProp } from "../components";
 
 type Props = {
     formID: string;
@@ -16,7 +17,13 @@ type Props = {
 };
 
 export const ShortAnswerDisplay = (props: Props) => {
+    const { formID } = props;
     const [userResponse, setUserResponse] = React.useState<string>("");
+    const [submitting, setSubmitting] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        setSubmitting(false);
+    }, [formID]);
 
     const [userAnswered] = useDynamicFetch<
         { found: boolean },
@@ -27,7 +34,7 @@ export const ShortAnswerDisplay = (props: Props) => {
         true
     );
 
-    const [, submitForm] = useDynamicFetch<
+    const [submitResponse, submitForm] = useDynamicFetch<
         undefined,
         {
             userID: string;
@@ -36,56 +43,66 @@ export const ShortAnswerDisplay = (props: Props) => {
         }
     >("/response-handler/answerShortAnswer", undefined, false);
 
-    if (!requestIsLoaded(userAnswered)) {
-        return <div>loading...</div>;
-    }
-
     const submit = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
+        setSubmitting(true);
         await submitForm({
             userID: props.uid,
             userResponse: userResponse,
             formID: props.formID,
         });
         props.sock.emit(ResponseFormEvent.NEW_RESPONSE, props.sid);
-        props.back(0);
+        setTimeout(() => {
+            props.back();
+        }, 1000);
     };
+
+    if (!requestIsLoaded(userAnswered)) {
+        return <Loader />;
+    }
 
     return (
         <div>
-            <Button
-                onClick={() => {
-                    props.back(0);
-                }}
-            >
-                Back
-            </Button>
-            <h1>{props.question}</h1>
+            {userAnswered.data.found && (
+                <Alert variant="danger">You have already answered</Alert>
+            )}
+
             <Form
+                className="mt-3 mb-3"
                 onSubmit={(e) => {
                     submit(e);
                 }}
             >
-                <Form.Label>Enter your response here:</Form.Label>
+                <h1>{props.question}</h1>
+                <Form.Label>Your response</Form.Label>
                 <Form.Control
                     as="textarea"
+                    className="mb-3"
                     onChange={(e) => {
                         setUserResponse(e.target.value);
                     }}
-                    disabled={userAnswered.data.found}
+                    disabled={userAnswered.data.found || submitting}
                 />
-                <br></br>
-                {!userAnswered.data.found ? (
-                    <Button type="submit">submit</Button>
-                ) : (
-                    <div style={{ color: "red" }}>
-                        You have already answered.
-                    </div>
-                )}
-                {!userAnswered.data.found && !userResponse && (
-                    <div style={{ color: "red" }}>Please enter a response</div>
-                )}
+                <ButtonWithLoadingProp
+                    type="submit"
+                    disabled={userAnswered.data.found || submitting}
+                    invertLoader
+                    loading={requestIsLoading(submitResponse)}
+                >
+                    Submit
+                </ButtonWithLoadingProp>
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        props.back();
+                    }}
+                >
+                    Back
+                </Button>
             </Form>
+            {requestIsLoaded(submitResponse) && (
+                <Alert variant="success">Successfully answered</Alert>
+            )}
         </div>
     );
 };

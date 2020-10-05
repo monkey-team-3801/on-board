@@ -9,6 +9,7 @@ import { DisplayResultsContainer } from "./DisplayResultsContainer";
 import { FileDisplay } from "./FileDisplay";
 import { FormListContainer } from "./FormListContainer";
 import { MultipleChoiceDisplay } from "./MultipleChoiceDisplay";
+import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 
 type Props = {
     sessionID: string;
@@ -149,28 +150,32 @@ export const DisplayContainer = (props: Props) => {
                 <>
                     {props.userType === UserType.STUDENT ? (
                         <>
-                            <MultipleChoiceDisplay
-                                formID={formData.formID}
-                                question={formData.question}
-                                back={() => {
-                                    setFormData(undefined);
-                                }}
-                                uid={props.uid}
-                                sock={props.sock}
-                                sid={props.sessionID}
-                                formType={ResponseFormType.MULTIPLE_CHOICE}
-                            />
-                            {/* <FileDisplay
-                                formID={formData.formID}
-                                question={formData.question}
-                                back={() => {
-                                    setFormData(undefined);
-                                }}
-                                userID={props.uid}
-                                socket={props.sock}
-                                sessionID={props.sessionID}
-                                formType={ResponseFormType.FILE}
-                            /> */}
+                            {formData.formType ===
+                            ResponseFormType.MULTIPLE_CHOICE ? (
+                                <MultipleChoiceDisplay
+                                    formID={formData.formID}
+                                    question={formData.question}
+                                    back={() => {
+                                        setFormData(undefined);
+                                    }}
+                                    uid={props.uid}
+                                    sock={props.sock}
+                                    sid={props.sessionID}
+                                    formType={ResponseFormType.MULTIPLE_CHOICE}
+                                />
+                            ) : (
+                                <ShortAnswerDisplay
+                                    formID={formData.formID}
+                                    question={formData.question}
+                                    back={() => {
+                                        setFormData(undefined);
+                                    }}
+                                    uid={props.uid}
+                                    sock={props.sock}
+                                    sid={props.sessionID}
+                                    formType={ResponseFormType.SHORT_ANSWER}
+                                />
+                            )}
                         </>
                     ) : (
                         <>
