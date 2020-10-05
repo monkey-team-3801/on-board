@@ -5,12 +5,13 @@ import {
     FormControl,
     FormGroup,
     InputGroup,
+    Alert,
 } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoading } from "../utils";
+import { requestIsLoading, requestIsLoaded } from "../utils";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
@@ -30,7 +31,15 @@ export const ResponseOptionsContainer = (props: Props) => {
         { sessionID: string; question: string; uid: string }
     >("/response-handler/submitSaForm", undefined, false);
 
-    const handleSubmit = async () => {
+    const [formSubmitting, setFormSubmitting] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        setFormSubmitting(false);
+    }, [checkedOption]);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setFormSubmitting(true);
         await uploadForm({
             sessionID: props.sid,
             question: question,
@@ -44,7 +53,7 @@ export const ResponseOptionsContainer = (props: Props) => {
 
     return (
         <Container>
-            <Form onSubmit={handleSubmit}>
+            <Form className="mb-3" onSubmit={handleSubmit}>
                 <FormGroup>
                     <Form.Row>
                         <Form.Label className="mr-4 mb-0">
@@ -61,6 +70,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                             onChange={() => {
                                 setOption(ResponseFormType.MULTIPLE_CHOICE);
                             }}
+                            disabled={formSubmitting}
                         />
                         <Form.Check
                             type={"radio"}
@@ -72,6 +82,7 @@ export const ResponseOptionsContainer = (props: Props) => {
                             onChange={() => {
                                 setOption(ResponseFormType.SHORT_ANSWER);
                             }}
+                            disabled={formSubmitting}
                         />
                     </Form.Row>
                 </FormGroup>
@@ -82,13 +93,14 @@ export const ResponseOptionsContainer = (props: Props) => {
                             setQuestion(e.target.value);
                         }}
                         required
+                        disabled={formSubmitting}
                     />
                 </InputGroup>
                 {checkedOption === ResponseFormType.SHORT_ANSWER && (
                     <ButtonWithLoadingProp
                         type="submit"
-                        className={"mt-2"}
-                        disabled={question === ""}
+                        className={"mt-3"}
+                        disabled={question === "" || formSubmitting}
                         invertLoader
                         loading={requestIsLoading(uploadFormResponse)}
                     >
@@ -96,7 +108,11 @@ export const ResponseOptionsContainer = (props: Props) => {
                     </ButtonWithLoadingProp>
                 )}
             </Form>
-
+            {requestIsLoaded(uploadFormResponse) && (
+                <Alert variant="success">
+                    Successfully created question form
+                </Alert>
+            )}
             <div>
                 {checkedOption === ResponseFormType.MULTIPLE_CHOICE && (
                     <MultipleChoiceContainer
@@ -105,6 +121,8 @@ export const ResponseOptionsContainer = (props: Props) => {
                         closeModal={props.closeModal}
                         uid={props.userid}
                         sock={props.sock}
+                        setFormSubmitting={setFormSubmitting}
+                        formSubmitting={formSubmitting}
                     />
                 )}
             </div>
