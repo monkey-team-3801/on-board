@@ -6,7 +6,7 @@ import { ResponseFormType } from "../../types";
 import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
-import { ShortAnswerDisplayContainer } from "./ShortAnswerDisplayContainer";
+import { MultipleChoiceResultsChart } from "./MultipleChoiceResultsChart";
 
 type Props = {
     formData: {
@@ -127,20 +127,13 @@ export const DisplayResultsContainer = (props: Props) => {
     return (
         <Container>
             <h1>{props.formData.question}</h1>
-            {formType === ResponseFormType.MULTIPLE_CHOICE &&
-                options?.map((x, i) => (
-                    <div key={i}>
-                        <div>
-                            {x}: {values?.[i]}
-                        </div>
-                    </div>
-                ))}
-            {formType === ResponseFormType.SHORT_ANSWER &&
-                saValues?.map((x, i) => (
-                    <div key={i}>
-                        <ShortAnswerDisplayContainer user={x[0]} text={x[1]} />
-                    </div>
-                ))}
+            {formType === ResponseFormType.MULTIPLE_CHOICE && options && (
+                <MultipleChoiceResultsChart
+                    data={options.map((option, i) => {
+                        return { name: option, value: Number(values?.[i]) };
+                    })}
+                />
+            )}
             <Button
                 onClick={() => {
                     props.back();
