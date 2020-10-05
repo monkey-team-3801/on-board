@@ -5,6 +5,9 @@ import { User } from "../database";
 import { Response } from "../database/schema/Response";
 import {
     FileForm,
+    IFileForm,
+    IMultipleChoiceResponseForm,
+    IShortAnswerResponseForm,
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
@@ -129,7 +132,7 @@ router.post(
         {
             MC: Array<[string, string]>;
             SA: Array<[string, string]>;
-            FF: Array<[string, string, string]>;
+            FF: Array<[string, string]>;
         },
         {},
         { sid: string }
@@ -158,19 +161,15 @@ router.post(
                 FileFormQuery.map(async (form) => {
                     const question = form.question;
                     const id = form.id;
-                    const description = form.description;
-                    return [id, question, description] as [
-                        string | undefined,
+                    return [id, question] as [
                         string | undefined,
                         string | undefined
                     ];
                 })
             )
         ).filter(
-            (data): data is [string, string, string] =>
-                data[0] !== undefined &&
-                data[1] !== undefined &&
-                data[2] !== undefined
+            (data): data is [string, string] =>
+                data[0] !== undefined && data[1] !== undefined
         );
 
         MCForms.forEach((key, i) => MCFormData.set(key, MCFormQuestions[i]));
@@ -203,16 +202,46 @@ router.post(
 );
 
 router.post(
+    "/getFileFormByID",
+    asyncHandler<{ description: string }, {}, { formID: string }>(
+        async (req, res) => {
+            const formQuery = await FileForm.findById(req.body.formID);
+            if (formQuery) {
+                res.send({ description: formQuery?.description })
+                    .status(200)
+                    .end();
+            } else {
+                res.send({ description: "" }).status(200).end();
+            }
+        }
+    )
+);
+
+router.post(
     "/checkAnswered",
     asyncHandler<
         { found: boolean },
         {},
         { userID: string; formID: string; formType: ResponseFormType }
     >(async (req, res) => {
-        const query =
-            req.body.formType === ResponseFormType.MULTIPLE_CHOICE
-                ? await MultipleChoiceResponseForm.findById(req.body.formID)
-                : await ShortAnswerResponseForm.findById(req.body.formID);
+        // const query =
+        //     req.body.formType === ResponseFormType.MULTIPLE_CHOICE
+        //         ? await MultipleChoiceResponseForm.findById(req.body.formID)
+        //         : await ShortAnswerResponseForm.findById(req.body.formID);
+
+        let query:
+            | IMultipleChoiceResponseForm
+            | IShortAnswerResponseForm
+            | IFileForm
+            | null = null;
+
+        if (req.body.formType === ResponseFormType.MULTIPLE_CHOICE) {
+            query = await MultipleChoiceResponseForm.findById(req.body.formID);
+        } else if (req.body.formType === ResponseFormType.SHORT_ANSWER) {
+            query = await ShortAnswerResponseForm.findById(req.body.formID);
+        } else if (req.body.formType === ResponseFormType.FILE) {
+            query = await FileForm.findById(req.body.formID);
+        }
 
         if (query) {
             if (query.answered.includes(req.body.userID)) {

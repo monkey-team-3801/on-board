@@ -6,6 +6,7 @@ import { Loader } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import { DisplayResultsContainer } from "./DisplayResultsContainer";
+import { FileDisplay } from "./FileDisplay";
 import { FormListContainer } from "./FormListContainer";
 import { MultipleChoiceDisplay } from "./MultipleChoiceDisplay";
 
@@ -21,7 +22,7 @@ export const DisplayContainer = (props: Props) => {
         {
             MC: Array<[string, string]>;
             SA: Array<[string, string]>;
-            FF: Array<[string, string, string]>;
+            FF: Array<[string, string]>;
         },
         { sid: string }
     >("/response-handler/getFormsBySession", { sid: props.sessionID }, true);
@@ -38,7 +39,7 @@ export const DisplayContainer = (props: Props) => {
     const [data, setData] = React.useState<{
         MC: Array<[string, string]>;
         SA: Array<[string, string]>;
-        FF: Array<[string, string, string]>;
+        FF: Array<[string, string]>;
     }>({ MC: [], SA: [], FF: [] });
 
     const updateForms = React.useCallback(() => {
@@ -119,6 +120,30 @@ export const DisplayContainer = (props: Props) => {
                             </Row>
                         </>
                     )}
+
+                    <hr />
+                    {data.FF.length > 0 && (
+                        <>
+                            <Row>
+                                <h4>File Collection</h4>
+                            </Row>
+                            <Row>
+                                <Container>
+                                    <FormListContainer
+                                        data={data.FF}
+                                        userType={props.userType}
+                                        setFormDisplay={(formID, question) => {
+                                            setFormData({
+                                                formID,
+                                                question,
+                                                formType: ResponseFormType.FILE,
+                                            });
+                                        }}
+                                    />
+                                </Container>
+                            </Row>
+                        </>
+                    )}
                 </>
             ) : (
                 <>
@@ -135,6 +160,17 @@ export const DisplayContainer = (props: Props) => {
                                 sid={props.sessionID}
                                 formType={ResponseFormType.MULTIPLE_CHOICE}
                             />
+                            {/* <FileDisplay
+                                formID={formData.formID}
+                                question={formData.question}
+                                back={() => {
+                                    setFormData(undefined);
+                                }}
+                                userID={props.uid}
+                                socket={props.sock}
+                                sessionID={props.sessionID}
+                                formType={ResponseFormType.FILE}
+                            /> */}
                         </>
                     ) : (
                         <>
