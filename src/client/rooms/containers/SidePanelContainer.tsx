@@ -12,6 +12,7 @@ type Props = {
     users?: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
     roomType: RoomType;
+    socket: SocketIOClient.Socket;
 };
 
 export const SidePanelContainer: React.FunctionComponent<Props> = (
@@ -52,6 +53,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                             username={props.username}
                             initialChatLog={props.initialChatLog}
                             roomType={props.roomType}
+                            socket={props.socket}
                         />
                     </Container>
                 </div>

@@ -303,6 +303,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     users={sessionUsersResponse.data?.users}
                     raisedHandUsers={raisedHandUsers.toArray()}
                     roomType={RoomType.CLASS}
+                    socket={socket}
                 />
             </Col>
             <BreakoutRoomModal

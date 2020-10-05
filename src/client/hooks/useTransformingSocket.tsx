@@ -41,7 +41,8 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
         socket: SocketIOClient.Socket
     ) => SocketIOClient.Socket,
     transformSocketData?: (prev: T | undefined, data: S) => T | undefined,
-    onEventEmit?: (data: S) => void
+    onEventEmit?: (data: S) => void,
+    customSocket?: SocketIOClient.Socket
 ): {
     data: T | undefined;
     setData: React.Dispatch<React.SetStateAction<T | undefined>>;
@@ -62,13 +63,16 @@ export const useTransformingSocket = <T extends any, S extends any = any>(
 
     React.useEffect(() => {
         if (componentDidMount) {
-            componentDidMount(socket).on(event, onEvent);
+            componentDidMount(customSocket || socket).on(event, onEvent);
         } else {
-            socket.on(event, onEvent);
+            (customSocket || socket).on(event, onEvent);
         }
+        return () => {
+            (customSocket || socket).off(event, onEvent);
+        };
         // Somewhat dangerious to use this rule here.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [event]);
+    }, []);
 
     return { data, setData, socket };
 };
