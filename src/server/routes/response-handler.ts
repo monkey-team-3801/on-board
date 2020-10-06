@@ -207,7 +207,7 @@ router.post(
         async (req, res) => {
             const formQuery = await FileForm.findById(req.body.formID);
             if (formQuery) {
-                res.send({ description: formQuery?.description })
+                res.send({ description: formQuery.description })
                     .status(200)
                     .end();
             } else {

@@ -144,7 +144,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                         Drag 'n' drop some files here, or click here to select
                         files
                         <br></br>
-                        <p>Note: You can upload at most 5 files at a time</p>
+                        Note: You can upload at most 5 files at a time
                     </p>
                 )}
             </div>
