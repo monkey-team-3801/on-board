@@ -1,6 +1,7 @@
 import express from "express";
 import { ExecutingEvent } from "../../events";
 import {
+    BaseJob,
     ClassOpenJob,
     ClassroomSessionData,
     GetCanvasRequestType,
@@ -10,13 +11,13 @@ import {
     SessionData,
     SessionDeleteRequestType,
     SessionInfo,
-    UpcomingClassroomSessionData,
     UserData,
     UserDataResponseType,
 } from "../../types";
 import {
     BreakoutSession,
     ClassroomSession,
+    IJob,
     Job,
     Session,
     SessionCanvas,
@@ -30,7 +31,12 @@ import {
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
-import { asyncHandler, createNewSession } from "../utils";
+import { ScheduleHandler } from "../jobs";
+import {
+    asyncHandler,
+    classFormDataHasError,
+    createNewSession,
+} from "../utils";
 import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
@@ -55,8 +61,8 @@ router.post(
                     const session = await createNewSession(
                         req.body.name,
                         "",
-                        undefined,
-                        user.id
+                        user.id,
+                        undefined // TODO allow course for private session
                     );
                     await SessionCanvas.create({
                         sessionId: session._id,
@@ -146,59 +152,58 @@ router.post(
 
 router.post(
     "/upcomingClassroomSessions",
-    asyncHandler<Array<UpcomingClassroomSessionData>, {}, { limit?: number }>(
-        async (req, res, next) => {
-            if (req.headers.authorization) {
-                const user = await getUserDataFromJWT(
-                    req.headers.authorization
-                );
-                if (user) {
-                    try {
-                        const query: Array<ClassOpenJob> = (await Job.find({
-                            executingEvent: ExecutingEvent.CLASS_OPEN,
-                        })) as Array<ClassOpenJob>;
+    asyncHandler<
+        Array<Omit<ClassroomSessionData, "messages">>,
+        {},
+        { limit?: number }
+    >(async (req, res, next) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            if (user) {
+                try {
+                    const query: Array<ClassOpenJob & IJob> = (await Job.find({
+                        executingEvent: ExecutingEvent.CLASS_OPEN,
+                    })) as Array<ClassOpenJob & IJob>;
 
-                        const jobs = query
-                            .filter((job) => {
-                                return user.courses.includes(
-                                    job.data.courseCode
-                                );
-                            })
-                            .sort((a, b) => {
-                                return (
-                                    new Date(a.data.startTime).getTime() -
-                                    new Date(b.data.startTime).getTime()
-                                );
-                            });
-
-                        if (jobs) {
-                            res.json(
-                                jobs.map((job) => {
-                                    const session = job.data;
-                                    return {
-                                        name: session.name,
-                                        roomType: session.roomType,
-                                        description: session.description,
-                                        courseCode: session.courseCode,
-                                        startTime: session.startTime,
-                                        endTime: session.endTime,
-                                        colourCode: session.colourCode,
-                                        createdby: session.createdBy,
-                                    };
-                                })
+                    const jobs = query
+                        .filter((job) => {
+                            return user.courses.includes(job.data.courseCode);
+                        })
+                        .sort((a, b) => {
+                            return (
+                                new Date(a.data.startTime).getTime() -
+                                new Date(b.data.startTime).getTime()
                             );
-                        }
-                    } catch (e) {
-                        console.log("error", e);
-                        res.status(500);
-                        next(new Error("Unexpected error has occured."));
+                        });
+
+                    if (jobs) {
+                        res.json(
+                            jobs.map((job) => {
+                                const session = job.data;
+                                return {
+                                    id: job._id.toHexString(),
+                                    name: session.name,
+                                    roomType: session.roomType,
+                                    description: session.description,
+                                    courseCode: session.courseCode,
+                                    startTime: session.startTime,
+                                    endTime: session.endTime,
+                                    colourCode: session.colourCode,
+                                    createdBy: job.createdBy,
+                                };
+                            })
+                        );
                     }
+                } catch (e) {
+                    console.log("error", e);
+                    res.status(500);
+                    next(new Error("Unexpected error has occured."));
                 }
             }
-
-            res.end();
         }
-    )
+
+        res.end();
+    })
 );
 
 router.post(
@@ -273,6 +278,73 @@ router.post(
             res.end();
         }
     )
+);
+
+router.post(
+    "/edit/classroomSession",
+    asyncHandler<
+        { message?: string },
+        {},
+        { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
+    >(async (req, res, next) => {
+        try {
+            if (req.body.type === RoomType.CLASS) {
+                const data = req.body.data;
+                const errorMessage = classFormDataHasError(data);
+                if (errorMessage) {
+                    res.status(500)
+                        .json({
+                            message: errorMessage,
+                        })
+                        .end();
+                    return;
+                }
+                if (new Date(data.endTime).getTime() < new Date().getTime()) {
+                    await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
+                        ...req.body.data,
+                    });
+                } else {
+                    const session = await ClassroomSession.findByIdAndDelete(
+                        req.body.data.id
+                    );
+                    if (session) {
+                        const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
+                        schedulerHandler.addNewJob({
+                            jobDate: req.body.data.startTime,
+                            executingEvent: ExecutingEvent.CLASS_OPEN,
+                            createdBy: session.createdBy,
+                            data: {
+                                ...data,
+                            },
+                        });
+                    }
+                }
+            } else if (req.body.type === RoomType.UPCOMING) {
+                const job = await Job.findById(req.body.data.id);
+                if (job) {
+                    const updatedJob: BaseJob = {
+                        jobDate: req.body.data.startTime,
+                        executingEvent: ExecutingEvent.CLASS_OPEN,
+                        createdBy: job.createdBy,
+                        data: {
+                            ...job.data,
+                            ...req.body.data,
+                        },
+                    };
+                    const scheduleHandler = ScheduleHandler.getInstance();
+                    scheduleHandler.removeQueuedJob(job._id);
+                    scheduleHandler.addNewJob(updatedJob);
+                }
+            }
+            res.status(200);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
 );
 
 router.post(

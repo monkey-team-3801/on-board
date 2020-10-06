@@ -6,7 +6,8 @@ import {
     AnyObjectMap,
     BaseJob,
     ClassOpenJob,
-    ClassroomData,
+    ClassroomSessionData,
+    UpcomingClassroomSessionData,
 } from "../types";
 import { Session } from "./database";
 import { ClassroomSession, SessionUsers } from "./database/schema";
@@ -53,8 +54,8 @@ export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
 export const createNewSession = async (
     name: string,
     description: string,
-    courseCode?: string,
-    createdBy?: string
+    createdBy: string,
+    courseCode?: string
 ) => {
     return await Session.create({
         name,
@@ -94,4 +95,18 @@ export const createNewClassroomSession = async (job: ClassOpenJob) => {
         sharingUsers: [],
     });
     return session;
+};
+
+export const classFormDataHasError = (
+    data: ClassroomSessionData | UpcomingClassroomSessionData
+): string | undefined => {
+    if (!data.name) {
+        return "Room name should not be empty";
+    }
+    if (!data.courseCode) {
+        return "Course should not be empty";
+    }
+    if (new Date(data.endTime).getTime() < new Date(data.startTime).getTime()) {
+        return "Class should not end before it starts";
+    }
 };
