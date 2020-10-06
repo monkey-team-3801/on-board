@@ -6,6 +6,7 @@ import CreatableSelect from "react-select/creatable";
 import { ClassroomSessionData } from "../../../types";
 import { ButtonWithLoadingProp, SimpleDatepicker } from "../../components";
 import { CourseOptionType } from "../../types";
+import { baseRoomTypeOptions } from "../../utils";
 
 const isOptionType = (option: any): option is CourseOptionType => {
     return option?.value && option?.label;
@@ -40,25 +41,6 @@ type Props = {
     ) => Promise<void>;
     submitText?: string;
 };
-
-const baseRoomTypeOptions = [
-    {
-        value: "Lecture",
-        label: "Lecture",
-    },
-    {
-        value: "Tutorial",
-        label: "Tutorial",
-    },
-    {
-        value: "Practical",
-        label: "Practical",
-    },
-    {
-        value: "Studio",
-        label: "Studio",
-    },
-];
 
 export const ScheduleRoomForm: React.FunctionComponent<Props> = (
     props: Props
