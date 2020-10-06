@@ -49,11 +49,7 @@ router.post(
         { name: string }
     >(async (req, res, next) => {
         try {
-            if (
-                req.body.name &&
-                req.body.name !== "" &&
-                req.headers.authorization
-            ) {
+            if (req.body.name && req.headers.authorization) {
                 const user = await getUserDataFromJWT(
                     req.headers.authorization
                 );
