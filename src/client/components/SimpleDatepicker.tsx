@@ -6,6 +6,7 @@ import parse from "date-fns/parse";
 type Props = {
     time: Date;
     onChange: (time: Date) => void;
+    disabled?: boolean;
 };
 
 /**
@@ -27,6 +28,7 @@ export const SimpleDatepicker: React.FunctionComponent<Props> = (
                     parse(e.target.value, "yyyy-MM-dd'T'HH:mm", new Date())
                 );
             }}
+            disabled={props.disabled}
         />
     );
 };

@@ -68,7 +68,6 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             data: {
                                 title,
                                 content,
-                                userId: props.userId,
                                 courseCode: option.value,
                             },
                         });
