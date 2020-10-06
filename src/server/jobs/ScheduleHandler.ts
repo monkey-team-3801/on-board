@@ -67,6 +67,7 @@ export class ScheduleHandler<T = any> {
                     jobDate: job.jobDate,
                     executingEvent: job.executingEvent,
                     data: job.data,
+                    createdBy: job.createdBy,
                 });
                 this.queueNewJob(jobReference);
             }

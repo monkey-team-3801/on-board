@@ -7,7 +7,7 @@ interface ISession extends mongoose.Document {
     description: string;
     courseCode?: string;
     files?: Array<string>;
-    createdBy?: string;
+    createdBy: string;
 }
 interface IClassroomSession extends ISession {
     courseCode: string;

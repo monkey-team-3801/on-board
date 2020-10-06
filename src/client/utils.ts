@@ -57,3 +57,22 @@ export const throttle = (callback: any, delay: number) => {
         }
     };
 };
+
+export const baseRoomTypeOptions = [
+    {
+        value: "Lecture",
+        label: "Lecture",
+    },
+    {
+        value: "Tutorial",
+        label: "Tutorial",
+    },
+    {
+        value: "Practical",
+        label: "Practical",
+    },
+    {
+        value: "Studio",
+        label: "Studio",
+    },
+];
