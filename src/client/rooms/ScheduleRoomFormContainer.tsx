@@ -1,54 +1,31 @@
-import { format } from "date-fns";
 import React from "react";
-import { Alert, Container, Form } from "react-bootstrap";
-import { TwitterPicker } from "react-color";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
-import { ExecutingEvent } from "../../events";
+import { Alert, Container } from "react-bootstrap";
 import {
     CourseListResponseType,
-    CreateClassroomJobRequestType,
+    UpcomingClassroomSessionData,
 } from "../../types";
-import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
-import { useDynamicFetch, useFetch } from "../hooks";
-import { CourseOptionType } from "../types";
-import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
-
-const isOptionType = (option: any): option is CourseOptionType => {
-    return option?.value && option?.label;
-};
+import { useFetch } from "../hooks";
+import { BaseResponseType, CourseOptionType } from "../types";
+import {
+    requestHasError,
+    requestIsLoaded,
+    requestIsLoading,
+    baseRoomTypeOptions,
+} from "../utils";
+import { ScheduleRoomForm } from "./components";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    response: BaseResponseType<any>;
+    onSubmit: (data: Omit<UpcomingClassroomSessionData, "id">) => Promise<void>;
+    submitting?: boolean;
 };
-
-const baseRoomTypeOptions = [
-    {
-        value: "Lecture",
-        label: "Lecture",
-    },
-    {
-        value: "Tutorial",
-        label: "Tutorial",
-    },
-    {
-        value: "Practical",
-        label: "Practical",
-    },
-    {
-        value: "Studio",
-        label: "Studio",
-    },
-];
 
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { setLoading } = props;
-    const [createClassroomResponse, createClassroom] = useDynamicFetch<
-        undefined,
-        CreateClassroomJobRequestType
-    >("/job/create", undefined, false);
+
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
 
     const [roomName, setRoomName] = React.useState<string>("");
@@ -70,14 +47,6 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
 
     const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
 
-    const isCourseEmpty = React.useMemo(() => {
-        return selectedCourse?.value === undefined;
-    }, [selectedCourse]);
-
-    const isSubmitting: boolean = React.useMemo(() => {
-        return requestIsLoading(createClassroomResponse);
-    }, [createClassroomResponse]);
-
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
             const options = courseData.data.map((course) => {
@@ -95,133 +64,38 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container>
-            <Form
-                className="mb-3"
-                onSubmit={async (e) => {
-                    e.preventDefault();
-                    if (selectedCourse?.value) {
-                        await createClassroom({
-                            jobDate: startingTime.toISOString(),
-                            executingEvent: ExecutingEvent.CLASS_OPEN,
-                            data: {
-                                name: roomName,
-                                description,
-                                roomType: roomType.value,
-                                courseCode: selectedCourse?.value,
-                                startTime: startingTime.toISOString(),
-                                endTime: endingTime.toISOString(),
-                                colourCode,
-                            },
-                        });
-                    }
-                }}
-            >
-                <Form.Group>
-                    <Form.Label>Room name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        onChange={(e) => {
-                            setRoomName(e.target.value);
-                        }}
-                        required
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        onChange={(e) => {
-                            setDescription(e.target.value);
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Type</Form.Label>
-                    <CreatableSelect
-                        options={baseRoomTypeOptions}
-                        value={roomType}
-                        onChange={(option) => {
-                            if (isOptionType(option)) {
-                                setRoomType(option);
-                            }
-                        }}
-                        disabled={isSubmitting}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Course</Form.Label>
-                    <Select
-                        options={courseCodes}
-                        value={selectedCourse}
-                        onChange={(option) => {
-                            if (isOptionType(option)) {
-                                setSelectedCourse(option);
-                            }
-                        }}
-                        disabled={isSubmitting}
-                        required
-                        styles={{
-                            control: (style) => ({
-                                ...style,
-                                borderColor: isCourseEmpty ? "red" : "initial",
-                            }),
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Class start time</Form.Label>
-                    <SimpleDatepicker
-                        time={startingTime}
-                        onChange={(time) => {
-                            setStartingTime(time);
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Class end time</Form.Label>
-                    <SimpleDatepicker
-                        time={endingTime}
-                        onChange={(time) => {
-                            setEndingTime(time);
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Room colour code</Form.Label>
-                    <div className="d-flex justify-content-center">
-                        <TwitterPicker
-                            triangle="hide"
-                            color={colourCode}
-                            onChangeComplete={(colour) => {
-                                setColourCode(colour.hex);
-                            }}
-                        />
-                    </div>
-                </Form.Group>
-                <ButtonWithLoadingProp
-                    variant="primary"
-                    type="submit"
-                    loading={isSubmitting}
-                    style={{
-                        backgroundColor: colourCode,
-                    }}
-                >
-                    Create
-                </ButtonWithLoadingProp>
-            </Form>
-            {requestHasError(createClassroomResponse) && (
-                <Alert variant="danger">
-                    {createClassroomResponse.message}
-                </Alert>
+            {
+                <ScheduleRoomForm
+                    roomName={roomName}
+                    description={description}
+                    courseCodes={courseCodes}
+                    selectedCourse={selectedCourse}
+                    roomType={roomType}
+                    startingTime={startingTime}
+                    endingTime={endingTime}
+                    colourCode={colourCode}
+                    setRoomName={setRoomName}
+                    setDescription={setDescription}
+                    setCourseCodes={setCourseCodes}
+                    setSelectedCourse={setSelectedCourse}
+                    setRoomType={setRoomType}
+                    setStartingTime={setStartingTime}
+                    setEndingTime={setEndingTime}
+                    setColourCode={setColourCode}
+                    submitting={props.submitting}
+                    requestIsLoading={requestIsLoading(props.response)}
+                    onSubmit={props.onSubmit}
+                    submitText={"Create Room"}
+                />
+            }
+            {requestIsLoaded(props.response) && props.submitting && (
+                <Alert variant="success">Successfully edited room</Alert>
             )}
             {new Date().getTime() > startingTime.getTime() && (
                 <Alert variant="info">This class will open immediately</Alert>
             )}
-            {requestIsLoaded(createClassroomResponse) && (
-                <Alert variant="success">
-                    Successfully scheduled class for{" "}
-                    {format(startingTime, "MM/dd hh:mm")}
-                </Alert>
+            {requestHasError(props.response) && (
+                <Alert variant="danger">{props.response.message}</Alert>
             )}
         </Container>
     );
