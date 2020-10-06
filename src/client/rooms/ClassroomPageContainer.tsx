@@ -23,6 +23,7 @@ import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
+import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 // import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
@@ -33,6 +34,9 @@ const socket = socketIOClient("/");
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const notification = new Audio("/public/notification.wav");
+    const [soundEnabled, setSoundEnabled] = React.useState<boolean>(true);
+
     const { id: userId } = props.userData;
     const { classroomId: sessionId } = props.match.params;
     const [
@@ -138,9 +142,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, [fetchRaisedHandUsers]);
 
     const onNewForm = React.useCallback(() => {
-        const notification = new Audio("/public/notification.wav");
-        notification.play();
-    }, []);
+        if (soundEnabled) {
+            notification.play();
+        }
+    }, [notification, soundEnabled]);
 
     React.useEffect(() => {
         socket
@@ -302,6 +307,17 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             Ask Questions
                                         </Button>
                                     )}
+                                    <Button
+                                        onClick={() => {
+                                            setSoundEnabled(!soundEnabled);
+                                        }}
+                                    >
+                                        {soundEnabled ? (
+                                            <MdNotificationsActive />
+                                        ) : (
+                                            <MdNotificationsOff />
+                                        )}
+                                    </Button>
                                 </Container>
                             </Col>
                         </Row>
