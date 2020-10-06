@@ -4,9 +4,11 @@ import { RouteComponentProps } from "react-router-dom";
 import { ClassroomSessionData, SessionDeleteRequestType } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
+import { UserData } from "../rooms/types";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    userData: UserData;
 };
 
 export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
@@ -56,18 +58,29 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                                 >
                                     Join
                                 </Button>
-                                <Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={async () => {
-                                        await deleteRoom({
-                                            id: session.id,
-                                        });
-                                        await getClassrooms();
-                                    }}
-                                >
-                                    Delete
-                                </Button>
+                                {props.userData.id === session.createdBy && (
+                                    <>
+                                        <Button
+                                            variant="info"
+                                            size="sm"
+                                            onClick={async () => {}}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={async () => {
+                                                await deleteRoom({
+                                                    id: session.id,
+                                                });
+                                                await getClassrooms();
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </>
+                                )}
                             </Col>
                         </Row>
                     );

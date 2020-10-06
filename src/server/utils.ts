@@ -53,21 +53,23 @@ export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
 export const createNewSession = async (
     name: string,
     description: string,
-    courseCode?: string
+    courseCode?: string,
+    createdBy?: string
 ) => {
-    const session = await Session.create({
+    return await Session.create({
         name,
         messages: [],
         description,
         courseCode,
         files: [],
+        createdBy,
     });
-    return session;
 };
 
-export const createNewClassroomSession = async (data: ClassroomData) => {
+export const createNewClassroomSession = async (job: ClassOpenJob) => {
+    const data = job.data;
     const session = await ClassroomSession.create({
-        name: data.roomName,
+        name: data.name,
         messages: [],
         roomType: data.roomType,
         description: data.description,
@@ -77,6 +79,7 @@ export const createNewClassroomSession = async (data: ClassroomData) => {
         raisedHandUsers: [],
         files: [],
         colourCode: data.colourCode,
+        createdBy: job.createdBy,
     });
     await SessionUsers.create({
         sessionId: session._id,

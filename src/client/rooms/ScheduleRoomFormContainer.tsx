@@ -104,7 +104,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                             jobDate: startingTime.toISOString(),
                             executingEvent: ExecutingEvent.CLASS_OPEN,
                             data: {
-                                roomName,
+                                name: roomName,
                                 description,
                                 roomType: roomType.value,
                                 courseCode: selectedCourse?.value,

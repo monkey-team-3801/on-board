@@ -8,6 +8,7 @@ export type SessionInfo = {
     description: string;
     courseCode?: string;
     parentSessionId?: string;
+    createdBy?: string;
 };
 
 export type MessageData = {
@@ -32,9 +33,7 @@ export type ClassroomSessionData = SessionData & {
 export type UpcomingClassroomSessionData = Omit<
     ClassroomSessionData,
     "messages" | "id"
-> & {
-    id?: string;
-};
+>;
 
 export type NewMessageRequestType = Omit<MessageData, "sentTime"> & {
     roomType: RoomType;
@@ -134,28 +133,21 @@ export type UserDataResponseType = {
     courses: Array<string>;
 };
 
-export type ClassroomData = {
-    roomName: string;
-    description: string;
-    roomType: string;
-    courseCode: string;
-    startTime: string;
-    endTime: string;
-    colourCode: string;
-};
+export type ClassroomData = ClassroomSessionData;
 
 export interface BaseJob<T = any> {
     jobDate: string;
     executingEvent: ExecutingEvent;
     data: T;
+    createdBy: string;
 }
 
-export interface AnnouncementJob<T = CourseAnnouncementsType>
+export interface AnnouncementJob<T = Omit<CourseAnnouncementsType, "userId">>
     extends BaseJob<T> {
     executingEvent: ExecutingEvent.ANNOUNCEMENT;
 }
 
-export interface ClassOpenJob extends BaseJob<ClassroomData> {
+export interface ClassOpenJob<T = ClassroomData> extends BaseJob<T> {
     executingEvent: ExecutingEvent.CLASS_OPEN;
 }
 
@@ -163,8 +155,11 @@ type WithUserId = {
     userId: string;
 };
 
-export type CreateAnnouncementJobRequestType = AnnouncementJob<
-    Omit<CourseAnnouncementsType, "date">
+export type CreateAnnouncementJobRequestType = Omit<
+    AnnouncementJob<
+        Omit<CourseAnnouncementsType, "date" | "userId" | "createdBy">
+    >,
+    "createdBy"
 >;
 
 export type EnrolCourseRequestType = WithUserId & {
@@ -181,7 +176,10 @@ export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType & { username: string }>;
 };
 
-export type CreateClassroomJobRequestType = ClassOpenJob;
+export type CreateClassroomJobRequestType = Omit<
+    ClassOpenJob<Omit<ClassroomData, "messages" | "id">>,
+    "createdBy"
+>;
 
 export enum FileUploadType {
     PROFILE,

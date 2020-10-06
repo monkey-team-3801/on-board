@@ -3,6 +3,7 @@ import express from "express";
 import { asyncHandler, isClassOpenJob, isAnnouncementJob } from "../utils";
 import { BaseJob } from "../../types";
 import { ScheduleHandler } from "../jobs";
+import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -10,9 +11,16 @@ router.post(
     "/create",
     asyncHandler<{ message?: string }, {}, BaseJob>(async (req, res) => {
         const job = req.body;
+        const user = req.headers.authorization
+            ? await getUserDataFromJWT(req.headers.authorization)
+            : null;
+        if (!user) {
+            res.status(401).end();
+            return;
+        }
         if (isClassOpenJob(job)) {
             const data = job.data;
-            if (!data.roomName) {
+            if (!data.name) {
                 res.status(500)
                     .json({
                         message: "Room name should not be empty",
@@ -68,6 +76,7 @@ router.post(
         const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
         schedulerHandler.addNewJob({
             ...req.body,
+            createdBy: user.id,
         });
         res.end();
     })

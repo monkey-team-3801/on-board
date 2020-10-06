@@ -63,6 +63,7 @@ export class ScheduleHandler<T = any> {
                 jobRunner(modifiedJobData);
             } else {
                 const jobReference: IJob = await Job.create({
+                    ...job,
                     jobDate: job.jobDate,
                     executingEvent: job.executingEvent,
                     data: job.data,

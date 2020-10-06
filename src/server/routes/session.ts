@@ -43,21 +43,35 @@ router.post(
         { name: string }
     >(async (req, res, next) => {
         try {
-            if (req.body.name && req.body.name !== "") {
-                const session = await createNewSession(req.body.name, "");
-                await SessionCanvas.create({
-                    sessionId: session._id,
-                    strokes: [],
-                });
-                await SessionUsers.create({
-                    sessionId: session._id,
-                    userReferenceMap: new Map(),
-                });
-                console.log("Session created:", session.name);
-                res.json({
-                    id: session._id,
-                    name: session.name,
-                });
+            if (
+                req.body.name &&
+                req.body.name !== "" &&
+                req.headers.authorization
+            ) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (user) {
+                    const session = await createNewSession(
+                        req.body.name,
+                        "",
+                        undefined,
+                        user.id
+                    );
+                    await SessionCanvas.create({
+                        sessionId: session._id,
+                        strokes: [],
+                    });
+                    await SessionUsers.create({
+                        sessionId: session._id,
+                        userReferenceMap: new Map(),
+                    });
+                    console.log("Session created:", session.name);
+                    res.json({
+                        id: session._id,
+                        name: session.name,
+                    });
+                }
             } else {
                 res.status(500).json({
                     message: "Room name should not be empty",
@@ -115,6 +129,7 @@ router.post(
                                 startTime: session.startTime,
                                 endTime: session.endTime,
                                 colourCode: session.colourCode,
+                                createdBy: session.createdBy,
                             };
                         })
                     );
@@ -161,13 +176,14 @@ router.post(
                                 jobs.map((job) => {
                                     const session = job.data;
                                     return {
-                                        name: session.roomName,
+                                        name: session.name,
                                         roomType: session.roomType,
                                         description: session.description,
                                         courseCode: session.courseCode,
                                         startTime: session.startTime,
                                         endTime: session.endTime,
                                         colourCode: session.colourCode,
+                                        createdby: session.createdBy,
                                     };
                                 })
                             );
