@@ -79,7 +79,6 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
 
                                             <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
-
                                         </Container>
                                     </header>
                                     <Container fluid>

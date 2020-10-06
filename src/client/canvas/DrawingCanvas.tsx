@@ -241,6 +241,20 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
         <Container className="drawing-canvas" fluid>
             <Row>
                 <Col lg={2}>
+                    <Form.Control
+                        type="range"
+                        value={penSize}
+                        min={1}
+                        max={100}
+                        onChange={(e) => {
+                            setPenSize(Number(e.target.value));
+                        }}
+                    />
+                    <ColourPicker
+                        onChange={(colour) => {
+                            setPenColour(colour);
+                        }}
+                    />
                     <Button
                         onClick={async () => {
                             const context =
@@ -262,20 +276,6 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                     >
                         Clear
                     </Button>
-                    <Form.Control
-                        type="range"
-                        value={penSize}
-                        min={1}
-                        max={100}
-                        onChange={(e) => {
-                            setPenSize(Number(e.target.value));
-                        }}
-                    />
-                    <ColourPicker
-                        onChange={(colour) => {
-                            setPenColour(colour);
-                        }}
-                    />
                 </Col>
                 <Col lg={10}>
                     <div className="canvas-container">
