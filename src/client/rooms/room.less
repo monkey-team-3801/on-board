@@ -1,7 +1,13 @@
+@import "../styles/Colours.less";
+
+.classroom-container {
+    background-color: white;
+}
+
 .panel {
     .panel-container {
         width: 100%;
-        background-color: lightcyan;
+        background-color: @primary;
     }
     .tutors-container {
         min-height: 200px;
@@ -16,4 +22,24 @@
 .presenter-container {
     height: 100%;
     background-color: lightpink;
+}
+
+.head-panel {
+    background-color: @page-bg;
+    padding: 25px;
+}
+
+.room-control button {
+    background-color: @page-bg;
+}
+
+.back-button {
+    border: none;
+    :hover{
+        color: grey;
+    }
+}
+
+.back-button:hover {
+    color: grey; 
 }

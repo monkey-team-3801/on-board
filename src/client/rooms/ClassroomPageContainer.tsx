@@ -24,6 +24,11 @@ import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 // import { StreamSelectorWrapper } from "../video";
+import * as AiIcons from "react-icons/ai";
+import * as FaIcons from "react-icons/fa";
+import * as BiIcons from "react-icons/bi";
+
+
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -187,16 +192,21 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     return (
         <Container fluid className="classroom-container">
             <Col md={9}>
-                <header className="d-flex">
+                <header className="d-flex head-panel">
                     <Container fluid>
+                        <button className="back-button">
+                            <AiIcons.AiOutlineArrowLeft className="icon" />
+                            back
+                        </button>
                         <h1>
                             {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
                         </h1>
                         <p>{sessionResponse.data.roomType}</p>
                         <p>{sessionResponse.data.description}</p>
                     </Container>
-                    <Container fluid>
-                        <p>{`Start time: ${sessionResponse.data.startTime}, end time: ${sessionResponse.data.endTime}`}</p>
+                    <Container fluid className="time-remaining">
+                        <p>{`Start time: ${sessionResponse.data.startTime}`}</p>
+                        <p>{`end time: ${sessionResponse.data.endTime}`}</p>
                     </Container>
                 </header>
                 <Container fluid>
@@ -224,6 +234,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             setBreakoutRoomModalVisible(true);
                                         }}
                                     >
+                                        <AiIcons.AiOutlineTeam className="icon" />
                                         Breakout Rooms
                                     </Button>
                                     <Button
@@ -250,10 +261,20 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             handRaisedRef.current = !handRaisedRef.current;
                                         }}
                                     >
+                                        <FaIcons.FaRegHandPaper className="icon" />
+
                                         Raise Hand
                                     </Button>
-                                    <Button>Camera off</Button>
-                                    <Button>Mic off</Button>
+                                    <Button>
+                                        {/* <BiIcons.BiVideo className="icon" /> */}
+                                        <BiIcons.BiVideoOff className="icon" />
+                                        {/* video icons for video on and off */}
+                                        Camera off</Button>
+                                    <Button>
+                                        {/* <BiIcons.BiMicrophone className="icon" /> */}
+                                        <BiIcons.BiMicrophoneOff className="icon" />
+                                        {/* icons for mic on and off */}
+                                        Mic off</Button>
                                     <Button
                                         onClick={() => {
                                             setResponsesModalStatus({
@@ -262,33 +283,39 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             });
                                         }}
                                     >
+                                        <AiIcons.AiOutlineProfile className="icon" />
                                         {props.userData.userType ===
-                                        UserType.STUDENT
+                                            UserType.STUDENT
                                             ? "View Questions"
                                             : "View Results"}
+
                                     </Button>
-                                    <FileModal
-                                        uploadType={FileUploadType.DOCUMENTS}
-                                        socket={socket}
-                                        sessionID={sessionId}
-                                        userID={props.userData.id}
-                                        updateFiles={getFileData}
-                                        files={files}
-                                        roomType={RoomType.CLASS}
-                                    ></FileModal>
+                                    <Button>
+                                        <AiIcons.AiOutlineUpload className="icon" />
+                                        <FileModal
+                                            uploadType={FileUploadType.DOCUMENTS}
+                                            socket={socket}
+                                            sessionID={sessionId}
+                                            userID={props.userData.id}
+                                            updateFiles={getFileData}
+                                            files={files}
+                                            roomType={RoomType.CLASS}
+                                        ></FileModal>
+                                    </Button>
                                     {props.userData.userType ===
                                         UserType.COORDINATOR && (
-                                        <Button
-                                            onClick={() => {
-                                                setResponsesModalStatus({
-                                                    visible: true,
-                                                    type: "ask",
-                                                });
-                                            }}
-                                        >
-                                            Ask Questions
-                                        </Button>
-                                    )}
+                                            <Button
+                                                onClick={() => {
+                                                    setResponsesModalStatus({
+                                                        visible: true,
+                                                        type: "ask",
+                                                    });
+                                                }}
+                                            >
+                                                <AiIcons.AiOutlineQuestionCircle className="icon" />
+                                                Ask Questions
+                                            </Button>
+                                        )}
                                 </Container>
                             </Col>
                         </Row>
