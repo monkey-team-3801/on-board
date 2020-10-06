@@ -13,6 +13,8 @@ import { useDynamicFetch } from "../hooks";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import { SessionContainer, SidePanelContainer } from "./containers";
+import * as AiIcons from "react-icons/ai";
+import "./PrivateRoom.less";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {
@@ -70,10 +72,14 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                         <Container fluid className="private-room-container">
                             <Row>
                                 <Col md={9}>
-                                    <header className="d-flex">
+                                    <header className="d-flex info-header">
                                         <Container fluid>
-                                            <h1>{`${sessionData.name}`}</h1>
+                                            <AiIcons.AiOutlineArrowLeft />
+                                            <p className="back-button">Back </p>
+
+                                            <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
+
                                         </Container>
                                     </header>
                                     <Container fluid>
