@@ -2,7 +2,6 @@ import express from "express";
 import { version } from "uuid";
 import { ResponseFormType } from "../../types";
 import { User } from "../database";
-import { FileResponse } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
     FileForm,

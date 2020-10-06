@@ -8,7 +8,6 @@ import { ResponseFormEvent, RoomEvent } from "../../events";
 import {
     ClassroomSessionData,
     FileUploadType,
-    ResponseFormType,
     RoomType,
     UserDataResponseType,
     UserType,
