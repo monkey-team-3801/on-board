@@ -127,11 +127,6 @@ export const ResponseOptionsContainer = (props: Props) => {
                     </Alert>
                 )}
             </Form>
-            {requestIsLoaded(uploadFormResponse) && (
-                <Alert variant="success">
-                    Successfully created question form
-                </Alert>
-            )}
             <div>
                 {checkedOption === ResponseFormType.MULTIPLE_CHOICE && (
                     <MultipleChoiceContainer

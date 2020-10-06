@@ -4,10 +4,11 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
-import { RoomEvent } from "../../events";
+import { ResponseFormEvent, RoomEvent } from "../../events";
 import {
     ClassroomSessionData,
     FileUploadType,
+    ResponseFormType,
     RoomType,
     UserDataResponseType,
     UserType,
@@ -137,6 +138,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         fetchRaisedHandUsers.callback();
     }, [fetchRaisedHandUsers]);
 
+    const onNewForm = React.useCallback(() => {
+        const notification = new Audio("/public/notification.wav");
+        notification.play();
+    }, []);
+
     React.useEffect(() => {
         socket
             .connect()
@@ -144,6 +150,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             .on(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
             .on(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
             .on(RoomEvent.USER_HAND_STATUS_CHANGED, onUserHandStatusChange)
+            .on(ResponseFormEvent.NEW_FORM, onNewForm)
             .emit(RoomEvent.SESSION_JOIN, {
                 userId,
                 sessionId,
@@ -155,6 +162,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 .off(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
                 .off(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
                 .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+                .off(ResponseFormEvent.NEW_FORM, onNewForm)
                 .off(
                     RoomEvent.USER_HAND_STATUS_CHANGED,
                     onUserHandStatusChange

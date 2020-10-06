@@ -45,6 +45,8 @@ export const DisplayContainer = (props: Props) => {
 
     const updateForms = React.useCallback(() => {
         getForms({ sid: props.sessionID });
+        const notification = new Audio("/public/notification.wav");
+        notification.play();
     }, [getForms, props.sessionID]);
 
     React.useEffect(() => {
