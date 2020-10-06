@@ -22,6 +22,13 @@ type Props = {
 };
 
 export const DisplayResultsContainer = (props: Props) => {
+    const fileContainerData = {
+        id: props.formData.formID,
+        socket: props.sock,
+        roomType: RoomType.CLASS,
+        containerType: FileUploadType.RESPONSE,
+        userID: props.userID,
+    };
     const { formID, formType } = props.formData;
     const [mcResultsData, getMcResults] = useDynamicFetch<
         Array<Array<string>>,
@@ -209,13 +216,9 @@ export const DisplayResultsContainer = (props: Props) => {
                     <hr></hr>
                     {fileData.length > 0 ? (
                         <FileContainer
-                            id={props.formData.formID}
-                            socket={props.sock}
-                            files={fileData}
+                            {...fileContainerData}
                             updateFiles={throttleFetchFile}
-                            roomType={RoomType.CLASS}
-                            containerType={FileUploadType.RESPONSE}
-                            userID={props.userID}
+                            files={fileData}
                         />
                     ) : (
                         <>
