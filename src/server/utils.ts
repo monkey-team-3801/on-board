@@ -57,7 +57,7 @@ export const createNewSession = async (
     createdBy: string,
     courseCode?: string
 ) => {
-    return await Session.create({
+    return Session.create({
         name,
         messages: [],
         description,
