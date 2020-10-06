@@ -45,11 +45,15 @@ export const DisplayResultsContainer = (props: Props) => {
     );
 
     const [FileResultsData, getFileResults] = useDynamicFetch<
-        Array<[string, string, string, string, string]>,
-        { formID: string }
+        Array<[string, string, string, string, string, string]>,
+        { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
-        "/response-handler/getFileResults",
-        { formID },
+        "/filehandler/getFiles",
+        {
+            id: props.formData.formID,
+            roomType: RoomType.CLASS,
+            fileUploadType: FileUploadType.RESPONSE,
+        },
         formType === ResponseFormType.FILE
     );
 
@@ -67,7 +71,7 @@ export const DisplayResultsContainer = (props: Props) => {
     >([]);
 
     const [fileData, setFileData] = React.useState<
-        Array<[string, string, string, string, string]>
+        Array<[string, string, string, string, string, string]>
     >([]);
 
     const throttleFetchMc = useThrottleCallback(
@@ -88,7 +92,11 @@ export const DisplayResultsContainer = (props: Props) => {
 
     const throttleFetchFile = useThrottleCallback(
         () => {
-            getFileResults({ formID });
+            getFileResults({
+                id: props.fileContainerData.sessionID,
+                roomType: RoomType.PRIVATE,
+                fileUploadType: FileUploadType.RESPONSE,
+            });
         },
         1,
         true

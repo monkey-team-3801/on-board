@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MessageData } from "../../../types";
 
-interface ISession extends mongoose.Document {
+export interface ISession extends mongoose.Document {
     name: string;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;

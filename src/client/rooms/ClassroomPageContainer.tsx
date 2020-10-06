@@ -164,16 +164,20 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, []);
 
     const [fileData, getFileData] = useDynamicFetch<
-        Array<[string, string, string, string, string]>,
-        { sid: string; roomType: RoomType }
+        Array<[string, string, string, string, string, string]>,
+        { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
         "/filehandler/getFiles",
-        { sid: sessionId, roomType: RoomType.CLASS },
+        {
+            id: sessionId,
+            roomType: RoomType.CLASS,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        },
         true
     );
 
     const [files, setFiles] = React.useState<
-        Array<[string, string, string, string, string]>
+        Array<[string, string, string, string, string, string]>
     >([]);
 
     React.useEffect(() => {

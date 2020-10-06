@@ -10,7 +10,7 @@ type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    files: Array<[string, string, string, string, string]>;
+    files: Array<[string, string, string, string, string, string]>;
     updateFiles: Function;
     roomType: RoomType;
     containerType?: FileUploadType;
@@ -100,6 +100,7 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                     <RiDeleteBin2Fill />
                                 </button>
                             )}
+                            <div>Uploaded by: {file[5]}</div>
                             <hr></hr>
                         </div>
                     </div>

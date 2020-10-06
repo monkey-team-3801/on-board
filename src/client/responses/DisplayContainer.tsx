@@ -65,7 +65,7 @@ export const DisplayContainer = (props: Props) => {
         return <Loader className="pt-4 pb-4" />;
     }
 
-    if (data.MC.length === 0 && data.SA.length === 0) {
+    if (data.MC.length === 0 && data.SA.length === 0 && data.FF.length === 0) {
         return <p>There are no questions</p>;
     }
 
@@ -94,10 +94,10 @@ export const DisplayContainer = (props: Props) => {
                                     />
                                 </Container>
                             </Row>
+                            <hr />
                         </>
                     )}
 
-                    <hr />
                     {data.SA.length > 0 && (
                         <>
                             <Row>
@@ -119,10 +119,10 @@ export const DisplayContainer = (props: Props) => {
                                     />
                                 </Container>
                             </Row>
+                            <hr />
                         </>
                     )}
 
-                    <hr />
                     {data.FF.length > 0 && (
                         <>
                             <Row>

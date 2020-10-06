@@ -1,12 +1,12 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { getUserDataFromJWT } from "./utils";
-import { User, Session, ClassroomSession } from "../database/schema";
+import { User, Session, ClassroomSession, ISession } from "../database/schema";
 import { readFile } from "fs";
 import { File, FileResponse } from "../database/schema/File";
 import { format } from "date-fns";
 import { FileUploadType, RoomType } from "../../types";
-import { FileForm } from "../database/schema/ResponseForm";
+import { FileForm, IFileForm } from "../database/schema/ResponseForm";
 
 export const router = express.Router();
 
@@ -137,29 +137,48 @@ router.post(
 router.post(
     "/getFiles",
     asyncHandler<
-        Array<[string, string, string, string, string]>,
+        Array<[string, string, string, string, string, string]>,
         {},
-        { sid: string; roomType: RoomType }
+        { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(async (req, res) => {
         const roomType = req.body.roomType;
+        const fileUploadType = req.body.fileUploadType;
 
         const session =
             roomType === RoomType.CLASS
-                ? await ClassroomSession.findById(req.body.sid)
-                : await Session.findById(req.body.sid);
+                ? await ClassroomSession.findById(req.body.id)
+                : await Session.findById(req.body.id);
 
-        if (session && session.files) {
+        const formQuery =
+            fileUploadType === FileUploadType.RESPONSE
+                ? await FileForm.findById(req.body.id)
+                : null;
+
+        let queryType: ISession | IFileForm | null;
+
+        if (session) {
+            queryType = session;
+        } else {
+            queryType = formQuery;
+        }
+        if (queryType && queryType.files) {
             const data = (
                 await Promise.all(
-                    session.files.map(async (fileId) => {
-                        const file = await File.findById(fileId);
+                    queryType.files.map(async (fileId) => {
+                        const file =
+                            req.body.fileUploadType === FileUploadType.RESPONSE
+                                ? await FileResponse.findById(fileId)
+                                : await File.findById(fileId);
+                        const user = await User.findById(file?.owner);
                         return [
                             fileId,
                             file?.name,
                             file?.size.toString(),
                             file?.fileTime,
                             file?.owner,
+                            user?.username,
                         ] as [
+                            string | undefined,
                             string | undefined,
                             string | undefined,
                             string | undefined,
@@ -169,12 +188,15 @@ router.post(
                     })
                 )
             ).filter(
-                (data): data is [string, string, string, string, string] =>
+                (
+                    data
+                ): data is [string, string, string, string, string, string] =>
                     data[0] !== undefined &&
                     data[1] !== undefined &&
                     data[2] !== undefined &&
                     data[3] !== undefined &&
-                    data[4] !== undefined
+                    data[4] !== undefined &&
+                    data[5] !== undefined
             );
 
             res.send(data).status(200).end();
