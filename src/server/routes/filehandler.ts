@@ -105,6 +105,11 @@ router.post(
                                           })
                                         : await File.create(data);
                                 query.files?.push(newFile.id);
+                                if (uploadType === FileUploadType.RESPONSE) {
+                                    (query as IFileForm).answered.push(
+                                        newFile.owner
+                                    );
+                                }
                             }
                         }
                     }
@@ -133,23 +138,19 @@ router.post(
         const roomType = req.body.roomType;
         const fileUploadType = req.body.fileUploadType;
 
-        const session =
-            roomType === RoomType.CLASS
-                ? await ClassroomSession.findById(req.body.id)
-                : await Session.findById(req.body.id);
-
-        const formQuery =
-            fileUploadType === FileUploadType.RESPONSE
-                ? await FileForm.findById(req.body.id)
-                : null;
-
         let queryType: ISession | IFileForm | null;
 
-        if (session) {
-            queryType = session;
+        if (fileUploadType === FileUploadType.RESPONSE) {
+            queryType = await FileForm.findById(req.body.id);
         } else {
-            queryType = formQuery;
+            queryType =
+                roomType === RoomType.CLASS
+                    ? await ClassroomSession.findById(req.body.id)
+                    : await Session.findById(req.body.id);
         }
+
+        console.log(queryType);
+
         if (queryType && queryType.files) {
             const data = (
                 await Promise.all(

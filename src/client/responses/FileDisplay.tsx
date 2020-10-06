@@ -58,6 +58,7 @@ export const FileDisplay = (props: Props) => {
                     roomType={RoomType.CLASS}
                     uploadType={FileUploadType.RESPONSE}
                     formID={props.formID}
+                    back={props.back}
                 ></UploadContainer>
             )}
             <Button

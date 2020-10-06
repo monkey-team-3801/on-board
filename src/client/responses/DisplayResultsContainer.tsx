@@ -16,10 +16,7 @@ type Props = {
         question: string;
         formType: ResponseFormType;
     };
-    fileContainerData: {
-        sessionID: string;
-        userID: string;
-    };
+    userID: string;
     back: () => void;
     sock: SocketIOClient.Socket;
 };
@@ -93,7 +90,7 @@ export const DisplayResultsContainer = (props: Props) => {
     const throttleFetchFile = useThrottleCallback(
         () => {
             getFileResults({
-                id: props.fileContainerData.sessionID,
+                id: props.formData.formID,
                 roomType: RoomType.PRIVATE,
                 fileUploadType: FileUploadType.RESPONSE,
             });
@@ -212,12 +209,13 @@ export const DisplayResultsContainer = (props: Props) => {
                     <hr></hr>
                     {fileData.length > 0 ? (
                         <FileContainer
-                            {...props.fileContainerData}
+                            id={props.formData.formID}
                             socket={props.sock}
                             files={fileData}
                             updateFiles={throttleFetchFile}
                             roomType={RoomType.CLASS}
                             containerType={FileUploadType.RESPONSE}
+                            userID={props.userID}
                         />
                     ) : (
                         <>

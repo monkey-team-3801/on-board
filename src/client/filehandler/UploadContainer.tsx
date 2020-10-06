@@ -13,6 +13,7 @@ type Props = {
     updateFiles?: Function;
     roomType: RoomType;
     formID?: string;
+    back?: Function;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -39,22 +40,15 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         }
     };
 
+    const totalFileLength =
+        props.uploadType === FileUploadType.DOCUMENTS ? 1 : 5;
+
     // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
     const checkValid = (files: Array<File>): boolean => {
-        if (
-            props.uploadType === FileUploadType.PROFILE ||
-            props.uploadType === FileUploadType.RESPONSE
-        ) {
-            return files.length === 1;
-        }
-        // Limit amount of files uploaded at once to 5 for now.
-        if (props.uploadType === FileUploadType.DOCUMENTS) {
-            return files.length > 0 && files.length < 6;
-        }
-        return false;
+        return files.length > 0 && files.length <= totalFileLength;
     };
 
     const onDrop = async (acceptedFiles: Array<File>) => {
@@ -105,6 +99,13 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append("document", IdData);
             await uploadFile(formData);
             props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
+            if (props.back) {
+                setTimeout(() => {
+                    if (props.back) {
+                        props.back();
+                    }
+                }, 500);
+            }
         }
     };
 
@@ -128,6 +129,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                         {fileRejections.map((file, i) => (
                             <div key={i} style={{ color: "red" }}>
                                 {file.file.name}
+                                <div>Reason: {file.errors[0].message}</div>
                             </div>
                         ))}
                     </div>
@@ -141,6 +143,8 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                     <p className="dropMessage">
                         Drag 'n' drop some files here, or click here to select
                         files
+                        <br></br>
+                        <p>Note: You can upload at most 5 files at a time</p>
                     </p>
                 )}
             </div>

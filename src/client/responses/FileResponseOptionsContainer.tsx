@@ -21,9 +21,15 @@ export const FileResponseOptionsContainer = (props: Props) => {
 
     const [description, setDescription] = React.useState<string>("");
 
+    const [formSubmitting, setFormSubmitting] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        setFormSubmitting(false);
+    }, []);
+
     const handleSubmit = async (event: React.FormEvent<HTMLElement>) => {
         event.preventDefault();
-
+        setFormSubmitting(true);
         await submitForm({
             sid: props.sessionID,
             uid: props.uid,
@@ -57,7 +63,7 @@ export const FileResponseOptionsContainer = (props: Props) => {
                 </Form.Group>
                 <ButtonWithLoadingProp
                     type="submit"
-                    disabled={props.question === ""}
+                    disabled={props.question === "" || formSubmitting}
                     invertLoader
                     loading={requestIsLoading(uploadFormResponse)}
                 >

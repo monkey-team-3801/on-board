@@ -199,10 +199,7 @@ export const DisplayContainer = (props: Props) => {
                                 back={() => {
                                     setFormData(undefined);
                                 }}
-                                fileContainerData={{
-                                    sessionID: props.sessionID,
-                                    userID: props.uid,
-                                }}
+                                userID={props.uid}
                                 sock={props.sock}
                             />
                         </>

@@ -38,7 +38,7 @@ export const FileModal = (props: Props) => {
                     <Modal.Title>File Upload</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FileContainer {...props} />
+                    <FileContainer {...props} id={props.sessionID} />
                     <hr></hr>
                     <UploadContainer {...props} />
                 </Modal.Body>
