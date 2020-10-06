@@ -26,6 +26,7 @@ import {
 import { File } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
+    FileForm,
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";

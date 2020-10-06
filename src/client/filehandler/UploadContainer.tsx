@@ -1,7 +1,7 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { FileUploadType, RoomType } from "../../types";
-import { FileUploadEvent } from "../../events";
+import { FileUploadEvent, ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import "./UploadContainer.less";
 
@@ -96,13 +96,15 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
             if (props.updateFiles) {
                 props.updateFiles({
-                    sid: props.sessionID,
+                    id: props.sessionID,
                     roomType: props.roomType,
+                    fileUploadType: FileUploadType.DOCUMENTS,
                 });
             }
         } else if (props.uploadType === FileUploadType.RESPONSE) {
             formData.append("document", IdData);
             await uploadFile(formData);
+            props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
         }
     };
 

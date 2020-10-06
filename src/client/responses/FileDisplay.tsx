@@ -1,7 +1,10 @@
 import React from "react";
+import Button from "react-bootstrap/esm/Button";
 import { FileUploadType, ResponseFormType, RoomType } from "../../types";
+import { Loader } from "../components";
 import { UploadContainer } from "../filehandler/UploadContainer";
 import { useDynamicFetch } from "../hooks";
+import { requestIsLoaded } from "../utils";
 
 type Props = {
     formID: string;
@@ -33,6 +36,10 @@ export const FileDisplay = (props: Props) => {
         true
     );
 
+    if (!requestIsLoaded(userAnswered) && !requestIsLoaded(form)) {
+        return <Loader className="pt-4 pb-4" />;
+    }
+
     return (
         <div>
             <h4>{props.question}</h4>
@@ -42,22 +49,26 @@ export const FileDisplay = (props: Props) => {
                 <h1>No description was provided</h1>
             )}
             <hr></hr>
-            <p>
-                Note: Only 1 file is accepted, resubmissions are allowed, but
-                you can only upload 1 file.
-            </p>
-            <UploadContainer
-                {...props}
-                roomType={RoomType.CLASS}
-                uploadType={FileUploadType.RESPONSE}
-                formID={props.formID}
-            ></UploadContainer>
-            {userAnswered.data?.found && (
-                <div style={{ color: "red" }}>
-                    You have already answered, new submissions will overwrite
-                    your old one.
-                </div>
+
+            {userAnswered.data?.found ? (
+                <div style={{ color: "red" }}>You have already answered.</div>
+            ) : (
+                <UploadContainer
+                    {...props}
+                    roomType={RoomType.CLASS}
+                    uploadType={FileUploadType.RESPONSE}
+                    formID={props.formID}
+                ></UploadContainer>
             )}
+            <Button
+                onClick={() => {
+                    props.back();
+                }}
+                size="sm"
+                className="mt-4"
+            >
+                Back
+            </Button>
         </div>
     );
 };

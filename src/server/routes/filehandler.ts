@@ -48,29 +48,44 @@ router.post(
 
             if (!Array.isArray(metaData)) {
                 // extract meta data
-                const sid = JSON.parse(metaData.data.toString())["sid"];
-                const uid = JSON.parse(metaData.data.toString())["uid"];
+                const sid = JSON.parse(metaData.data.toString())[
+                    "sid"
+                ] as string;
+                const uid = JSON.parse(metaData.data.toString())[
+                    "uid"
+                ] as string;
                 const roomType = JSON.parse(metaData.data.toString())[
                     "roomType"
-                ];
+                ] as RoomType;
                 const uploadType = JSON.parse(metaData.data.toString())[
                     "uploadType"
-                ];
+                ] as FileUploadType;
+                const formID = JSON.parse(metaData.data.toString())[
+                    "formID"
+                ] as string;
 
-                const sessionQuery =
-                    roomType === RoomType.CLASS
-                        ? await ClassroomSession.findById(sid)
-                        : await Session.findById(sid);
+                const ftpUpperLimit =
+                    uploadType === FileUploadType.RESPONSE ? 2 : 6;
 
-                if (sessionQuery && uploadType !== FileUploadType.RESPONSE) {
-                    // Limits. Always add 1 to the length.
-                    if (ftp.length > 1 || ftp.length < 7) {
+                let query: ISession | IFileForm | null = null;
+
+                if (uploadType === FileUploadType.RESPONSE) {
+                    query = await FileForm.findById(formID);
+                } else {
+                    query =
+                        roomType === RoomType.CLASS
+                            ? await ClassroomSession.findById(sid)
+                            : await Session.findById(sid);
+                }
+
+                if (query) {
+                    if (ftp.length > 1 && ftp.length <= ftpUpperLimit) {
                         for (let file of ftp) {
                             if (file === metaData) {
                                 break;
                             }
                             if (!Array.isArray(file)) {
-                                const newFile = await File.create({
+                                const data = {
                                     name: file.name,
                                     size: file.size,
                                     data: file.data,
@@ -81,55 +96,29 @@ router.post(
                                         new Date(),
                                         "dd/MM hh:mm a"
                                     ),
-                                });
-                                sessionQuery.files?.push(newFile.id);
+                                };
+                                const newFile =
+                                    uploadType === FileUploadType.RESPONSE
+                                        ? await FileResponse.create({
+                                              ...data,
+                                              formID,
+                                          })
+                                        : await File.create(data);
+                                query.files?.push(newFile.id);
                             }
                         }
-                        await sessionQuery.save();
-                        res.status(200).end();
                     }
-                } else if (
-                    sessionQuery &&
-                    uploadType === FileUploadType.RESPONSE
-                ) {
-                    const formID = JSON.parse(metaData.data.toString())[
-                        "formID"
-                    ];
-
-                    const formQuery = await FileForm.findById(formID);
-                    if (formQuery) {
-                        console.log(formQuery);
-                        if (ftp.length <= 2 && ftp.length > 0) {
-                            for (let file of ftp) {
-                                if (file === metaData) {
-                                    break;
-                                }
-                                if (!Array.isArray(file)) {
-                                    const newFile = await FileResponse.create({
-                                        name: file.name,
-                                        size: file.size,
-                                        data: file.data,
-                                        extension: file.mimetype,
-                                        owner: uid,
-                                        sessionID: sid,
-                                        fileTime: format(
-                                            new Date(),
-                                            "dd/MM hh:mm a"
-                                        ),
-                                        formID: formID,
-                                    });
-                                    formQuery.files.push(newFile.id);
-                                    formQuery.answered.push(uid);
-                                }
-                            }
-                            await formQuery.save();
-                            res.status(200).end();
-                        }
+                    if (uploadType === FileUploadType.RESPONSE) {
+                        await (query as IFileForm).save();
+                    } else {
+                        await (query as ISession).save();
                     }
+                    res.status(200).end();
+                    return;
                 }
+                res.status(500).end();
             }
         }
-        res.status(500).end();
     })
 );
 
@@ -198,7 +187,6 @@ router.post(
                     data[4] !== undefined &&
                     data[5] !== undefined
             );
-
             res.send(data).status(200).end();
         } else {
             res.status(500).end();

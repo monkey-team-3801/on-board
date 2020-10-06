@@ -42,11 +42,19 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
             uid: props.userID,
         });
         props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
-        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
+        props.updateFiles({
+            id: props.sessionID,
+            roomType: props.roomType,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        });
     };
 
     const updateFileList = React.useCallback(() => {
-        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
+        props.updateFiles({
+            id: props.sessionID,
+            roomType: props.roomType,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        });
     }, [props]);
 
     React.useEffect(() => {

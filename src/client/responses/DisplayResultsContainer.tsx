@@ -1,7 +1,7 @@
 import { useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
 import { Button, Container } from "react-bootstrap";
-import { ResponseFormEvent } from "../../events";
+import { FileUploadEvent, ResponseFormEvent } from "../../events";
 import { FileUploadType, ResponseFormType, RoomType } from "../../types";
 import { Loader } from "../components";
 import { FileContainer } from "../filehandler/FileContainer";
@@ -107,7 +107,7 @@ export const DisplayResultsContainer = (props: Props) => {
             throttleFetchMc();
         } else if (formType === ResponseFormType.SHORT_ANSWER) {
             throttleFetchSa();
-        } else {
+        } else if (formType === ResponseFormType.FILE) {
             throttleFetchFile();
         }
     }, [formType, throttleFetchMc, throttleFetchSa, throttleFetchFile]);
