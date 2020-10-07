@@ -48,28 +48,26 @@ router.post(
 
             if (!Array.isArray(metaData)) {
                 // extract meta data
-                const sid = JSON.parse(metaData.data.toString())["sid"];
-                const uid = JSON.parse(metaData.data.toString())["uid"];
-                const roomType = JSON.parse(metaData.data.toString())[
-                    "roomType"
-                ];
-                const uploadType = JSON.parse(metaData.data.toString())[
-                    "uploadType"
-                ];
-                const formID = JSON.parse(metaData.data.toString())["formID"];
+                const options = JSON.parse(metaData.data.toString()) as {
+                    sid: string;
+                    uid: string;
+                    roomType: RoomType;
+                    uploadType: FileUploadType;
+                    formID: string;
+                };
 
                 const ftpUpperLimit =
-                    uploadType === FileUploadType.RESPONSE ? 2 : 6;
+                    options.uploadType === FileUploadType.RESPONSE ? 2 : 6;
 
                 let query: ISession | IFileForm | null = null;
 
-                if (uploadType === FileUploadType.RESPONSE) {
-                    query = await FileForm.findById(formID);
+                if (options.uploadType === FileUploadType.RESPONSE) {
+                    query = await FileForm.findById(options.formID);
                 } else {
                     query =
-                        roomType === RoomType.CLASS
-                            ? await ClassroomSession.findById(sid)
-                            : await Session.findById(sid);
+                        options.roomType === RoomType.CLASS
+                            ? await ClassroomSession.findById(options.sid)
+                            : await Session.findById(options.sid);
                 }
 
                 if (query) {
@@ -84,22 +82,26 @@ router.post(
                                     size: file.size,
                                     data: file.data,
                                     extension: file.mimetype,
-                                    owner: uid,
-                                    sessionID: sid,
+                                    owner: options.uid,
+                                    sessionID: options.sid,
                                     fileTime: format(
                                         new Date(),
                                         "dd/MM hh:mm a"
                                     ),
                                 };
                                 const newFile =
-                                    uploadType === FileUploadType.RESPONSE
+                                    options.uploadType ===
+                                    FileUploadType.RESPONSE
                                         ? await FileResponse.create({
                                               ...data,
-                                              formID,
+                                              formID: options.formID,
                                           })
                                         : await File.create(data);
                                 query.files?.push(newFile.id);
-                                if (uploadType === FileUploadType.RESPONSE) {
+                                if (
+                                    options.uploadType ===
+                                    FileUploadType.RESPONSE
+                                ) {
                                     (query as IFileForm).answered.push(
                                         newFile.owner
                                     );
@@ -107,7 +109,7 @@ router.post(
                             }
                         }
                     }
-                    if (uploadType === FileUploadType.RESPONSE) {
+                    if (options.uploadType === FileUploadType.RESPONSE) {
                         await (query as IFileForm).save();
                     } else {
                         await (query as ISession).save();
