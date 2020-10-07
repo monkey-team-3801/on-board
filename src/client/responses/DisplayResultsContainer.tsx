@@ -1,5 +1,5 @@
 import { useThrottleCallback } from "@react-hook/throttle";
-import React from "react";
+import React, { useMemo } from "react";
 import { Button, Container } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { FileUploadType, ResponseFormType, RoomType } from "../../types";
@@ -49,7 +49,14 @@ export const DisplayResultsContainer = (props: Props) => {
     );
 
     const [FileResultsData, getFileResults] = useDynamicFetch<
-        Array<[string, string, string, string, string, string]>,
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>,
         { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
         "/filehandler/getFiles",
@@ -61,7 +68,7 @@ export const DisplayResultsContainer = (props: Props) => {
         formType === ResponseFormType.FILE
     );
 
-    const [desc] = useDynamicFetch<{ desc: string }, { formID: string }>(
+    const [description] = useDynamicFetch<{ desc: string }, { formID: string }>(
         "/response-handler/getFileFormDesc",
         { formID: props.formData.formID },
         formType === ResponseFormType.FILE
@@ -75,7 +82,14 @@ export const DisplayResultsContainer = (props: Props) => {
     >([]);
 
     const [fileData, setFileData] = React.useState<
-        Array<[string, string, string, string, string, string]>
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>
     >([]);
 
     const throttleFetchMc = useThrottleCallback(
@@ -116,6 +130,14 @@ export const DisplayResultsContainer = (props: Props) => {
         }
     }, [formType, throttleFetchMc, throttleFetchSa, throttleFetchFile]);
 
+    const mcValues = React.useMemo(() => multipleChoiceData, [
+        multipleChoiceData,
+    ]);
+
+    const saValues = React.useMemo(() => shortAnswerData, [shortAnswerData]);
+
+    const fileValues = React.useMemo(() => fileData, [fileData]);
+
     React.useEffect(() => {
         props.sock.on(ResponseFormEvent.NEW_RESPONSE, updateResponses);
         return () => {
@@ -150,56 +172,24 @@ export const DisplayResultsContainer = (props: Props) => {
         setFileData,
     ]);
 
-    if (
-        formType === ResponseFormType.MULTIPLE_CHOICE &&
-        !requestIsLoaded(mcResultsData)
-    ) {
+    if (formType === ResponseFormType.FILE && !requestIsLoaded(description)) {
         return <Loader className="pt-4 pb-4" />;
     }
-
-    if (
-        formType === ResponseFormType.SHORT_ANSWER &&
-        !requestIsLoaded(saResultsData)
-    ) {
-        return <Loader className="pt-4 pb-4" />;
-    }
-    if (
-        formType === ResponseFormType.FILE &&
-        !requestIsLoaded(FileResultsData)
-    ) {
-        return <Loader className="pt-4 pb-4" />;
-    }
-
-    if (formType === ResponseFormType.FILE && !requestIsLoaded(desc)) {
-        return <Loader className="pt-4 pb-4" />;
-    }
-
-    // TODO: Consider splitting this file up into seperate ones.
-    const values =
-        formType === ResponseFormType.MULTIPLE_CHOICE
-            ? multipleChoiceData[0]
-            : undefined;
-    const options =
-        formType === ResponseFormType.MULTIPLE_CHOICE
-            ? multipleChoiceData[1]
-            : undefined;
-    const saValues =
-        formType === ResponseFormType.SHORT_ANSWER
-            ? shortAnswerData
-            : undefined;
-    const fileValues =
-        formType === ResponseFormType.FILE ? fileData : undefined;
 
     return (
         <Container>
             <h1>{props.formData.question}</h1>
-            {formType === ResponseFormType.MULTIPLE_CHOICE && options && (
-                <MultipleChoiceResultsChart
-                    data={options.map((option, i) => {
-                        return { name: option, value: Number(values?.[i]) };
-                    })}
-                />
-            )}
+            {formType === ResponseFormType.MULTIPLE_CHOICE &&
+                mcValues.length > 0 && (
+                    <MultipleChoiceResultsChart
+                        data={mcValues[1].map((option, i) => {
+                            return {
+                                name: option,
+                                value: Number(mcValues[0]?.[i]),
+                            };
+                        })}
+                    />
+                )}
             {formType === ResponseFormType.SHORT_ANSWER && saValues && (
                 <ShortAnswerResultsTable
                     data={saValues as Array<[string, string]>}
@@ -209,8 +199,8 @@ export const DisplayResultsContainer = (props: Props) => {
                 <>
                     <p>
                         Description:{" "}
-                        {desc.data?.desc
-                            ? desc.data?.desc
+                        {description.data?.desc
+                            ? description.data?.desc
                             : "No description was provided"}
                     </p>
                     <hr></hr>

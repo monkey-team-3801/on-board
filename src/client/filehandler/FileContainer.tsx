@@ -10,13 +10,21 @@ type Props = {
     id: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    files: Array<[string, string, string, string, string, string]>;
+    files: Array<{
+        id: string;
+        name: string;
+        size: number;
+        time: string;
+        userId: string;
+        username: string;
+    }>;
     updateFiles: Function;
     roomType: RoomType;
     containerType?: FileUploadType;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
+    const { id, roomType } = props;
     const [, deleteFile] = useDynamicFetch<
         undefined,
         { sid: string; fileId: string; uid: string }
@@ -51,11 +59,11 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
 
     const updateFileList = React.useCallback(() => {
         props.updateFiles({
-            id: props.id,
-            roomType: props.roomType,
+            id: id,
+            roomType: roomType,
             fileUploadType: FileUploadType.DOCUMENTS,
         });
-    }, [props]);
+    }, [id, roomType, props]);
 
     React.useEffect(() => {
         props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
@@ -82,15 +90,15 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                     <div className="file-bar" key={i}>
                         <div>
                             <div className="file-name">
-                                {file[1]}
+                                {file.name}
                                 {" - "}
-                                {sizeDisplay(Number(file[2]))}
+                                {sizeDisplay(file.size)}
                                 <br></br>
                                 {"At: "}
-                                {file[3]}
+                                {file.time}
                             </div>
                             <a
-                                href={`/filehandler/file/${file[0]}`}
+                                href={`/filehandler/file/${file.id}`}
                                 target="_self"
                                 download
                                 style={{ float: "right" }}
@@ -99,18 +107,18 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                     <FaDownload />
                                 </button>
                             </a>
-                            {props.userID === file[4] && (
+                            {props.userID === file.userId && (
                                 <button
                                     style={{ float: "right" }}
                                     className="file-del-btn"
                                     onClick={() => {
-                                        handleFileDeletion(file[0]);
+                                        handleFileDeletion(file.id);
                                     }}
                                 >
                                     <RiDeleteBin2Fill />
                                 </button>
                             )}
-                            <div>Uploaded by: {file[5]}</div>
+                            <div>Uploaded by: {file.username}</div>
                             <hr></hr>
                         </div>
                     </div>

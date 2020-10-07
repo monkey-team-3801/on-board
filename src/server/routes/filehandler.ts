@@ -48,21 +48,15 @@ router.post(
 
             if (!Array.isArray(metaData)) {
                 // extract meta data
-                const sid = JSON.parse(metaData.data.toString())[
-                    "sid"
-                ] as string;
-                const uid = JSON.parse(metaData.data.toString())[
-                    "uid"
-                ] as string;
+                const sid = JSON.parse(metaData.data.toString())["sid"];
+                const uid = JSON.parse(metaData.data.toString())["uid"];
                 const roomType = JSON.parse(metaData.data.toString())[
                     "roomType"
-                ] as RoomType;
+                ];
                 const uploadType = JSON.parse(metaData.data.toString())[
                     "uploadType"
-                ] as FileUploadType;
-                const formID = JSON.parse(metaData.data.toString())[
-                    "formID"
-                ] as string;
+                ];
+                const formID = JSON.parse(metaData.data.toString())["formID"];
 
                 const ftpUpperLimit =
                     uploadType === FileUploadType.RESPONSE ? 2 : 6;
@@ -131,7 +125,14 @@ router.post(
 router.post(
     "/getFiles",
     asyncHandler<
-        Array<[string, string, string, string, string, string]>,
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>,
         {},
         { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(async (req, res) => {
@@ -149,44 +150,30 @@ router.post(
                     : await Session.findById(req.body.id);
         }
 
-        console.log(queryType);
-
         if (queryType && queryType.files) {
-            const data = (
-                await Promise.all(
-                    queryType.files.map(async (fileId) => {
-                        const file =
-                            req.body.fileUploadType === FileUploadType.RESPONSE
-                                ? await FileResponse.findById(fileId)
-                                : await File.findById(fileId);
-                        const user = await User.findById(file?.owner);
-                        return [
-                            fileId,
-                            file?.name,
-                            file?.size.toString(),
-                            file?.fileTime,
-                            file?.owner,
-                            user?.username,
-                        ] as [
-                            string | undefined,
-                            string | undefined,
-                            string | undefined,
-                            string | undefined,
-                            string | undefined,
-                            string | undefined
-                        ];
-                    })
-                )
-            ).filter(
-                (
-                    data
-                ): data is [string, string, string, string, string, string] =>
-                    data[0] !== undefined &&
-                    data[1] !== undefined &&
-                    data[2] !== undefined &&
-                    data[3] !== undefined &&
-                    data[4] !== undefined &&
-                    data[5] !== undefined
+            const data = await Promise.all(
+                queryType.files.map(async (fileId) => {
+                    const file =
+                        req.body.fileUploadType === FileUploadType.RESPONSE
+                            ? await FileResponse.findById(fileId)
+                            : await File.findById(fileId);
+                    const user = await User.findById(file?.owner);
+                    return {
+                        id: fileId,
+                        name: file?.name,
+                        size: file?.size,
+                        time: file?.fileTime,
+                        userId: user?.id,
+                        username: user?.username,
+                    } as {
+                        id: string;
+                        name: string;
+                        size: number;
+                        time: string;
+                        userId: string;
+                        username: string;
+                    };
+                })
             );
             res.send(data).status(200).end();
         } else {

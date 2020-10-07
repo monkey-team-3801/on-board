@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React from "react";
+import React, { useRef } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
@@ -34,7 +34,7 @@ const socket = socketIOClient("/");
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const notification = new Audio("/public/notification.wav");
+    const notification = useRef(new Audio("/public/notification.wav"));
     const [soundEnabled, setSoundEnabled] = React.useState<boolean>(true);
 
     const { id: userId } = props.userData;
@@ -143,7 +143,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
     const onNewForm = React.useCallback(() => {
         if (soundEnabled) {
-            notification.play();
+            notification.current.play();
         }
     }, [notification, soundEnabled]);
 
@@ -176,7 +176,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, []);
 
     const [fileData, getFileData] = useDynamicFetch<
-        Array<[string, string, string, string, string, string]>,
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>,
         { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
         "/filehandler/getFiles",
@@ -189,7 +196,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     );
 
     const [files, setFiles] = React.useState<
-        Array<[string, string, string, string, string, string]>
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>
     >([]);
 
     React.useEffect(() => {

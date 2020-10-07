@@ -10,7 +10,14 @@ type Props = {
     socket: SocketIOClient.Socket;
     userID: string;
     updateFiles: Function;
-    files: Array<[string, string, string, string, string, string]>;
+    files: Array<{
+        id: string;
+        name: string;
+        size: number;
+        time: string;
+        userId: string;
+        username: string;
+    }>;
     roomType: RoomType;
 };
 
