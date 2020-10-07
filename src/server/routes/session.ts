@@ -47,7 +47,7 @@ router.post(
     asyncHandler<
         { id: string; name: string } | { message?: string },
         {},
-        { name: string }
+        { name: string; description: string; course: string | undefined }
     >(async (req, res, next) => {
         try {
             if (req.body.name && req.headers.authorization) {
@@ -55,11 +55,12 @@ router.post(
                     req.headers.authorization
                 );
                 if (user) {
+                    console.log(req.body);
                     const session = await createNewSession(
                         req.body.name,
-                        "", // TODO allow description
+                        req.body.description,
                         user.id,
-                        undefined // TODO allow course for private session
+                        req.body.course
                     );
                     await SessionCanvas.create({
                         sessionId: session._id,
