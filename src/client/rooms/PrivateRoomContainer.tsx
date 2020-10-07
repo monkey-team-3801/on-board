@@ -79,7 +79,9 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
 
                                             <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
+
                                             <div className="progress">
+
                                                 <div
                                                     className="progress-bar"
                                                     role="progressbar"
@@ -91,8 +93,11 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                     <span className="sr-only">
                                                         70% Complete
                                                     </span>
+
                                                 </div>
+
                                             </div>
+
                                         </Container>
                                     </header>
                                     <Container fluid>
