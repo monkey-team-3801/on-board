@@ -1,10 +1,10 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { UpcomingClassroomSessionData } from "../../types";
+import { UpcomingClassroomSessionData, RoomType } from "../../types";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
-import "./Classes.less";
 import { UpcomingClass } from "./UpcomingClass";
+import { ClassContainer } from "../classes";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,7 +40,13 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
                         </p>
                     ) : (
                         data.map((session, i) => {
-                            return <UpcomingClass key={i} {...session} />;
+                            return (
+                                <ClassContainer
+                                    key={i}
+                                    {...session}
+                                    size="sm"
+                                />
+                            );
                         })
                     )}
                 </Container>

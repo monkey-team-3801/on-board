@@ -57,7 +57,7 @@ router.post(
                 if (user) {
                     const session = await createNewSession(
                         req.body.name,
-                        "",
+                        "", // TODO allow description
                         user.id,
                         undefined // TODO allow course for private session
                     );
@@ -94,15 +94,19 @@ router.post(
     "/privateSessions",
     asyncHandler<Array<SessionInfo>, {}, {}>(async (req, res, next) => {
         try {
-            const sessions: Array<SessionInfo> = (await Session.find()).map(
-                (session) => {
+            const sessions: Array<SessionInfo> = await Promise.all(
+                (await Session.find()).map(async (session) => {
+                    const user = await User.findById(session.createdBy);
                     return {
                         id: session._id,
-                        name: session.name,
+                        name: user?.username
+                            ? `${user.username}'s ${session.name}`
+                            : session.name,
                         description: session.description,
                         courseCode: session.courseCode,
+                        createdBy: session.createdBy,
                     };
-                }
+                })
             );
             res.json(sessions);
         } catch (e) {
@@ -121,20 +125,27 @@ router.post(
                 const sessions = await ClassroomSession.find();
                 if (sessions) {
                     res.json(
-                        sessions.map((session) => {
-                            return {
-                                id: session._id,
-                                name: session.name,
-                                roomType: session.roomType,
-                                description: session.description,
-                                courseCode: session.courseCode,
-                                messages: session.messages,
-                                startTime: session.startTime,
-                                endTime: session.endTime,
-                                colourCode: session.colourCode,
-                                createdBy: session.createdBy,
-                            };
-                        })
+                        await Promise.all(
+                            sessions.map(async (session) => {
+                                const user = await User.findById(
+                                    session.createdBy
+                                );
+                                return {
+                                    id: session._id,
+                                    name: user?.username
+                                        ? `${user.username}'s ${session.name}`
+                                        : session.name,
+                                    roomType: session.roomType,
+                                    description: session.description,
+                                    courseCode: session.courseCode,
+                                    messages: session.messages,
+                                    startTime: session.startTime,
+                                    endTime: session.endTime,
+                                    colourCode: session.colourCode,
+                                    createdBy: session.createdBy,
+                                };
+                            })
+                        )
                     );
                 }
             } catch (e) {
@@ -175,20 +186,27 @@ router.post(
 
                     if (jobs) {
                         res.json(
-                            jobs.map((job) => {
-                                const session = job.data;
-                                return {
-                                    id: job._id.toHexString(),
-                                    name: session.name,
-                                    roomType: session.roomType,
-                                    description: session.description,
-                                    courseCode: session.courseCode,
-                                    startTime: session.startTime,
-                                    endTime: session.endTime,
-                                    colourCode: session.colourCode,
-                                    createdBy: job.createdBy,
-                                };
-                            })
+                            await Promise.all(
+                                jobs.map(async (job) => {
+                                    const session = job.data;
+                                    const user = await User.findById(
+                                        session.createdBy
+                                    );
+                                    return {
+                                        id: job._id.toHexString(),
+                                        name: user?.username
+                                            ? `${user.username}'s ${session.name}`
+                                            : session.name,
+                                        roomType: session.roomType,
+                                        description: session.description,
+                                        courseCode: session.courseCode,
+                                        startTime: session.startTime,
+                                        endTime: session.endTime,
+                                        colourCode: session.colourCode,
+                                        createdBy: job.createdBy,
+                                    };
+                                })
+                            )
                         );
                     }
                 } catch (e) {

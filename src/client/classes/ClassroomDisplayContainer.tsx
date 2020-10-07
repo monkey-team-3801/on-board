@@ -8,8 +8,9 @@ import {
 } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 import { EditClassroomModal } from "./EditClassroomModal";
+import { ClassContainer } from "./ClassContainer";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,11 +35,10 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         Array<Omit<ClassroomSessionData, "messages">>
     >("session/upcomingClassroomSessions");
 
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete/classroom",
+    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        false
-    );
+        SessionDeleteRequestType
+    >("session/delete/classroom", undefined, false);
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -54,95 +54,63 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     }, [classroomsResponse, setLoading]);
 
     return (
-        <Container>
+        <Container fluid>
             {classroomsResponse.data &&
                 classroomsResponse.data.map((session, i) => {
                     return (
-                        <Row key={session.id}>
-                            <Col>
-                                <p>{`${i + 1}. ${session.name}`}</p>
-                            </Col>
-                            <Col>
-                                <Button
-                                    variant="success"
-                                    size="sm"
-                                    onClick={() => {
-                                        onRoomJoinClick(session.id);
-                                    }}
-                                >
-                                    Join
-                                </Button>
-                                {props.userData.id === session.createdBy && (
-                                    <>
-                                        <Button
-                                            variant="info"
-                                            size="sm"
-                                            onClick={async () => {
-                                                setRoomSelection({
-                                                    data: session,
-                                                    type: RoomType.CLASS,
-                                                });
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={async () => {
-                                                await deleteRoom({
-                                                    id: session.id,
-                                                });
-                                                await getClassrooms();
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </>
-                                )}
-                            </Col>
-                        </Row>
+                        <ClassContainer
+                            {...session}
+                            key={session.id}
+                            canEdit={props.userData.id === session.createdBy}
+                            canJoin
+                            onJoinClick={() => {
+                                onRoomJoinClick(session.id);
+                            }}
+                            onEditClick={() => {
+                                setRoomSelection({
+                                    data: session,
+                                    type: RoomType.CLASS,
+                                });
+                            }}
+                            onDeleteClick={async () => {
+                                await deleteRoom({
+                                    id: session.id,
+                                });
+                                await getClassrooms();
+                            }}
+                            isDeleting={
+                                requestIsLoading(deleteRoomResponse) ||
+                                requestIsLoading(classroomsResponse)
+                            }
+                            size="lg"
+                        />
                     );
                 })}
-            <hr></hr>
             {upcomingClassroomsResponse.data &&
                 upcomingClassroomsResponse.data.map((session, i) => {
                     return (
-                        <Row key={session.id}>
-                            <Col>
-                                <p>{`${i + 1}. ${session.name}`}</p>
-                            </Col>
-                            <Col>
-                                {props.userData.id === session.createdBy && (
-                                    <>
-                                        <Button
-                                            variant="info"
-                                            size="sm"
-                                            onClick={async () => {
-                                                setRoomSelection({
-                                                    data: session,
-                                                    type: RoomType.UPCOMING,
-                                                });
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={async () => {
-                                                await deleteRoom({
-                                                    id: session.id,
-                                                });
-                                                await getClassrooms();
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </>
-                                )}
-                            </Col>
-                        </Row>
+                        <ClassContainer
+                            {...session}
+                            key={session.id}
+                            canEdit={props.userData.id === session.createdBy}
+                            onEditClick={() => {
+                                setRoomSelection({
+                                    data: session,
+                                    type: RoomType.UPCOMING,
+                                });
+                            }}
+                            onDeleteClick={async () => {
+                                await deleteRoom({
+                                    id: session.id,
+                                });
+                                await getClassrooms();
+                            }}
+                            isDeleting={
+                                requestIsLoading(deleteRoomResponse) ||
+                                requestIsLoading(upcomingClassroomsResponse)
+                            }
+                            size="lg"
+                        />
                     );
                 })}
             <EditClassroomModal

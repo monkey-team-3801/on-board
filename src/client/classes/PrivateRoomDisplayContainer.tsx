@@ -3,10 +3,13 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { SessionDeleteRequestType, SessionInfo } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
+import { ClassContainer } from "./ClassContainer";
+import { UserData } from "../rooms/types";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    userData: UserData;
 };
 
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
@@ -18,11 +21,10 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
         "session/privateSessions"
     );
 
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete/privateRoom",
+    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        false
-    );
+        SessionDeleteRequestType
+    >("session/delete/privateRoom", undefined, false);
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -38,38 +40,34 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     }, [privateRoomResponse, setLoading]);
 
     return (
-        <Container>
+        <Container fluid>
             {privateRoomResponse.data &&
                 privateRoomResponse.data.map((session, i) => {
                     return (
-                        <Row key={session.id}>
-                            <Col>
-                                <p>{`${i + 1}. ${session.name}`}</p>
-                            </Col>
-                            <Col>
-                                <Button
-                                    variant="success"
-                                    size="sm"
-                                    onClick={async () => {
-                                        onRoomJoinClick(session.id);
-                                    }}
-                                >
-                                    Join
-                                </Button>
-                                <Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={async () => {
-                                        await deleteRoom({
-                                            id: session.id,
-                                        });
-                                        await getPrivateRooms();
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                            </Col>
-                        </Row>
+                        <ClassContainer
+                            {...session}
+                            key={session.id}
+                            canEdit={props.userData.id === session.createdBy}
+                            onEditClick={() => {
+                                // setRoomSelection({
+                                //     data: session,
+                                //     type: RoomType.UPCOMING,
+                                // });
+                            }}
+                            courseCode={session?.courseCode || "PRIVATE"}
+                            onDeleteClick={async () => {
+                                await deleteRoom({
+                                    id: session.id,
+                                });
+                                await getPrivateRooms();
+                            }}
+                            isDeleting={
+                                requestIsLoading(deleteRoomResponse) ||
+                                requestIsLoading(privateRoomResponse)
+                            }
+                            canJoin
+                            size="lg"
+                        />
                     );
                 })}
         </Container>
