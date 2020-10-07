@@ -383,20 +383,22 @@ router.post(
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
             console.log("Deleting classroom:", req.body.id);
-            await File.deleteMany({ sessionID: req.body.id });
-            await FileForm.deleteMany({ sessionID: req.body.id });
-            await FileResponse.deleteMany({ sessionID: req.body.id });
-
-            await MultipleChoiceResponseForm.deleteMany({
-                sessionID: req.body.id,
-            });
-            const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
-                sessionID: req.body.id,
-            });
-            for (let form of shortAnswerResponseIDs) {
-                await Response.deleteMany({ formID: form.id });
-            }
             try {
+                await File.deleteMany({ sessionID: req.body.id });
+                await FileForm.deleteMany({ sessionID: req.body.id });
+                await FileResponse.deleteMany({ sessionID: req.body.id });
+
+                await MultipleChoiceResponseForm.deleteMany({
+                    sessionID: req.body.id,
+                });
+                const shortAnswerResponseIDs = await ShortAnswerResponseForm.find(
+                    {
+                        sessionID: req.body.id,
+                    }
+                );
+                for (let form of shortAnswerResponseIDs) {
+                    await Response.deleteMany({ formID: form.id });
+                }
                 await ClassroomSession.findByIdAndDelete(req.body.id);
                 await VideoSession.findOneAndDelete({ sessionId: req.body.id });
                 await BreakoutSession.deleteMany({
