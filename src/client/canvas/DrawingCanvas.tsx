@@ -255,7 +255,8 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                             setPenColour(colour);
                         }}
                     />
-                    <Button className="clear-button"
+                    <Button
+                        className="clear-button"
                         onClick={async () => {
                             const context =
                                 canvasRef.current?.getContext("2d") ||
