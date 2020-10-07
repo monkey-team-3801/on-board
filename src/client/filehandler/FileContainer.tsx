@@ -24,7 +24,7 @@ type Props = {
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const { id, roomType } = props;
+    const { id, roomType, updateFiles } = props;
     const [, deleteFile] = useDynamicFetch<
         undefined,
         { sid: string; fileId: string; uid: string }
@@ -58,12 +58,12 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
     };
 
     const updateFileList = React.useCallback(() => {
-        props.updateFiles({
+        updateFiles({
             id: id,
             roomType: roomType,
             fileUploadType: FileUploadType.DOCUMENTS,
         });
-    }, [id, roomType, props]);
+    }, [id, roomType, updateFiles]);
 
     React.useEffect(() => {
         props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
