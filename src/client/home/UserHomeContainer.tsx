@@ -8,7 +8,7 @@ import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
 import { useSocket } from "../hooks";
 import { CreateClassroomContainer } from "../rooms";
-import { CreateRoomForm } from "../rooms/CreateRoomForm";
+import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import "./Homepage.less";
@@ -87,7 +87,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         <ContainerWrapper title="Create Private Room">
                             {(setLoading) => {
                                 return (
-                                    <CreateRoomForm
+                                    <CreatePrivateRoomContainer
                                         setLoading={setLoading}
                                         {...props}
                                     />

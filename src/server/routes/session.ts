@@ -47,7 +47,7 @@ router.post(
     asyncHandler<
         { id: string; name: string } | { message?: string },
         {},
-        { name: string; description: string; course: string | undefined }
+        { name: string; description: string; courseCode?: string }
     >(async (req, res, next) => {
         try {
             if (req.body.name && req.headers.authorization) {
@@ -60,7 +60,7 @@ router.post(
                         req.body.name,
                         req.body.description,
                         user.id,
-                        req.body.course
+                        req.body.courseCode
                     );
                     await SessionCanvas.create({
                         sessionId: session._id,
@@ -93,76 +93,80 @@ router.post(
 
 router.post(
     "/privateSessions",
-    asyncHandler<Array<SessionInfo>, {}, {}>(async (req, res, next) => {
-        try {
-            const sessions: Array<SessionInfo> = await Promise.all(
-                (await Session.find()).map(async (session) => {
-                    const user = await User.findById(session.createdBy);
-                    return {
-                        id: session._id,
-                        name: user?.username
-                            ? `${user.username}'s ${session.name}`
-                            : session.name,
-                        description: session.description,
-                        courseCode: session.courseCode,
-                        createdBy: session.createdBy,
-                    };
-                })
-            );
-            res.json(sessions);
-        } catch (e) {
-            console.log("error", e);
-            res.status(500);
-            next(new Error("Unexpected error has occured."));
-        }
-    })
-);
-
-router.post(
-    "/classroomSessions",
-    asyncHandler<Array<ClassroomSessionData>, {}, {}>(
+    asyncHandler<Array<SessionInfo & { createdByUsername?: string }>, {}, {}>(
         async (req, res, next) => {
             try {
-                const sessions = await ClassroomSession.find();
-                if (sessions) {
-                    res.json(
-                        await Promise.all(
-                            sessions.map(async (session) => {
-                                const user = await User.findById(
-                                    session.createdBy
-                                );
-                                return {
-                                    id: session._id,
-                                    name: user?.username
-                                        ? `${user.username}'s ${session.name}`
-                                        : session.name,
-                                    roomType: session.roomType,
-                                    description: session.description,
-                                    courseCode: session.courseCode,
-                                    messages: session.messages,
-                                    startTime: session.startTime,
-                                    endTime: session.endTime,
-                                    colourCode: session.colourCode,
-                                    createdBy: session.createdBy,
-                                };
-                            })
-                        )
-                    );
-                }
+                const sessions: Array<SessionInfo> = await Promise.all(
+                    (await Session.find()).map(async (session) => {
+                        const user = await User.findById(session.createdBy);
+                        return {
+                            id: session._id,
+                            name: session.name,
+                            description: session.description,
+                            courseCode: session.courseCode,
+                            createdBy: session.createdBy,
+                            createdByUsername: user?.username,
+                        };
+                    })
+                );
+                res.json(sessions);
             } catch (e) {
                 console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
             }
-            res.end();
         }
     )
 );
 
 router.post(
+    "/classroomSessions",
+    asyncHandler<
+        Array<ClassroomSessionData & { createdByUsername?: string }>,
+        {},
+        {}
+    >(async (req, res, next) => {
+        try {
+            const sessions = await ClassroomSession.find();
+            if (sessions) {
+                res.json(
+                    await Promise.all(
+                        sessions.map(async (session) => {
+                            const user = await User.findById(session.createdBy);
+                            return {
+                                id: session._id,
+                                name: session.name,
+                                roomType: session.roomType,
+                                description: session.description,
+                                courseCode: session.courseCode,
+                                messages: session.messages,
+                                startTime: session.startTime,
+                                endTime: session.endTime,
+                                colourCode: session.colourCode,
+                                createdBy: session.createdBy,
+                                createdByUsername: user?.username,
+                            };
+                        })
+                    )
+                );
+            }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        }
+        res.end();
+    })
+);
+
+router.post(
     "/upcomingClassroomSessions",
     asyncHandler<
-        Array<Omit<ClassroomSessionData, "messages">>,
+        Array<
+            Omit<ClassroomSessionData, "messages"> & {
+                createdByUsername?: string;
+            }
+        >,
         {},
         { limit?: number }
     >(async (req, res, next) => {
@@ -195,9 +199,7 @@ router.post(
                                     );
                                     return {
                                         id: job._id.toHexString(),
-                                        name: user?.username
-                                            ? `${user.username}'s ${session.name}`
-                                            : session.name,
+                                        name: session.name,
                                         roomType: session.roomType,
                                         description: session.description,
                                         courseCode: session.courseCode,
@@ -205,6 +207,7 @@ router.post(
                                         endTime: session.endTime,
                                         colourCode: session.colourCode,
                                         createdBy: job.createdBy,
+                                        createdByUsername: user?.username,
                                     };
                                 })
                             )
@@ -352,6 +355,30 @@ router.post(
                     scheduleHandler.addNewJob(updatedJob);
                 }
             }
+            res.status(200);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/edit/privateSession",
+    asyncHandler<
+        { message?: string },
+        {},
+        { id: string; name: string; description: string; courseCode?: string }
+    >(async (req, res, next) => {
+        try {
+            await Session.findByIdAndUpdate(req.body.id, {
+                name: req.body.name,
+                description: req.body.description,
+                courseCode: req.body.courseCode,
+            });
             res.status(200);
         } catch (e) {
             console.log("error", e);

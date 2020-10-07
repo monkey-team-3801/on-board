@@ -12,7 +12,7 @@ type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const CreateRoomForm: React.FunctionComponent<Props> = (
+export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { setLoading } = props;
@@ -32,7 +32,7 @@ export const CreateRoomForm: React.FunctionComponent<Props> = (
 
     const [createRoomResponse, createRoom] = useDynamicFetch<
         { id: string; name: string },
-        { name: string; description: string; course: string | undefined }
+        { name: string; description: string; courseCode?: string }
     >("session/create", undefined, false);
 
     React.useEffect(() => {

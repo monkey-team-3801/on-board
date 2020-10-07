@@ -26,9 +26,10 @@ type Props = {
     requestIsLoading?: boolean;
     submitting?: boolean;
     onSubmit: (data: {
+        id?: string;
         name: string;
         description: string;
-        course: string | undefined;
+        courseCode?: string;
     }) => Promise<void>;
     submitText?: string;
     children?: React.ReactNode;
@@ -43,9 +44,10 @@ export const CreatePrivateRoomForm: React.FunctionComponent<Props> = (
             onSubmit={async (e: React.FormEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 props.onSubmit({
+                    id: props.id,
                     name: props.roomName,
                     description: props.description,
-                    course: props.selectedCourse?.value,
+                    courseCode: props.selectedCourse?.value,
                 });
             }}
         >
@@ -94,7 +96,7 @@ export const CreatePrivateRoomForm: React.FunctionComponent<Props> = (
                 invertLoader
                 loading={props.submitting}
             >
-                Create Private Room
+                {props.submitText || "Create Private Room"}
             </ButtonWithLoadingProp>
             {props.children}
         </Form>

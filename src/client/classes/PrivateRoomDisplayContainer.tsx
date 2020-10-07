@@ -6,6 +6,7 @@ import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ClassContainer } from "./ClassContainer";
 import { UserData } from "../rooms/types";
+import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,6 +23,16 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
+
+    const [roomSelection, setRoomSelection] = React.useState<
+        | {
+              id?: string;
+              name: string;
+              description: string;
+              courseCode?: string;
+          }
+        | undefined
+    >();
 
     const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
@@ -73,10 +84,12 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                 onRoomJoinClick(session.id);
                             }}
                             onEditClick={() => {
-                                // setRoomSelection({
-                                //     data: session,
-                                //     type: RoomType.UPCOMING,
-                                // });
+                                setRoomSelection({
+                                    id: session.id,
+                                    name: session.name,
+                                    description: session.description,
+                                    courseCode: session.courseCode,
+                                });
                             }}
                             courseCode={session?.courseCode || "PRIVATE"}
                             onDeleteClick={async () => {
@@ -94,6 +107,15 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                         />
                     );
                 })}
+            <EditPrivateRoomModal
+                roomSelection={roomSelection}
+                onClose={() => {
+                    setRoomSelection(undefined);
+                }}
+                refresh={() => {
+                    getPrivateRooms();
+                }}
+            />
         </Container>
     );
 };
