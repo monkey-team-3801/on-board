@@ -61,22 +61,17 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append(file.name, file, file.name);
         });
 
-        const IdObj =
+        let IdObj = {
+            sid: props.sessionID,
+            uid: props.userID,
+            roomType: props.roomType,
+            uploadType: props.uploadType,
+        };
+
+        const json =
             props.uploadType === FileUploadType.RESPONSE
-                ? {
-                      sid: props.sessionID,
-                      uid: props.userID,
-                      roomType: props.roomType,
-                      uploadType: props.uploadType,
-                      formID: props.formID,
-                  }
-                : {
-                      sid: props.sessionID,
-                      uid: props.userID,
-                      roomType: props.roomType,
-                      uploadType: props.uploadType,
-                  };
-        const json = JSON.stringify(IdObj);
+                ? JSON.stringify({ ...IdObj, formID: props.formID })
+                : JSON.stringify(IdObj);
         const IdData = new Blob([json], {
             type: "application/json",
         });
@@ -99,13 +94,11 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append("document", IdData);
             await uploadFile(formData);
             props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
-            if (props.back) {
-                setTimeout(() => {
-                    if (props.back) {
-                        props.back();
-                    }
-                }, 500);
-            }
+            setTimeout(() => {
+                if (props.back) {
+                    props.back();
+                }
+            }, 1000);
         }
     };
 
