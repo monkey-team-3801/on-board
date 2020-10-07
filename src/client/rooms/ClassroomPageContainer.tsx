@@ -35,7 +35,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const notification = useRef(new Audio("/public/notification.wav"));
-    const [soundEnabled, setSoundEnabled] = React.useState<boolean>(true);
+    const [soundEnabled, setSoundEnabled] = React.useState<boolean>(false);
 
     const { id: userId } = props.userData;
     const { classroomId: sessionId } = props.match.params;
@@ -142,10 +142,13 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, [fetchRaisedHandUsers]);
 
     const onNewForm = React.useCallback(() => {
-        if (soundEnabled) {
-            notification.current.play();
-        }
-    }, [notification, soundEnabled]);
+        setSoundEnabled((prev) => {
+            if (prev) {
+                notification.current.play();
+            }
+            return prev;
+        });
+    }, [notification]);
 
     React.useEffect(() => {
         socket
@@ -323,7 +326,9 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     )}
                                     <Button
                                         onClick={() => {
-                                            setSoundEnabled(!soundEnabled);
+                                            setSoundEnabled((prev) => {
+                                                return !prev;
+                                            });
                                         }}
                                     >
                                         {soundEnabled ? (
