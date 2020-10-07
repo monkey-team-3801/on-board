@@ -122,3 +122,22 @@ router.post(
         res.end();
     })
 );
+
+router.post(
+    "/getUserById",
+    asyncHandler<UserDataResponseType | undefined, {}, { userID: string }>(
+        async (req, res) => {
+            const user = await User.findById(req.body.userID);
+
+            if (user) {
+                res.json({
+                    id: user._id.toHexString(),
+                    username: user.username,
+                    userType: user.userType,
+                    courses: user.courses,
+                });
+            }
+            res.end();
+        }
+    )
+);

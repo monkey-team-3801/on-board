@@ -3,19 +3,28 @@ import "./FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
-import { FileUploadEvent } from "../../events";
-import { RoomType } from "../../types";
+import { FileUploadEvent, ResponseFormEvent } from "../../events";
+import { FileUploadType, RoomType } from "../../types";
 
 type Props = {
-    sessionID: string;
+    id: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    files: Array<Array<string>>;
+    files: Array<{
+        id: string;
+        name: string;
+        size: number;
+        time: string;
+        userId: string;
+        username: string;
+    }>;
     updateFiles: Function;
     roomType: RoomType;
+    containerType?: FileUploadType;
 };
 
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
+    const { id, roomType, updateFiles } = props;
     const [, deleteFile] = useDynamicFetch<
         undefined,
         { sid: string; fileId: string; uid: string }
@@ -36,45 +45,60 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
 
     const handleFileDeletion = async (fileID: string) => {
         await deleteFile({
-            sid: props.sessionID,
+            sid: props.id,
             fileId: fileID,
             uid: props.userID,
         });
-        props.socket.emit(FileUploadEvent.FILE_DELETED, props.sessionID);
-        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
+        props.socket.emit(FileUploadEvent.FILE_DELETED, props.id);
+        props.updateFiles({
+            id: props.id,
+            roomType: props.roomType,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        });
     };
 
     const updateFileList = React.useCallback(() => {
-        props.updateFiles({ sid: props.sessionID, roomType: props.roomType });
-    }, [props]);
+        updateFiles({
+            id: id,
+            roomType: roomType,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        });
+    }, [id, roomType, updateFiles]);
 
     React.useEffect(() => {
         props.socket.on(FileUploadEvent.NEW_FILE, updateFileList);
         props.socket.on(FileUploadEvent.FILE_DELETED, updateFileList);
+        props.socket.on(ResponseFormEvent.NEW_RESPONSE, updateFileList);
         return () => {
             props.socket.off(FileUploadEvent.NEW_FILE, updateFileList);
             props.socket.off(FileUploadEvent.FILE_DELETED, updateFileList);
+            props.socket.off(ResponseFormEvent.NEW_RESPONSE, updateFileList);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <div className="file-container">
-            <h1 className="file-list-header">Uploaded Files</h1>
+            <h1 className="file-list-header">
+                {props.containerType &&
+                props.containerType === FileUploadType.RESPONSE
+                    ? null
+                    : "Uploaded Files"}
+            </h1>
             <div>
                 {Object.values(props.files).map((file, i) => (
                     <div className="file-bar" key={i}>
                         <div>
                             <div className="file-name">
-                                {file[1]}
+                                {file.name}
                                 {" - "}
-                                {sizeDisplay(Number(file[2]))}
+                                {sizeDisplay(file.size)}
                                 <br></br>
                                 {"At: "}
-                                {file[3]}
+                                {file.time}
                             </div>
                             <a
-                                href={`/filehandler/file/${file[0]}`}
+                                href={`/filehandler/file/${file.id}`}
                                 target="_self"
                                 download
                                 style={{ float: "right" }}
@@ -83,17 +107,18 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
                                     <FaDownload />
                                 </button>
                             </a>
-                            {props.userID === file[4] && (
+                            {props.userID === file.userId && (
                                 <button
                                     style={{ float: "right" }}
                                     className="file-del-btn"
                                     onClick={() => {
-                                        handleFileDeletion(file[0]);
+                                        handleFileDeletion(file.id);
                                     }}
                                 >
                                     <RiDeleteBin2Fill />
                                 </button>
                             )}
+                            <div>Uploaded by: {file.username}</div>
                             <hr></hr>
                         </div>
                     </div>

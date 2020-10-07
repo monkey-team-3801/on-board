@@ -185,6 +185,7 @@ export type CreateClassroomJobRequestType = Omit<
 export enum FileUploadType {
     PROFILE,
     DOCUMENTS,
+    RESPONSE,
 }
 
 export type FileStorageType = {
@@ -240,4 +241,5 @@ export type UserData = Omit<UserDataResponseType, "courses">;
 export enum ResponseFormType {
     SHORT_ANSWER,
     MULTIPLE_CHOICE,
+    FILE,
 }

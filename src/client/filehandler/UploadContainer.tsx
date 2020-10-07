@@ -1,7 +1,7 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { FileUploadType, RoomType } from "../../types";
-import { FileUploadEvent } from "../../events";
+import { FileUploadEvent, ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
 import "./UploadContainer.less";
 
@@ -10,8 +10,10 @@ type Props = {
     sessionID: string;
     socket: SocketIOClient.Socket;
     userID: string;
-    updateFiles: Function;
+    updateFiles?: Function;
     roomType: RoomType;
+    formID?: string;
+    back?: Function;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -38,19 +40,15 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         }
     };
 
+    const totalFileLength =
+        props.uploadType === FileUploadType.DOCUMENTS ? 1 : 5;
+
     // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
     const checkValid = (files: Array<File>): boolean => {
-        if (props.uploadType === FileUploadType.PROFILE) {
-            return files.length === 1;
-        }
-        // Limit amount of files uploaded at once to 5 for now.
-        if (props.uploadType === FileUploadType.DOCUMENTS) {
-            return files.length > 0 && files.length < 6;
-        }
-        return false;
+        return files.length > 0 && files.length <= totalFileLength;
     };
 
     const onDrop = async (acceptedFiles: Array<File>) => {
@@ -63,28 +61,44 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append(file.name, file, file.name);
         });
 
+        let IdObj = {
+            sid: props.sessionID,
+            uid: props.userID,
+            roomType: props.roomType,
+            uploadType: props.uploadType,
+        };
+
+        const json =
+            props.uploadType === FileUploadType.RESPONSE
+                ? JSON.stringify({ ...IdObj, formID: props.formID })
+                : JSON.stringify(IdObj);
+        const IdData = new Blob([json], {
+            type: "application/json",
+        });
+
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
-            const IdObj = {
-                sid: props.sessionID,
-                uid: props.userID,
-                roomType: props.roomType,
-            };
-
-            const json = JSON.stringify(IdObj);
-            const IdData = new Blob([json], {
-                type: "application/json",
-            });
-
             formData.append("document", IdData);
             await uploadFile(formData);
 
             props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
-            props.updateFiles({
-                sid: props.sessionID,
-                roomType: props.roomType,
-            });
+            if (props.updateFiles) {
+                props.updateFiles({
+                    id: props.sessionID,
+                    roomType: props.roomType,
+                    fileUploadType: FileUploadType.DOCUMENTS,
+                });
+            }
+        } else if (props.uploadType === FileUploadType.RESPONSE) {
+            formData.append("document", IdData);
+            await uploadFile(formData);
+            props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
+            setTimeout(() => {
+                if (props.back) {
+                    props.back();
+                }
+            }, 1000);
         }
     };
 
@@ -108,6 +122,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                         {fileRejections.map((file, i) => (
                             <div key={i} style={{ color: "red" }}>
                                 {file.file.name}
+                                <div>Reason: {file.errors[0].message}</div>
                             </div>
                         ))}
                     </div>
@@ -121,6 +136,8 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                     <p className="dropMessage">
                         Drag 'n' drop some files here, or click here to select
                         files
+                        <br></br>
+                        Note: You can upload at most 5 files at a time
                     </p>
                 )}
             </div>

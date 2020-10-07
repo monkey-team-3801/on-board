@@ -24,9 +24,10 @@ import {
     SessionUsers,
     User,
 } from "../database";
-import { File } from "../database/schema/File";
+import { File, FileResponse } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
+    FileForm,
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
@@ -383,6 +384,8 @@ router.post(
         async (req, res, next) => {
             console.log("Deleting classroom:", req.body.id);
             await File.deleteMany({ sessionID: req.body.id });
+            await FileForm.deleteMany({ sessionID: req.body.id });
+            await FileResponse.deleteMany({ sessionID: req.body.id });
 
             await MultipleChoiceResponseForm.deleteMany({
                 sessionID: req.body.id,
