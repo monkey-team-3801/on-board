@@ -1,5 +1,5 @@
 import { useThrottleCallback } from "@react-hook/throttle";
-import React, { useMemo } from "react";
+import React from "react";
 import { Button, Container } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { FileUploadType, ResponseFormType, RoomType } from "../../types";
