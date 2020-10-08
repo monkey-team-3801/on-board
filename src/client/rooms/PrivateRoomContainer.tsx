@@ -27,15 +27,35 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     const { roomId } = props.match.params;
 
     const [fileData, getFileData] = useDynamicFetch<
-        Array<Array<string>>,
-        { sid: string; roomType: RoomType }
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>,
+        { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
         "/filehandler/getFiles",
-        { sid: roomId, roomType: RoomType.PRIVATE },
+        {
+            id: roomId,
+            roomType: RoomType.PRIVATE,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        },
         true
     );
 
-    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
+    const [files, setFiles] = React.useState<
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>
+    >([]);
 
     React.useEffect(() => {
         if (requestIsLoaded(fileData)) {

@@ -7,8 +7,8 @@ import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer"
 import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
 import { useSocket } from "../hooks";
+import { CreateClassroomContainer } from "../rooms";
 import { CreateRoomForm } from "../rooms/CreateRoomForm";
-import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import "./Homepage.less";
@@ -99,7 +99,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         <ContainerWrapper title="Create Classroom">
                             {(setLoading) => {
                                 return (
-                                    <ScheduleRoomFormContainer
+                                    <CreateClassroomContainer
                                         setLoading={setLoading}
                                     />
                                 );

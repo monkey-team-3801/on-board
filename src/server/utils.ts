@@ -6,7 +6,8 @@ import {
     AnyObjectMap,
     BaseJob,
     ClassOpenJob,
-    ClassroomData,
+    ClassroomSessionData,
+    UpcomingClassroomSessionData,
 } from "../types";
 import { Session } from "./database";
 import { ClassroomSession, SessionUsers } from "./database/schema";
@@ -53,21 +54,23 @@ export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
 export const createNewSession = async (
     name: string,
     description: string,
+    createdBy: string,
     courseCode?: string
 ) => {
-    const session = await Session.create({
+    return Session.create({
         name,
         messages: [],
         description,
         courseCode,
         files: [],
+        createdBy,
     });
-    return session;
 };
 
-export const createNewClassroomSession = async (data: ClassroomData) => {
+export const createNewClassroomSession = async (job: ClassOpenJob) => {
+    const data = job.data;
     const session = await ClassroomSession.create({
-        name: data.roomName,
+        name: data.name,
         messages: [],
         roomType: data.roomType,
         description: data.description,
@@ -77,6 +80,7 @@ export const createNewClassroomSession = async (data: ClassroomData) => {
         raisedHandUsers: [],
         files: [],
         colourCode: data.colourCode,
+        createdBy: job.createdBy,
     });
     await SessionUsers.create({
         sessionId: session._id,
@@ -91,4 +95,18 @@ export const createNewClassroomSession = async (data: ClassroomData) => {
         sharingUsers: [],
     });
     return session;
+};
+
+export const classFormDataHasError = (
+    data: ClassroomSessionData | UpcomingClassroomSessionData
+): string | undefined => {
+    if (!data.name) {
+        return "Room name should not be empty";
+    }
+    if (!data.courseCode) {
+        return "Course should not be empty";
+    }
+    if (new Date(data.endTime).getTime() < new Date(data.startTime).getTime()) {
+        return "Class should not end before it starts";
+    }
 };

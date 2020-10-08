@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import { MessageData } from "../../../types";
 
-interface ISession extends mongoose.Document {
+export interface ISession extends mongoose.Document {
     name: string;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;
     courseCode?: string;
     files?: Array<string>;
+    createdBy: string;
 }
 interface IClassroomSession extends ISession {
     courseCode: string;
@@ -27,6 +28,7 @@ const SessionSchema = new mongoose.Schema<ISession>({
     files: { type: Array, default: [] },
     roomType: { type: Number },
     courseCode: { type: String },
+    createdBy: { type: String },
 });
 
 const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
@@ -40,6 +42,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     raisedHandUsers: { type: Array, default: [] },
     files: { type: Array, default: [] },
     colourCode: { type: String },
+    createdBy: { type: String },
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
@@ -50,6 +53,7 @@ const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
     roomType: { type: Number },
     courseCode: { type: String },
     parentSessionId: { type: String, required: true },
+    createdBy: { type: String },
 });
 
 export const Session = mongoose.model<ISession>("Session", SessionSchema);
