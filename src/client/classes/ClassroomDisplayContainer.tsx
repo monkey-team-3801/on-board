@@ -45,6 +45,11 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         SessionDeleteRequestType
     >("session/delete/classroom", undefined, false);
 
+    const [deleteJobResponse, deleteJob] = useDynamicFetch<
+        undefined,
+        SessionDeleteRequestType
+    >("job/delete", undefined, false);
+
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
             history.push(`/classroom/${id}`);
@@ -150,13 +155,13 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                                 });
                             }}
                             onDeleteClick={async () => {
-                                await deleteRoom({
+                                await deleteJob({
                                     id: session.id,
                                 });
-                                await getClassrooms();
+                                await getUpcomingClassrooms();
                             }}
                             isDeleting={
-                                requestIsLoading(deleteRoomResponse) ||
+                                requestIsLoading(deleteJobResponse) ||
                                 requestIsLoading(upcomingClassroomsResponse)
                             }
                             size="lg"

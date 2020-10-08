@@ -55,7 +55,6 @@ router.post(
                     req.headers.authorization
                 );
                 if (user) {
-                    console.log(req.body);
                     const session = await createNewSession(
                         req.body.name,
                         req.body.description,
@@ -428,6 +427,7 @@ router.post(
     "/delete/classroom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
+            console.log(req.body);
             console.log("Deleting classroom:", req.body.id);
             try {
                 await File.deleteMany({ sessionID: req.body.id });
