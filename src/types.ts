@@ -79,6 +79,7 @@ export type CourseListResponseType = CourseCodesType;
 export type CourseListRequestType = CourseCodesType;
 
 export type CourseAnnouncementsType = {
+    id: string;
     title: string;
     content: string;
     courseCode: string;

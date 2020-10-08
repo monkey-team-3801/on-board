@@ -6,7 +6,7 @@ import {
     GetAnnouncementsResponseType,
     UserEnrolledCoursesResponseType,
 } from "../../types";
-import { useFetch, useDynamicFetch } from "../hooks";
+import { useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
 import { requestIsLoaded } from "../utils";
 import { AnnouncementEntry } from "./AnnouncementEntry";
@@ -118,6 +118,9 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                                     <AnnouncementEntry
                                         announcement={announcement}
                                         currentUser={props.userId}
+                                        onDelete={async () => {
+                                            await refresh();
+                                        }}
                                     />
                                 </Row>
                                 <hr />

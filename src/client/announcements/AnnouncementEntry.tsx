@@ -1,18 +1,28 @@
-import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import { CourseAnnouncementsType } from "../../types";
 import { format } from "date-fns/esm";
+import React from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { CourseAnnouncementsType } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
+import { requestIsLoading } from "../utils";
 
 type Props = {
     announcement: CourseAnnouncementsType & { username: string };
     currentUser: string;
+    onDelete?: () => Promise<void>;
 };
 
 export const AnnouncementEntry: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { announcement } = props;
+
+    const [deleteResponse, deleteAnnouncement] = useDynamicFetch<
+        undefined,
+        { id: string; courseCode: string }
+    >("courses/announcements/delete", undefined, false);
+
+    const [deleteDisabled, setDeleteDisabled] = React.useState<boolean>(false);
 
     return (
         <Container className="ml-2">
@@ -21,7 +31,7 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                     <Row>
                         <header
                             style={{
-                                borderLeftColor: `#67579e`,
+                                borderLeftColor: "#67579e",
                             }}
                             className="d-flex justify-content-between pl-2"
                         >
@@ -48,6 +58,21 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                         size="sm"
                                         style={{
                                             height: "20px",
+                                        }}
+                                        loading={
+                                            requestIsLoading(deleteResponse) ||
+                                            deleteDisabled
+                                        }
+                                        invertLoader
+                                        onClick={async () => {
+                                            await deleteAnnouncement({
+                                                id: announcement.id,
+                                                courseCode:
+                                                    announcement.courseCode,
+                                            });
+                                            setDeleteDisabled(true);
+                                            await props.onDelete?.();
+                                            setDeleteDisabled(false);
                                         }}
                                     >
                                         Delete
