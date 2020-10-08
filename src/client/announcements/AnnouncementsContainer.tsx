@@ -67,7 +67,7 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     const filteredAnnouncements = React.useMemo(() => {
         return (
             announcementsData.data &&
-            announcementsData.data?.announcements.filter((entry) => {
+            announcementsData.data.announcements.filter((entry) => {
                 return (
                     (entry.content.toLowerCase().includes(textFilter) ||
                         entry.title.toLowerCase().includes(textFilter) ||
