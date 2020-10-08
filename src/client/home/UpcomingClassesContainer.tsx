@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { UpcomingClassroomSessionData } from "../../types";
+import { UpcomingClassroomSessionData, RoomType } from "../../types";
 import { ClassContainer } from "../classes";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
@@ -44,6 +44,7 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
                                     key={i}
                                     {...session}
                                     size="sm"
+                                    type={RoomType.UPCOMING}
                                 />
                             );
                         })

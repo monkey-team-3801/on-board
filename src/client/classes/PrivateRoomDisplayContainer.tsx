@@ -1,8 +1,8 @@
 import React from "react";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { SessionDeleteRequestType, SessionInfo } from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { RoomType, SessionInfo } from "../../types";
+import { useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ClassContainer } from "./ClassContainer";
@@ -33,11 +33,6 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
           }
         | undefined
     >();
-
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
-        undefined,
-        SessionDeleteRequestType
-    >("session/delete/privateRoom", undefined, false);
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -93,17 +88,12 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                             }}
                             courseCode={session?.courseCode || "PRIVATE"}
                             onDeleteClick={async () => {
-                                await deleteRoom({
-                                    id: session.id,
-                                });
                                 await getPrivateRooms();
                             }}
-                            isDeleting={
-                                requestIsLoading(deleteRoomResponse) ||
-                                requestIsLoading(privateRoomResponse)
-                            }
+                            isRefreshing={requestIsLoading(privateRoomResponse)}
                             canJoin
                             size="lg"
+                            type={RoomType.PRIVATE}
                         />
                     );
                 })}
