@@ -11,6 +11,7 @@ import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
+import { v4 } from "uuid";
 
 type Props = {
     userId: string;
@@ -40,8 +41,13 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         new Date()
     );
 
+    const [creatingAnnouncements, setCreatingAnnouncements] = React.useState<
+        boolean
+    >(false);
+
     React.useEffect(() => {
         refreshCourseData();
+        setCreatingAnnouncements(false);
     }, [refreshKey, refreshCourseData]);
 
     const isCourseEmpty = React.useMemo(() => {
@@ -51,9 +57,10 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     const isSubmitting: boolean = React.useMemo(() => {
         return (
             requestIsLoading(createAnnouncementResponse) ||
-            requestIsLoading(courseData)
+            requestIsLoading(courseData) ||
+            creatingAnnouncements
         );
-    }, [createAnnouncementResponse, courseData]);
+    }, [createAnnouncementResponse, courseData, creatingAnnouncements]);
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
@@ -69,19 +76,23 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         <Container>
             <Form
                 className="mb-3"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                     e.preventDefault();
-                    courses.forEach((option) => {
-                        createAnnouncement({
-                            jobDate: announcementTime.toISOString(),
-                            executingEvent: ExecutingEvent.ANNOUNCEMENT,
-                            data: {
-                                title,
-                                content,
-                                courseCode: option.value,
-                            },
-                        });
-                    });
+                    setCreatingAnnouncements(true);
+                    await Promise.all(
+                        courses.map(async (option) => {
+                            await createAnnouncement({
+                                jobDate: announcementTime.toISOString(),
+                                executingEvent: ExecutingEvent.ANNOUNCEMENT,
+                                data: {
+                                    id: v4(),
+                                    title,
+                                    content,
+                                    courseCode: option.value,
+                                },
+                            });
+                        })
+                    );
                 }}
             >
                 <Form.Group>
