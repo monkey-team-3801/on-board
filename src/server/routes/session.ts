@@ -95,24 +95,40 @@ router.post(
     asyncHandler<Array<SessionInfo & { createdByUsername?: string }>, {}, {}>(
         async (req, res, next) => {
             try {
-                const sessions: Array<SessionInfo> = await Promise.all(
-                    (await Session.find()).map(async (session) => {
-                        const user = await User.findById(session.createdBy);
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                            createdBy: session.createdBy,
-                            createdByUsername: user?.username,
-                        };
-                    })
-                );
-                res.json(sessions);
+                if (req.headers.authorization) {
+                    const currentUser = await getUserDataFromJWT(
+                        req.headers.authorization
+                    );
+                    const query: Array<SessionInfo> = await Promise.all(
+                        (await Session.find()).map(async (session) => {
+                            const user = await User.findById(session.createdBy);
+                            return {
+                                id: session._id,
+                                name: session.name,
+                                description: session.description,
+                                courseCode: session.courseCode,
+                                createdBy: session.createdBy,
+                                createdByUsername: user?.username,
+                            };
+                        })
+                    );
+                    res.json(
+                        query.filter((session) => {
+                            if (!session.courseCode) {
+                                return true;
+                            }
+                            return currentUser?.courses.includes(
+                                session.courseCode
+                            );
+                        })
+                    );
+                }
             } catch (e) {
                 console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
+            } finally {
+                res.status(200).end();
             }
         }
     )
@@ -127,26 +143,34 @@ router.post(
     >(async (req, res, next) => {
         try {
             const sessions = await ClassroomSession.find();
-            if (sessions) {
+            if (sessions && req.headers.authorization) {
+                const currentUser = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                const query = await Promise.all(
+                    sessions.map(async (session) => {
+                        const user = await User.findById(session.createdBy);
+                        return {
+                            id: session._id,
+                            name: session.name,
+                            roomType: session.roomType,
+                            description: session.description,
+                            courseCode: session.courseCode,
+                            messages: session.messages,
+                            startTime: session.startTime,
+                            endTime: session.endTime,
+                            colourCode: session.colourCode,
+                            createdBy: session.createdBy,
+                            createdByUsername: user?.username,
+                        };
+                    })
+                );
                 res.json(
-                    await Promise.all(
-                        sessions.map(async (session) => {
-                            const user = await User.findById(session.createdBy);
-                            return {
-                                id: session._id,
-                                name: session.name,
-                                roomType: session.roomType,
-                                description: session.description,
-                                courseCode: session.courseCode,
-                                messages: session.messages,
-                                startTime: session.startTime,
-                                endTime: session.endTime,
-                                colourCode: session.colourCode,
-                                createdBy: session.createdBy,
-                                createdByUsername: user?.username,
-                            };
-                        })
-                    )
+                    query.filter((session) => {
+                        return currentUser?.courses.includes(
+                            session.courseCode
+                        );
+                    })
                 );
             }
         } catch (e) {
