@@ -85,14 +85,12 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 <div
                                                     className="progress-bar"
                                                     role="progressbar"
-                                                    aria-valuenow={70}
+                                                    aria-valuenow={80}
                                                     aria-valuemin={0}
                                                     aria-valuemax={100}
                                                     style={{ width: "70%" }}
                                                 >
-                                                    <span className="sr-only">
-                                                        70% Complete
-                                                    </span>
+
 
                                                 </div>
 
