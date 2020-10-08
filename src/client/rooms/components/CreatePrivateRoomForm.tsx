@@ -61,6 +61,7 @@ export const CreatePrivateRoomForm: React.FunctionComponent<Props> = (
                     onChange={(e) => {
                         props.setRoomName(e.target.value);
                     }}
+                    disabled={props.submitting}
                     required
                 />
             </Form.Group>

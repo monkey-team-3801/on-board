@@ -9,6 +9,7 @@ import { ScheduleRoomFormContainer } from "./ScheduleRoomFormContainer";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    refreshKey: number;
 };
 
 export const CreateClassroomContainer: React.FunctionComponent<Props> = (
@@ -23,6 +24,7 @@ export const CreateClassroomContainer: React.FunctionComponent<Props> = (
         <ScheduleRoomFormContainer
             setLoading={props.setLoading}
             response={createClassroomResponse}
+            refreshKey={props.refreshKey}
             onSubmit={async (
                 data: Omit<UpcomingClassroomSessionData, "id">
             ) => {

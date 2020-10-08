@@ -89,6 +89,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <CreatePrivateRoomContainer
                                         setLoading={setLoading}
+                                        refreshKey={refreshKey}
                                         {...props}
                                     />
                                 );
@@ -101,6 +102,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <CreateClassroomContainer
                                         setLoading={setLoading}
+                                        refreshKey={refreshKey}
                                     />
                                 );
                             }}
@@ -145,6 +147,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <CreateAnnouncementsForm
                                         userId={userData.id}
                                         setLoading={setLoading}
+                                        refreshKey={refreshKey}
                                     />
                                 );
                             }}

@@ -13,15 +13,16 @@ import {
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    refreshKey: number;
 };
 
 export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
-    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
-        "/user/courses"
-    );
+    const { setLoading, refreshKey } = props;
+    const [courseData, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [courseCodes, setCourseCodes] = React.useState<
@@ -39,6 +40,10 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
         { id: string; name: string },
         { name: string; description: string; courseCode?: string }
     >("session/create", undefined, false);
+
+    React.useEffect(() => {
+        refreshCourseData();
+    }, [refreshKey, refreshCourseData]);
 
     React.useEffect(() => {
         setLoading(false);
@@ -78,7 +83,7 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
                 onSubmit={async (data) => {
                     await createRoom(data);
                 }}
-                submitting={submitting}
+                submitting={submitting || requestIsLoading(courseData)}
                 submitText="Create Room"
             >
                 {roomId && (

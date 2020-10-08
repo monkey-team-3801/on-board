@@ -20,16 +20,17 @@ type Props = {
     response: BaseResponseType<any>;
     onSubmit: (data: Omit<UpcomingClassroomSessionData, "id">) => Promise<void>;
     submitting?: boolean;
+    refreshKey?: number;
 };
 
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
+    const { setLoading, refreshKey } = props;
 
-    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
-        "/user/courses"
-    );
+    const [courseData, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
@@ -49,6 +50,10 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     );
 
     const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
+
+    React.useEffect(() => {
+        refreshCourseData();
+    }, [refreshKey, refreshCourseData]);
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
@@ -85,7 +90,9 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     setStartingTime={setStartingTime}
                     setEndingTime={setEndingTime}
                     setColourCode={setColourCode}
-                    submitting={props.submitting}
+                    submitting={
+                        props.submitting || requestIsLoading(courseData)
+                    }
                     requestIsLoading={requestIsLoading(props.response)}
                     onSubmit={props.onSubmit}
                     submitText={"Create Room"}
