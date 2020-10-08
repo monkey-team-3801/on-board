@@ -8,9 +8,9 @@ import {
     Row,
     Tooltip,
 } from "react-bootstrap";
-import { UpcomingClassroomSessionData, RoomType } from "../../types";
-import "./Classes.less";
+import { UpcomingClassroomSessionData } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
+import "./Classes.less";
 
 type Props = Partial<UpcomingClassroomSessionData> & {
     size: "sm" | "lg";

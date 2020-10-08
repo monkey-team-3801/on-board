@@ -2,7 +2,6 @@ import React from "react";
 import { Alert, Modal } from "react-bootstrap";
 import {
     ClassroomSessionData,
-    CourseListResponseType,
     RoomType,
     UserEnrolledCoursesResponseType,
 } from "../../types";
@@ -10,10 +9,10 @@ import { useDynamicFetch, useFetch } from "../hooks";
 import { ScheduleRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
 import {
+    baseRoomTypeOptions,
     requestHasError,
     requestIsLoaded,
     requestIsLoading,
-    baseRoomTypeOptions,
 } from "../utils";
 
 type Props = {

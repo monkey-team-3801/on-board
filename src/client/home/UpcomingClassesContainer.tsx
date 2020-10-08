@@ -1,10 +1,9 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { UpcomingClassroomSessionData, RoomType } from "../../types";
+import { UpcomingClassroomSessionData } from "../../types";
+import { ClassContainer } from "../classes";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
-import { UpcomingClass } from "./UpcomingClass";
-import { ClassContainer } from "../classes";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;

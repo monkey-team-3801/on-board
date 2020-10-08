@@ -4,7 +4,6 @@ import { Alert, Container, Form } from "react-bootstrap";
 import Select from "react-select";
 import { ExecutingEvent } from "../../events";
 import {
-    CourseListResponseType,
     CreateAnnouncementJobRequestType,
     UserEnrolledCoursesResponseType,
 } from "../../types";

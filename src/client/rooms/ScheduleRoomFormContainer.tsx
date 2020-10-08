@@ -1,17 +1,16 @@
 import React from "react";
 import { Alert, Container } from "react-bootstrap";
 import {
-    CourseListResponseType,
     UpcomingClassroomSessionData,
     UserEnrolledCoursesResponseType,
 } from "../../types";
 import { useFetch } from "../hooks";
 import { BaseResponseType, CourseOptionType } from "../types";
 import {
+    baseRoomTypeOptions,
     requestHasError,
     requestIsLoaded,
     requestIsLoading,
-    baseRoomTypeOptions,
 } from "../utils";
 import { ScheduleRoomForm } from "./components";
 

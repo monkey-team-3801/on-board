@@ -1,7 +1,6 @@
 import React from "react";
 import { Form } from "react-bootstrap";
 import Select from "react-select";
-import { ClassroomSessionData } from "../../../types";
 import { ButtonWithLoadingProp } from "../../components";
 import { CourseOptionType } from "../../types";
 

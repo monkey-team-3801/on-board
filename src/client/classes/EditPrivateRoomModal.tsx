@@ -1,13 +1,10 @@
 import React from "react";
-import { Modal, Alert } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
+import { UserEnrolledCoursesResponseType } from "../../types";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { CreatePrivateRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
-import { useDynamicFetch, useFetch } from "../hooks";
-import {
-    CourseListResponseType,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
-import { requestIsLoaded, requestHasError, requestIsLoading } from "../utils";
+import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     roomSelection?: {

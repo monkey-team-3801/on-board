@@ -1,15 +1,11 @@
 import React from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
-import { useDynamicFetch, useFetch } from "../hooks";
-import { requestIsLoaded, requestHasError, requestIsLoading } from "../utils";
+import { Alert, Button, Container } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { ButtonWithLoadingProp } from "../components";
+import { UserEnrolledCoursesResponseType } from "../../types";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
+import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 import { CreatePrivateRoomForm } from "./components";
-import {
-    CourseListRequestType,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;

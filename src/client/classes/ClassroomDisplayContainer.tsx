@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, Col, Container, Row, Form } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import Select from "react-select";
 import {
     ClassroomSessionData,
     RoomType,
@@ -9,10 +10,8 @@ import {
 import { useDynamicFetch, useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
-import { EditClassroomModal } from "./EditClassroomModal";
 import { ClassContainer } from "./ClassContainer";
-import Select from "react-select";
-import { isArray } from "lodash";
+import { EditClassroomModal } from "./EditClassroomModal";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
