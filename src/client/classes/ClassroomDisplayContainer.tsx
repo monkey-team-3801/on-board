@@ -2,12 +2,8 @@ import React from "react";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import Select from "react-select";
-import {
-    ClassroomSessionData,
-    RoomType,
-    SessionDeleteRequestType,
-} from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { ClassroomSessionData, RoomType } from "../../types";
+import { useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ClassContainer } from "./ClassContainer";
@@ -38,16 +34,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     const [upcomingClassroomsResponse, getUpcomingClassrooms] = useFetch<
         Array<Omit<ClassroomSessionData, "messages">>
     >("session/upcomingClassroomSessions");
-
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
-        undefined,
-        SessionDeleteRequestType
-    >("session/delete/classroom", undefined, false);
-
-    const [deleteJobResponse, deleteJob] = useDynamicFetch<
-        undefined,
-        SessionDeleteRequestType
-    >("job/delete", undefined, false);
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -127,16 +113,11 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                                 });
                             }}
                             onDeleteClick={async () => {
-                                await deleteRoom({
-                                    id: session.id,
-                                });
                                 await getClassrooms();
                             }}
-                            isDeleting={
-                                requestIsLoading(deleteRoomResponse) ||
-                                requestIsLoading(classroomsResponse)
-                            }
+                            isRefreshing={requestIsLoading(classroomsResponse)}
                             size="lg"
+                            type={RoomType.CLASS}
                         />
                     );
                 })}
@@ -154,16 +135,13 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                                 });
                             }}
                             onDeleteClick={async () => {
-                                await deleteJob({
-                                    id: session.id,
-                                });
                                 await getUpcomingClassrooms();
                             }}
-                            isDeleting={
-                                requestIsLoading(deleteJobResponse) ||
-                                requestIsLoading(upcomingClassroomsResponse)
-                            }
+                            isRefreshing={requestIsLoading(
+                                upcomingClassroomsResponse
+                            )}
                             size="lg"
+                            type={RoomType.UPCOMING}
                         />
                     );
                 })}

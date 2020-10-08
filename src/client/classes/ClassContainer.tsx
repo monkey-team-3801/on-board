@@ -8,24 +8,51 @@ import {
     Row,
     Tooltip,
 } from "react-bootstrap";
-import { UpcomingClassroomSessionData } from "../../types";
+import {
+    RoomType,
+    SessionDeleteRequestType,
+    UpcomingClassroomSessionData,
+} from "../../types";
 import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
+import { requestIsLoading } from "../utils";
 import "./Classes.less";
 
 type Props = Partial<UpcomingClassroomSessionData> & {
+    id?: string;
     size: "sm" | "lg";
     canEdit?: boolean;
     canJoin?: boolean;
     onJoinClick?: () => void;
     onEditClick?: () => void;
     onDeleteClick?: () => void;
-    isDeleting?: boolean;
+    isRefreshing?: boolean;
+    type: RoomType;
 };
 
 export const ClassContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { startTime: startTimeIso, endTime: endTimeIso } = props;
+    const {
+        startTime: startTimeIso,
+        endTime: endTimeIso,
+        isRefreshing: parentRefreshing,
+    } = props;
+
+    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
+        undefined,
+        SessionDeleteRequestType
+    >("session/delete/classroom", undefined, false);
+
+    const [deleteJobResponse, deleteJob] = useDynamicFetch<
+        undefined,
+        SessionDeleteRequestType
+    >("job/delete", undefined, false);
+
+    const [deletePrivateRoomResponse, deletePrivateRoom] = useDynamicFetch<
+        undefined,
+        SessionDeleteRequestType
+    >("session/delete/privateRoom", undefined, false);
 
     const startTime = React.useMemo(() => {
         return startTimeIso && format(new Date(startTimeIso), "MM/dd hh:mm");
@@ -34,6 +61,20 @@ export const ClassContainer: React.FunctionComponent<Props> = (
     const endTime = React.useMemo(() => {
         return endTimeIso && format(new Date(endTimeIso), "MM/dd hh:mm");
     }, [endTimeIso]);
+
+    const isRefreshing = React.useMemo(() => {
+        return (
+            requestIsLoading(deleteRoomResponse) ||
+            requestIsLoading(deleteJobResponse) ||
+            requestIsLoading(deletePrivateRoomResponse) ||
+            parentRefreshing
+        );
+    }, [
+        deleteRoomResponse,
+        deleteJobResponse,
+        deletePrivateRoomResponse,
+        parentRefreshing,
+    ]);
 
     return (
         <Row
@@ -110,6 +151,7 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                     <Button
                                         variant="info"
                                         onClick={props.onEditClick}
+                                        disabled={isRefreshing}
                                     >
                                         Edit
                                     </Button>
@@ -117,8 +159,34 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                 <Col md={6} className="p-0">
                                     <ButtonWithLoadingProp
                                         variant="danger"
-                                        onClick={props.onDeleteClick}
-                                        loading={props.isDeleting}
+                                        onClick={async () => {
+                                            if (props.id) {
+                                                if (
+                                                    props.type ===
+                                                    RoomType.CLASS
+                                                ) {
+                                                    await deleteRoom({
+                                                        id: props.id,
+                                                    });
+                                                } else if (
+                                                    props.type ===
+                                                    RoomType.UPCOMING
+                                                ) {
+                                                    await deleteJob({
+                                                        id: props.id,
+                                                    });
+                                                } else if (
+                                                    props.type ===
+                                                    RoomType.PRIVATE
+                                                ) {
+                                                    await deletePrivateRoom({
+                                                        id: props.id,
+                                                    });
+                                                }
+                                                props.onDeleteClick?.();
+                                            }
+                                        }}
+                                        loading={isRefreshing}
                                         invertLoader
                                         style={{
                                             height: "100%",
