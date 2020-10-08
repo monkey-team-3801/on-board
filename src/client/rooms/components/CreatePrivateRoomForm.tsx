@@ -3,10 +3,7 @@ import { Form } from "react-bootstrap";
 import Select from "react-select";
 import { ButtonWithLoadingProp } from "../../components";
 import { CourseOptionType } from "../../types";
-
-const isOptionType = (option: any): option is CourseOptionType => {
-    return option?.value && option?.label;
-};
+import { isOptionType } from "../../utils";
 
 type Props = {
     id?: string;
