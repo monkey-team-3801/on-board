@@ -6,7 +6,7 @@ import {
     GetAnnouncementsResponseType,
     UserEnrolledCoursesResponseType,
 } from "../../types";
-import { useFetch } from "../hooks";
+import { useFetch, useDynamicFetch } from "../hooks";
 import { CourseOptionType } from "../types";
 import { requestIsLoaded } from "../utils";
 import { AnnouncementEntry } from "./AnnouncementEntry";
@@ -113,14 +113,15 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                 {filteredAnnouncements &&
                     filteredAnnouncements.map((announcement, i) => {
                         return (
-                            <>
-                                <Row className="announcement my-4" key={i}>
+                            <React.Fragment key={i}>
+                                <Row className="announcement my-4">
                                     <AnnouncementEntry
                                         announcement={announcement}
+                                        currentUser={props.userId}
                                     />
                                 </Row>
                                 <hr />
-                            </>
+                            </React.Fragment>
                         );
                     })}
             </Container>

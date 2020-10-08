@@ -2,9 +2,11 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { CourseAnnouncementsType } from "../../types";
 import { format } from "date-fns/esm";
+import { ButtonWithLoadingProp } from "../components";
 
 type Props = {
     announcement: CourseAnnouncementsType & { username: string };
+    currentUser: string;
 };
 
 export const AnnouncementEntry: React.FunctionComponent<Props> = (
@@ -13,38 +15,54 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
     const { announcement } = props;
 
     return (
-        <Container>
+        <Container className="ml-2">
             <Row>
                 <Col>
                     <Row>
                         <header
                             style={{
-                                borderLeftColor: `#${Math.floor(
-                                    Math.random() * 16777215
-                                )
-                                    .toString(16)
-                                    .toString()}`,
+                                borderLeftColor: `#67579e`,
                             }}
+                            className="d-flex justify-content-between pl-2"
                         >
-                            <h2 className="title">{announcement.title}</h2>
-                            <h3 className="coursecode">
-                                {announcement.courseCode}
-                            </h3>
-                            <p className="date">
-                                {format(
-                                    new Date(props.announcement.date),
-                                    "MM/dd hh:mm"
+                            <Container fluid>
+                                <h2 className="title">{announcement.title}</h2>
+                                <h3 className="coursecode">
+                                    {announcement.courseCode}
+                                </h3>
+                                <p className="date">
+                                    {format(
+                                        new Date(props.announcement.date),
+                                        "MM/dd hh:mm"
+                                    )}
+                                </p>
+                            </Container>
+                            <Container
+                                fluid
+                                className="d-flex flex-row-reverse"
+                            >
+                                {props.currentUser ===
+                                    props.announcement.userId && (
+                                    <ButtonWithLoadingProp
+                                        variant="danger"
+                                        size="sm"
+                                        style={{
+                                            height: "20px",
+                                        }}
+                                    >
+                                        Delete
+                                    </ButtonWithLoadingProp>
                                 )}
-                            </p>
+                            </Container>
                         </header>
                     </Row>
-                    <Row>
-                        <div className="message">
+                    <Row className="pl-2">
+                        <Container fluid className="message">
                             <p>{announcement.content}</p>
-                        </div>
+                        </Container>
                     </Row>
-                    <Row>
-                        <div className="user-container">
+                    <Row className="pl-2 mt-2">
+                        <Container fluid className="user-container">
                             <div className="profile">
                                 <img
                                     src={`/filehandler/getPfp/${
@@ -58,7 +76,7 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                 <h4>{announcement.username}</h4>
                                 <p>Instructor</p>
                             </div>
-                        </div>
+                        </Container>
                     </Row>
                 </Col>
             </Row>
