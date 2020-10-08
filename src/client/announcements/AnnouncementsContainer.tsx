@@ -5,10 +5,11 @@ import {
     GetAnnouncementsResponseType,
 } from "../../types";
 import { requestIsLoaded } from "../utils";
-import { Row } from "react-bootstrap";
+import { Row, Container, Col, Form } from "react-bootstrap";
 
 import "./Announcements.less";
 import { AnnouncementEntry } from "./AnnouncementEntry";
+import Select from "react-select";
 type Props = {
     userId: string;
     refreshKey: number;
@@ -31,6 +32,9 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
         GetAnnouncementsRequestType
     >("/courses/announcements", apiData);
 
+    const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
+    const [roomActiveFilter, setRoomActiveFilter] = React.useState<string>("");
+
     React.useEffect(() => {
         refresh();
     }, [refreshKey, refresh]);
@@ -43,21 +47,22 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <div className="announcement-list">
                 {announcementsData.data &&
                     announcementsData.data.announcements.map(
                         (announcement, i) => {
                             return (
-                                <Row className="announcement" key={i}>
-                                    <AnnouncementEntry
-                                        announcement={announcement}
-                                    />
+                                <>
+                                    <Row className="announcement my-4" key={i}>
+                                        <AnnouncementEntry
+                                            announcement={announcement}
+                                        />
+                                    </Row>
                                     <hr />
-                                </Row>
+                                </>
                             );
                         }
                     )}
-            </div>
+            </Container>
         </>
     );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { CourseAnnouncementsType } from "../../types";
+import { format } from "date-fns/esm";
 
 type Props = {
     announcement: CourseAnnouncementsType & { username: string };
@@ -25,12 +26,15 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                     .toString()}`,
                             }}
                         >
-                            <h2 className="coursecode">
+                            <h2 className="title">{announcement.title}</h2>
+                            <h3 className="coursecode">
                                 {announcement.courseCode}
-                            </h2>
-                            <h3 className="title">{announcement.title}</h3>
+                            </h3>
                             <p className="date">
-                                {new Date(announcement.date).toDateString()}
+                                {format(
+                                    new Date(props.announcement.date),
+                                    "MM/dd hh:mm"
+                                )}
                             </p>
                         </header>
                     </Row>
