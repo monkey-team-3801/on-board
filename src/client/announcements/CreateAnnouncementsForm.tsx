@@ -6,6 +6,7 @@ import { ExecutingEvent } from "../../events";
 import {
     CourseListResponseType,
     CreateAnnouncementJobRequestType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
@@ -25,7 +26,9 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         undefined,
         CreateAnnouncementJobRequestType
     >("/job/create", undefined, false);
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
 
     const [title, setTitle] = React.useState<string>("");
     const [content, setContent] = React.useState<string>("");
@@ -47,8 +50,8 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData.data.map((course) => {
-                return { value: course.code, label: course.code };
+            const options = courseData.data.courses.map((code) => {
+                return { value: code, label: code };
             });
             setCourseCodes(options);
             setLoading(false);

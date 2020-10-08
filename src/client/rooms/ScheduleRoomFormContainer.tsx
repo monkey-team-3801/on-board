@@ -3,6 +3,7 @@ import { Alert, Container } from "react-bootstrap";
 import {
     CourseListResponseType,
     UpcomingClassroomSessionData,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { useFetch } from "../hooks";
 import { BaseResponseType, CourseOptionType } from "../types";
@@ -26,7 +27,9 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
 ) => {
     const { setLoading } = props;
 
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
 
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
@@ -49,8 +52,8 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData.data.map((course) => {
-                return { value: course.code, label: course.code };
+            const options = courseData.data.courses.map((code) => {
+                return { value: code, label: code };
             });
             setCourseCodes(options);
         }

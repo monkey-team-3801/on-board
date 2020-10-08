@@ -6,7 +6,10 @@ import { RouteComponentProps } from "react-router-dom";
 import { ButtonWithLoadingProp } from "../components";
 import { CourseOptionType } from "../types";
 import { CreatePrivateRoomForm } from "./components";
-import { CourseListRequestType } from "../../types";
+import {
+    CourseListRequestType,
+    UserEnrolledCoursesResponseType,
+} from "../../types";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,7 +19,9 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { setLoading } = props;
-    const [courseData] = useFetch<CourseListRequestType>("/courses/list");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [courseCodes, setCourseCodes] = React.useState<
@@ -48,8 +53,8 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData.data.map((course) => {
-                return { value: course.code, label: course.code };
+            const options = courseData.data.courses.map((code) => {
+                return { value: code, label: code };
             });
             setCourseCodes(options);
         }

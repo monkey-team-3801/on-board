@@ -3,7 +3,10 @@ import { Modal, Alert } from "react-bootstrap";
 import { CreatePrivateRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
 import { useDynamicFetch, useFetch } from "../hooks";
-import { CourseListResponseType } from "../../types";
+import {
+    CourseListResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../../types";
 import { requestIsLoaded, requestHasError, requestIsLoading } from "../utils";
 
 type Props = {
@@ -25,7 +28,9 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
         { id?: string; name: string; description: string; courseCode?: string }
     >("/session/edit/privateSession", undefined, false);
 
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
 
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
@@ -65,8 +70,8 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
             setRoomName(roomData.name);
             setDescription(roomData.description);
             setCourseCodes(
-                courseData.data.map((course) => {
-                    return { value: course.code, label: course.code };
+                courseData.data.courses.map((code) => {
+                    return { value: code, label: code };
                 })
             );
             setSelectedCourse(

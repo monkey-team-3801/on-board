@@ -4,6 +4,7 @@ import {
     ClassroomSessionData,
     CourseListResponseType,
     RoomType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { ScheduleRoomForm } from "../rooms/components";
@@ -35,7 +36,9 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
         { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
     >("/session/edit/classroomSession", undefined, false);
 
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
 
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
@@ -79,8 +82,8 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
             setRoomName(roomData.name);
             setDescription(roomData.description);
             setCourseCodes(
-                courseData.data.map((course) => {
-                    return { value: course.code, label: course.code };
+                courseData.data.courses.map((code) => {
+                    return { value: code, label: code };
                 })
             );
             setSelectedCourse({
