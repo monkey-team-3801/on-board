@@ -125,6 +125,30 @@ router.post(
     )
 );
 
+router.post(
+    "/announcements/delete",
+    asyncHandler<{}, {}, { id: string; courseCode: string }>(
+        async (req, res) => {
+            try {
+                await Course.findOneAndUpdate(
+                    { code: req.body.courseCode },
+                    {
+                        $pull: {
+                            announcements: {
+                                id: req.body.id,
+                            },
+                        },
+                    }
+                );
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.status(200).end();
+            }
+        }
+    )
+);
+
 router.delete(
     "/delete/:course_code",
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
