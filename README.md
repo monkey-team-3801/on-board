@@ -40,7 +40,8 @@ Online collaboration and learning environment powered by SocketIO.
 ### Developing
 
 1. Run `npm install`
-2. Run `npm run start-client-dev` to initialise the client or `npm run start-server-dev` to initialise the server.
+2. Run `npm run start-client-dev` to initialise the client or
+   `npm run start-server-dev` to initialise the server.
 
 ### Building
 
