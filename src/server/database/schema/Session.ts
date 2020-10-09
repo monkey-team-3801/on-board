@@ -27,6 +27,7 @@ const SessionSchema = new mongoose.Schema<ISession>({
     messages: { type: Array, default: [] },
     files: { type: Array, default: [] },
     roomType: { type: Number },
+    description: { type: String },
     courseCode: { type: String },
     createdBy: { type: String },
 });

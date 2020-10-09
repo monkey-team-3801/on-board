@@ -1,0 +1,35 @@
+@import "../styles/Colours.less";
+
+.classes-container {
+    background-color: @content-bg;
+}
+
+.class-container {
+    min-height: 200px;
+    border-radius: 5px;
+    color: white;
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .course-column {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
+    .course-container {
+        .row {
+            flex: 0;
+        }
+    }
+    .info-container {
+        .row {
+            flex: 0;
+        }
+    }
+    .button-container {
+        button {
+            width: 100%;
+        }
+    }
+}

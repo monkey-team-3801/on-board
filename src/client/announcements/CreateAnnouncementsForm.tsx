@@ -4,8 +4,8 @@ import { Alert, Container, Form } from "react-bootstrap";
 import Select from "react-select";
 import { ExecutingEvent } from "../../events";
 import {
-    CourseListResponseType,
     CreateAnnouncementJobRequestType,
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
@@ -15,17 +15,20 @@ import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 type Props = {
     userId: string;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    refreshKey: number;
 };
 
 export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
+    const { setLoading, refreshKey } = props;
     const [createAnnouncementResponse, createAnnouncement] = useDynamicFetch<
         undefined,
         CreateAnnouncementJobRequestType
     >("/job/create", undefined, false);
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const [title, setTitle] = React.useState<string>("");
     const [content, setContent] = React.useState<string>("");
@@ -37,18 +40,25 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         new Date()
     );
 
+    React.useEffect(() => {
+        refreshCourseData();
+    }, [refreshKey, refreshCourseData]);
+
     const isCourseEmpty = React.useMemo(() => {
         return courses.length === 0;
     }, [courses]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return requestIsLoading(createAnnouncementResponse);
-    }, [createAnnouncementResponse]);
+        return (
+            requestIsLoading(createAnnouncementResponse) ||
+            requestIsLoading(courseData)
+        );
+    }, [createAnnouncementResponse, courseData]);
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData.data.map((course) => {
-                return { value: course.code, label: course.code };
+            const options = courseData.data.courses.map((code) => {
+                return { value: code, label: code };
             });
             setCourseCodes(options);
             setLoading(false);
@@ -82,6 +92,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             setTitle(e.target.value);
                         }}
                         required
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <Form.Group>
@@ -92,6 +103,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             setContent(e.target.value);
                         }}
                         required
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <Form.Group>
@@ -106,7 +118,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                                 setCourses([]);
                             }
                         }}
-                        disabled={isSubmitting}
+                        isDisabled={isSubmitting}
                         isMulti
                         required
                         closeMenuOnSelect={false}
@@ -125,12 +137,14 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                         onChange={(time) => {
                             setAnnouncementTime(time);
                         }}
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <ButtonWithLoadingProp
                     variant="primary"
                     type="submit"
                     loading={isSubmitting}
+                    disabled={isSubmitting}
                     invertLoader
                 >
                     Create
