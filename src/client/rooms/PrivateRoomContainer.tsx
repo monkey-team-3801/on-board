@@ -100,21 +100,22 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
 
-                                            <div className="progress">
 
-                                                <div
-                                                    className="progress-bar"
-                                                    role="progressbar"
-                                                    aria-valuenow={80}
-                                                    aria-valuemin={0}
-                                                    aria-valuemax={100}
-                                                    style={{ width: "70%" }}
-                                                >
-
-
+                                            <Container>
+                                                <p className="start-time">16:00</p>
+                                                <div className="progress">
+                                                    <div
+                                                        className="progress-bar"
+                                                        role="progressbar"
+                                                        aria-valuenow={80}
+                                                        aria-valuemin={0}
+                                                        aria-valuemax={100}
+                                                        style={{ width: "70%" }}
+                                                    >
+                                                    </div>
                                                 </div>
-
-                                            </div>
+                                                <p className="end-time">18:00</p>
+                                            </Container>
 
                                         </Container>
                                     </header>
