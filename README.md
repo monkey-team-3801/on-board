@@ -59,13 +59,13 @@ For manual deployment setup your container to run `npm start` (after building).
 
 🔴 [aXises](https://github.com/aXises) 🔴
 
-🟠 [JZ4012](https://github.com/JZ4012) �
+🟠 [JZ4012](https://github.com/JZ4012) 🟠
 
-🟢 [mike-fam](https://github.com/mike-fam) 🟢
+🟡 [mike-fam](https://github.com/mike-fam) 🟡
 
-🔵 [oscardunstan](https://github.com/oscardunstan) 🔵
+🟢 [oscardunstan](https://github.com/oscardunstan) 🟢
 
-🟣 [spaceytato](https://github.com/spaceytato) 🟣
+🔵 [spaceytato](https://github.com/spaceytato) 🔵
 
 Happy swinging!
 
