@@ -94,29 +94,43 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 <Col md={9}>
                                     <header className="d-flex info-header">
                                         <Container fluid className="d-flex">
-                                            <a href="/home" className="back-button-icon"><AiIcons.AiOutlineArrowLeft /></a>
-                                            <a href="/home" className="back-button">Back </a>
+                                            <a
+                                                href="/home"
+                                                className="back-button-icon"
+                                            >
+                                                <AiIcons.AiOutlineArrowLeft />
+                                            </a>
+                                            <a
+                                                href="/home"
+                                                className="back-button"
+                                            >
+                                                Back{" "}
+                                            </a>
 
                                             <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
 
-
-                                            <Container fluid className="progress-bar-container">
-                                                <   span className="start-time">14:00</span>
+                                            <Container
+                                                fluid
+                                                className="progress-bar-container"
+                                            >
+                                                <span className="start-time">
+                                                    14:00
+                                                </span>
                                                 <div className="progress">
                                                     <div
-                                                        className="progress-bar"
+                                                        className="progress-bar "
                                                         role="progressbar"
                                                         aria-valuenow={80}
                                                         aria-valuemin={0}
                                                         aria-valuemax={100}
                                                         style={{ width: "70%" }}
-                                                    >
-                                                    </div>
+                                                    ></div>
                                                 </div>
-                                                <span className="end-time">16:00</span>
+                                                <span className="end-time">
+                                                    16:00
+                                                </span>
                                             </Container>
-
                                         </Container>
                                     </header>
                                     <Container fluid>
