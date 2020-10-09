@@ -93,7 +93,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
-                                        <Container fluid>
+                                        <Container fluid className="d-flex">
                                             <a href="/home" className="back-button-icon"><AiIcons.AiOutlineArrowLeft /></a>
                                             <a href="/home" className="back-button">Back </a>
 
