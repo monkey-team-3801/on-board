@@ -94,8 +94,8 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 <Col md={9}>
                                     <header className="d-flex info-header">
                                         <Container fluid>
-                                            <AiIcons.AiOutlineArrowLeft />
-                                            <p className="back-button">Back </p>
+                                            <a href="/home" className="back-button-icon"><AiIcons.AiOutlineArrowLeft /></a>
+                                            <a href="/home" className="back-button">Back </a>
 
                                             <h1 className="session-name">{`${sessionData.name}`}</h1>
                                             <p>{sessionData.description}</p>
