@@ -1,37 +1,39 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PeerId } from "../hooks/useMyPeer";
+import Peer from "peerjs";
+import { addPeer, enableMyPeer, peer } from "../peer/peer";
 
 type Props = {
-    videoStream: MediaStream | undefined;
-    muted: boolean;
-    mine: boolean;
     peerId: PeerId;
+    myPeer: Peer;
+    myStream: MediaStream
 };
 
 export const Video: React.FunctionComponent<Props> = ({
-    videoStream,
-    mine,
-    muted,
-    peerId
+    peerId,
 }) => {
-    // My stream
+    useEffect(() => {
+
+        if (!peer) {
+            enableMyPeer();
+        }
+        addPeer(peerId);
+    }, []);
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
-        if (videoStream) {
+        if (remoteStream) {
             if (videoRef.current) {
-                videoRef.current.srcObject = videoStream;
+                videoRef.current.srcObject = remoteStream;
                 videoRef.current.addEventListener("loadedmetadata", () => {
                     videoRef.current?.play();
                 });
             }
         }
-    }, [videoStream]);
+    }, [remoteStream]);
 
     return (
         <video
-            className={mine ? "my-video" : "peers-video"}
             ref={videoRef}
-            muted={muted}
         />
     );
 };

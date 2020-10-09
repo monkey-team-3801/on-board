@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Button } from "react-bootstrap";
-import { VideoContainer } from "./VideoContainer";
+import { FocusedVideoView } from "./FocusedVideoView";
 import { useMediaStream } from "../hooks/useMediaStream";
 
 type Props = { sessionId: string; userId: string };
@@ -13,7 +13,7 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     return (
         <Container>
             <Row>
-                <VideoContainer
+                <FocusedVideoView
                     {...props}
                     myStream={myStream}
                     // Hack to force component rerender

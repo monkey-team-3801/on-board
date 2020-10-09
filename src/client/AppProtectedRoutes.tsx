@@ -17,7 +17,7 @@ import { Calendar } from "./timetable/calendar/Calendar";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
-import { VideoContainer } from "./video/VideoContainer";
+import { FocusedVideoView } from "./video/FocusedVideoView";
 import { VideoRoomLobby } from "./video/VideoRoomLobby";
 
 type Props = RouteComponentProps;

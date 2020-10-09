@@ -1,18 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { MediaConnection } from "peerjs";
 import { Map } from "immutable";
-import socketIOClient from "socket.io-client";
 
 import { Video } from "./Video";
-import { PeerId, useMyPeer } from "../hooks/useMyPeer";
+import { useMyPeer } from "../hooks/useMyPeer";
 import { VideoEvent } from "../../events";
-import { RouteComponentProps } from "react-router-dom";
-import omit from "lodash/omit";
-import keys from "lodash/keys";
-import difference from "lodash/difference";
 import { socket } from "../io";
-import { useMediaStream } from "../hooks/useMediaStream";
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import "./VideoContainer.less";
@@ -30,35 +24,10 @@ type VideoStreamData = {
     stream: MediaStream;
 };
 
-
-// const socket: SocketIOClient.Socket = socketIOClient("/").connect();
-
-// export const createEmptyAudioTrack = () => {
-//     const ctx = new AudioContext();
-//     const oscillator = ctx.createOscillator();
-//     const dst = oscillator.connect(ctx.createMediaStreamDestination());
-//     oscillator.start();
-//     const track = (dst as any).stream.getAudioTracks()[0];
-//     return Object.assign(track, { enabled: false });
-//   };
-
-//   export const createEmptyVideoTrack = ({ width, height } = { }) => {
-//     const canvas: HTMLCanvasElement = Object.assign(document.createElement("canvas"), { width, height });
-//     canvas?.getContext('2d')?.fillRect(0, 0, width, height);
-
-//     const stream = canvas.captureStream();
-//     const track = stream.getVideoTracks()[0];
-
-//     return Object.assign(track, { enabled: false });
-//   };
-
-//   const audioTrack = createEmptyAudioTrack();
-//   const videoTrack = createEmptyVideoTrack({ width:640, height:480 });
-//   const mediaStream = new MediaStream([audioTrack, videoTrack]);
-
-export const VideoContainer: React.FunctionComponent<Props> = (props) => {
+export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId, myStream } = props;
-    const [myPeer, myPeerId, setupPeer] = useMyPeer();
+    const [myPeer, myPeerId] = useMyPeer();
+    const [remotePeerIds, setRemotePeers] = useState([]);
     const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
         Map()
     );
@@ -226,18 +195,20 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                             videoStream={myStream}
                             mine={true}
                             muted={true}
+                            peerId={myPeerId}
                         />
                     )}
                 </Col>
                 {Array.from(peerStreams.entries()).map(
-                    ([userId, stream], i) => {
+                    ([peerId, stream], i) => {
                         return (
                             <Col lg={4} key={i}>
-                                <p>{userId}</p>
+                                <p>{peerId}</p>
                                 <Video
                                     videoStream={stream}
                                     mine={false}
                                     muted={true}
+                                    peerId={peerId}
                                 />
                             </Col>
                         );
