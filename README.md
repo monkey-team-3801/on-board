@@ -60,8 +60,6 @@ For manual deployment setup your container to run `npm start` (after building).
 
 🟠 [JZ4012](https://github.com/JZ4012) 🟠
 
-🟡 [Kas-kb](https://github.com/Kas-kb) 🟡
-
 🟢 [mike-fam](https://github.com/mike-fam) 🟢
 
 🔵 [oscardunstan](https://github.com/oscardunstan) 🔵
