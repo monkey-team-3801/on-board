@@ -180,7 +180,7 @@ export const DisplayResultsContainer = (props: Props) => {
         <Container>
             <h1>{props.formData.question}</h1>
             {formType === ResponseFormType.MULTIPLE_CHOICE &&
-                mcValues.length > 0 && (
+                (mcValues.length > 0 && requestIsLoaded(mcResultsData) ? (
                     <MultipleChoiceResultsChart
                         data={mcValues[1].map((option, i) => {
                             return {
@@ -189,12 +189,17 @@ export const DisplayResultsContainer = (props: Props) => {
                             };
                         })}
                     />
-                )}
-            {formType === ResponseFormType.SHORT_ANSWER && saValues && (
-                <ShortAnswerResultsTable
-                    data={saValues as Array<[string, string]>}
-                />
-            )}
+                ) : (
+                    <Loader />
+                ))}
+            {formType === ResponseFormType.SHORT_ANSWER &&
+                (saValues && requestIsLoaded(saResultsData) ? (
+                    <ShortAnswerResultsTable
+                        data={saValues as Array<[string, string]>}
+                    />
+                ) : (
+                    <Loader />
+                ))}
             {formType === ResponseFormType.FILE && fileValues && (
                 <>
                     <p>
