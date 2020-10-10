@@ -1,6 +1,11 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { MessageData, RoomType, UserDataResponseType } from "../../../types";
+import {
+    MessageData,
+    RoomType,
+    UserDataResponseType,
+    UserType,
+} from "../../../types";
 import { ChatContainer } from "../../chat";
 import { Loader } from "../../components";
 import { ParticipantsContainer } from "./ParticipantsContainer";
@@ -21,11 +26,21 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
     return (
         <Container className="panel">
             <Row className="mt-4">
-                <div className="panel-container tutors-container">
+                <Container className="panel-container tutors-container">
                     <Container>
                         <h4>Tutors</h4>
                     </Container>
-                </div>
+                    {props.users ? (
+                        <ParticipantsContainer
+                            users={props.users.filter(
+                                (user) => user.userType === UserType.TUTOR
+                            )}
+                            raisedHandUsers={props.raisedHandUsers}
+                        />
+                    ) : (
+                        <Loader />
+                    )}
+                </Container>
             </Row>
             <Row className="mt-4">
                 <Container className="panel-container students-container d-flex flex-column">
@@ -34,7 +49,9 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
-                            users={props.users}
+                            users={props.users.filter(
+                                (user) => user.userType === UserType.STUDENT
+                            )}
                             raisedHandUsers={props.raisedHandUsers}
                         />
                     ) : (
