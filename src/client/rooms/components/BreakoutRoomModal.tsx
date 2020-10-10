@@ -152,14 +152,13 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                     <>
                         {!allocationComplete ? (
                             <BreakoutRoomAllocationContainer
+                                sessionId={props.sessionId}
                                 users={props.userData}
                                 rooms={rooms}
                                 setRooms={setRooms}
                             />
                         ) : (
-                            <Alert variant="success">
-                                Successfully created breakout rooms
-                            </Alert>
+                            <Alert variant="success">Allocation success</Alert>
                         )}
                     </>
                 ) : (
@@ -170,7 +169,8 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                 <ButtonWithLoadingProp
                     disabled={
                         requestIsLoading(createBreakoutRoomsResponse) ||
-                        allocationComplete
+                        allocationComplete ||
+                        rooms.size === 1
                     }
                     loading={requestIsLoading(createBreakoutRoomsResponse)}
                     invertLoader
@@ -185,7 +185,7 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
                         }, 1000);
                     }}
                 >
-                    Create
+                    Allocate
                 </ButtonWithLoadingProp>
             </Modal.Footer>
         </Modal>
