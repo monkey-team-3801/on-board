@@ -14,7 +14,7 @@ router.post(
                 userPeerMap: new Map(),
                 userReferenceMap: new Map(),
                 numScreensAllowed: 1,
-                sharingUsers: []
+                sharingUsers: [],
             });
             console.log("Video Session created:", session.sessionId);
 

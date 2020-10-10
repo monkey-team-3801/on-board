@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { MediaConnection } from "peerjs";
-import { Map } from "immutable";
 
 import { Video } from "./Video";
-import { useMyPeer } from "../hooks/useMyPeer";
 import { VideoEvent } from "../../events";
 import { socket } from "../io";
 import { Container, Row, Col } from "react-bootstrap";
@@ -11,8 +9,18 @@ import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import "./VideoContainer.less";
 import { VideoPeersResponseType, UserPeer } from "../../types";
+import {
+    addPeer,
+    enableMyPeer,
+    myPeer,
+    peerStreams,
+    removePeer
+} from "../peer";
+import { RemotePeerVideo } from "./RemotePeerVideo";
+import { myStream } from "../peer/peer";
+import { useMyPeer } from "../hooks/useMyPeer";
 
-type Props = { sessionId: string; userId: string; myStream?: MediaStream };
+type Props = { sessionId: string; userId: string };
 type PeerCalls = {
     [key: string]: MediaConnection;
 };
@@ -25,17 +33,13 @@ type VideoStreamData = {
 };
 
 export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
-    const { sessionId, userId, myStream } = props;
-    const [myPeer, myPeerId] = useMyPeer();
-    const [remotePeerIds, setRemotePeers] = useState([]);
-    const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
-        Map()
-    );
-    const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
-        Map()
-    );
+    const { sessionId, userId } = props;
+    const [myPeerId, setMyPeerId] = useState<string>("");
+    const [peers, setPeers] = useState<Array<string>>([]);
     // const [myStream, setMediaStream] = useMediaStream();
-
+    useEffect(() => {
+        enableMyPeer(setMyPeerId);
+    }, [setMyPeerId]);
     const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }
@@ -43,89 +47,13 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     // myStream?.getTracks().forEach(track => {
     //     console.log(track, track.getCapabilities());
     // });
-    myStream?.getVideoTracks().forEach(track => {
+    myStream?.getVideoTracks().forEach((track) => {
         console.log("video track settings:", track.getSettings());
     });
-    const addPeer = useCallback(
-        (userPeer: UserPeer) => {
-            const { userId: theirUserId, peerId } = userPeer;
-            if (myPeer) {
-                if (myStream) {
-                    console.log("My stream:", myStream);
-                    //console.log(peerId, myStream, myPeer.id, myPeerId);
-                    console.log("Trying to call", peerId);
-                    const call = myPeer.call(peerId, myStream);
-                    if (!call) {
-                        console.log("Call is undefined");
-                        return;
-                    }
-                    console.log("Connecting to Peer", peerId);
-                    call.on("stream", (stream) => {
-                        console.log("MY CALL Receiving stream from", peerId);
-                        setPeerStreams((prev) => {
-                            return prev.set(peerId, stream);
-                        });
-                    });
-                    call.on("close", () => {
-                        console.log("disconnecting from", peerId);
-                        setPeerStreams((prev) => {
-                            return prev.delete(peerId);
-                        });
-                        setPeerCalls((prev) => {
-                            return prev.delete(peerId);
-                        });
-                    });
-                    call.on("error", (error) => {
-                        console.log("Call error", error);
-                        setPeerStreams((prev) => {
-                            return prev.delete(peerId);
-                        });
-                        setPeerCalls((prev) => {
-                            return prev.delete(peerId);
-                        });
-                    });
-                }
-                myPeer.on("call", (call: MediaConnection) => {
-                    console.log("Receiving call from", call.peer);
-                    call.answer(myStream);
-                    setPeerCalls((prev) => {
-                        return prev.set(call.peer, call);
-                    });
-                    call.on("stream", (stream) => {
-                        console.log(
-                            "OTHER CALL Receiving stream from",
-                            call.peer
-                        );
-                        setPeerStreams((prev) => {
-                            return prev.set(call.peer, stream);
-                        });
-                    });
-                });
-            }
-        },
-        [myStream, myPeer, peerStreams]
-    );
-    const removePeer = useCallback((userPeer: UserPeer) => {
-        const { userId: theirUserId, peerId } = userPeer;
-        console.log("Removing peer", peerId);
-        setPeerStreams((prev) => {
-            return prev.delete(peerId);
-        });
-        setPeerCalls((prev) => {
-            const call = prev.get(theirUserId);
-            call?.close();
-            console.log("Peer", peerId, "hung up.");
-            return prev.delete(theirUserId);
-        });
-    }, []);
 
     useEffect(() => {
         if (requestIsLoaded(response)) {
-            response.data.peers.forEach((userPeer) => {
-                if (userPeer.peerId !== myPeerId) {
-                    addPeer(userPeer);
-                }
-            });
+            setPeers(response.data.peers.map(usePeer => usePeer.peerId));
         }
     }, [response, myPeerId]);
 
@@ -151,23 +79,18 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
         return () => {
             console.log("cleanup");
             socket.disconnect();
+            //disableMyPeer();
         };
     }, []);
 
-    const onSocketUpdateUsers = useCallback(
-        (userPeer: UserPeer) => {
-            console.log("new peer", userPeer.peerId);
-            addPeer(userPeer);
-        },
-        [addPeer]
-    );
+    const onSocketUpdateUsers = useCallback(async (userPeer: UserPeer) => {
+        console.log("new peer", userPeer.peerId);
+        await addPeer(userPeer.peerId);
+    }, []);
 
-    const onSocketRemoveUser = useCallback(
-        (userPeer: UserPeer) => {
-            removePeer(userPeer);
-        },
-        [removePeer]
-    );
+    const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
+        removePeer(userPeer.peerId);
+    }, []);
 
     // Handle socket interactions
     useEffect(() => {
@@ -195,7 +118,6 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
                             videoStream={myStream}
                             mine={true}
                             muted={true}
-                            peerId={myPeerId}
                         />
                     )}
                 </Col>
@@ -204,12 +126,7 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
                         return (
                             <Col lg={4} key={i}>
                                 <p>{peerId}</p>
-                                <Video
-                                    videoStream={stream}
-                                    mine={false}
-                                    muted={true}
-                                    peerId={peerId}
-                                />
+                                <RemotePeerVideo peerId={peerId} myPeerId={myPeerId}/>
                             </Col>
                         );
                     }

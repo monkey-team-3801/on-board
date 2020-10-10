@@ -1,31 +1,29 @@
 import React, { useEffect, useRef } from "react";
-import { PeerId } from "../hooks/useMyPeer";
+import { myStream } from "../peer/peer";
 
 type Props = {
     videoStream: MediaStream | undefined;
     muted: boolean;
     mine: boolean;
-    peerId: PeerId;
 };
 
 export const Video: React.FunctionComponent<Props> = ({
-    videoStream,
     mine,
     muted,
-    peerId
 }) => {
     // My stream
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
-        if (videoStream) {
+        console.log("testing");
+        if (myStream) {
             if (videoRef.current) {
-                videoRef.current.srcObject = videoStream;
+                videoRef.current.srcObject = myStream;
                 videoRef.current.addEventListener("loadedmetadata", () => {
                     videoRef.current?.play();
                 });
             }
         }
-    }, [videoStream]);
+    }, []);
 
     return (
         <video

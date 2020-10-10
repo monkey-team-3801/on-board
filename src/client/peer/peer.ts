@@ -1,8 +1,5 @@
-import {createContext, useContext} from 'react';
 import Peer, { MediaConnection } from "peerjs";
-import { cleanup } from "@testing-library/react";
-import { socket } from "../io";
-import { VideoEvent } from "../../events";
+import { createContext, useContext } from "react";
 
 const options: Peer.PeerJSOption = {
     host: "/",
@@ -20,80 +17,100 @@ const defaultConstraints: MediaStreamConstraints = {
     },
     audio: {
         noiseSuppression: true,
-        echoCancellation: true
-    }
+        echoCancellation: true,
+    },
 };
 
-export let peer: Peer | null = null;
-export const peerCalls: Map<string, MediaConnection> = new Map<string, Peer.MediaConnection>();
-export const peerStreams: Map<string, MediaStream> = new Map<string, MediaStream>();
-let stream: MediaStream | undefined = undefined;
+export const PeerContext = createContext<Peer | undefined>(undefined);
+export const PeerCallContext = createContext<Map<string, MediaConnection>>(new Map());
+export const PeerStreamContext = createContext<Map<string, MediaStream>>(new Map());
+const peerCalls: Map<string, MediaConnection> = new Map<
+    string,
+    Peer.MediaConnection
+>();
+export const peerStreams: Map<string, MediaStream> = new Map<
+    string,
+    MediaStream
+>();
+export let myStream: MediaStream | undefined = undefined;
 
-export const enableMyPeer = async () => {
-    stream = await navigator.mediaDevices.getUserMedia(defaultConstraints);
-    peer = new Peer(options);
-    peer.on("call", call => {
-        call.answer(stream);
+export const usePeer = () => {
+
+}
+export const enableMyPeer = async (setPeerId: (peerId: string) => void) => {
+    myStream = await navigator.mediaDevices.getUserMedia(defaultConstraints);
+    myPeer = new Peer(options);
+    myPeer.on("call", (call) => {
+        call.answer(myStream);
         peerCalls.set(call.peer, call);
-        call.on("stream", remoteStream => {
+        call.on("stream", (remoteStream) => {
             peerStreams.set(call.peer, remoteStream);
         });
     });
 
-    peer.on("disconnected", () => {
+    myPeer.on("disconnected", () => {
         disableMyPeer();
     });
 
-    peer.on("close", () => {
+    myPeer.on("close", () => {
         disableMyPeer();
     });
 
-    peer.on("error", (error) => {
+    myPeer.on("error", (error) => {
         console.log(error);
     });
-    peer.on("open", (id) => {
-        socket.emit(VideoEvent.USER_JOIN_ROOM, id);
+    myPeer.on("open", (id) => {
+        setPeerId(id);
     });
 };
 
 export const disableMyPeer = () => {
-    if (stream) {
-        stream.getTracks().forEach(track => {
+    if (myStream) {
+        myStream.getTracks().forEach((track) => {
             track.stop();
         });
     }
     peerStreams.clear();
     peerCalls.clear();
-    peer?.destroy();
-
+    myPeer?.destroy();
 };
 
-export const addPeer = (peerId: string) => {
-    if (!peer) {
+export const addPeer = async (myPeer: Peer, peerId: string) => {
+    if (!myPeer) {
         return;
     }
-    // TODO: how to continue checking until done
-    if (stream) {
-
-        const call = peer.call(peerId, stream);
-        if (!call) {
-            console.log("Call is undefined");
-            return;
-        }
-        console.log("Connecting to Peer", peerId);
-        call.on("stream", (stream) => {
-            console.log("MY CALL Receiving stream from", peerId);
-            peerStreams.set(peerId, stream);
-        });
-        call.on("close", () => {
-            console.log("disconnecting from", peerId);
-            peerCalls.delete(peerId);
-            peerStreams.delete(peerId);
-        });
-        call.on("error", (error) => {
-            console.log("Call error", error);
-            peerCalls.delete(peerId);
-            peerStreams.delete(peerId);
-        });
+    if (!myStream) {
+        myStream = await navigator.mediaDevices.getUserMedia(
+            defaultConstraints
+        );
     }
+    console.log("calling peer", peerId);
+    const call = myPeer.call(peerId, myStream);
+    if (!call) {
+        console.log("Call is undefined");
+        return;
+    }
+    peerCalls.set(peerId, call);
+    console.log("Connecting to Peer", peerId);
+    call.on("stream", (stream) => {
+        console.log("MY CALL Receiving stream from", peerId);
+        peerStreams.set(peerId, stream);
+    });
+    call.on("close", () => {
+        console.log("disconnecting from", peerId);
+        peerCalls.delete(peerId);
+        peerStreams.delete(peerId);
+    });
+    call.on("error", (error) => {
+        console.log("Call error", error);
+        peerCalls.delete(peerId);
+        peerStreams.delete(peerId);
+    });
+};
+
+export const removePeer = (peerId: string) => {
+    peerStreams.delete(peerId);
+    const remoteCall = peerCalls.get(peerId);
+    remoteCall?.close();
+    peerCalls.delete(peerId);
 };

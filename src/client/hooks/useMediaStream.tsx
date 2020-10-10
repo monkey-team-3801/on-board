@@ -16,8 +16,8 @@ const defaultConstraints: MediaStreamConstraints = {
     },
     audio: {
         noiseSuppression: true,
-        echoCancellation: true
-    }
+        echoCancellation: true,
+    },
 };
 type MediaType = "camera" | "display" | "none";
 
@@ -28,9 +28,7 @@ export const useMediaStream: () => [
 ] = () => {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined);
     const enableMediaStream = useCallback(
-        async (
-            constraints: MediaStreamConstraints = defaultConstraints
-        ) => {
+        async (constraints: MediaStreamConstraints = defaultConstraints) => {
             if (!stream) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia(
@@ -46,7 +44,7 @@ export const useMediaStream: () => [
     );
 
     const disableMediaStream = useCallback(() => {
-        stream?.getTracks().forEach(track => {
+        stream?.getTracks().forEach((track) => {
             track.stop();
         });
         setStream(undefined);

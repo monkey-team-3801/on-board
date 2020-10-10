@@ -15,7 +15,6 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
             <Row>
                 <FocusedVideoView
                     {...props}
-                    myStream={myStream}
                     // Hack to force component rerender
                     //key={new Date().toString()}
                 />
@@ -28,13 +27,7 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
                 >
                     Show Camera
                 </Button>
-                <Button
-                    onClick={() => {
-
-                    }}
-                >
-                    Show Screen
-                </Button>
+                <Button onClick={() => {}}>Show Screen</Button>
                 <Button
                     onClick={() => {
                         disableMediaStream();
