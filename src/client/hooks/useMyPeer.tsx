@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
 import { useMediaStream } from "./useMediaStream";
-import { PeerData } from "../peer/peer";
+import { PeerData } from "../peer";
 
 declare var process: any;
 
