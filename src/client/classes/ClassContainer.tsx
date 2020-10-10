@@ -28,6 +28,7 @@ type Props = Partial<UpcomingClassroomSessionData> & {
     onDeleteClick?: () => void;
     isRefreshing?: boolean;
     type: RoomType;
+    setDeletedRooms?: React.Dispatch<React.SetStateAction<Array<string>>>;
 };
 
 export const ClassContainer: React.FunctionComponent<Props> = (
@@ -143,15 +144,15 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                 </div>
                             </OverlayTrigger>
                         )}
-
-                        <Button variant="light">Download Content</Button>
                         {props.canEdit && (
                             <>
                                 <Col md={6} className="p-0">
                                     <Button
                                         variant="info"
                                         onClick={props.onEditClick}
-                                        disabled={isRefreshing}
+                                        disabled={requestIsLoading(
+                                            deletePrivateRoomResponse
+                                        )}
                                     >
                                         Edit
                                     </Button>
@@ -183,10 +184,19 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                         id: props.id,
                                                     });
                                                 }
+                                                props.setDeletedRooms?.(
+                                                    (prev) => {
+                                                        return prev.concat([
+                                                            props.id!,
+                                                        ]);
+                                                    }
+                                                );
                                                 props.onDeleteClick?.();
                                             }
                                         }}
-                                        loading={isRefreshing}
+                                        loading={requestIsLoading(
+                                            deletePrivateRoomResponse
+                                        )}
                                         invertLoader
                                         style={{
                                             height: "100%",

@@ -24,6 +24,8 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
 
+    const [deletedRooms, setDeletedRooms] = React.useState<Array<string>>([]);
+
     const [roomSelection, setRoomSelection] = React.useState<
         | {
               id?: string;
@@ -44,16 +46,20 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     React.useEffect(() => {
         if (requestIsLoaded(privateRoomResponse)) {
             setLoading(false);
+            setDeletedRooms([]);
         }
     }, [privateRoomResponse, setLoading]);
 
     const filteredRooms = React.useMemo(() => {
         return privateRoomResponse.data?.filter((session) => {
+            if (deletedRooms.includes(session.id)) {
+                return false;
+            }
             return session.name
                 .toLocaleLowerCase()
                 .includes(roomFilterValue.toLocaleLowerCase());
         });
-    }, [roomFilterValue, privateRoomResponse]);
+    }, [roomFilterValue, privateRoomResponse, deletedRooms]);
 
     return (
         <Container fluid className="pt-2">
@@ -94,6 +100,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                             canJoin
                             size="lg"
                             type={RoomType.PRIVATE}
+                            setDeletedRooms={setDeletedRooms}
                         />
                     );
                 })}
