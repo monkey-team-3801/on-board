@@ -68,7 +68,10 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
         if (requestIsLoaded(breakoutRoomResponse)) {
             breakoutRoomResponse.data.rooms.forEach((room) => {
                 setRooms((prev) => {
-                    let currentRoom = rooms.get(room.roomId) || OrderedMap();
+                    let currentRoom = rooms.get(room.roomId);
+                    if (!currentRoom) {
+                        return prev;
+                    }
                     room.users.forEach((user) => {
                         currentRoom = currentRoom?.set(user.id, {
                             ...user,
@@ -139,6 +142,7 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
             size="xl"
             centered
             scrollable
+            backdrop={allocationComplete ? "static" : true}
         >
             <Modal.Header closeButton>
                 <Modal.Title>Breakout Rooms Management</Modal.Title>
