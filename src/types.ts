@@ -7,6 +7,8 @@ export type SessionInfo = {
     name: string;
     description: string;
     courseCode?: string;
+    parentSessionId?: string;
+    createdBy?: string;
 };
 
 export type MessageData = {
@@ -22,11 +24,20 @@ export type SessionData = SessionInfo & {
 
 export type ClassroomSessionData = SessionData & {
     courseCode: string;
+    roomType: string;
     startTime: string;
     endTime: string;
+    colourCode: string;
 };
 
-export type NewMessageRequestType = Omit<MessageData, "sentTime">;
+export type UpcomingClassroomSessionData = Omit<
+    ClassroomSessionData,
+    "messages" | "id"
+>;
+
+export type NewMessageRequestType = Omit<MessageData, "sentTime"> & {
+    roomType: RoomType;
+};
 
 export type CourseActivityUnique = {
     code: string;
@@ -68,6 +79,7 @@ export type CourseListResponseType = CourseCodesType;
 export type CourseListRequestType = CourseCodesType;
 
 export type CourseAnnouncementsType = {
+    id: string;
     title: string;
     content: string;
     courseCode: string;
@@ -84,6 +96,8 @@ export enum UserType {
 export enum RoomType {
     CLASS,
     PRIVATE,
+    BREAKOUT,
+    UPCOMING,
 }
 
 export type SessionRequestType = {
@@ -121,26 +135,21 @@ export type UserDataResponseType = {
     courses: Array<string>;
 };
 
-export type ClassroomData = {
-    roomName: string;
-    description: string;
-    courseCode: string;
-    startTime: string;
-    endTime: string;
-};
+export type ClassroomData = ClassroomSessionData;
 
 export interface BaseJob<T = any> {
     jobDate: string;
     executingEvent: ExecutingEvent;
     data: T;
+    createdBy: string;
 }
 
-export interface AnnouncementJob<T = CourseAnnouncementsType>
+export interface AnnouncementJob<T = Omit<CourseAnnouncementsType, "userId">>
     extends BaseJob<T> {
     executingEvent: ExecutingEvent.ANNOUNCEMENT;
 }
 
-export interface ClassOpenJob extends BaseJob<ClassroomData> {
+export interface ClassOpenJob<T = ClassroomData> extends BaseJob<T> {
     executingEvent: ExecutingEvent.CLASS_OPEN;
 }
 
@@ -148,8 +157,11 @@ type WithUserId = {
     userId: string;
 };
 
-export type CreateAnnouncementJobRequestType = AnnouncementJob<
-    Omit<CourseAnnouncementsType, "date">
+export type CreateAnnouncementJobRequestType = Omit<
+    AnnouncementJob<
+        Omit<CourseAnnouncementsType, "date" | "userId" | "createdBy">
+    >,
+    "createdBy"
 >;
 
 export type EnrolCourseRequestType = WithUserId & {
@@ -166,11 +178,15 @@ export type GetAnnouncementsResponseType = {
     announcements: Array<CourseAnnouncementsType & { username: string }>;
 };
 
-export type CreateClassroomJobRequestType = ClassOpenJob;
+export type CreateClassroomJobRequestType = Omit<
+    ClassOpenJob<Omit<ClassroomData, "messages" | "id">>,
+    "createdBy"
+>;
 
 export enum FileUploadType {
     PROFILE,
     DOCUMENTS,
+    RESPONSE,
 }
 
 export type FileStorageType = {
@@ -214,3 +230,17 @@ export type UserPeer = {
 export type VideoPeersResponseType = {
     peers: Array<UserPeer>;
 };
+
+export type BreakoutRoomData = {
+    name: string;
+    roomId: string;
+    description: string;
+};
+
+export type UserData = Omit<UserDataResponseType, "courses">;
+
+export enum ResponseFormType {
+    SHORT_ANSWER,
+    MULTIPLE_CHOICE,
+    FILE,
+}

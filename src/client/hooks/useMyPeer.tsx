@@ -40,7 +40,10 @@ export const useMyPeer: () => PeerData = () => {
 
     const setupPeer = useCallback(() => {
         console.log("Setup peer");
-        setMyPeer(new Peer(options));
+        if (!myPeer) {
+            setMyPeer(new Peer(options));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

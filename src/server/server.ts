@@ -1,38 +1,37 @@
-import express, { Request, Response, NextFunction, Express } from "express";
-import { createServer, Server } from "http";
-import socketIO from "socket.io";
-import { ExpressPeerServer } from "peer";
-import dotenv from "dotenv";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import express, { Express, NextFunction, Request, Response } from "express";
 import fileUpload from "express-fileupload";
-
-import { asyncHandler } from "./utils";
-import { Database } from "./database";
+import { createServer, Server } from "http";
+import { ExpressPeerServer } from "peer";
+import socketIO from "socket.io";
 import {
-    RoomEvent,
-    PrivateRoomJoinData,
-    ChatEvent,
-    ChatMessageSendType,
-    VideoEvent,
-    PrivateVideoRoomJoinData,
-    PrivateVideoRoomLeaveData,
     AnnouncementEvent,
     CanvasEvent,
+    ChatEvent,
+    ChatMessageSendType,
+    FileUploadEvent,
+    PrivateVideoRoomJoinData,
+    ResponseFormEvent,
+    RoomEvent,
+    VideoEvent,
 } from "../events";
-
-import {
-    healthCheckRoute,
-    chatRoute,
-    sessionRoute,
-    courseRoute,
-    authRoute,
-    videoRoute,
-    jobRoute,
-    fileRoute,
-} from "./routes";
-import { userRoute } from "./routes";
-import { ScheduleHandler } from "./jobs";
+import { Database, SessionUsers } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
+import { ScheduleHandler } from "./jobs";
+import {
+    authRoute,
+    chatRoute,
+    courseRoute,
+    fileRoute,
+    healthCheckRoute,
+    jobRoute,
+    responseRoute,
+    sessionRoute,
+    userRoute,
+    videoRoute,
+} from "./routes";
+import { asyncHandler } from "./utils";
 
 dotenv.config();
 
@@ -46,13 +45,57 @@ const peerServer = ExpressPeerServer(server, {
 app.use("/peerServer", peerServer);
 
 io.on("connect", (socket: SocketIO.Socket) => {
-    socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
-        socket.join(data.sessionId);
-    });
+    // socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
+    //     socket.join(data.sessionId);
+    // });
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
-        socket.to(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
+        socket.in(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
     });
+
+    socket.on(
+        RoomEvent.SESSION_JOIN,
+        async (data: PrivateVideoRoomJoinData) => {
+            const { sessionId, userId } = data;
+            const session = await SessionUsers.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            socket.join(sessionId);
+            if (session.userReferenceMap.has(userId)) {
+                session.userReferenceMap.set(
+                    userId,
+                    (session.userReferenceMap.get(userId) ?? 0) + 1
+                );
+                await session.save();
+            } else {
+                session.userReferenceMap.set(userId, 1);
+                await session.save();
+                io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
+            }
+            console.log("User", userId, "joining", sessionId);
+            socket.on("disconnect", async () => {
+                const currentReference =
+                    session.userReferenceMap.get(userId) ?? 1;
+                console.log("User disconnect", userId);
+                if (currentReference - 1 === 0) {
+                    session.userReferenceMap.delete(userId);
+                    await session.save();
+                    socket.leave(sessionId);
+                    io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
+                    console.log("User", userId, "leaving", sessionId);
+                } else {
+                    session.userReferenceMap.set(
+                        userId,
+                        (session.userReferenceMap.get(userId) ?? 0) - 1
+                    );
+                    await session.save();
+                }
+            });
+        }
+    );
     // TODO: merge PrivateVideoRoomJoinData with PrivateRoomJoinData?
     socket.on(
         VideoEvent.USER_JOIN_ROOM,
@@ -103,6 +146,29 @@ io.on("connect", (socket: SocketIO.Socket) => {
         }
     );
 
+    socket.on(
+        RoomEvent.BREAKOUT_ROOM_ALLOCATE,
+        (
+            users: Array<string>,
+            roomId: string,
+            roomIndex: number,
+            sessionId: string
+        ) => {
+            socket
+                .to(sessionId)
+                .emit(
+                    RoomEvent.BREAKOUT_ROOM_ALLOCATE,
+                    users,
+                    roomIndex,
+                    roomId
+                );
+        }
+    );
+
+    socket.on(RoomEvent.USER_HAND_STATUS_CHANGED, (sessionId) => {
+        socket.to(sessionId).emit(RoomEvent.USER_HAND_STATUS_CHANGED);
+    });
+
     // socket.on(
     //     VideoEvent.USER_LEAVE_ROOM,
     //     async ({ sessionId, peerId, userId }) => {
@@ -130,11 +196,29 @@ io.on("connect", (socket: SocketIO.Socket) => {
             });
         }
     );
+
     socket.on(CanvasEvent.DRAW, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CHANGE, data.canvasData);
     });
+
     socket.on(CanvasEvent.CLEAR, (data) => {
         socket.to(data.sessionId).emit(CanvasEvent.CLEAR);
+    });
+
+    socket.on(ResponseFormEvent.NEW_FORM, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_FORM);
+    });
+
+    socket.on(ResponseFormEvent.NEW_RESPONSE, (data) => {
+        socket.to(data).emit(ResponseFormEvent.NEW_RESPONSE);
+    });
+
+    socket.on(FileUploadEvent.NEW_FILE, (data) => {
+        socket.to(data).emit(FileUploadEvent.NEW_FILE);
+    });
+
+    socket.on(FileUploadEvent.FILE_DELETED, (data) => {
+        socket.to(data).emit(FileUploadEvent.FILE_DELETED);
     });
 });
 
@@ -163,6 +247,8 @@ app.get(
 // Automatically serve the index.html file from the build folder
 app.use("/", express.static("build"));
 
+app.use("/public", express.static("public"));
+
 // Health check route.
 app.use("/health", healthCheckRoute);
 
@@ -187,7 +273,11 @@ app.use("/auth", authRoute);
 // Job routes.
 app.use("/job", jobRoute);
 
+// File routes.
 app.use("/filehandler", fileRoute);
+
+// Response collection routes.
+app.use("/response-handler", responseRoute);
 
 // TODO API Routes
 app.use(
@@ -215,15 +305,15 @@ database.connect().then(() => {
         const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
-        await VideoSession.updateMany(
-            {},
-            {
-                $set: {
-                    userPeerMap: new Map(),
-                    userReferenceMap: new Map(),
-                },
-            }
-        );
+        // await VideoSession.updateMany(
+        //     {},
+        //     {
+        //         $set: {
+        //             userPeerMap: new Map(),
+        //             userReferenceMap: new Map(),
+        //         },
+        //     }
+        // );
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });

@@ -1,13 +1,13 @@
 import React from "react";
+import { Button, Container, Form } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { Form, Button, Container } from "react-bootstrap";
-
-import { useDynamicFetch } from "../hooks";
 import {
-    UserType,
     CreateUserRequestType,
     LoginSuccessResponseType,
+    UserType,
 } from "../../types";
+import { ButtonWithLoadingProp } from "../components";
+import { useDynamicFetch } from "../hooks";
 import { requestHasError } from "../utils";
 
 type Props = RouteComponentProps & {
@@ -21,6 +21,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const [userType, setUserType] = React.useState<UserType>(UserType.STUDENT);
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const [userData, registerUser] = useDynamicFetch<
         LoginSuccessResponseType,
@@ -45,11 +46,13 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
         event: React.FormEvent<HTMLElement>
     ): Promise<void> => {
         event.preventDefault();
+        setLoading(true);
         await registerUser({
             username,
             password,
             userType,
         });
+        setLoading(false);
     };
 
     return (
@@ -101,13 +104,15 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                             )}
                         </div>
                     </Container>
-                    <Button
+                    <ButtonWithLoadingProp
                         variant="primary"
                         type="submit"
                         className="registerbtn"
+                        loading={loading}
+                        invertLoader
                     >
                         Register
-                    </Button>
+                    </ButtonWithLoadingProp>
                 </div>
             </Form>
             <div className="toggle-button">

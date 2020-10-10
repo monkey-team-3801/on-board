@@ -1,8 +1,11 @@
+import { UserType } from "../types";
+
 export enum RequestState {
     LOADING,
     LOADED,
     ERROR,
     UNAUTHORISED,
+    UNINITIALISED,
 }
 
 export interface BaseResponseType<T> {
@@ -31,6 +34,7 @@ export type TopLayerContainerProps = {
         username: string;
         id: string;
         courses: Array<string>;
+        userType: UserType;
     };
 };
 
@@ -44,5 +48,12 @@ export type ClassOpenEventData =
           id: string;
           course: string;
           roomName: string;
+      }
+    | undefined;
+
+export type BreakoutAllocationEventData =
+    | {
+          id: string;
+          roomIndex: number;
       }
     | undefined;

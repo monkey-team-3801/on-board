@@ -2,58 +2,27 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
-import {
-    RoomType,
-    SessionDeleteRequestType,
-    SessionRequestType,
-    SessionResponseType,
-} from "../../types";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
-import { useDynamicFetch, useFetch, useSocket } from "../hooks";
-import { CreateRoomForm } from "../rooms/CreateRoomForm";
-import { RoomDisplayContainer } from "../rooms/RoomDisplayContainer";
-import { ScheduleRoomFormContainer } from "../rooms/ScheduleRoomFormContainer";
-import "../styles/Homepage.less";
+import { useSocket } from "../hooks";
+import { CreateClassroomContainer } from "../rooms";
+import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
-import { RequestState, TopLayerContainerProps } from "../types";
-import { ClassesContainer } from "./ClassesContainer";
+import { TopLayerContainerProps } from "../types";
+import "./Homepage.less";
+import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { history, userData } = props;
+    const { userData } = props;
     const { courses } = userData;
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
-
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
-        undefined,
-        SessionDeleteRequestType
-    >("session/delete", undefined, false);
-
-    const [createRoomResponse, createRoom] = useDynamicFetch<
-        undefined,
-        { name: string }
-    >("session/create", undefined, false);
-
-    const [privateRoomsResponse, refreshPrivateRooms] = useFetch<
-        SessionResponseType,
-        SessionRequestType
-    >("session/sessions", {
-        roomType: RoomType.PRIVATE,
-    });
-
-    const [classroomsResponse, refreshClassrooms] = useFetch<
-        SessionResponseType,
-        SessionRequestType
-    >("session/sessions", {
-        roomType: RoomType.CLASS,
-    });
 
     const componentDidMount = React.useCallback(
         (socket: SocketIOClient.Socket) => {
@@ -78,42 +47,11 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         }
     );
 
-    const onDeleteClick = React.useCallback(
-        async (request: SessionDeleteRequestType) => {
-            await deleteRoom(request);
-            await refreshPrivateRooms();
-            await refreshClassrooms();
-        },
-        [deleteRoom, refreshPrivateRooms, refreshClassrooms]
-    );
-
-    const onPrivateRoomJoinClick = React.useCallback(
-        (id: string) => {
-            history.push(`/room/${id}`);
-        },
-        [history]
-    );
-
-    const onClassroomJoinClick = React.useCallback(
-        (id: string) => {
-            history.push(`/classroom/${id}`);
-        },
-        [history]
-    );
-
     const refreshAnnouncements = React.useCallback(() => {
         setRefreshKey((k) => {
             return k + 1;
         });
     }, []);
-
-    if (createRoomResponse.state === RequestState.ERROR) {
-        return <div>Error while creating room</div>;
-    }
-
-    if (deleteRoomResponse.state === RequestState.ERROR) {
-        return <div>Error while deleting room</div>;
-    }
 
     return (
         <div className="homepage">
@@ -121,10 +59,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 <Col xl="6" lg="6" md="12">
                     <Row>
                         <ContainerWrapper className="calendar" title="Calendar">
-                            {(setShowLoader) => {
+                            {(setLoading) => {
                                 return (
                                     <Calendar
-                                        setShowLoader={setShowLoader}
+                                        setLoading={setLoading}
                                         sessions={[]}
                                     />
                                 );
@@ -136,74 +74,36 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             className="classes-container"
                             title="Classes"
                         >
-                            {(setShowLoader) => {
+                            {(setLoading) => {
                                 return (
-                                    <ClassesContainer
-                                        setShowLoader={setShowLoader}
+                                    <UpcomingClassesContainer
+                                        setLoading={setLoading}
                                     />
                                 );
                             }}
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper>
-                            {(setShowLoader) => {
+                        <ContainerWrapper title="Create Private Room">
+                            {(setLoading) => {
                                 return (
-                                    <CreateRoomForm
-                                        createRoom={async (name: string) => {
-                                            await createRoom({ name });
-                                            await refreshPrivateRooms();
-                                        }}
+                                    <CreatePrivateRoomContainer
+                                        setLoading={setLoading}
+                                        refreshKey={refreshKey}
+                                        {...props}
                                     />
                                 );
                             }}
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper title="Private rooms">
-                            {(setShowLoader) => {
+                        <ContainerWrapper title="Create Classroom">
+                            {(setLoading) => {
                                 return (
-                                    privateRoomsResponse.data && (
-                                        <RoomDisplayContainer
-                                            data={
-                                                privateRoomsResponse.data
-                                                    .sessions
-                                            }
-                                            onDeleteClick={async (
-                                                id: string
-                                            ) => {
-                                                onDeleteClick({
-                                                    id,
-                                                    roomType: RoomType.PRIVATE,
-                                                });
-                                            }}
-                                            onJoinClick={onPrivateRoomJoinClick}
-                                        />
-                                    )
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        <ContainerWrapper title="Class rooms">
-                            {(setShowLoader) => {
-                                return (
-                                    classroomsResponse.data && (
-                                        <RoomDisplayContainer
-                                            data={
-                                                classroomsResponse.data.sessions
-                                            }
-                                            onDeleteClick={async (
-                                                id: string
-                                            ) => {
-                                                onDeleteClick({
-                                                    id,
-                                                    roomType: RoomType.CLASS,
-                                                });
-                                            }}
-                                            onJoinClick={onClassroomJoinClick}
-                                        />
-                                    )
+                                    <CreateClassroomContainer
+                                        setLoading={setLoading}
+                                        refreshKey={refreshKey}
+                                    />
                                 );
                             }}
                         </ContainerWrapper>
@@ -215,22 +115,23 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             className="announcements-container"
                             title="Announcements"
                         >
-                            {(setShowLoader) => {
+                            {(setLoading) => {
                                 return (
                                     <AnnouncementsContainer
                                         refreshKey={refreshKey}
                                         userId={userData.id}
-                                        setShowLoader={setShowLoader}
+                                        setLoading={setLoading}
                                     />
                                 );
                             }}
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper>
-                            {(setShowLoader) => {
+                        <ContainerWrapper title="Course Enrolment">
+                            {(setLoading) => {
                                 return (
                                     <EnrolFormContainer
+                                        setLoading={setLoading}
                                         refresh={refreshAnnouncements}
                                         userId={userData.id}
                                         socket={socket}
@@ -240,22 +141,13 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper>
-                            {(setShowLoader) => {
-                                return (
-                                    <ScheduleRoomFormContainer
-                                        userId={userData.id}
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        <ContainerWrapper>
-                            {(setShowLoader) => {
+                        <ContainerWrapper title="Create Announcements">
+                            {(setLoading) => {
                                 return (
                                     <CreateAnnouncementsForm
                                         userId={userData.id}
+                                        setLoading={setLoading}
+                                        refreshKey={refreshKey}
                                     />
                                 );
                             }}

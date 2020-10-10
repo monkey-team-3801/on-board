@@ -1,23 +1,44 @@
 import express from "express";
 
 import { asyncHandler } from "../utils";
-import { NewMessageRequestType } from "../../types";
-import { Session } from "../database";
+import { NewMessageRequestType, RoomType } from "../../types";
+import { Session, ClassroomSession, BreakoutSession } from "../database";
 
 export const router = express.Router();
+
+const roomTypeToSession = async (id: string, roomType: RoomType) => {
+    switch (roomType) {
+        case RoomType.PRIVATE:
+            return Session.findById(id);
+        case RoomType.CLASS:
+            return ClassroomSession.findById(id);
+        case RoomType.BREAKOUT:
+            return BreakoutSession.findById(id);
+    }
+};
 
 router.post(
     "/newMessage",
     asyncHandler<undefined, {}, NewMessageRequestType>(
         async (req, res, next) => {
-            const session = await Session.findById(req.body.sessionId);
-            session?.messages?.push({
-                sendUser: req.body.sendUser,
-                content: req.body.content,
-                sentTime: new Date().toISOString(),
-            });
-            await session?.save();
-            res.end();
+            try {
+                const session = await roomTypeToSession(
+                    req.body.sessionId,
+                    req.body.roomType
+                );
+                session?.messages?.push({
+                    sendUser: req.body.sendUser,
+                    content: req.body.content,
+                    sentTime: new Date().toISOString(),
+                });
+                await session?.save();
+                res.status(200);
+            } catch (e) {
+                console.log("error", e);
+                res.status(500);
+            } finally {
+                res.end();
+            }
         }
     )
 );

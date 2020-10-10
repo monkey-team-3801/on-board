@@ -1,13 +1,19 @@
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import "../styles/UploadContainer.less";
+import { FileUploadType, RoomType } from "../../types";
+import { FileUploadEvent, ResponseFormEvent } from "../../events";
 import { useDynamicFetch } from "../hooks";
-import { FileUploadType } from "../../types";
+import "./UploadContainer.less";
 
-// To differentiate between documents and profile pictures.
 type Props = {
     uploadType: FileUploadType;
-    sessionID?: string;
+    sessionID: string;
+    socket: SocketIOClient.Socket;
+    userID: string;
+    updateFiles?: Function;
+    roomType: RoomType;
+    formID?: string;
+    back?: Function;
 };
 
 export const UploadContainer: React.FunctionComponent<Props> = (
@@ -26,35 +32,27 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     );
 
     // Values are in bytes
-    function maxFileSize(): number {
+    const maxFileSize = (): number => {
         if (props.uploadType === FileUploadType.DOCUMENTS) {
             return 10000000;
         } else {
             return 1000000;
         }
-    }
+    };
+
+    const totalFileLength =
+        props.uploadType === FileUploadType.DOCUMENTS ? 1 : 5;
 
     // Max file size.
     const mfs = maxFileSize();
 
     // Check files are of appropriate length.
-    function checkValid(files: Array<File>): boolean {
-        if (props.uploadType === FileUploadType.PROFILE) {
-            return files.length === 1;
-        }
-        // Limit amount of files uploaded at once to 5 for now.
-        if (props.uploadType === FileUploadType.DOCUMENTS) {
-            return files.length > 0 && files.length < 6;
-        }
-        return false;
-    }
+    const checkValid = (files: Array<File>): boolean => {
+        return files.length > 0 && files.length <= totalFileLength;
+    };
 
     const onDrop = async (acceptedFiles: Array<File>) => {
-        // Handle error. Someone will need to implement this.
-        if (!checkValid(acceptedFiles)) {
-            // Note: You can access rejected files through the variable "fileRejections" as below.
-            console.log(fileRejections);
-            console.log("Some files failed to upload.");
+        if (!checkValid(acceptedFiles) && fileRejections.length > 0) {
             return;
         }
 
@@ -63,21 +61,44 @@ export const UploadContainer: React.FunctionComponent<Props> = (
             formData.append(file.name, file, file.name);
         });
 
+        let IdObj = {
+            sid: props.sessionID,
+            uid: props.userID,
+            roomType: props.roomType,
+            uploadType: props.uploadType,
+        };
+
+        const json =
+            props.uploadType === FileUploadType.RESPONSE
+                ? JSON.stringify({ ...IdObj, formID: props.formID })
+                : JSON.stringify(IdObj);
+        const IdData = new Blob([json], {
+            type: "application/json",
+        });
+
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
-            // Append session ID at the end of the form data.
-            const obj = {
-                sid: props.sessionID,
-            };
-
-            const json = JSON.stringify(obj);
-            const blob = new Blob([json], {
-                type: "application/json",
-            });
-
-            formData.append("document", blob);
+            formData.append("document", IdData);
             await uploadFile(formData);
+
+            props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
+            if (props.updateFiles) {
+                props.updateFiles({
+                    id: props.sessionID,
+                    roomType: props.roomType,
+                    fileUploadType: FileUploadType.DOCUMENTS,
+                });
+            }
+        } else if (props.uploadType === FileUploadType.RESPONSE) {
+            formData.append("document", IdData);
+            await uploadFile(formData);
+            props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
+            setTimeout(() => {
+                if (props.back) {
+                    props.back();
+                }
+            }, 1000);
         }
     };
 
@@ -93,15 +114,33 @@ export const UploadContainer: React.FunctionComponent<Props> = (
     });
 
     return (
-        <div {...getRootProps()} className="dropContainer">
-            <input {...getInputProps()} />
-            {isDragActive ? (
-                <p className="dropMessage">Drop the files here ...</p>
-            ) : (
-                <p className="dropMessage">
-                    Drag 'n' drop some files here, or click here to select files
-                </p>
-            )}
+        <div>
+            <div style={{ textAlign: "center" }}>
+                {fileRejections.length > 0 && (
+                    <div>
+                        <div>The following files failed to upload:</div>
+                        {fileRejections.map((file, i) => (
+                            <div key={i} style={{ color: "red" }}>
+                                {file.file.name}
+                                <div>Reason: {file.errors[0].message}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+            <div {...getRootProps()} className="dropContainer">
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                    <p className="dropMessage">Drop the files here ...</p>
+                ) : (
+                    <p className="dropMessage">
+                        Drag 'n' drop some files here, or click here to select
+                        files
+                        <br></br>
+                        Note: You can upload at most 5 files at a time
+                    </p>
+                )}
+            </div>
         </div>
     );
 };

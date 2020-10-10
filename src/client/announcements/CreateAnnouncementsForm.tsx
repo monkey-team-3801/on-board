@@ -1,29 +1,35 @@
+import { format } from "date-fns/esm";
 import React from "react";
-import { Form, Button, Container, Row } from "react-bootstrap";
+import { Alert, Container, Form } from "react-bootstrap";
 import Select from "react-select";
-
-import { useDynamicFetch, useFetch } from "../hooks";
-import {
-    CourseListResponseType,
-    CreateAnnouncementJobRequestType,
-} from "../../types";
-import { requestIsLoaded } from "../utils";
 import { ExecutingEvent } from "../../events";
+import {
+    CreateAnnouncementJobRequestType,
+    UserEnrolledCoursesResponseType,
+} from "../../types";
+import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
+import { useDynamicFetch, useFetch } from "../hooks";
 import { CourseOptionType } from "../types";
-import { SimpleDatepicker } from "../components";
+import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
+import { v4 } from "uuid";
 
 type Props = {
     userId: string;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    refreshKey: number;
 };
 
 export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const { setLoading, refreshKey } = props;
     const [createAnnouncementResponse, createAnnouncement] = useDynamicFetch<
         undefined,
         CreateAnnouncementJobRequestType
     >("/job/create", undefined, false);
-    const [courseData] = useFetch<CourseListResponseType>("/courses/list");
+    const [courseData, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const [title, setTitle] = React.useState<string>("");
     const [content, setContent] = React.useState<string>("");
@@ -35,47 +41,58 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         new Date()
     );
 
+    const [creatingAnnouncements, setCreatingAnnouncements] = React.useState<
+        boolean
+    >(false);
+
+    React.useEffect(() => {
+        refreshCourseData();
+        setCreatingAnnouncements(false);
+    }, [refreshKey, refreshCourseData]);
+
     const isCourseEmpty = React.useMemo(() => {
         return courses.length === 0;
     }, [courses]);
 
     const isSubmitting: boolean = React.useMemo(() => {
-        return !requestIsLoaded(createAnnouncementResponse);
-    }, [createAnnouncementResponse]);
+        return (
+            requestIsLoading(createAnnouncementResponse) ||
+            requestIsLoading(courseData) ||
+            creatingAnnouncements
+        );
+    }, [createAnnouncementResponse, courseData, creatingAnnouncements]);
 
     React.useEffect(() => {
         if (requestIsLoaded(courseData)) {
-            const options = courseData.data.map((course) => {
-                return { value: course.code, label: course.code };
+            const options = courseData.data.courses.map((code) => {
+                return { value: code, label: code };
             });
             setCourseCodes(options);
+            setLoading(false);
         }
-    }, [courseData]);
-
-    if (!requestIsLoaded(courseData)) {
-        return <div>loading</div>;
-    }
+    }, [courseData, setLoading]);
 
     return (
         <Container>
-            <Row>
-                <h3>Create Announcement</h3>
-            </Row>
             <Form
-                onSubmit={(e) => {
+                className="mb-3"
+                onSubmit={async (e) => {
                     e.preventDefault();
-                    courses.forEach((option) => {
-                        createAnnouncement({
-                            jobDate: announcementTime.toISOString(),
-                            executingEvent: ExecutingEvent.ANNOUNCEMENT,
-                            data: {
-                                title,
-                                content,
-                                userId: props.userId,
-                                courseCode: option.value,
-                            },
-                        });
-                    });
+                    setCreatingAnnouncements(true);
+                    await Promise.all(
+                        courses.map(async (option) => {
+                            await createAnnouncement({
+                                jobDate: announcementTime.toISOString(),
+                                executingEvent: ExecutingEvent.ANNOUNCEMENT,
+                                data: {
+                                    id: v4(),
+                                    title,
+                                    content,
+                                    courseCode: option.value,
+                                },
+                            });
+                        })
+                    );
                 }}
             >
                 <Form.Group>
@@ -86,6 +103,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             setTitle(e.target.value);
                         }}
                         required
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <Form.Group>
@@ -96,6 +114,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                             setContent(e.target.value);
                         }}
                         required
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
                 <Form.Group>
@@ -110,7 +129,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                                 setCourses([]);
                             }
                         }}
-                        disabled={isSubmitting}
+                        isDisabled={isSubmitting}
                         isMulti
                         required
                         closeMenuOnSelect={false}
@@ -129,12 +148,37 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                         onChange={(time) => {
                             setAnnouncementTime(time);
                         }}
+                        disabled={isSubmitting}
                     />
                 </Form.Group>
-                <Button variant="primary" type="submit" disabled={isSubmitting}>
+                <ButtonWithLoadingProp
+                    variant="primary"
+                    type="submit"
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                    invertLoader
+                >
                     Create
-                </Button>
+                </ButtonWithLoadingProp>
             </Form>
+            {requestHasError(createAnnouncementResponse) && (
+                <Alert variant="danger">
+                    {createAnnouncementResponse.message}
+                </Alert>
+            )}
+            {new Date().getTime() > announcementTime.getTime() && (
+                <Alert variant="info">
+                    This announcement will be sent immediately
+                </Alert>
+            )}
+            {requestIsLoaded(createAnnouncementResponse) && (
+                <Alert variant="success">
+                    {`Successfully scheduled announcement for ${format(
+                        announcementTime,
+                        "MM/dd hh:mm"
+                    )}`}
+                </Alert>
+            )}
         </Container>
     );
 };

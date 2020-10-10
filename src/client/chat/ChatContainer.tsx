@@ -1,21 +1,23 @@
 import React from "react";
-import { Container, Row, Button, Col, Form } from "react-bootstrap";
-
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { ChatEvent, ChatMessageReceiveType } from "../../events";
+import { MessageData, NewMessageRequestType, RoomType } from "../../types";
 import { useDynamicFetch } from "../hooks";
 import { useTransformingSocket } from "../hooks/useTransformingSocket";
-import { MessageData, NewMessageRequestType } from "../../types";
-import { ChatEvent, ChatMessageReceiveType } from "../../events";
 import { RequestState } from "../types";
+import "./Chat.less";
 import { ChatLog } from "./ChatLog";
 
 type Props = {
     username: string;
     roomId: string;
     initialChatLog: Array<Omit<MessageData, "sessionId">>;
+    roomType: RoomType;
+    socket: SocketIOClient.Socket;
 };
 
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
-    const { roomId, username } = props;
+    const { roomId, username, roomType } = props;
 
     const [text, setText] = React.useState<string>("");
 
@@ -29,13 +31,16 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             prev: Array<Omit<MessageData, "sessionId">> | undefined,
             data: Omit<MessageData, "sessionId">
         ) => {
+            if (data.sendUser === username) {
+                return prev;
+            }
             if (prev && data) {
                 return prev.concat([data]);
             } else {
                 return [];
             }
         },
-        []
+        [username]
     );
 
     const { data, setData, socket } = useTransformingSocket<
@@ -45,7 +50,9 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         ChatEvent.CHAT_MESSAGE_RECEIVE,
         props.initialChatLog,
         undefined,
-        transformData
+        transformData,
+        () => {},
+        props.socket
     );
 
     const onSubmit = React.useCallback(
@@ -69,9 +76,10 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             socket.emit(ChatEvent.CHAT_MESSAGE_SEND, message);
             await updateChat({
                 ...message,
+                roomType,
             });
         },
-        [roomId, username, text, setData, updateChat, socket]
+        [roomId, username, text, socket, roomType, updateChat, setData]
     );
 
     if (response.state === RequestState.ERROR) {
@@ -79,17 +87,16 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     }
 
     return (
-        <Container>
+        <Container fluid className="chat-container">
             <Row>
                 <ChatLog messages={data || []} currentUser={props.username} />
             </Row>
-            <Row>
+            <Row className="d-flex justify-content-center">
                 <Form onSubmit={onSubmit}>
                     <Form.Row>
                         <Col xs="auto">
                             <Form.Control
                                 className="mb-2"
-                                id="inlineFormInput"
                                 value={text}
                                 onChange={(e) => {
                                     setText(e.target.value);

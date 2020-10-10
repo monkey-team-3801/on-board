@@ -1,46 +1,70 @@
 import mongoose from "mongoose";
-import { MessageData, RoomType, FileStorageType } from "../../../types";
+import { MessageData } from "../../../types";
 
-interface ISession extends mongoose.Document {
+export interface ISession extends mongoose.Document {
     name: string;
-    files?: Map<string, FileStorageType>;
     messages: Array<Omit<MessageData, "sessionId">>;
     description: string;
-    roomType: RoomType;
     courseCode?: string;
+    files?: Array<string>;
+    createdBy: string;
 }
-
-// interface PrivateRoom extends ISession {
-//     roomType: RoomType.PRIVATE;
-// }
-
 interface IClassroomSession extends ISession {
-    roomType: RoomType.CLASS;
     courseCode: string;
     startTime: string;
     endTime: string;
+    raisedHandUsers: Array<string>;
+    roomType: string;
+    colourCode: string;
 }
 
+interface IBreakoutSession extends ISession {
+    id: string;
+    parentSessionId: string;
+}
 const SessionSchema = new mongoose.Schema<ISession>({
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
-    files: { type: Map, default: new Map() },
+    files: { type: Array, default: [] },
     roomType: { type: Number },
+    description: { type: String },
+    courseCode: { type: String },
+    createdBy: { type: String },
 });
-
-export const Session = mongoose.model<ISession>("Session", SessionSchema);
 
 const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     name: { type: String, required: true },
     messages: { type: Array, default: [] },
-    roomType: { type: Number },
+    roomType: { type: String },
     description: { type: String },
     courseCode: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
+    raisedHandUsers: { type: Array, default: [] },
+    files: { type: Array, default: [] },
+    colourCode: { type: String },
+    createdBy: { type: String },
 });
+
+const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+    messages: { type: Array, default: [] },
+    files: { type: Map, default: [] },
+    roomType: { type: Number },
+    courseCode: { type: String },
+    parentSessionId: { type: String, required: true },
+    createdBy: { type: String },
+});
+
+export const Session = mongoose.model<ISession>("Session", SessionSchema);
 
 export const ClassroomSession = mongoose.model<IClassroomSession>(
     "ClassroomSession",
     ClassroomSessionSchema
+);
+
+export const BreakoutSession = mongoose.model<IBreakoutSession>(
+    "BreakoutSession",
+    BreakoutSessionSchema
 );

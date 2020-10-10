@@ -6,6 +6,7 @@ import parse from "date-fns/parse";
 type Props = {
     time: Date;
     onChange: (time: Date) => void;
+    disabled?: boolean;
 };
 
 /**
@@ -16,13 +17,18 @@ export const SimpleDatepicker: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Form.Control
-            value={format(props.time, "yyyy-MM-dd'T'HH:mm")}
+            defaultValue={
+                props.time.toString() !== "Invalid Date"
+                    ? format(props.time, "yyyy-MM-dd'T'HH:mm")
+                    : undefined
+            }
             type="datetime-local"
             onChange={(e) => {
                 props.onChange(
                     parse(e.target.value, "yyyy-MM-dd'T'HH:mm", new Date())
                 );
             }}
+            disabled={props.disabled}
         />
     );
 };

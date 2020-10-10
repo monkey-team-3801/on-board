@@ -59,10 +59,9 @@ export const getClashedRanges = (ranges: TimeRange[]): ClashedResult => {
         if (start >= lastEnd) {
             // no crashing at this entry
             // Save all found classing ranges to result
-            // TODO: type warning
-            clashedIds.forEach((clashedId, index) => {
+            clashedIds.forEach((clashedId, index, ids) => {
                 result[clashedId] = {
-                    stacked: clashedIds.length,
+                    stacked: ids.length,
                     stackIndex: index,
                 };
             });
