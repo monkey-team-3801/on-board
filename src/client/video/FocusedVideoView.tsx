@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { MediaConnection } from "peerjs";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { Video } from "./Video";
 import { VideoEvent } from "../../events";
@@ -9,54 +8,25 @@ import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 import "./VideoContainer.less";
 import { VideoPeersResponseType, UserPeer } from "../../types";
-import {
-    addPeer,
-    enableMyPeer,
-    myPeer,
-    peerStreams,
-    removePeer
-} from "../peer";
 import { RemotePeerVideo } from "./RemotePeerVideo";
-import { myStream } from "../peer/peer";
-import { useMyPeer } from "../hooks/useMyPeer";
+import { PeerId } from "../hooks/useMyPeer";
+import { PeerContext } from "../peer";
 
 type Props = { sessionId: string; userId: string };
-type PeerCalls = {
-    [key: string]: MediaConnection;
-};
-type PeerStreams = {
-    [key: string]: MediaStream;
-};
-type VideoStreamData = {
-    userId: string;
-    stream: MediaStream;
-};
 
 export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId } = props;
-    const [myPeerId, setMyPeerId] = useState<string>("");
-    const [peers, setPeers] = useState<Array<string>>([]);
-    // const [myStream, setMediaStream] = useMediaStream();
-    useEffect(() => {
-        enableMyPeer(setMyPeerId);
-    }, [setMyPeerId]);
+    const [peerIds, setPeerIds] = useState<Array<PeerId>>([]);
+    const {peer: myPeer, peerId: myPeerId, cleanUp: cleanUpPeer, stream: myStream} = useContext(PeerContext);
     const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }
-    >("/videos/peers", { sessionId, userId });
-    // myStream?.getTracks().forEach(track => {
-    //     console.log(track, track.getCapabilities());
-    // });
-    myStream?.getVideoTracks().forEach((track) => {
-        console.log("video track settings:", track.getSettings());
-    });
-
+        >("/videos/peers", { sessionId, userId });
     useEffect(() => {
         if (requestIsLoaded(response)) {
-            setPeers(response.data.peers.map(usePeer => usePeer.peerId));
+            setPeerIds(response.data.peers.map(usePeer => usePeer.peerId).filter(peerId => peerId !== myPeerId));
         }
     }, [response, myPeerId]);
-
     useEffect(() => {
         if (myPeerId) {
             socket.connect();
@@ -78,6 +48,7 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     useEffect(() => {
         return () => {
             console.log("cleanup");
+            //cleanUpPeer();
             socket.disconnect();
             //disableMyPeer();
         };
@@ -85,11 +56,11 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
 
     const onSocketUpdateUsers = useCallback(async (userPeer: UserPeer) => {
         console.log("new peer", userPeer.peerId);
-        await addPeer(userPeer.peerId);
+        setPeerIds(prev => [...prev, userPeer.peerId]);
     }, []);
 
     const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
-        removePeer(userPeer.peerId);
+        setPeerIds(prev => prev.filter(peerId => peerId !== userPeer.peerId));
     }, []);
 
     // Handle socket interactions
@@ -121,12 +92,12 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
                         />
                     )}
                 </Col>
-                {Array.from(peerStreams.entries()).map(
-                    ([peerId, stream], i) => {
+                {peerIds.map(
+                    (peerId, i) => {
                         return (
                             <Col lg={4} key={i}>
                                 <p>{peerId}</p>
-                                <RemotePeerVideo peerId={peerId} myPeerId={myPeerId}/>
+                                <RemotePeerVideo peerId={peerId}/>
                             </Col>
                         );
                     }

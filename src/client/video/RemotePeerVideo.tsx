@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { PeerId } from "../hooks/useMyPeer";
-import { addPeer, peerStreams } from "../peer/";
+import { PeerContext } from "../peer";
 
 type Props = {
     peerId: PeerId;
-    myPeerId: PeerId;
 };
 
-export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId, myPeerId }) => {
+export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const {peerId: myPeerId, addPeer, peerStreams} = useContext(PeerContext);
     useEffect(() => {
-        const test = async () => {
+        const setupStream = async () => {
             if (myPeerId) {
                 await addPeer(peerId);
                 if (videoRef.current) {
@@ -21,8 +21,8 @@ export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId, myPeer
                 }
             }
         };
-        test();
-    }, [peerId, myPeerId]);
+        setupStream();
+    }, [peerId, myPeerId, addPeer, peerStreams]);
 
     return <video ref={videoRef} />;
 };

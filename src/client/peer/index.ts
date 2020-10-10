@@ -1,7 +1,3 @@
 export {
-    peerStreams,
-    enableMyPeer,
-    disableMyPeer,
-    addPeer,
-    removePeer,
+    PeerContext
 } from "./peer";
