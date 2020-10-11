@@ -40,7 +40,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                 <div className="formcontent">
                     <Form.Group>
                         <Form.Control
-                            className="inputbar purple-gradient"
+                            className="inputbar purple-gradient-input"
                             type="text"
                             placeholder="Username"
                             value={username}
@@ -50,7 +50,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Form.Group>
                     <Form.Group>
                         <Form.Control
-                            className="inputbar purple-gradient"
+                            className="inputbar purple-gradient-input"
                             type="password"
                             placeholder="Password"
                             value={password}
@@ -89,6 +89,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Container>
                     <ButtonWithLoadingProp
                         variant="primary"
+                        id="login"
                         type="submit"
                         className="loginbtn"
                         loading={loading}

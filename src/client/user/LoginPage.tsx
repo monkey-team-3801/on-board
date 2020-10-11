@@ -40,7 +40,7 @@ export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
             )}
             <ParticlesContainer />
             <Container className="login-section">
-                <Container className="login-container purple-gradient">
+                <Container className="login-container">
                     <Row className="heading-row">
                         <div className="heading-row-container">
                             <div className="logo-image"></div>
