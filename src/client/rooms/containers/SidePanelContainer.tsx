@@ -4,6 +4,7 @@ import { MessageData, RoomType, UserDataResponseType } from "../../../types";
 import { ChatContainer } from "../../chat";
 import { Loader } from "../../components";
 import { ParticipantsContainer } from "./ParticipantsContainer";
+import "./SidePanelContainer.less";
 
 type Props = {
     sessionId: string;
@@ -22,14 +23,14 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
         <Container className="panel">
             <Row >
                 <div className="panel-container tutors-container">
-                    <Container>
+                    <Container className="section=header">
                         <h4>Tutors</h4>
                     </Container>
                 </div>
             </Row>
             <Row >
                 <Container className="panel-container students-container d-flex flex-column">
-                    <Container>
+                    <Container className="section=header">
                         <h4>Participants</h4>
                     </Container>
                     {props.users ? (
@@ -44,7 +45,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row >
                 <div className="panel-container messages-container">
-                    <Container>
+                    <Container className="section=header">
                         <h4>Chat</h4>
                     </Container>
                     <Container fluid>
