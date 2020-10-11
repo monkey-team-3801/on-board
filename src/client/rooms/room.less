@@ -43,3 +43,31 @@
 .back-button:hover {
     color: grey; 
 }
+
+.first-btn {
+    border-radius: 15px 0px 0px 15px;    
+}
+
+.setting-btn {
+    border-radius: 0px;
+}
+
+.end-btn {
+    border-radius: 0px 15px 15px 0px;
+}
+
+.first-btn, .setting-btn, .end-btn {
+    background-color: lightgrey !important;
+    color: black;
+    max-width: 15%;
+    &:hover {
+        background-color: darken(grey, 10%) !important;
+    }
+    &:focus {
+        background-color: @primary;
+        box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
+    }
+    &:active {
+        background-color: darken(grey, 10%) !important;
+    }
+}

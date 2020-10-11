@@ -230,6 +230,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                 </Container>
                                 <Container className="room-control d-flex justify-content-center mt-4">
                                     <Button
+                                        className="first-btn"
                                         onClick={() => {
                                             setBreakoutRoomModalVisible(true);
                                         }}
@@ -238,6 +239,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         Breakout Rooms
                                     </Button>
                                     <Button
+                                        className="setting-btn"
                                         onClick={async () => {
                                             if (handRaisedRef.current) {
                                                 setRaisedHandUsers(
@@ -265,17 +267,18 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
                                         Raise Hand
                                     </Button>
-                                    <Button>
+                                    <Button className="setting-btn">
                                         {/* <BiIcons.BiVideo className="icon" /> */}
                                         <BiIcons.BiVideoOff className="icon" />
                                         {/* video icons for video on and off */}
                                         Camera off</Button>
-                                    <Button>
+                                    <Button className="setting-btn">
                                         {/* <BiIcons.BiMicrophone className="icon" /> */}
                                         <BiIcons.BiMicrophoneOff className="icon" />
                                         {/* icons for mic on and off */}
                                         Mic off</Button>
                                     <Button
+                                        className="setting-btn"
                                         onClick={() => {
                                             setResponsesModalStatus({
                                                 visible: true,
@@ -290,7 +293,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             : "View Results"}
 
                                     </Button>
-                                    <Button>
+                                    <Button className="end-btn">
                                         <AiIcons.AiOutlineUpload className="icon" />
                                         <FileModal
                                             uploadType={FileUploadType.DOCUMENTS}
