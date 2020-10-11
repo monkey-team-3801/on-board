@@ -20,14 +20,14 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Container className="panel">
-            <Row className="mt-4">
+            <Row >
                 <div className="panel-container tutors-container">
                     <Container>
                         <h4>Tutors</h4>
                     </Container>
                 </div>
             </Row>
-            <Row className="mt-4">
+            <Row >
                 <Container className="panel-container students-container d-flex flex-column">
                     <Container>
                         <h4>Participants</h4>
@@ -38,11 +38,11 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                             raisedHandUsers={props.raisedHandUsers}
                         />
                     ) : (
-                        <Loader />
-                    )}
+                            <Loader />
+                        )}
                 </Container>
             </Row>
-            <Row className="mt-4">
+            <Row >
                 <div className="panel-container messages-container">
                     <Container>
                         <h4>Chat</h4>
