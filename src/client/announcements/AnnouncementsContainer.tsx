@@ -81,10 +81,10 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Row className="d-flex justify-content-center">
-                <p className="text-muted">You have reached the top...</p>
-            </Row>
             <Container className="announcement-list">
+                <Row className="d-flex justify-content-center">
+                    <p className="text-muted">You have reached the top...</p>
+                </Row>
                 {filteredAnnouncements &&
                     filteredAnnouncements.map((announcement, i) => {
                         return (
