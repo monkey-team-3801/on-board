@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ClassEvent } from "../events";
+import { ClassEvent, RoomEvent } from "../events";
 import { UserDataResponseType, RoomType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
@@ -14,8 +14,11 @@ import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
-import { ClassOpenEventData } from "./types";
+import { ClassOpenEventData, ChatModalStatusType } from "./types";
 import { requestIsLoaded } from "./utils";
+import { ChatModalStatusContext } from "./context";
+import { ChatModal } from "./chat";
+import { socket } from "./io";
 
 type Props = RouteComponentProps;
 
@@ -48,6 +51,20 @@ export const AppProtectedRoutes = (props: Props) => {
         setEventData(event);
     }, [event]);
 
+    React.useEffect(() => {
+        if (userData.id) {
+            socket.connect().emit(RoomEvent.SESSION_JOIN, {
+                sessionId: "global",
+                userId: userData.id,
+            });
+        }
+        return () => {
+            if (userData.id) {
+                socket.disconnect();
+            }
+        };
+    }, [userData]);
+
     if (!requestIsLoaded(userDataResponse)) {
         return <Loader full />;
     }
@@ -67,6 +84,17 @@ export const AppProtectedRoutes = (props: Props) => {
                     setEventData(undefined);
                 }}
             />
+            <ChatModalStatusContext.Consumer>
+                {(context) => {
+                    return (
+                        <ChatModal
+                            {...context.status}
+                            myUserId={id}
+                            myUsername={username}
+                        />
+                    );
+                }}
+            </ChatModalStatusContext.Consumer>
             <Container fluid style={{ marginTop: "50px" }}>
                 <Switch>
                     <SecuredRoute

@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Button } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
 import { CreateAnnouncementsForm } from "../announcements";
@@ -13,6 +13,7 @@ import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
+import { ChatModalStatusContext } from "../context";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -53,8 +54,17 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         });
     }, []);
 
+    const modalContext = React.useContext(ChatModalStatusContext);
+
     return (
         <div className="homepage">
+            <Button
+                onClick={() => {
+                    modalContext.onOpen?.();
+                }}
+            >
+                test
+            </Button>
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>

@@ -5,6 +5,9 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import * as AiIcons from "react-icons/ai";
 import "./Navbar.less";
 import { LocalStorageKey } from "../types";
+import { socket } from "../io";
+import { RoomEvent } from "../../events";
+import { userInfo } from "os";
 
 type Props = RouteComponentProps & {
     username?: string;
@@ -65,6 +68,10 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                                     ""
                                 );
                                 props.history.replace("/");
+                                socket.emit(RoomEvent.SESSION_LEAVE, {
+                                    sessionId: "global",
+                                    userId: props.userid,
+                                });
                             }}
                         >
                             Logout

@@ -220,6 +220,21 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(FileUploadEvent.FILE_DELETED, (data) => {
         socket.to(data).emit(FileUploadEvent.FILE_DELETED);
     });
+
+    socket.on("joinchat", (chatId) => {
+        console.log("join", chatId);
+        socket.join(chatId);
+    });
+
+    socket.on("leavechat", (chatId) => {
+        console.log("leave", chatId);
+        socket.leave(chatId);
+    });
+
+    socket.on("newmessage", (chatId) => {
+        console.log("test", chatId);
+        socket.in(chatId).emit("newmessage");
+    });
 });
 
 app.use(bodyParser.json());
@@ -305,6 +320,19 @@ database.connect().then(() => {
         const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
+
+        await SessionUsers.findOneAndUpdate(
+            { sessionId: "global" },
+            {
+                sessionId: "global",
+                userReferenceMap: new Map(),
+            },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true,
+            }
+        );
         // await VideoSession.updateMany(
         //     {},
         //     {
