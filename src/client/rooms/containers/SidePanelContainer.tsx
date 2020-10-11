@@ -23,15 +23,15 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
         <Container className="panel">
             <Row >
                 <div className="panel-container tutors-container">
-                    <Container className="section=header">
-                        <h4>Tutors</h4>
+                    <Container className="section-header">
+                        <h6>Tutor Team</h6>
                     </Container>
                 </div>
             </Row>
             <Row >
                 <Container className="panel-container students-container d-flex flex-column">
-                    <Container className="section=header">
-                        <h4>Participants</h4>
+                    <Container className="section-header">
+                        <h6>Participants</h6>
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
@@ -45,8 +45,8 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row >
                 <div className="panel-container messages-container">
-                    <Container className="section=header">
-                        <h4>Chat</h4>
+                    <Container className="section-header">
+                        <h6>Chat</h6>
                     </Container>
                     <Container fluid>
                         <ChatContainer
