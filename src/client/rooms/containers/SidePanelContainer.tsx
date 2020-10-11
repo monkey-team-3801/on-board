@@ -29,7 +29,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                 </div>
             </Row>
             <Row >
-                <Container className="panel-container students-container d-flex flex-column">
+                <Container className="panel-container students-container ">
                     <Container className="section-header">
                         <h6>Participants</h6>
                     </Container>
