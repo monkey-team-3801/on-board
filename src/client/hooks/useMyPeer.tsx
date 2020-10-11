@@ -20,8 +20,12 @@ export const useMyPeer: () => PeerData = () => {
         () => new Peer(options)
     );
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
-    const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(Map());
-    const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(Map());
+    const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
+        Map()
+    );
+    const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
+        Map()
+    );
     const [myStream, enableStream, disableStream] = useMediaStream();
     const cleanUp = useCallback(() => {
         if (myPeer) {
@@ -66,54 +70,83 @@ export const useMyPeer: () => PeerData = () => {
                 setMyPeerId(id);
                 // setMyPeer(myPeer);
             });
-
+        }
+    }, [myPeer, cleanUp]);
+    useEffect(() => {
+        if (myPeer) {
             myPeer.on("call", (call) => {
-                call.answer(myStream);
-                setPeerCalls(prev => prev.set(call.peer, call));
-                call.on("stream", stream => {
+                if (myStream) {
+                    console.log(
+                        "Answering call to peer",
+                        call.peer,
+                        "with my stream",
+                        myStream
+                    );
+                    call.answer(myStream);
+                    setPeerCalls((prev) => prev.set(call.peer, call));
+                }
+                call.on("stream", (stream) => {
                     console.log("OTHER CALL Receiving stream from", call.peer);
-                    setPeerStreams(prev => prev.set(call.peer, stream));
+                    setPeerStreams((prev) => prev.set(call.peer, stream));
                 });
             });
         }
-    }, [myPeer, cleanUp, setupPeer, myStream]);
-    const addPeer = useCallback<(peerId: PeerId) => void>(async (peerId) => {
-        if (peerCalls.has(peerId)) {
-            return;
-        }
-        if (!myStream) {
-            await enableStream();
-        }
-        if (myStream) {
-            const call = myPeer?.call(peerId, myStream);
-            if (!call) {
-                console.log("Call is undefined");
+    }, [myPeer, myStream]);
+    const addPeer = useCallback<(peerId: PeerId) => void>(
+        async (peerId) => {
+            if (peerCalls.has(peerId)) {
                 return;
             }
-            setPeerCalls(prev => prev.set(peerId, call));
-            console.log("Connecting to Peer", peerId);
-            call.on("stream", (stream) => {
-                console.log("MY CALL Receiving stream from", peerId);
-                setPeerStreams(prev => prev.set(peerId, stream));
-            });
-            call.on("close", () => {
-                console.log("disconnecting from", peerId);
-                setPeerCalls(prev => prev.delete(peerId));
-                setPeerStreams(prev => prev.delete(peerId));
-            });
-            call.on("error", (error) => {
-                console.log("Call error", error);
-                setPeerCalls(prev => prev.delete(peerId));
-                setPeerStreams(prev => prev.delete(peerId));
-            });
-        }
-
-    }, [myStream, peerCalls, myPeer, enableStream]);
-    const removePeer = useCallback<(peerId: PeerId) => void>((peerId) => {
-        setPeerStreams(prev => prev.delete(peerId));
-        const remoteCall = peerCalls.get(peerId);
-        remoteCall?.close();
-        setPeerCalls(prev => prev.delete(peerId));
-    }, [peerCalls]);
-    return {peer: myPeer, peerId: myPeerId, stream: myStream, peerCalls, peerStreams, addPeer, removePeer, enableStream, disableStream, cleanUp};
+            if (!myStream) {
+                await enableStream();
+            }
+            if (myStream) {
+                const call = myPeer?.call(peerId, myStream);
+                if (!call) {
+                    console.log("Call is undefined");
+                    return;
+                } else {
+                    console.log("Sending peer", peerId, "my stream");
+                }
+                setPeerCalls((prev) => prev.set(peerId, call));
+                console.log("Connecting to Peer", peerId);
+                call.on("stream", (stream) => {
+                    console.log("MY CALL Receiving stream from", peerId);
+                    setPeerStreams((prev) => prev.set(peerId, stream));
+                });
+                call.on("close", () => {
+                    console.log("disconnecting from", peerId);
+                    setPeerCalls((prev) => prev.delete(peerId));
+                    setPeerStreams((prev) => prev.delete(peerId));
+                });
+                call.on("error", (error) => {
+                    console.log("Call error", error);
+                    setPeerCalls((prev) => prev.delete(peerId));
+                    setPeerStreams((prev) => prev.delete(peerId));
+                });
+            }
+        },
+        [myStream, peerCalls, myPeer, enableStream]
+    );
+    const removePeer = useCallback<(peerId: PeerId) => void>(
+        (peerId) => {
+            setPeerStreams((prev) => prev.delete(peerId));
+            const remoteCall = peerCalls.get(peerId);
+            remoteCall?.close();
+            setPeerCalls((prev) => prev.delete(peerId));
+        },
+        [peerCalls]
+    );
+    return {
+        peer: myPeer,
+        peerId: myPeerId,
+        stream: myStream,
+        peerCalls,
+        peerStreams,
+        addPeer,
+        removePeer,
+        enableStream,
+        disableStream,
+        cleanUp,
+    };
 };

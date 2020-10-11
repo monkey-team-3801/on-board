@@ -8,7 +8,7 @@ import { useFetch } from "../hooks";
 import { useMyPeer } from "../hooks/useMyPeer";
 import { socket } from "../io";
 import { requestIsLoaded } from "../utils";
-import { Video } from "./Video";
+import { MyVideo } from "./MyVideo";
 import "./VideoContainer.less";
 
 type Props = { sessionId: string; userId: string; myStream?: MediaStream };
@@ -50,7 +50,7 @@ type VideoStreamData = {
 
 export const VideoContainer: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId, myStream } = props;
-    const [myPeer, myPeerId] = useMyPeer();
+    const { peer: myPeer, peerId: myPeerId } = useMyPeer();
     const [, setPeerCalls] = useState<Map<string, MediaConnection>>(Map());
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
@@ -275,11 +275,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                     <p>You</p>
                     {myStream ? "Stream exists" : "Stream not exists"}
                     {myStream && myPeer && (
-                        <Video
-                            videoStream={myStream}
-                            mine={true}
-                            muted={true}
-                        />
+                        <MyVideo videoStream={myStream} muted={true} />
                     )}
                 </Col>
                 {Array.from(peerStreams.entries()).map(
@@ -287,11 +283,7 @@ export const VideoContainer: React.FunctionComponent<Props> = (props) => {
                         return (
                             <Col lg={4} key={i}>
                                 <p>{userId}</p>
-                                <Video
-                                    videoStream={stream}
-                                    mine={false}
-                                    muted={true}
-                                />
+                                <MyVideo videoStream={stream} muted={true} />
                             </Col>
                         );
                     }

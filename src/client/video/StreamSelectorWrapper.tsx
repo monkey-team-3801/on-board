@@ -10,7 +10,7 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const peerData = useMyPeer();
-    const {enableStream, disableStream} = peerData;
+    const { enableStream, disableStream } = peerData;
     return (
         <PeerContext.Provider value={peerData}>
             <Container>

@@ -24,6 +24,7 @@ import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
+import { StreamSelectorWrapper } from "../video";
 // import { StreamSelectorWrapper } from "../video";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
@@ -248,10 +249,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     <Button>Participants View</Button>
                                 </Container>
                                 <Container className="video-container mt-4">
-                                    {/* <StreamSelectorWrapper
-                                        sessionId={props.match.params.classroomId}
+                                    <StreamSelectorWrapper
+                                        sessionId={
+                                            props.match.params.classroomId
+                                        }
                                         userId={props.userData.id}
-                                    /> */}
+                                    />
                                 </Container>
                                 <Container className="room-control d-flex justify-content-center mt-4">
                                     <Button

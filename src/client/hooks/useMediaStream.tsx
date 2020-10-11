@@ -44,11 +44,12 @@ export const useMediaStream: () => [
     );
 
     const disableMediaStream = useCallback(() => {
+        console.log("Turning off stream", stream);
         stream?.getTracks().forEach((track) => {
             track.stop();
         });
-        setStream(undefined);
-    }, []);
+        //setStream(undefined);
+    }, [stream]);
 
     useEffect(() => {
         enableMediaStream();

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
-import { Video } from "./Video";
+import { MyVideo } from "./MyVideo";
 import { VideoEvent } from "../../events";
 import { socket } from "../io";
 import { Container, Row, Col } from "react-bootstrap";
@@ -17,14 +17,24 @@ type Props = { sessionId: string; userId: string };
 export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId } = props;
     const [peerIds, setPeerIds] = useState<Array<PeerId>>([]);
-    const {peer: myPeer, peerId: myPeerId, cleanUp: cleanUpPeer, stream: myStream} = useContext(PeerContext);
+    const {
+        peer: myPeer,
+        peerId: myPeerId,
+        cleanUp: cleanUpPeer,
+        stream: myStream,
+    } = useContext(PeerContext);
     const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }
-        >("/videos/peers", { sessionId, userId });
+    >("/videos/peers", { sessionId, userId });
+    console.log("my peer id", myPeerId);
     useEffect(() => {
         if (requestIsLoaded(response)) {
-            setPeerIds(response.data.peers.map(usePeer => usePeer.peerId).filter(peerId => peerId !== myPeerId));
+            setPeerIds(
+                response.data.peers
+                    .map((usePeer) => usePeer.peerId)
+                    .filter((peerId) => peerId !== myPeerId)
+            );
         }
     }, [response, myPeerId]);
     useEffect(() => {
@@ -56,11 +66,13 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
 
     const onSocketUpdateUsers = useCallback(async (userPeer: UserPeer) => {
         console.log("new peer", userPeer.peerId);
-        setPeerIds(prev => [...prev, userPeer.peerId]);
+        setPeerIds((prev) => [...prev, userPeer.peerId]);
     }, []);
 
     const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
-        setPeerIds(prev => prev.filter(peerId => peerId !== userPeer.peerId));
+        setPeerIds((prev) =>
+            prev.filter((peerId) => peerId !== userPeer.peerId)
+        );
     }, []);
 
     // Handle socket interactions
@@ -85,23 +97,17 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
                     <p>You</p>
                     {myStream ? "Stream exists" : "Stream not exists"}
                     {myStream && myPeer && (
-                        <Video
-                            videoStream={myStream}
-                            mine={true}
-                            muted={true}
-                        />
+                        <MyVideo videoStream={myStream} muted={true} />
                     )}
                 </Col>
-                {peerIds.map(
-                    (peerId, i) => {
-                        return (
-                            <Col lg={4} key={i}>
-                                <p>{peerId}</p>
-                                <RemotePeerVideo peerId={peerId}/>
-                            </Col>
-                        );
-                    }
-                )}
+                {peerIds.map((peerId, i) => {
+                    return (
+                        <Col lg={4} key={i}>
+                            <p>{peerId}</p>
+                            <RemotePeerVideo peerId={peerId} />
+                        </Col>
+                    );
+                })}
             </Row>
         </Container>
     );

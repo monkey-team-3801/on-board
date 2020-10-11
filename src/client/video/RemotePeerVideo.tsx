@@ -6,9 +6,9 @@ type Props = {
     peerId: PeerId;
 };
 
-export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId}) => {
+export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const {peerId: myPeerId, addPeer, peerStreams} = useContext(PeerContext);
+    const { peerId: myPeerId, addPeer, peerStreams } = useContext(PeerContext);
     useEffect(() => {
         const setupStream = async () => {
             if (myPeerId) {

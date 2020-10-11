@@ -4,15 +4,11 @@ import { PeerContext } from "../peer";
 type Props = {
     videoStream: MediaStream | undefined;
     muted: boolean;
-    mine: boolean;
 };
 
-export const Video: React.FunctionComponent<Props> = ({
-    mine,
-    muted,
-}) => {
+export const MyVideo: React.FunctionComponent<Props> = ({ muted }) => {
     // My stream
-    const {stream: myStream} = useContext(PeerContext);
+    const { stream: myStream } = useContext(PeerContext);
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
         console.log("testing");
@@ -26,11 +22,5 @@ export const Video: React.FunctionComponent<Props> = ({
         }
     }, [myStream]);
 
-    return (
-        <video
-            className={mine ? "my-video" : "peers-video"}
-            ref={videoRef}
-            muted={muted}
-        />
-    );
+    return <video className="my-video" ref={videoRef} muted={muted} />;
 };
