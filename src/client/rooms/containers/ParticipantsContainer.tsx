@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Form } from "react-bootstrap";
 import { UserDataResponseType } from "../../../types";
 import { Participants } from "../components";
+import * as AiIcons from "react-icons/ai";
 
 type Props = {
     users: Array<Omit<UserDataResponseType, "courses">>;
@@ -24,14 +25,17 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
     }, [filterValue, users]);
 
     return (
-        <Container className="search-bar">
-            <Form.Control
-                type="text"
-                placeholder="Find a person..."
-                onChange={(e) => {
-                    setFilterValue(e.target.value);
-                }}
-            />
+        <Container  >
+            <Container className="search-bar" >
+                <Form.Control
+                    type="text"
+                    placeholder="Find a person..."
+                    onChange={(e) => {
+                        setFilterValue(e.target.value);
+                    }}
+                />
+                <AiIcons.AiOutlineSearch />
+            </Container>
             <Participants
                 users={filteredUsers}
                 raisedHandUsers={props.raisedHandUsers}
