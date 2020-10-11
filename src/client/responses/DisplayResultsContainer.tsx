@@ -1,6 +1,6 @@
 import { useThrottleCallback } from "@react-hook/throttle";
 import React from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Row } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { FileUploadType, ResponseFormType, RoomType } from "../../types";
 import { Loader } from "../components";
@@ -178,7 +178,7 @@ export const DisplayResultsContainer = (props: Props) => {
 
     return (
         <Container>
-            <h1>{props.formData.question}</h1>
+            <h1 className="mb-4">{props.formData.question}</h1>
             {formType === ResponseFormType.MULTIPLE_CHOICE &&
                 mcValues.length > 0 && (
                     <MultipleChoiceResultsChart
@@ -198,23 +198,23 @@ export const DisplayResultsContainer = (props: Props) => {
             {formType === ResponseFormType.FILE && fileValues && (
                 <>
                     <p>
-                        Description:{" "}
                         {description.data?.desc
                             ? description.data?.desc
                             : "No description was provided"}
                     </p>
-                    <hr></hr>
-                    {fileData.length > 0 ? (
-                        <FileContainer
-                            {...fileContainerData}
-                            updateFiles={throttleFetchFile}
-                            files={fileData}
-                        />
-                    ) : (
-                        <>
-                            No responses have been made yet.<br></br>
-                        </>
-                    )}
+                    <Row className="mt-4">
+                        {fileData.length > 0 ? (
+                            <FileContainer
+                                {...fileContainerData}
+                                updateFiles={throttleFetchFile}
+                                files={fileData}
+                            />
+                        ) : (
+                            <>
+                                No responses have been made yet.<br></br>
+                            </>
+                        )}
+                    </Row>
                 </>
             )}
             <Button

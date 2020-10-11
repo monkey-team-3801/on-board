@@ -24,14 +24,14 @@ export const RoomGroupingContainer: React.FunctionComponent<Props> = (
         <Row>
             <Container fluid className="room-group-header">
                 <Row>
-                    <Col xs={10}>
-                        <h5>
+                    <Col xs={9} className="d-flex align-items-center">
+                        <h5 className="m-0">
                             {props.roomId === "main"
                                 ? "Main Room"
                                 : `Room ${props.roomIndex + 1}`}
                         </h5>
                     </Col>
-                    <Col xs={1}>
+                    <Col xs={3}>
                         {props.roomId !== "main" && (
                             <Button
                                 variant="danger"

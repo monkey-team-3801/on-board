@@ -48,7 +48,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
         new Date(new Date().getTime() + 3600000)
     );
 
-    const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
+    const [colourCode, setColourCode] = React.useState<string>("#7873f5");
 
     React.useEffect(() => {
         refreshCourseData();

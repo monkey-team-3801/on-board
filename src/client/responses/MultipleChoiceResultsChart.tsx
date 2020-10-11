@@ -11,7 +11,7 @@ export const MultipleChoiceResultsChart: React.FunctionComponent<Props> = (
         <ResponsiveContainer width="100%" height={500}>
             <BarChart data={props.data}>
                 <XAxis dataKey="name" />
-                <Bar dataKey="value" fill="#5c4e8e" />;
+                <Bar dataKey="value" fill="#fc6262" />;
             </BarChart>
         </ResponsiveContainer>
     );

@@ -1,22 +1,19 @@
 import React from "react";
-import { Container, Row } from "react-bootstrap";
+import { Card, Container, Row } from "react-bootstrap";
 
 export const UpcomingEventsContainer = () => {
     return (
-        <Container className="upcoming-events">
+        <Container className="upcoming-events mt-4">
             <Row>
                 <header>
-                    <h1>{new Date().toDateString()}</h1>
+                    <h1>Upcoming Events</h1>
                 </header>
+                <hr className="my-2 peach-gradient" />
             </Row>
-            <Row>
-                <Container className="events-container">
-                    <Event />
-                    <Event />
-                    <Event />
-                    <Event />
-                    <Event />
-                </Container>
+            <Row className="events-container">
+                <Event />
+                <Event />
+                <Event />
             </Row>
         </Container>
     );
@@ -24,25 +21,24 @@ export const UpcomingEventsContainer = () => {
 
 const Event = () => {
     return (
-        <Container className="event">
-            <Row>
-                <hr
-                    style={{
-                        borderTopColor: `#${Math.floor(Math.random() * 16777215)
-                            .toString(16)
-                            .toString()}`,
-                    }}
-                />
-            </Row>
-            <Row>
-                <p>In xxx Hours</p>
-            </Row>
-            <Row>
-                <p>12AM - 12PM</p>
-            </Row>
-            <Row>
-                <p>Description</p>
-            </Row>
-        </Container>
+        <Card className="event my-2">
+            <Card.Header className="peach-gradient">Event</Card.Header>
+            <Card.Body>
+                <Card.Title>Assignment Due</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">
+                    {new Date().toDateString()}
+                </Card.Subtitle>
+                <Card.Text>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Duis aute irure dolor in reprehenderit in voluptate velit
+                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                    occaecat cupidatat non proident, sunt in culpa qui officia
+                    deserunt mollit anim id est laborum.
+                </Card.Text>
+            </Card.Body>
+        </Card>
     );
 };

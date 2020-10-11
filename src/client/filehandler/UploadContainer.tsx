@@ -128,7 +128,10 @@ export const UploadContainer: React.FunctionComponent<Props> = (
                     </div>
                 )}
             </div>
-            <div {...getRootProps()} className="dropContainer">
+            <div
+                {...getRootProps()}
+                className="dropContainer d-flex align-items-center justify-content-center"
+            >
                 <input {...getInputProps()} />
                 {isDragActive ? (
                     <p className="dropMessage">Drop the files here ...</p>

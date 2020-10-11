@@ -1,12 +1,17 @@
+@import "../styles/Colours.less";
+
 .dropContainer {
-    width: 500px;
+    outline: none;
     height: 150px;
-    border: 4px dashed #4aa1f3;
+    border: 1px dashed @primary;
     cursor: pointer;
+    &:focus {
+        border: 1px solid @primary;
+    }
 }
 
 .dropMessage {
     text-align: center;
-    color: #4aa1f3;
+    color: @primary;
     font-size: 1em;
 }

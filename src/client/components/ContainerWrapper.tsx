@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Container, Card } from "react-bootstrap";
 import { FaFolderOpen } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { Loader } from "./Loader";
@@ -28,19 +28,16 @@ export const ContainerWrapper: React.FunctionComponent<Props> = (
     }, [containerVisible]);
 
     return (
-        <Container className="content-container" fluid>
-            <Container
-                className={`content-internal ${props.className || ""}`}
-                fluid
-            >
+        <Container className="content-container my-4" fluid>
+            <Card className={`content-internal ${props.className || ""}`}>
                 {props.title && (
-                    <header>
-                        <h1>{props.title}</h1>
-                    </header>
+                    <Card.Header className="purple-gradient">
+                        <h1 className="m-0">{props.title}</h1>
+                    </Card.Header>
                 )}
 
                 {containerVisible && (
-                    <div>
+                    <Card.Body>
                         {loading && (
                             <div className="content-loader">
                                 <Loader />
@@ -49,7 +46,7 @@ export const ContainerWrapper: React.FunctionComponent<Props> = (
                         <div style={{ display: loading ? "none" : "unset" }}>
                             {props.children?.(setLoading)}
                         </div>
-                    </div>
+                    </Card.Body>
                 )}
 
                 <div
@@ -60,7 +57,7 @@ export const ContainerWrapper: React.FunctionComponent<Props> = (
                 >
                     {containerVisible ? <AiOutlineClose /> : <FaFolderOpen />}
                 </div>
-            </Container>
+            </Card>
         </Container>
     );
 };

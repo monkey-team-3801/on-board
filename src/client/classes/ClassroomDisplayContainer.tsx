@@ -70,6 +70,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         <Container fluid className="pt-2">
             <Row>
                 <Col xl={6}>
+                    <Form.Label>Search rooms</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search rooms..."
@@ -79,6 +80,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
                 <Col xl={6}>
+                    <Form.Label>Filter room status</Form.Label>
                     <Select
                         placeholder="Filter active..."
                         options={[

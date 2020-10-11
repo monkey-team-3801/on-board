@@ -40,7 +40,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                 <div className="formcontent">
                     <Form.Group>
                         <Form.Control
-                            className="inputbar"
+                            className="inputbar purple-gradient"
                             type="text"
                             placeholder="Username"
                             value={username}
@@ -50,7 +50,7 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                     </Form.Group>
                     <Form.Group>
                         <Form.Control
-                            className="inputbar"
+                            className="inputbar purple-gradient"
                             type="password"
                             placeholder="Password"
                             value={password}
@@ -68,10 +68,12 @@ export const LoginContainer: React.FunctionComponent<Props> = (
                                         value="remember"
                                     ></input>
                                     <span className="checkmark"></span>
-                                    <label>Remember Me</label>
+                                    <label className="text-muted">
+                                        Remember Me
+                                    </label>
                                 </Col>
                                 <Col className="center">
-                                    <p className="forget-password">
+                                    <p className="forget-password text-muted">
                                         Forgot my Password
                                     </p>
                                 </Col>

@@ -47,7 +47,10 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                         Welcome {props.username} ({props.userid})
                     </p>
                 </div>
-                <Dropdown className="dropdown-override">
+                <Dropdown
+                    id="nav-profile-dropdown"
+                    className="dropdown-override"
+                >
                     <Dropdown.Toggle>
                         <AiIcons.AiOutlineMenu className="icon" />
                     </Dropdown.Toggle>

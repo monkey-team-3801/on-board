@@ -66,7 +66,11 @@ export const DisplayContainer = (props: Props) => {
     }
 
     if (data.MC.length === 0 && data.SA.length === 0 && data.FF.length === 0) {
-        return <p>There are no questions</p>;
+        return (
+            <Container>
+                <p className="text-muted">There are no questions</p>
+            </Container>
+        );
     }
 
     return (

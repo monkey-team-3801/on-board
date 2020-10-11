@@ -23,7 +23,8 @@ export const ClassOpenIndicator: React.FunctionComponent<Props> = (
             <Col xs={5}>
                 <div className="join-button">
                     <Button
-                        variant="outline-dark"
+                        variant="primary"
+                        className="peach-gradient"
                         onClick={() => {
                             props.history.push(`/classroom/${event.id}`);
                             onClose();

@@ -16,7 +16,7 @@ export const FormListContainer: React.FunctionComponent<Props> = (
             {props.data.map(([key, value], index) => (
                 <Row
                     key={index}
-                    className="d-flex justify-content-between pt-1 pd-1"
+                    className="d-flex justify-content-between pt-1 pd-1 align-items-center"
                 >
                     <p>{value}</p>
                     <Button

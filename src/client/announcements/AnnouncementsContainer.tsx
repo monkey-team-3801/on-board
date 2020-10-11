@@ -81,8 +81,30 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Row className="mt-3">
+            <Row className="d-flex justify-content-center">
+                <p className="text-muted">You have reached the top...</p>
+            </Row>
+            <Container className="announcement-list">
+                {filteredAnnouncements &&
+                    filteredAnnouncements.map((announcement, i) => {
+                        return (
+                            <React.Fragment key={i}>
+                                <Row className="announcement mt-5 mb-5">
+                                    <AnnouncementEntry
+                                        announcement={announcement}
+                                        currentUser={props.userId}
+                                        onDelete={async () => {
+                                            await refresh();
+                                        }}
+                                    />
+                                </Row>
+                            </React.Fragment>
+                        );
+                    })}
+            </Container>
+            <Row>
                 <Col xl={6}>
+                    <Form.Label>Filter text</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search..."
@@ -92,6 +114,7 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
                 <Col xl={6}>
+                    <Form.Label>Filter courses</Form.Label>
                     <Select
                         placeholder="Filter course..."
                         options={courseCodes}
@@ -109,25 +132,6 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
             </Row>
-            <Container className="announcement-list mt-2">
-                {filteredAnnouncements &&
-                    filteredAnnouncements.map((announcement, i) => {
-                        return (
-                            <React.Fragment key={i}>
-                                <Row className="announcement my-4">
-                                    <AnnouncementEntry
-                                        announcement={announcement}
-                                        currentUser={props.userId}
-                                        onDelete={async () => {
-                                            await refresh();
-                                        }}
-                                    />
-                                </Row>
-                                <hr />
-                            </React.Fragment>
-                        );
-                    })}
-            </Container>
         </>
     );
 };
