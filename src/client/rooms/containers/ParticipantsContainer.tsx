@@ -20,13 +20,13 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
         return filterValue === ""
             ? users
             : users.filter((user) => {
-                return user.username.includes(filterValue);
-            });
+                  return user.username.includes(filterValue);
+              });
     }, [filterValue, users]);
 
     return (
-        <Container  >
-            <Container className="search-bar" >
+        <Container>
+            <Container className="search-bar">
                 <Form.Control
                     type="text"
                     placeholder="Find a person..."
