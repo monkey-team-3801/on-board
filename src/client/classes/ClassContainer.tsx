@@ -34,21 +34,19 @@ type Props = Partial<UpcomingClassroomSessionData> & {
 export const ClassContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const {
-        startTime: startTimeIso,
-        endTime: endTimeIso,
-        isRefreshing: parentRefreshing,
-    } = props;
+    const { startTime: startTimeIso, endTime: endTimeIso } = props;
 
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
+    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
+        "session/delete/classroom",
         undefined,
-        SessionDeleteRequestType
-    >("session/delete/classroom", undefined, false);
+        false
+    );
 
-    const [deleteJobResponse, deleteJob] = useDynamicFetch<
+    const [, deleteJob] = useDynamicFetch<undefined, SessionDeleteRequestType>(
+        "job/delete",
         undefined,
-        SessionDeleteRequestType
-    >("job/delete", undefined, false);
+        false
+    );
 
     const [deletePrivateRoomResponse, deletePrivateRoom] = useDynamicFetch<
         undefined,
@@ -62,20 +60,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
     const endTime = React.useMemo(() => {
         return endTimeIso && format(new Date(endTimeIso), "MM/dd hh:mm");
     }, [endTimeIso]);
-
-    const isRefreshing = React.useMemo(() => {
-        return (
-            requestIsLoading(deleteRoomResponse) ||
-            requestIsLoading(deleteJobResponse) ||
-            requestIsLoading(deletePrivateRoomResponse) ||
-            parentRefreshing
-        );
-    }, [
-        deleteRoomResponse,
-        deleteJobResponse,
-        deletePrivateRoomResponse,
-        parentRefreshing,
-    ]);
 
     return (
         <Row
