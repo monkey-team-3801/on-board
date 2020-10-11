@@ -39,7 +39,9 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                             raisedHandUsers={props.raisedHandUsers}
                         />
                     ) : (
-                            <Loader />
+                            <Container className="loader-container">
+                                <Loader />
+                            </Container>
                         )}
                 </Container>
             </Row>
