@@ -12,6 +12,8 @@ type Props = {
     updateFiles: Function;
     files: Array<Array<string>>;
     roomType: RoomType;
+    // showmodal
+    // modalbutton: Function;
 };
 
 export const FileModal = (props: Props) => {
@@ -20,6 +22,7 @@ export const FileModal = (props: Props) => {
     return (
         <div>
             <Button
+                className="file-btn"
                 onClick={() => {
                     setShowModal(true);
                 }}
