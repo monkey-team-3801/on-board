@@ -20,7 +20,6 @@
     align-items: center;
     justify-content: center;
     font-size: 2em;
-    margin-bottom: 20px;
     .heading-container {
         display: flex;
         justify-content: space-between;
@@ -40,21 +39,49 @@
         cursor: pointer;
     }
 }
-.calendar-date {
-    margin: 10px;
-    padding: 5%;
+
+.calendar-today-button {
+    text-align: center;
+    margin-bottom: 20px;
+    &a {
+        color: black!important;
+        text-decoration: none!important;
+    }
 }
 
-.calendar-date.today {
-    background-color: @primary;
-    color: #fff;
-    padding: 5%;
+.calendar-date {
     margin: auto;
+    padding: 7% 5% 5% 5%;
     line-height: 33px;
-    border-radius: 60%;
-    width: 50px;
     height: 50px;
-    font-weight: bold;
+    width: 50px;
+    border: none;
+    background: white;
+    display: inline-block;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+
+    &.chosen-date {
+        background-color: @primary!important;
+        color: #fff !important;
+        border-radius: 100% !important;
+        font-weight: bold !important;
+    }
+
+    &.today {
+        border: red dashed 1px;
+        background-color: white;
+        color: red;
+        border-radius: 100%;
+        font-weight: bold;
+    }
+
+    &:hover {
+        border-radius: 100%;
+        background: #4aa1f3;
+        color: white;
+        text-decoration: none !important;
+    }
 }
 
 .upcoming-events {
