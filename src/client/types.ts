@@ -1,5 +1,24 @@
 import { UserType } from "../types";
 
+export type HttpMethod =
+    | "get"
+    | "post"
+    | "put"
+    | "patch"
+    | "delete"
+    | "head"
+    | "GET"
+    | "POST"
+    | "PUT"
+    | "PATCH"
+    | "DELETE"
+    | "HEAD"
+
+export type CachedFetchData<T> = {
+    fetchedTime: Date,
+    responseData: T
+}
+
 export enum RequestState {
     LOADING,
     LOADED,
