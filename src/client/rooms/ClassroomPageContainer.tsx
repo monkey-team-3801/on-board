@@ -220,7 +220,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container fluid className="classroom-container">
+        <Container fluid className="classroom-container p-0">
             <Col md={9}>
                 <header className="d-flex">
                     <Container fluid>
@@ -298,7 +298,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         }}
                                     >
                                         {props.userData.userType ===
-                                        UserType.STUDENT
+                                            UserType.STUDENT
                                             ? "View Questions"
                                             : "View Results"}
                                     </Button>
@@ -313,17 +313,17 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     ></FileModal>
                                     {props.userData.userType ===
                                         UserType.COORDINATOR && (
-                                        <Button
-                                            onClick={() => {
-                                                setResponsesModalStatus({
-                                                    visible: true,
-                                                    type: "ask",
-                                                });
-                                            }}
-                                        >
-                                            Ask Questions
-                                        </Button>
-                                    )}
+                                            <Button
+                                                onClick={() => {
+                                                    setResponsesModalStatus({
+                                                        visible: true,
+                                                        type: "ask",
+                                                    });
+                                                }}
+                                            >
+                                                Ask Questions
+                                            </Button>
+                                        )}
                                     <Button
                                         onClick={() => {
                                             setSoundEnabled((prev) => {
@@ -334,8 +334,8 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         {soundEnabled ? (
                                             <MdNotificationsActive />
                                         ) : (
-                                            <MdNotificationsOff />
-                                        )}
+                                                <MdNotificationsOff />
+                                            )}
                                     </Button>
                                 </Container>
                             </Col>
@@ -343,7 +343,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     </div>
                 </Container>
             </Col>
-            <Col md={3}>
+            <Col md={3} className="no-gutters p-0">
                 <SidePanelContainer
                     sessionId={sessionId}
                     username={props.userData.username}
