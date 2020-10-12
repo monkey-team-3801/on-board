@@ -65,7 +65,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                             Account type
                         </Form.Label>
                         <Form.Control
-                            className="dropdownbar"
+                            className="dropdownbar purple-gradient-input"
                             as="select"
                             onChange={(e) => {
                                 changeUserType(e.target.value);
@@ -79,7 +79,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                     </Form.Group>
                     <Form.Group>
                         <Form.Control
-                            className="inputbar"
+                            className="inputbar purple-gradient-input"
                             type="text"
                             placeholder="Username"
                             value={username}
@@ -89,7 +89,7 @@ export const RegisterContainer: React.FunctionComponent<Props> = (
                     </Form.Group>
                     <Form.Group>
                         <Form.Control
-                            className="inputbar"
+                            className="inputbar purple-gradient-input"
                             type="password"
                             placeholder="Password"
                             value={password}
