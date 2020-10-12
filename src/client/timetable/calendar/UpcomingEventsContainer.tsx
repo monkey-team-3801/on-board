@@ -1,7 +1,15 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
 
-export const UpcomingEventsContainer = () => {
+type Props = {
+    chosenMonth: number;
+    chosenYear: number;
+};
+
+export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
+    chosenMonth,
+    chosenYear,
+}) => {
     return (
         <Container className="upcoming-events">
             <Row>

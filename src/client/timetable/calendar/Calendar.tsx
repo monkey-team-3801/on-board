@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
     startOfMonth,
     startOfISOWeek,
@@ -19,19 +19,14 @@ type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export type State = {
-    chosenMonth: number;
-    chosenYear: number;
-};
-
 export const Calendar: React.FunctionComponent<Props> = ({
     sessions,
     setLoading,
 }) => {
-    const [{ chosenMonth, chosenYear }, setTimeFrame] = React.useState<State>({
-        chosenMonth: new Date().getMonth(),
-        chosenYear: new Date().getFullYear(),
-    });
+    const today = new Date();
+    const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
+    const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
+    const [chosenDate, setDate] = React.useState<Date>(today);
     const firstDayOfMonth: Date = startOfMonth(
         new Date(chosenYear, chosenMonth)
     );
@@ -50,6 +45,20 @@ export const Calendar: React.FunctionComponent<Props> = ({
         start: lastDayOfMonth,
         end: lastDayShown,
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
+
+    const setMonthRange = useCallback((month: number, year: number) => {
+        setMonth(month);
+        setYear(year);
+    }, []);
+
+    const chooseDate = useCallback(
+        (date: number, month: number, year: number) => {
+            setDate(new Date(year, month, date));
+            setMonthRange(month, year);
+        },
+        [setMonthRange]
+    );
+
     React.useEffect(() => {
         setLoading(false);
     }, [setLoading]);
@@ -60,8 +69,25 @@ export const Calendar: React.FunctionComponent<Props> = ({
                     <CalendarHeading
                         month={chosenMonth}
                         year={chosenYear}
-                        setTimeFrame={setTimeFrame}
+                        setMonthRange={setMonthRange}
                     />
+                    <div className="calendar-today-button">
+                        <small>
+                            <a
+                                href="#!"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    chooseDate(
+                                        today.getDate(),
+                                        today.getMonth(),
+                                        today.getFullYear()
+                                    );
+                                }}
+                            >
+                                (go to today)
+                            </a>
+                        </small>
+                    </div>
                     <div className="calendar-container">
                         {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
                             (dayName: string) => (
@@ -75,8 +101,10 @@ export const Calendar: React.FunctionComponent<Props> = ({
                             <CalendarDay
                                 sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
                                 key={index}
                             />
                         ))}
@@ -84,8 +112,10 @@ export const Calendar: React.FunctionComponent<Props> = ({
                             <CalendarDay
                                 sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
                                 key={index}
                             />
                         ))}
@@ -93,8 +123,10 @@ export const Calendar: React.FunctionComponent<Props> = ({
                             <CalendarDay
                                 sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
                                 key={index}
                             />
                         ))}
@@ -103,7 +135,10 @@ export const Calendar: React.FunctionComponent<Props> = ({
             </Row>
             <Row>
                 <Container>
-                    <UpcomingEventsContainer />
+                    <UpcomingEventsContainer
+                        chosenMonth={chosenMonth}
+                        chosenYear={chosenYear}
+                    />
                 </Container>
             </Row>
         </>
