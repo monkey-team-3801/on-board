@@ -6,9 +6,10 @@ import {
     isAnnouncementJob,
     classFormDataHasError,
 } from "../utils";
-import { BaseJob } from "../../types";
+import { BaseJob, SessionDeleteRequestType } from "../../types";
 import { ScheduleHandler } from "../jobs";
 import { getUserDataFromJWT } from "./utils";
+import { Job } from "../database";
 
 export const router = express.Router();
 
@@ -67,4 +68,25 @@ router.post(
         });
         res.end();
     })
+);
+
+router.post(
+    "/delete",
+    asyncHandler<undefined, {}, SessionDeleteRequestType>(
+        async (req, res, next) => {
+            console.log(req.body);
+            console.log("Deleting job:", req.body.id);
+            try {
+                const job = await Job.findByIdAndDelete(req.body.id);
+                if (job) {
+                    const scheduleHandler = ScheduleHandler.getInstance();
+                    scheduleHandler.removeQueuedJob(job._id);
+                }
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.status(200).end();
+            }
+        }
+    )
 );

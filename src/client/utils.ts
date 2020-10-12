@@ -1,4 +1,9 @@
-import { BaseResponseType, RequestState, ErrorResponseType } from "./types";
+import {
+    BaseResponseType,
+    RequestState,
+    ErrorResponseType,
+    CourseOptionType,
+} from "./types";
 
 import { ResponseType } from "./types";
 
@@ -56,6 +61,10 @@ export const throttle = (callback: any, delay: number) => {
             callback.apply(null, arguments);
         }
     };
+};
+
+export const isOptionType = (option: any): option is CourseOptionType => {
+    return option?.value && option?.label;
 };
 
 export const baseRoomTypeOptions = [

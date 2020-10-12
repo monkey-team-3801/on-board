@@ -1,39 +1,29 @@
 import React from "react";
 import { Alert, Modal } from "react-bootstrap";
-import {
-    ClassroomSessionData,
-    RoomType,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
+import { UserEnrolledCoursesResponseType } from "../../types";
 import { useDynamicFetch, useFetch } from "../hooks";
-import { ScheduleRoomForm } from "../rooms/components";
+import { CreatePrivateRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
-import {
-    baseRoomTypeOptions,
-    requestHasError,
-    requestIsLoaded,
-    requestIsLoading,
-} from "../utils";
+import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
-    roomSelection:
-        | {
-              data: Omit<ClassroomSessionData, "messages">;
-              type: RoomType;
-              message?: string;
-          }
-        | undefined;
+    roomSelection?: {
+        id?: string;
+        name: string;
+        description: string;
+        courseCode?: string;
+    };
     onClose: () => void;
     refresh: () => void;
 };
 
-export const EditClassroomModal: React.FunctionComponent<Props> = (
+export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [editRoomResponse, editRoom] = useDynamicFetch<
         undefined,
-        { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
-    >("/session/edit/classroomSession", undefined, false);
+        { id?: string; name: string; description: string; courseCode?: string }
+    >("/session/edit/privateSession", undefined, false);
 
     const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
         "/user/courses"
@@ -42,7 +32,13 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
     const [roomData, setRoomData] = React.useState<
-        Omit<ClassroomSessionData, "messages"> | undefined
+        | {
+              id?: string;
+              name: string;
+              description: string;
+              courseCode?: string;
+          }
+        | undefined
     >();
 
     const [roomName, setRoomName] = React.useState<string>("");
@@ -53,16 +49,6 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
-    const [roomType, setRoomType] = React.useState<CourseOptionType>(
-        baseRoomTypeOptions[0]!
-    );
-    const [startingTime, setStartingTime] = React.useState<Date>(new Date());
-
-    const [endingTime, setEndingTime] = React.useState<Date>(
-        new Date(new Date().getTime() + 3600000)
-    );
-
-    const [colourCode, setColourCode] = React.useState<string>("#5c4e8e");
 
     const visible = React.useMemo(() => {
         return props.roomSelection !== undefined;
@@ -70,7 +56,7 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
 
     React.useEffect(() => {
         if (visible) {
-            setRoomData(props.roomSelection?.data);
+            setRoomData(props.roomSelection);
             setSubmitting(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,14 +71,14 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
                     return { value: code, label: code };
                 })
             );
-            setSelectedCourse({
-                value: roomData.courseCode,
-                label: roomData.courseCode,
-            });
-            setRoomType({ value: roomData.roomType, label: roomData.roomType });
-            setStartingTime(new Date(roomData.startTime));
-            setEndingTime(new Date(roomData.endTime));
-            setColourCode(roomData.colourCode);
+            setSelectedCourse(
+                roomData.courseCode
+                    ? {
+                          value: roomData.courseCode,
+                          label: roomData.courseCode,
+                      }
+                    : undefined
+            );
         }
     }, [roomData, courseData]);
 
@@ -123,41 +109,22 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
             </Modal.Header>
             <Modal.Body>
                 {
-                    <ScheduleRoomForm
-                        id={props.roomSelection?.data.id}
+                    <CreatePrivateRoomForm
+                        id={roomData?.id}
                         roomName={roomName}
                         description={description}
                         courseCodes={courseCodes}
                         selectedCourse={selectedCourse}
-                        roomType={roomType}
-                        startingTime={startingTime}
-                        endingTime={endingTime}
-                        colourCode={colourCode}
                         setRoomName={setRoomName}
                         setDescription={setDescription}
                         setCourseCodes={setCourseCodes}
                         setSelectedCourse={setSelectedCourse}
-                        setRoomType={setRoomType}
-                        setStartingTime={setStartingTime}
-                        setEndingTime={setEndingTime}
-                        setColourCode={setColourCode}
                         requestIsLoading={requestIsLoading(editRoomResponse)}
                         submitting={submitting}
-                        onSubmit={async (
-                            data: Omit<
-                                ClassroomSessionData,
-                                "messages" | "id"
-                            > & { id?: string }
-                        ) => {
+                        onSubmit={async (data) => {
+                            setSubmitting(true);
                             if (data.id) {
-                                await editRoom({
-                                    data: {
-                                        ...data,
-                                        id: data.id,
-                                    },
-                                    type: props.roomSelection!.type,
-                                });
-                                setSubmitting(true);
+                                await editRoom(data);
                             }
                         }}
                         submitText={"Edit Room"}
@@ -165,11 +132,6 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
                 }
                 {requestIsLoaded(editRoomResponse) && submitting && (
                     <Alert variant="success">Successfully edited room</Alert>
-                )}
-                {new Date().getTime() > startingTime.getTime() && (
-                    <Alert variant="info">
-                        This class will open immediately
-                    </Alert>
                 )}
                 {requestHasError(editRoomResponse) && (
                     <Alert variant="danger">{editRoomResponse.message}</Alert>

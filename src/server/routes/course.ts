@@ -83,25 +83,6 @@ router.post(
 );
 
 router.post(
-    "/list",
-    asyncHandler<CourseListResponseType>(async (req, res, next) => {
-        try {
-            res.json(
-                (await findAllCourses()).map((course) => {
-                    return {
-                        code: course.code,
-                    };
-                })
-            );
-        } catch (e) {
-            console.log("error", e);
-            res.status(500);
-            next(new Error("Unexpected error has occured."));
-        }
-    })
-);
-
-router.post(
     "/announcements",
     asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
         async (req, res) => {
@@ -140,6 +121,30 @@ router.post(
                 });
             }
             res.end();
+        }
+    )
+);
+
+router.post(
+    "/announcements/delete",
+    asyncHandler<{}, {}, { id: string; courseCode: string }>(
+        async (req, res) => {
+            try {
+                await Course.findOneAndUpdate(
+                    { code: req.body.courseCode },
+                    {
+                        $pull: {
+                            announcements: {
+                                id: req.body.id,
+                            },
+                        },
+                    }
+                );
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.status(200).end();
+            }
         }
     )
 );

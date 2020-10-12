@@ -133,7 +133,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                 </Form.Row>
             </Form>
             {requestIsLoaded(enrolCourseResponse) && (
-                <Alert variant="success">Successfully enrolled</Alert>
+                <Alert variant="success">Successfully updated enrolment</Alert>
             )}
         </Container>
     );

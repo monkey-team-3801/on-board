@@ -47,7 +47,7 @@ router.post(
     asyncHandler<
         { id: string; name: string } | { message?: string },
         {},
-        { name: string }
+        { name: string; description: string; courseCode?: string }
     >(async (req, res, next) => {
         try {
             if (req.body.name && req.headers.authorization) {
@@ -57,9 +57,9 @@ router.post(
                 if (user) {
                     const session = await createNewSession(
                         req.body.name,
-                        "",
+                        req.body.description,
                         user.id,
-                        undefined // TODO allow course for private session
+                        req.body.courseCode
                     );
                     await SessionCanvas.create({
                         sessionId: session._id,
@@ -92,48 +92,34 @@ router.post(
 
 router.post(
     "/privateSessions",
-    asyncHandler<Array<SessionInfo>, {}, {}>(async (req, res, next) => {
-        try {
-            const sessions: Array<SessionInfo> = (await Session.find()).map(
-                (session) => {
-                    return {
-                        id: session._id,
-                        name: session.name,
-                        description: session.description,
-                        courseCode: session.courseCode,
-                    };
-                }
-            );
-            res.json(sessions);
-        } catch (e) {
-            console.log("error", e);
-            res.status(500);
-            next(new Error("Unexpected error has occured."));
-        }
-    })
-);
-
-router.post(
-    "/classroomSessions",
-    asyncHandler<Array<ClassroomSessionData>, {}, {}>(
+    asyncHandler<Array<SessionInfo & { createdByUsername?: string }>, {}, {}>(
         async (req, res, next) => {
             try {
-                const sessions = await ClassroomSession.find();
-                if (sessions) {
-                    res.json(
-                        sessions.map((session) => {
+                if (req.headers.authorization) {
+                    const currentUser = await getUserDataFromJWT(
+                        req.headers.authorization
+                    );
+                    const query: Array<SessionInfo> = await Promise.all(
+                        (await Session.find()).map(async (session) => {
+                            const user = await User.findById(session.createdBy);
                             return {
                                 id: session._id,
                                 name: session.name,
-                                roomType: session.roomType,
                                 description: session.description,
                                 courseCode: session.courseCode,
-                                messages: session.messages,
-                                startTime: session.startTime,
-                                endTime: session.endTime,
-                                colourCode: session.colourCode,
                                 createdBy: session.createdBy,
+                                createdByUsername: user?.username,
                             };
+                        })
+                    );
+                    res.json(
+                        query.filter((session) => {
+                            if (!session.courseCode) {
+                                return true;
+                            }
+                            return currentUser?.courses.includes(
+                                session.courseCode
+                            );
                         })
                     );
                 }
@@ -141,16 +127,69 @@ router.post(
                 console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
+            } finally {
+                res.status(200).end();
             }
-            res.end();
         }
     )
 );
 
 router.post(
+    "/classroomSessions",
+    asyncHandler<
+        Array<ClassroomSessionData & { createdByUsername?: string }>,
+        {},
+        {}
+    >(async (req, res, next) => {
+        try {
+            const sessions = await ClassroomSession.find();
+            if (sessions && req.headers.authorization) {
+                const currentUser = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                const query = await Promise.all(
+                    sessions.map(async (session) => {
+                        const user = await User.findById(session.createdBy);
+                        return {
+                            id: session._id,
+                            name: session.name,
+                            roomType: session.roomType,
+                            description: session.description,
+                            courseCode: session.courseCode,
+                            messages: session.messages,
+                            startTime: session.startTime,
+                            endTime: session.endTime,
+                            colourCode: session.colourCode,
+                            createdBy: session.createdBy,
+                            createdByUsername: user?.username,
+                        };
+                    })
+                );
+                res.json(
+                    query.filter((session) => {
+                        return currentUser?.courses.includes(
+                            session.courseCode
+                        );
+                    })
+                );
+            }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        }
+        res.end();
+    })
+);
+
+router.post(
     "/upcomingClassroomSessions",
     asyncHandler<
-        Array<Omit<ClassroomSessionData, "messages">>,
+        Array<
+            Omit<ClassroomSessionData, "messages"> & {
+                createdByUsername?: string;
+            }
+        >,
         {},
         { limit?: number }
     >(async (req, res, next) => {
@@ -175,20 +214,26 @@ router.post(
 
                     if (jobs) {
                         res.json(
-                            jobs.map((job) => {
-                                const session = job.data;
-                                return {
-                                    id: job._id.toHexString(),
-                                    name: session.name,
-                                    roomType: session.roomType,
-                                    description: session.description,
-                                    courseCode: session.courseCode,
-                                    startTime: session.startTime,
-                                    endTime: session.endTime,
-                                    colourCode: session.colourCode,
-                                    createdBy: job.createdBy,
-                                };
-                            })
+                            await Promise.all(
+                                jobs.map(async (job) => {
+                                    const session = job.data;
+                                    const user = await User.findById(
+                                        session.createdBy
+                                    );
+                                    return {
+                                        id: job._id.toHexString(),
+                                        name: session.name,
+                                        roomType: session.roomType,
+                                        description: session.description,
+                                        courseCode: session.courseCode,
+                                        startTime: session.startTime,
+                                        endTime: session.endTime,
+                                        colourCode: session.colourCode,
+                                        createdBy: job.createdBy,
+                                        createdByUsername: user?.username,
+                                    };
+                                })
+                            )
                         );
                     }
                 } catch (e) {
@@ -345,6 +390,30 @@ router.post(
 );
 
 router.post(
+    "/edit/privateSession",
+    asyncHandler<
+        { message?: string },
+        {},
+        { id: string; name: string; description: string; courseCode?: string }
+    >(async (req, res, next) => {
+        try {
+            await Session.findByIdAndUpdate(req.body.id, {
+                name: req.body.name,
+                description: req.body.description,
+                courseCode: req.body.courseCode,
+            });
+            res.status(200);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
     "/delete/privateRoom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
@@ -382,6 +451,7 @@ router.post(
     "/delete/classroom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
+            console.log(req.body);
             console.log("Deleting classroom:", req.body.id);
             try {
                 await File.deleteMany({ sessionID: req.body.id });

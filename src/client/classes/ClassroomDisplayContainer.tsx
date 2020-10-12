@@ -1,14 +1,12 @@
 import React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import {
-    ClassroomSessionData,
-    RoomType,
-    SessionDeleteRequestType,
-} from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import Select from "react-select";
+import { ClassroomSessionData, RoomType } from "../../types";
+import { useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
+import { ClassContainer } from "./ClassContainer";
 import { EditClassroomModal } from "./EditClassroomModal";
 
 type Props = RouteComponentProps & {
@@ -26,6 +24,9 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         | undefined
     >();
 
+    const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
+    const [roomActiveFilter, setRoomActiveFilter] = React.useState<string>("");
+
     const [classroomsResponse, getClassrooms] = useFetch<
         Array<ClassroomSessionData>
     >("session/classroomSessions");
@@ -33,12 +34,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     const [upcomingClassroomsResponse, getUpcomingClassrooms] = useFetch<
         Array<Omit<ClassroomSessionData, "messages">>
     >("session/upcomingClassroomSessions");
-
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete/classroom",
-        undefined,
-        false
-    );
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -53,96 +48,101 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         }
     }, [classroomsResponse, setLoading]);
 
+    const filteredClassrooms = React.useMemo(() => {
+        if (roomActiveFilter === "Active" || !roomActiveFilter) {
+            return classroomsResponse.data?.filter((session) => {
+                return session.name
+                    .toLocaleLowerCase()
+                    .includes(roomFilterValue.toLocaleLowerCase());
+            });
+        }
+    }, [roomFilterValue, roomActiveFilter, classroomsResponse]);
+
+    const filteredUpcomingRooms = React.useMemo(() => {
+        if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
+            return upcomingClassroomsResponse.data?.filter((session) => {
+                return session.name.includes(roomFilterValue);
+            });
+        }
+    }, [roomFilterValue, roomActiveFilter, upcomingClassroomsResponse]);
+
     return (
-        <Container>
-            {classroomsResponse.data &&
-                classroomsResponse.data.map((session, i) => {
+        <Container fluid className="pt-2">
+            <Row>
+                <Col xl={6}>
+                    <Form.Control
+                        type="text"
+                        placeholder="Search rooms..."
+                        onChange={(e) => {
+                            setRoomFilterValue(e.target.value);
+                        }}
+                    />
+                </Col>
+                <Col xl={6}>
+                    <Select
+                        placeholder="Filter active..."
+                        options={[
+                            { value: "Active", label: "Active" },
+                            { value: "Upcoming", label: "Upcoming" },
+                        ]}
+                        isClearable
+                        onChange={(value) => {
+                            setRoomActiveFilter(
+                                ((value as unknown) as { value: string } | null)
+                                    ?.value ?? ""
+                            );
+                        }}
+                    />
+                </Col>
+            </Row>
+            {filteredClassrooms &&
+                filteredClassrooms.map((session, i) => {
                     return (
-                        <Row key={session.id}>
-                            <Col>
-                                <p>{`${i + 1}. ${session.name}`}</p>
-                            </Col>
-                            <Col>
-                                <Button
-                                    variant="success"
-                                    size="sm"
-                                    onClick={() => {
-                                        onRoomJoinClick(session.id);
-                                    }}
-                                >
-                                    Join
-                                </Button>
-                                {props.userData.id === session.createdBy && (
-                                    <>
-                                        <Button
-                                            variant="info"
-                                            size="sm"
-                                            onClick={async () => {
-                                                setRoomSelection({
-                                                    data: session,
-                                                    type: RoomType.CLASS,
-                                                });
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={async () => {
-                                                await deleteRoom({
-                                                    id: session.id,
-                                                });
-                                                await getClassrooms();
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </>
-                                )}
-                            </Col>
-                        </Row>
+                        <ClassContainer
+                            {...session}
+                            key={session.id}
+                            canEdit={props.userData.id === session.createdBy}
+                            canJoin
+                            onJoinClick={() => {
+                                onRoomJoinClick(session.id);
+                            }}
+                            onEditClick={() => {
+                                setRoomSelection({
+                                    data: session,
+                                    type: RoomType.CLASS,
+                                });
+                            }}
+                            onDeleteClick={async () => {
+                                await getClassrooms();
+                            }}
+                            isRefreshing={requestIsLoading(classroomsResponse)}
+                            size="lg"
+                            type={RoomType.CLASS}
+                        />
                     );
                 })}
-            <hr></hr>
-            {upcomingClassroomsResponse.data &&
-                upcomingClassroomsResponse.data.map((session, i) => {
+            {filteredUpcomingRooms &&
+                filteredUpcomingRooms.map((session, i) => {
                     return (
-                        <Row key={session.id}>
-                            <Col>
-                                <p>{`${i + 1}. ${session.name}`}</p>
-                            </Col>
-                            <Col>
-                                {props.userData.id === session.createdBy && (
-                                    <>
-                                        <Button
-                                            variant="info"
-                                            size="sm"
-                                            onClick={async () => {
-                                                setRoomSelection({
-                                                    data: session,
-                                                    type: RoomType.UPCOMING,
-                                                });
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onClick={async () => {
-                                                await deleteRoom({
-                                                    id: session.id,
-                                                });
-                                                await getClassrooms();
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </>
-                                )}
-                            </Col>
-                        </Row>
+                        <ClassContainer
+                            {...session}
+                            key={session.id}
+                            canEdit={props.userData.id === session.createdBy}
+                            onEditClick={() => {
+                                setRoomSelection({
+                                    data: session,
+                                    type: RoomType.UPCOMING,
+                                });
+                            }}
+                            onDeleteClick={async () => {
+                                await getUpcomingClassrooms();
+                            }}
+                            isRefreshing={requestIsLoading(
+                                upcomingClassroomsResponse
+                            )}
+                            size="lg"
+                            type={RoomType.UPCOMING}
+                        />
                     );
                 })}
             <EditClassroomModal
