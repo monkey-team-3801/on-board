@@ -18,7 +18,7 @@ import { useDynamicFetch, useFetch } from "../hooks";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
 import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
@@ -308,6 +308,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         sessionID={sessionId}
                                         userID={props.userData.id}
                                         updateFiles={getFileData}
+                                        isLoading={requestIsLoading(fileData)}
                                         files={files}
                                         roomType={RoomType.CLASS}
                                     ></FileModal>

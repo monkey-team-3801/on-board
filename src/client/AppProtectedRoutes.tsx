@@ -67,7 +67,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     setEventData(undefined);
                 }}
             />
-            <Container fluid>
+            <Container fluid style={{ marginTop: "50px" }}>
                 <Switch>
                     <SecuredRoute
                         path="/home"
