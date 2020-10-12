@@ -62,21 +62,36 @@ export const ClassContainer: React.FunctionComponent<Props> = (
     }, [endTimeIso]);
 
     return (
-        <Row
-            className="class-container my-3 mx-1 p-4"
-            style={{
-                backgroundColor: props.colourCode || "lightgrey",
-            }}
-        >
-            <Col
-                lg={props.size === "sm" ? 3 : 2}
-                md="12"
-                className="d-flex align-items-center course-column"
-            >
-                <Container className="d-flex justify-content-center course-container">
-                    <Row className="d-flex justify-content-center course-row">
-                        <h1>{props.courseCode}</h1>
-                        <p>{props.roomType}</p>
+        <Row className="class-container my-3 mx-1 p-4" style={{}}>
+            <Col lg={props.size === "sm" ? 3 : 2} md="12" className="info-left">
+                <Container>
+                    <Row>
+                        <Col className="text-right">
+                            <h1 className="text-truncate">
+                                {props.courseCode}
+                            </h1>
+                            {startTime && (
+                                <p className="text-muted text-truncate">
+                                    Start {startTime}
+                                </p>
+                            )}
+                            {endTime && (
+                                <p className="text-muted text-truncate">
+                                    End {endTime}
+                                </p>
+                            )}
+                            <p className="text-muted text-truncate">
+                                {props.roomType}
+                            </p>
+                            <div
+                                className="orb mt-2"
+                                style={{
+                                    background: props.colourCode
+                                        ? props.colourCode
+                                        : "linear-gradient(40deg, #986eff, #7873f5)",
+                                }}
+                            />
+                        </Col>
                     </Row>
                 </Container>
             </Col>
@@ -85,12 +100,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                     <Row>
                         <Col>
                             <h1>{props.name}</h1>
-                            {startTime && endTime && (
-                                <p>
-                                    {`${startTime} -
-                                    ${endTime}`}
-                                </p>
-                            )}
                             <p>{props.description}</p>
                         </Col>
                     </Row>
@@ -104,7 +113,10 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                 <Container className="button-container">
                     <Row>
                         {props.canJoin ? (
-                            <Button variant="light" onClick={props.onJoinClick}>
+                            <Button
+                                variant="primary peach-gradient"
+                                onClick={props.onJoinClick}
+                            >
                                 Join
                             </Button>
                         ) : (
@@ -182,9 +194,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                             deletePrivateRoomResponse
                                         )}
                                         invertLoader
-                                        style={{
-                                            height: "100%",
-                                        }}
                                     >
                                         Delete
                                     </ButtonWithLoadingProp>

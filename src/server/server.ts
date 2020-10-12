@@ -37,7 +37,10 @@ dotenv.config();
 
 const app: Express = express();
 const server: Server = createServer(app);
-export const io: socketIO.Server = socketIO(server, { serveClient: false });
+export const io: socketIO.Server = socketIO(server, {
+    serveClient: false,
+    upgradeTimeout: 30000,
+});
 const peerServer = ExpressPeerServer(server, {
     path: "/",
 });
