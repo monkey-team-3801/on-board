@@ -51,7 +51,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         props.initialChatLog,
         undefined,
         transformData,
-        () => { },
+        () => {},
         props.socket
     );
 
@@ -93,8 +93,8 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             </Row>
             <Row className="d-flex m-1 p-1 ">
                 <Form onSubmit={onSubmit}>
-                    <Form.Row className="d-flex justify-content-center flex-nowrap align-content-start " >
-                        <Col >
+                    <Form.Row className="d-flex justify-content-center flex-nowrap align-content-start ">
+                        <Col>
                             <Form.Control
                                 className="send-chat"
                                 value={text}
