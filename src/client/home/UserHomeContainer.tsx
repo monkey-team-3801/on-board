@@ -60,12 +60,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     <Row>
                         <ContainerWrapper className="calendar" title="Calendar">
                             {(setLoading) => {
-                                return (
-                                    <Calendar
-                                        setLoading={setLoading}
-                                        sessions={[]}
-                                    />
-                                );
+                                return <Calendar setLoading={setLoading} />;
                             }}
                         </ContainerWrapper>
                     </Row>

@@ -14,6 +14,7 @@ import {
 } from "../../types";
 import { addWeeks, setISODay } from "date-fns";
 import { User } from "../database/schema";
+import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -23,6 +24,7 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
         code: course.code,
         description: course.description,
         activities: course.activities,
+        announcements: course.announcements,
     }));
 };
 
@@ -42,6 +44,7 @@ router.get(
                     code: course.code,
                     description: course.description,
                     activities: course.activities,
+                    announcements: course.announcements,
                 });
             } catch (e) {
                 res.status(500).end();
@@ -258,5 +261,36 @@ router.get(
                 });
             })
         );
+    })
+);
+
+router.get(
+    "/enrolled-activities",
+    asyncHandler<
+        Array<CourseActivityResponseType>,
+        { course_code: string },
+        CourseActivityRequestFilterType
+    >(async (req, res) => {
+        console.log("in route");
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            const courses = await Course.find({
+                code: {
+                    $in: user?.courses,
+                },
+            });
+            console.log(courses);
+            const activities = courses.reduce(
+                (
+                    currentActivities: Array<CourseActivityResponseType>,
+                    newCourse
+                ) => {
+                    return [...newCourse.activities, ...currentActivities];
+                },
+                []
+            );
+            res.json(activities);
+        }
+        res.end();
     })
 );

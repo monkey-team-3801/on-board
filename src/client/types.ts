@@ -12,12 +12,12 @@ export type HttpMethod =
     | "PUT"
     | "PATCH"
     | "DELETE"
-    | "HEAD"
+    | "HEAD";
 
 export type CachedFetchData<T> = {
-    fetchedTime: Date,
-    responseData: T
-}
+    fetchedTime: Date;
+    responseData: T;
+};
 
 export enum RequestState {
     LOADING,

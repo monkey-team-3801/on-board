@@ -5,7 +5,8 @@ import {
     RequestState,
     BaseResponseType,
     LocalStorageKey,
-    ErrorResponseType, HttpMethod
+    ErrorResponseType,
+    HttpMethod,
 } from "../types";
 import { AnyObjectMap } from "../../types";
 import { HTTPStatusCodeToResponseState } from "./utils";
@@ -51,7 +52,11 @@ export const useDynamicFetch2 = <
     invokeImmediately: boolean | undefined = true,
     onFetchSuccess?: (response: T) => void,
     onFetchError?: (err: AxiosError<ErrorResponseType>) => void
-): [BaseResponseType<T>, (newRequestData: S | undefined) => Promise<void>, (responseType: BaseResponseType<T>) => void] => {
+): [
+    BaseResponseType<T>,
+    (newRequestData: S | undefined) => Promise<void>,
+    (responseType: BaseResponseType<T>) => void
+] => {
     const componentMounted: React.MutableRefObject<boolean> = React.useRef<
         boolean
     >(false);

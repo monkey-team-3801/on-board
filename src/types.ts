@@ -66,6 +66,7 @@ export type CourseDataUnique = {
 
 export type CourseResponseType = CourseDataUnique & {
     activities: Array<CourseActivityResponseType>;
+    announcements: Array<CourseAnnouncementsType>;
 };
 
 export type CoursesType = Array<CourseResponseType>;

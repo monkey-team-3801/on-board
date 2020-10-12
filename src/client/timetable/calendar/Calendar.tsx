@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     startOfMonth,
     startOfISOWeek,
@@ -7,22 +7,27 @@ import {
     eachDayOfInterval,
     startOfDay,
 } from "date-fns";
-import { CourseActivityResponseType } from "../../../types";
+import {
+    CourseActivityResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
 import { Container, Row } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
+import { useCachedFetch } from "../../hooks/useCachedFetch";
+import Spinner from "react-bootstrap/Spinner";
+import { requestIsLoaded } from "../../utils";
 
 type Props = {
-    sessions: Array<CourseActivityResponseType>;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const Calendar: React.FunctionComponent<Props> = ({
-    sessions,
-    setLoading,
-}) => {
+export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
+    const [sessions, setSessions] = useState<Array<CourseActivityResponseType>>(
+        []
+    );
     const today = new Date();
     const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
     const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
@@ -59,7 +64,9 @@ export const Calendar: React.FunctionComponent<Props> = ({
         [setMonthRange]
     );
 
-    React.useEffect(() => {
+    const [activityResponse, refetch] = useCachedFetch<Array<CourseActivityResponseType>>("get", "/courses/enrolled-activities");
+    console.log(activityResponse.data);
+    useEffect(() => {
         setLoading(false);
     }, [setLoading]);
     return (
