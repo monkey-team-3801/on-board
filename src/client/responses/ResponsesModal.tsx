@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { UserType } from "../../types";
 import { DisplayContainer } from "./DisplayContainer";
 import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
@@ -54,6 +54,15 @@ export const ResponsesModal = (props: Props) => {
                         />
                     )}
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        onClick={() => {
+                            props.closeModal();
+                        }}
+                    >
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </>
     );

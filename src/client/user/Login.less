@@ -2,7 +2,7 @@
     height: 100vh;
     display: flex;
     align-items: center;
-    background-color: #493e71;
+    background: linear-gradient(40deg, #422e46, #262446) !important;
 
     .login-section {
         z-index: 1;
@@ -10,26 +10,22 @@
 
     .form-label {
         font-size: 12px;
-        font-weight: 800;
         color: rgb(92, 78, 142);
     }
 
     .inputbar::placeholder {
         color: white;
         font-size: 12px;
-        font-weight: 500;
         opacity: 0.5;
     }
 
     .form-heading {
         font-size: 18px;
-        font-weight: 400;
         color: rgb(92, 78, 142);
         text-align: center;
     }
 
     .form-container {
-        font-family: Raleway;
         min-height: 200px;
         width: 500px;
         border-radius: 0px 0px 5px 5px;
@@ -40,17 +36,11 @@
     }
 
     .login-container {
-        background-image: linear-gradient(
-            to bottom,
-            rgba(92, 78, 142, 100),
-            rgba(124, 113, 164, 100)
-        );
-        font-family: Raleway;
         width: 500px;
         min-height: 100px;
         border-radius: 5px 5px 0px 0px;
         padding: 65px;
-        background-color: #f6f6f6;
+        background: linear-gradient(40deg, #ffa0ef40, #a774ff38) !important;
     }
 
     .formcontent {
@@ -81,16 +71,8 @@
     }
 
     .inputbar {
-        background-image: linear-gradient(
-            to right,
-            rgba(92, 78, 142, 100),
-            rgba(124, 113, 164, 100)
-        );
         border-radius: 25px;
-        font-family: Raleway;
-        font-weight: 500;
         font-size: 12px;
-
         width: 250px;
         height: 30px;
         padding: 15px;
@@ -104,8 +86,7 @@
         border-radius: 25px;
         height: 30px;
         width: 250px;
-        font-family: Raleway;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 12px;
         border-color: #493e71;
     }
@@ -124,7 +105,6 @@
         &:hover {
             outline-color: rgb(92, 78, 142);
             background-color: white;
-            color: rgb(92, 78, 142);
             border: 1px solid rgb(92, 78, 142);
         }
     }
@@ -197,7 +177,6 @@
         .center;
         p {
             font-size: 12px;
-            color: red;
             margin: 0;
         }
     }
@@ -219,5 +198,13 @@
     .center {
         .center-vertical;
         .center-horizontal;
+    }
+
+    .purple-gradient-input {
+        background: linear-gradient(40deg, #754da9, #504d97) !important;
+    }
+
+    #login.btn-primary {
+        background-color: #634da1 !important;
     }
 }
