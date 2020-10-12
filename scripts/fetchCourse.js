@@ -137,4 +137,5 @@ MongoClient.connect(
         await client.close();
     }
 );
-// getCourses().then((res) => console.log(util.inspect(parseCourse(res), false, null, true)));
+// getCourses().then((res) => console.log(util.inspect(parseCourse(res), false,
+// null, true)));
