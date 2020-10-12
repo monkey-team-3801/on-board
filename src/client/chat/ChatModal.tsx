@@ -3,7 +3,7 @@ import { Modal, Container, Row, Col } from "react-bootstrap";
 import { ChatModalStatusContext } from "../context";
 import { ChatModalStatusType } from "../types";
 import { useFetch } from "../hooks";
-import { UserDataResponseType } from "../../types";
+import { UserDataResponseType, UserType } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { ChatSession } from "./ChatSession";
 
@@ -23,6 +23,24 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         UserDataResponseType | undefined
     >();
 
+    const coordinators = React.useMemo(() => {
+        return userResponse.data?.filter((user) => {
+            return user.userType === UserType.COORDINATOR;
+        });
+    }, [userResponse]);
+
+    const tutors = React.useMemo(() => {
+        return userResponse.data?.filter((user) => {
+            return user.userType === UserType.TUTOR;
+        });
+    }, [userResponse]);
+
+    const students = React.useMemo(() => {
+        return userResponse.data?.filter((user) => {
+            return user.userType === UserType.STUDENT;
+        });
+    }, [userResponse]);
+
     return (
         <Modal
             show={props.open}
@@ -35,22 +53,63 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                 <Container>
                     <Row>
                         <Col lg="4">
-                            {requestIsLoaded(userResponse) &&
-                                userResponse.data.map((user) => {
-                                    return user.id !== props.myUserId ? (
-                                        <Container key={user.id}>
-                                            <h1
-                                                onClick={() => {
-                                                    setTargetUser(user);
-                                                }}
-                                            >
-                                                {user.username}
-                                            </h1>
-                                        </Container>
-                                    ) : (
-                                        <React.Fragment key={user.id} />
-                                    );
-                                })}
+                            <Row>
+                                <h1>Coordinators</h1>
+                                {coordinators &&
+                                    coordinators.map((user) => {
+                                        return user.id !== props.myUserId ? (
+                                            <Container key={user.id}>
+                                                <p
+                                                    onClick={() => {
+                                                        setTargetUser(user);
+                                                    }}
+                                                >
+                                                    {user.username}
+                                                </p>
+                                            </Container>
+                                        ) : (
+                                            <React.Fragment key={user.id} />
+                                        );
+                                    })}
+                            </Row>
+                            <Row>
+                                <h1>Tutors</h1>
+                                {tutors &&
+                                    tutors.map((user) => {
+                                        return user.id !== props.myUserId ? (
+                                            <Container key={user.id}>
+                                                <p
+                                                    onClick={() => {
+                                                        setTargetUser(user);
+                                                    }}
+                                                >
+                                                    {user.username}
+                                                </p>
+                                            </Container>
+                                        ) : (
+                                            <React.Fragment key={user.id} />
+                                        );
+                                    })}
+                            </Row>
+                            <Row>
+                                <h1>Students</h1>
+                                {students &&
+                                    students.map((user) => {
+                                        return user.id !== props.myUserId ? (
+                                            <Container key={user.id}>
+                                                <p
+                                                    onClick={() => {
+                                                        setTargetUser(user);
+                                                    }}
+                                                >
+                                                    {user.username}
+                                                </p>
+                                            </Container>
+                                        ) : (
+                                            <React.Fragment key={user.id} />
+                                        );
+                                    })}
+                            </Row>
                         </Col>
                         <Col lg="8">
                             {targetUser && (
