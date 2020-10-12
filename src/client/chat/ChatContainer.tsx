@@ -51,7 +51,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         props.initialChatLog,
         undefined,
         transformData,
-        () => {},
+        () => { },
         props.socket
     );
 
@@ -97,6 +97,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
                         <Col>
                             <Form.Control
                                 className="send-chat"
+                                placeholder="Send a message"
                                 value={text}
                                 onChange={(e) => {
                                     setText(e.target.value);
