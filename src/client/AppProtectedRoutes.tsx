@@ -67,7 +67,7 @@ export const AppProtectedRoutes = (props: Props) => {
                     setEventData(undefined);
                 }}
             />
-            <Container fluid>
+            <Container fluid className="pr-0">
                 <Switch>
                     <SecuredRoute
                         path="/home"
