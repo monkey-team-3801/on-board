@@ -18,6 +18,7 @@ export const ChatLog: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <Container className="chat-log-container">
+            <p className="text-muted text-center">Beginning of chat...</p>
             {messages?.map((messageData, i) => {
                 return (
                     <Log

@@ -59,43 +59,41 @@ router.post(
         }
     >(async (req, res, next) => {
         try {
-            const chatData = await UserToUserChat.findOneAndUpdate(
-                {
-                    betweenUsers: {
-                        $all: [
-                            {
-                                $elemMatch: {
-                                    $eq: req.body.myUserId,
-                                },
+            const chatData = await UserToUserChat.findOne({
+                betweenUsers: {
+                    $all: [
+                        {
+                            $elemMatch: {
+                                $eq: req.body.myUserId,
                             },
-                            {
-                                $elemMatch: {
-                                    $eq: req.body.theirUserId,
-                                },
+                        },
+                        {
+                            $elemMatch: {
+                                $eq: req.body.theirUserId,
                             },
-                        ],
-                    },
+                        },
+                    ],
                 },
-                {
+            });
+            if (chatData) {
+                console.log(chatData);
+                res.status(200).json({
+                    chatId: chatData._id,
+                    messages: chatData.messages,
+                });
+            } else {
+                const newChatData = await UserToUserChat.create({
                     betweenUsers: [req.body.myUserId, req.body.theirUserId],
                     usersToHasNewMessageMap: new Map([
                         [req.body.myUserId, false],
                         [req.body.theirUserId, false],
                     ]),
                     messages: [],
-                },
-                {
-                    upsert: true,
-                    new: true,
-                }
-            );
-            if (chatData) {
-                res.status(200).json({
-                    chatId: chatData._id,
-                    messages: chatData.messages,
                 });
-            } else {
-                res.status(404);
+                res.status(200).json({
+                    chatId: newChatData._id,
+                    messages: newChatData.messages,
+                });
             }
         } catch (e) {
             console.log(e);
@@ -126,6 +124,7 @@ router.post(
                     },
                 }
             );
+            await chatData?.save();
             if (chatData) {
                 chatData.usersToHasNewMessageMap.set(
                     req.body.theirUserId,

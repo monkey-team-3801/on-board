@@ -231,9 +231,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
         socket.leave(chatId);
     });
 
-    socket.on("newmessage", (chatId) => {
+    socket.on("newmessage", (chatId, data) => {
         console.log("test", chatId);
-        socket.in(chatId).emit("newmessage");
+        socket.to(chatId).emit("newmessage", data);
     });
 });
 
