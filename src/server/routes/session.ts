@@ -735,6 +735,22 @@ router.post(
 );
 
 router.post(
+    "/deleteAllBreakoutRooms",
+    asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
+        try {
+            await BreakoutSession.deleteMany({
+                parentSessionId: req.body.sessionId,
+            });
+            res.status(200);
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
     "/addRaisedHandUser",
     asyncHandler<undefined, {}, { sessionId: string; userId: string }>(
         async (req, res) => {

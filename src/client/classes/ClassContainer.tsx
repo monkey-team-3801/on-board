@@ -28,26 +28,25 @@ type Props = Partial<UpcomingClassroomSessionData> & {
     onDeleteClick?: () => void;
     isRefreshing?: boolean;
     type: RoomType;
+    setDeletedRooms?: React.Dispatch<React.SetStateAction<Array<string>>>;
 };
 
 export const ClassContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const {
-        startTime: startTimeIso,
-        endTime: endTimeIso,
-        isRefreshing: parentRefreshing,
-    } = props;
+    const { startTime: startTimeIso, endTime: endTimeIso } = props;
 
-    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
+    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
+        "session/delete/classroom",
         undefined,
-        SessionDeleteRequestType
-    >("session/delete/classroom", undefined, false);
+        false
+    );
 
-    const [deleteJobResponse, deleteJob] = useDynamicFetch<
+    const [, deleteJob] = useDynamicFetch<undefined, SessionDeleteRequestType>(
+        "job/delete",
         undefined,
-        SessionDeleteRequestType
-    >("job/delete", undefined, false);
+        false
+    );
 
     const [deletePrivateRoomResponse, deletePrivateRoom] = useDynamicFetch<
         undefined,
@@ -61,20 +60,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
     const endTime = React.useMemo(() => {
         return endTimeIso && format(new Date(endTimeIso), "MM/dd hh:mm");
     }, [endTimeIso]);
-
-    const isRefreshing = React.useMemo(() => {
-        return (
-            requestIsLoading(deleteRoomResponse) ||
-            requestIsLoading(deleteJobResponse) ||
-            requestIsLoading(deletePrivateRoomResponse) ||
-            parentRefreshing
-        );
-    }, [
-        deleteRoomResponse,
-        deleteJobResponse,
-        deletePrivateRoomResponse,
-        parentRefreshing,
-    ]);
 
     return (
         <Row className="class-container my-3 mx-1 p-4" style={{}}>
@@ -161,7 +146,9 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                     <Button
                                         variant="info"
                                         onClick={props.onEditClick}
-                                        disabled={isRefreshing}
+                                        disabled={requestIsLoading(
+                                            deletePrivateRoomResponse
+                                        )}
                                     >
                                         Edit
                                     </Button>
@@ -193,10 +180,19 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                         id: props.id,
                                                     });
                                                 }
+                                                props.setDeletedRooms?.(
+                                                    (prev) => {
+                                                        return prev.concat([
+                                                            props.id!,
+                                                        ]);
+                                                    }
+                                                );
                                                 props.onDeleteClick?.();
                                             }
                                         }}
-                                        loading={isRefreshing}
+                                        loading={requestIsLoading(
+                                            deletePrivateRoomResponse
+                                        )}
                                         invertLoader
                                     >
                                         Delete

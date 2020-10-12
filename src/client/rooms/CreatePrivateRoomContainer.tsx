@@ -83,15 +83,26 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
                 submitText="Create Room"
             >
                 {roomId && (
-                    <Button
-                        className="ml-1 btn-secondary"
-                        variant="primary"
-                        onClick={() => {
-                            props.history.push(`/room/${roomId}`);
-                        }}
-                    >
-                        Join {createdRoomName}
-                    </Button>
+                    <>
+                        <Button
+                            className="ml-1 btn-secondary"
+                            variant="primary"
+                            onClick={() => {
+                                props.history.push(`/room/${roomId}`);
+                            }}
+                        >
+                            Join {createdRoomName}
+                        </Button>
+                        <Button
+                            className="ml-1 btn-secondary"
+                            variant="primary"
+                            onClick={() => {
+                                props.history.push("/classes");
+                            }}
+                        >
+                            View all
+                        </Button>
+                    </>
                 )}
             </CreatePrivateRoomForm>
             {requestIsLoaded(createRoomResponse) && createRoomResponse.data && (
