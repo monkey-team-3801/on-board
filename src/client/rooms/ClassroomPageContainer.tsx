@@ -250,6 +250,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                 </Container>
                                 <Container className="video-container mt-4">
                                     <StreamSelectorWrapper
+                                        socket={socket}
                                         sessionId={
                                             props.match.params.classroomId
                                         }

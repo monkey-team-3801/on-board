@@ -3,14 +3,16 @@ import { Container, Row, Button } from "react-bootstrap";
 import { FocusedVideoView } from "./FocusedVideoView";
 import { PeerContext } from "../peer";
 import { useMyPeer } from "../hooks/useMyPeer";
+import { VideoEvent } from "../../events";
 
-type Props = { sessionId: string; userId: string };
+type Props = { sessionId: string; userId: string; socket: SocketIOClient.Socket };
 
 export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const {socket} = props;
     const peerData = useMyPeer();
-    const { enableStream, disableStream } = peerData;
+    const { enableStream, disableStream, peerId: myPeerId } = peerData;
     return (
         <PeerContext.Provider value={peerData}>
             <Container>
@@ -33,6 +35,7 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
                     <Button
                         onClick={() => {
                             disableStream();
+                            socket.emit(VideoEvent.USER_STOP_STREAMING, myPeerId);
                         }}
                     >
                         Turn off stream

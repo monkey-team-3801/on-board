@@ -35,6 +35,7 @@ export const useMediaStream: () => [
                         constraints
                     );
                     setStream(stream);
+
                 } catch (e) {
                     setStream(undefined);
                 }
@@ -44,10 +45,14 @@ export const useMediaStream: () => [
     );
 
     const disableMediaStream = useCallback(() => {
-        console.log("Turning off stream", stream);
         stream?.getTracks().forEach((track) => {
             track.stop();
+            // track.enabled = false;
+            stream?.removeTrack(track);
         });
+
+        console.log("Turning off stream", stream);
+        console.log("Turning off stream tracks", stream?.getTracks());
         //setStream(undefined);
     }, [stream]);
 

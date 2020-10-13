@@ -123,6 +123,10 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     .emit(VideoEvent.USER_JOIN_ROOM, { userId, peerId });
             }
             console.log("User", userId, "joining", sessionId, peerId);
+            socket.on(VideoEvent.USER_STOP_STREAMING, (peerId) => {
+                console.log("user", peerId, "turned of camera.");
+                socket.in(sessionId).emit(VideoEvent.USER_STOP_STREAMING, peerId);
+            });
             socket.on("disconnect", async () => {
                 const currentReference =
                     session.userReferenceMap.get(userId) ?? 1;

@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { MyVideo } from "./MyVideo";
 import { VideoEvent } from "../../events";
-import { socket } from "../io";
 import { Container, Row, Col } from "react-bootstrap";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
@@ -12,16 +11,17 @@ import { RemotePeerVideo } from "./RemotePeerVideo";
 import { PeerId } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
 
-type Props = { sessionId: string; userId: string };
+type Props = { sessionId: string; userId: string; socket: SocketIOClient.Socket };
 
 export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
-    const { sessionId, userId } = props;
+    const { sessionId, userId, socket } = props;
     const [peerIds, setPeerIds] = useState<Array<PeerId>>([]);
     const {
         peer: myPeer,
         peerId: myPeerId,
         cleanUp: cleanUpPeer,
         stream: myStream,
+        peerStreams
     } = useContext(PeerContext);
     const [response] = useFetch<
         VideoPeersResponseType,
@@ -80,14 +80,27 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
         // Listen to update event
         socket.on(VideoEvent.USER_JOIN_ROOM, onSocketUpdateUsers);
         socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
-
+        socket.on(VideoEvent.USER_STOP_STREAMING, (peerId: PeerId) => {
+            console.log("received user", peerId, "turned of camera");
+            const peerStream = peerStreams.get(peerId);
+            console.log(peerStream, peerStreams);
+            if (peerStream) {
+                console.log("Peer Stream exists");
+                peerStream.getTracks().forEach(track => {
+                    console.log("stopping remote tracks");
+                    track.stop();
+                });
+            } else {
+                console.log("Peer stream doesn't exist");
+            }
+        });
         // console.log("Use effect running, emitting join room");
         // socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
         return () => {
             socket.off(VideoEvent.USER_JOIN_ROOM, onSocketUpdateUsers);
             socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
         };
-    }, [onSocketUpdateUsers, onSocketRemoveUser]);
+    }, [socket, onSocketUpdateUsers, onSocketRemoveUser, peerStreams]);
 
     // Receive calls
     return (
