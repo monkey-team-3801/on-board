@@ -6,6 +6,10 @@ import { useFetch } from "../hooks";
 import { UserDataResponseType, UserType } from "../../types";
 import { requestIsLoaded } from "../utils";
 import { ChatSession } from "./ChatSession";
+import { UserList } from "./components";
+import { socket } from "../io";
+import { RoomEvent, GlobalEvent } from "../../events";
+import { useDebounce, useDebouncedCallback } from "use-debounce/lib";
 
 type Props = ChatModalStatusType & {
     myUserId: string;
@@ -17,6 +21,10 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
 
     const [userResponse, fetchUsers] = useFetch<Array<UserDataResponseType>>(
         "/user/getAllUserInCourse"
+    );
+
+    const [onlineUserResponse, fetchOnlineUsers] = useFetch<Array<string>>(
+        "/user/online"
     );
 
     const [targetUser, setTargetUser] = React.useState<
@@ -41,6 +49,24 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         });
     }, [userResponse]);
 
+    const debouncedFetchOnlineUsers = useDebouncedCallback(
+        fetchOnlineUsers,
+        1000
+    );
+
+    const x = () => {
+        debouncedFetchOnlineUsers.callback();
+    };
+
+    React.useEffect(() => {
+        fetchOnlineUsers();
+        if (props.open) {
+            socket.on(GlobalEvent.USER_ONLINE_STATUS_CHANGE, x);
+        } else {
+            socket.off(GlobalEvent.USER_ONLINE_STATUS_CHANGE, x);
+        }
+    }, [props.open]);
+
     return (
         <Modal
             show={props.open}
@@ -48,6 +74,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
             size="xl"
             centered
             scrollable
+            className="chat-modal"
         >
             <Modal.Body>
                 <Container>
@@ -55,60 +82,30 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                         <Col lg="4">
                             <Row>
                                 <h1>Coordinators</h1>
-                                {coordinators &&
-                                    coordinators.map((user) => {
-                                        return user.id !== props.myUserId ? (
-                                            <Container key={user.id}>
-                                                <p
-                                                    onClick={() => {
-                                                        setTargetUser(user);
-                                                    }}
-                                                >
-                                                    {user.username}
-                                                </p>
-                                            </Container>
-                                        ) : (
-                                            <React.Fragment key={user.id} />
-                                        );
-                                    })}
+                                <UserList
+                                    users={coordinators || []}
+                                    myUserId={props.myUserId}
+                                    onlineUsers={onlineUserResponse.data || []}
+                                    setTargetUser={setTargetUser}
+                                />
                             </Row>
                             <Row>
                                 <h1>Tutors</h1>
-                                {tutors &&
-                                    tutors.map((user) => {
-                                        return user.id !== props.myUserId ? (
-                                            <Container key={user.id}>
-                                                <p
-                                                    onClick={() => {
-                                                        setTargetUser(user);
-                                                    }}
-                                                >
-                                                    {user.username}
-                                                </p>
-                                            </Container>
-                                        ) : (
-                                            <React.Fragment key={user.id} />
-                                        );
-                                    })}
+                                <UserList
+                                    users={tutors || []}
+                                    myUserId={props.myUserId}
+                                    onlineUsers={onlineUserResponse.data || []}
+                                    setTargetUser={setTargetUser}
+                                />
                             </Row>
                             <Row>
                                 <h1>Students</h1>
-                                {students &&
-                                    students.map((user) => {
-                                        return user.id !== props.myUserId ? (
-                                            <Container key={user.id}>
-                                                <p
-                                                    onClick={() => {
-                                                        setTargetUser(user);
-                                                    }}
-                                                >
-                                                    {user.username}
-                                                </p>
-                                            </Container>
-                                        ) : (
-                                            <React.Fragment key={user.id} />
-                                        );
-                                    })}
+                                <UserList
+                                    users={students || []}
+                                    myUserId={props.myUserId}
+                                    onlineUsers={onlineUserResponse.data || []}
+                                    setTargetUser={setTargetUser}
+                                />
                             </Row>
                         </Col>
                         <Col lg="8">

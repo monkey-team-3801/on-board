@@ -54,17 +54,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         });
     }, []);
 
-    const modalContext = React.useContext(ChatModalStatusContext);
-
     return (
         <div className="homepage">
-            <Button
-                onClick={() => {
-                    modalContext.onOpen?.();
-                }}
-            >
-                test
-            </Button>
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>

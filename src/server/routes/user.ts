@@ -1,6 +1,6 @@
 import express from "express";
 
-import { User } from "../database/schema";
+import { User, SessionUsers } from "../database/schema";
 import { asyncHandler } from "../utils";
 import {
     CreateUserRequestType,
@@ -179,4 +179,20 @@ router.post(
             }
         }
     )
+);
+
+router.post(
+    "/online",
+    asyncHandler<Array<string>>(async (req, res) => {
+        try {
+            const users = await SessionUsers.findOne({ sessionId: "global" });
+            res.json(Array.from(users?.userReferenceMap.keys() || [])).status(
+                200
+            );
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
 );

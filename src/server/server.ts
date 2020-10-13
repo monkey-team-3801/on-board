@@ -15,6 +15,7 @@ import {
     ResponseFormEvent,
     RoomEvent,
     VideoEvent,
+    GlobalEvent,
 } from "../events";
 import { Database, SessionUsers } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
@@ -74,6 +75,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 session.userReferenceMap.set(userId, 1);
                 await session.save();
                 io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
+                io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
             }
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
@@ -85,6 +87,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     await session.save();
                     socket.leave(sessionId);
                     io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
+                    io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
                     console.log("User", userId, "leaving", sessionId);
                 } else {
                     session.userReferenceMap.set(

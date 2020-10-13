@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, Button } from "react-bootstrap";
 import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as AiIcons from "react-icons/ai";
@@ -8,6 +8,8 @@ import { LocalStorageKey } from "../types";
 import { socket } from "../io";
 import { RoomEvent } from "../../events";
 import { userInfo } from "os";
+import { ChatModalStatusContext } from "../context";
+import { useFetch } from "../hooks";
 
 type Props = RouteComponentProps & {
     username?: string;
@@ -15,6 +17,14 @@ type Props = RouteComponentProps & {
 };
 
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
+    const [hasNewMessage, setHasNewMessage] = React.useState(false);
+
+    const [x, y] = useFetch("/chat/hasNewMessage");
+
+    React.useEffect(() => {}, []);
+
+    const modalContext = React.useContext(ChatModalStatusContext);
+
     return (
         <nav className="on-board-nav">
             <div className="nav-control left">
@@ -42,6 +52,14 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                         <AiIcons.AiOutlinePlayCircle className="icon" />
                         <p>Classes</p>
                     </Link>
+                    <Button
+                        onClick={() => {
+                            modalContext.onOpen?.();
+                        }}
+                    >
+                        <AiIcons.AiOutlinePlayCircle className="icon" />
+                        <p>Messages</p>
+                    </Button>
                 </div>
             </div>
             <div className="nav-control right">

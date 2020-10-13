@@ -9,6 +9,10 @@ export type ChatMessageSendType = MessageData;
 
 export type ChatMessageReceiveType = MessageData;
 
+export enum GlobalEvent {
+    USER_ONLINE_STATUS_CHANGE = "USER_ONLINE_STATUS_CHANGE",
+}
+
 export enum RoomEvent {
     PRIVATE_ROOM_JOIN = "PRIVATE_ROOM_JOIN",
     SESSION_JOIN = "SESSION_JOIN",

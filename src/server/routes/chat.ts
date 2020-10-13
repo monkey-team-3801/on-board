@@ -8,6 +8,8 @@ import {
     BreakoutSession,
     UserToUserChat,
 } from "../database";
+import { io } from "../server";
+import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -131,6 +133,33 @@ router.post(
                     true
                 );
                 await chatData.save();
+                io.emit("newmessage", req.body.theirUserId);
+            }
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/hasNewMessage",
+    asyncHandler<{
+        hasNewMessage: boolean;
+    }>(async (req, res, next) => {
+        try {
+            if (req.headers.authorization) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                const chatMap = await UserToUserChat.find({
+                    [`usersToHasNewMessageMap.${user?.id}`]: { $exists: true },
+                }).select("usersToHasNewMessageMap");
+                console.log(chatMap);
+                res.status(200);
+            } else {
+                res.status(412);
             }
         } catch (e) {
             res.status(500);
