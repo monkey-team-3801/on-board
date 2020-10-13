@@ -20,7 +20,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
     const { open: modalOpen } = props;
     const modalContext = React.useContext(ChatModalStatusContext);
 
-    const [userResponse, fetchUsers] = useFetch<Array<UserDataResponseType>>(
+    const [userResponse] = useFetch<Array<UserDataResponseType>>(
         "/user/getAllUserInCourse"
     );
 

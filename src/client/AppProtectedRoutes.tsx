@@ -2,23 +2,23 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ClassEvent, RoomEvent, ChatEvent } from "../events";
-import { UserDataResponseType, RoomType } from "../types";
+import { ChatEvent, ClassEvent, RoomEvent } from "../events";
+import { RoomType, UserDataResponseType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
+import { ChatModal } from "./chat";
 import { ClassesPageContainer } from "./classes";
 import { Loader } from "./components";
+import { ChatModalStatusContext } from "./context";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { ClassOpenIndicator } from "./Indicators";
+import { socket } from "./io";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
-import { ClassOpenEventData, ChatModalStatusType } from "./types";
+import { ClassOpenEventData } from "./types";
 import { requestIsLoaded } from "./utils";
-import { ChatModalStatusContext } from "./context";
-import { ChatModal } from "./chat";
-import { socket } from "./io";
 
 type Props = RouteComponentProps;
 
@@ -68,7 +68,7 @@ export const AppProtectedRoutes = (props: Props) => {
         return () => {
             socket.off(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
         };
-    }, [id]);
+    }, [id, onChatStatusChange]);
 
     React.useEffect(() => {
         setEventData(event);

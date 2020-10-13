@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
 import { CreateAnnouncementsForm } from "../announcements";
@@ -13,7 +13,6 @@ import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
-import { ChatModalStatusContext } from "../context";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
