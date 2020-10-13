@@ -32,6 +32,10 @@ export const AppProtectedRoutes = (props: Props) => {
 
     const [authData] = useFetch<never>("/auth");
 
+    const [chatsWithNewMessageResponse, fetchChatsWithNewMessage] = useFetch<
+        Array<string>
+    >("/chat/hasNewMessage");
+
     const userData = React.useMemo(() => {
         return {
             username: data?.username,
@@ -46,6 +50,25 @@ export const AppProtectedRoutes = (props: Props) => {
         undefined
     );
     const { username, id, courses, userType } = userData;
+
+    const onChatStatusChange = React.useCallback(
+        (targetUserId?: string) => {
+            if (id === targetUserId) {
+                console.log("status change", id, targetUserId);
+                fetchChatsWithNewMessage();
+            }
+        },
+        [id, fetchChatsWithNewMessage]
+    );
+
+    React.useEffect(() => {
+        if (id) {
+            socket.on("chatstatuschange", onChatStatusChange);
+        }
+        return () => {
+            socket.off("chatstatuschange", onChatStatusChange);
+        };
+    }, [id]);
 
     React.useEffect(() => {
         setEventData(event);
@@ -76,7 +99,15 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
-            <Navbar {...props} username={data?.username} userid={data?.id} />
+            <Navbar
+                {...props}
+                username={data?.username}
+                userid={data?.id}
+                displayNewMessageIndicator={
+                    chatsWithNewMessageResponse.data &&
+                    chatsWithNewMessageResponse.data?.length > 0
+                }
+            />
             <ClassOpenIndicator
                 {...props}
                 event={eventData}
@@ -91,6 +122,9 @@ export const AppProtectedRoutes = (props: Props) => {
                             {...context.status}
                             myUserId={id}
                             myUsername={username}
+                            chatWithNewMessages={
+                                chatsWithNewMessageResponse.data || []
+                            }
                         />
                     );
                 }}

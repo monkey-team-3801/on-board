@@ -1,3 +1,4 @@
+import { List } from "immutable";
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { MessageData, UserDataResponseType } from "../../types";
@@ -5,12 +6,14 @@ import { useDynamicFetch } from "../hooks";
 import { socket } from "../io";
 import { requestIsLoaded } from "../utils";
 import { ChatLog } from "./ChatLog";
-import { List } from "immutable";
 
 type Props = {
-    targetUserData: UserDataResponseType;
+    targetUserData: UserDataResponseType & {
+        shouldClearNewMessage: boolean;
+    };
     myUserId: string;
     myUsername: string;
+    onNewMessageClear?: () => void;
 };
 
 export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
@@ -43,13 +46,19 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
         }
     >("/chat/privateChat/newMessage", undefined, false);
 
+    const [, clearNewMessage] = useDynamicFetch<
+        undefined,
+        {
+            chatId: string;
+            myUserId: string;
+        }
+    >("/chat/clearNewMessage", undefined, false);
+
     const [chatData, setChatData] = React.useState<
         List<Omit<MessageData, "sessionId">>
     >(List([]));
 
     const onNewMessage = React.useCallback((data) => {
-        // const { sendUser, content, sentTime } = data;
-        console.log(data);
         setChatData((prev) => {
             return prev.push(data);
         });
@@ -63,18 +72,41 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
     }, [theirUserId, myUserId, getChatData]);
 
     React.useEffect(() => {
+        socket.on("newmessage", onNewMessage);
+        return () => {
+            socket.off("newmessage", onNewMessage);
+        };
+    }, []);
+
+    React.useEffect(() => {
         if (requestIsLoaded(chatDataResponse)) {
             socket.emit("joinchat", chatDataResponse.data.chatId);
             setChatData(List(chatDataResponse.data.messages));
         }
-        socket.on("newmessage", onNewMessage);
         return () => {
             if (chatDataResponse.data?.chatId) {
                 socket.emit("leavechat", chatDataResponse.data.chatId);
             }
-            socket.off("newmessage", onNewMessage);
         };
-    }, [chatDataResponse]);
+    }, [chatDataResponse, onNewMessage]);
+
+    React.useEffect(() => {
+        if (requestIsLoaded(chatDataResponse)) {
+            if (props.targetUserData.shouldClearNewMessage) {
+                console.log("clearing new message");
+                clearNewMessage({
+                    chatId: chatDataResponse.data.chatId,
+                    myUserId,
+                });
+                props.onNewMessageClear?.();
+            }
+        }
+    }, [
+        chatDataResponse,
+        props.targetUserData.shouldClearNewMessage,
+        myUserId,
+        clearNewMessage,
+    ]);
 
     const onSubmit = React.useCallback(
         async (e: React.FormEvent<HTMLDivElement>) => {
@@ -94,28 +126,8 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
                     theirUserId,
                 });
             }
-
-            // if (text === "") {
-            //     return;
-            // }
-
-            // const date: string = new Date().toISOString();
-            // const message: MessageData = {
-            //     sendUser: username,
-            //     content: text,
-            //     sessionId: roomId,
-            //     sentTime: date,
-            // };
-            // setData((messageData) => {
-            //     return messageData?.concat([message]);
-            // });
-            // socket.emit(ChatEvent.CHAT_MESSAGE_SEND, message);
-            // await updateChat({
-            //     ...message,
-            //     roomType,
-            // });
         },
-        [myUsername, text, chatDataResponse.data, onNewMessage]
+        [myUsername, text, chatDataResponse.data, onNewMessage, theirUserId]
     );
 
     return (

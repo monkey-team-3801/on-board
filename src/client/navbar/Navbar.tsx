@@ -14,15 +14,10 @@ import { useFetch } from "../hooks";
 type Props = RouteComponentProps & {
     username?: string;
     userid?: string;
+    displayNewMessageIndicator?: boolean;
 };
 
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
-    const [hasNewMessage, setHasNewMessage] = React.useState(false);
-
-    const [x, y] = useFetch("/chat/hasNewMessage");
-
-    React.useEffect(() => {}, []);
-
     const modalContext = React.useContext(ChatModalStatusContext);
 
     return (
@@ -53,12 +48,14 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                         <p>Classes</p>
                     </Link>
                     <Button
+                        className="link"
                         onClick={() => {
                             modalContext.onOpen?.();
                         }}
                     >
                         <AiIcons.AiOutlinePlayCircle className="icon" />
                         <p>Messages</p>
+                        {props.displayNewMessageIndicator && <p> new</p>}
                     </Button>
                 </div>
             </div>

@@ -14,6 +14,7 @@ import { useDebounce, useDebouncedCallback } from "use-debounce/lib";
 type Props = ChatModalStatusType & {
     myUserId: string;
     myUsername: string;
+    chatWithNewMessages: Array<string>;
 };
 
 export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
@@ -28,7 +29,10 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     const [targetUser, setTargetUser] = React.useState<
-        UserDataResponseType | undefined
+        | (UserDataResponseType & {
+              shouldClearNewMessage: boolean;
+          })
+        | undefined
     >();
 
     const coordinators = React.useMemo(() => {
@@ -67,6 +71,19 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         }
     }, [props.open]);
 
+    React.useEffect(() => {
+        if (targetUser && props.chatWithNewMessages.includes(targetUser.id)) {
+            setTargetUser((user) => {
+                return user
+                    ? {
+                          ...user,
+                          shouldClearNewMessage: true,
+                      }
+                    : undefined;
+            });
+        }
+    }, [props.chatWithNewMessages]);
+
     return (
         <Modal
             show={props.open}
@@ -87,6 +104,9 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
+                                    chatWithNewMessages={
+                                        props.chatWithNewMessages
+                                    }
                                 />
                             </Row>
                             <Row>
@@ -96,6 +116,9 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
+                                    chatWithNewMessages={
+                                        props.chatWithNewMessages
+                                    }
                                 />
                             </Row>
                             <Row>
@@ -105,6 +128,9 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
+                                    chatWithNewMessages={
+                                        props.chatWithNewMessages
+                                    }
                                 />
                             </Row>
                         </Col>
@@ -114,6 +140,16 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     targetUserData={targetUser}
                                     myUserId={props.myUserId}
                                     myUsername={props.myUsername}
+                                    onNewMessageClear={() => {
+                                        setTargetUser((user) => {
+                                            return user
+                                                ? {
+                                                      ...user,
+                                                      shouldClearNewMessage: false,
+                                                  }
+                                                : undefined;
+                                        });
+                                    }}
                                 />
                             )}
                         </Col>

@@ -78,7 +78,6 @@ router.post(
                 },
             });
             if (chatData) {
-                console.log(chatData);
                 res.status(200).json({
                     chatId: chatData._id,
                     messages: chatData.messages,
@@ -98,7 +97,6 @@ router.post(
                 });
             }
         } catch (e) {
-            console.log(e);
             res.status(500);
         } finally {
             res.end();
@@ -133,7 +131,7 @@ router.post(
                     true
                 );
                 await chatData.save();
-                io.emit("newmessage", req.body.theirUserId);
+                io.emit("chatstatuschange", req.body.theirUserId);
             }
         } catch (e) {
             res.status(500);
@@ -145,9 +143,7 @@ router.post(
 
 router.post(
     "/hasNewMessage",
-    asyncHandler<{
-        hasNewMessage: boolean;
-    }>(async (req, res, next) => {
+    asyncHandler<Array<string>>(async (req, res, next) => {
         try {
             if (req.headers.authorization) {
                 const user = await getUserDataFromJWT(
@@ -155,12 +151,47 @@ router.post(
                 );
                 const chatMap = await UserToUserChat.find({
                     [`usersToHasNewMessageMap.${user?.id}`]: { $exists: true },
-                }).select("usersToHasNewMessageMap");
-                console.log(chatMap);
+                });
+                res.json(
+                    chatMap
+                        .filter((mapping) => {
+                            return mapping.usersToHasNewMessageMap.get(
+                                user?.id
+                            );
+                        })
+                        .map((mapping) => {
+                            const map = mapping.usersToHasNewMessageMap;
+                            map.delete(user?.id);
+                            return Array.from<string>(map.keys())[0] || "";
+                        })
+                );
                 res.status(200);
             } else {
                 res.status(412);
             }
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/clearNewMessage",
+    asyncHandler<
+        undefined,
+        {},
+        {
+            chatId: string;
+            myUserId: string;
+        }
+    >(async (req, res, next) => {
+        try {
+            const chatData = await UserToUserChat.findById(req.body.chatId);
+            chatData?.usersToHasNewMessageMap.set(req.body.myUserId, false);
+            await chatData?.save();
+            io.emit("chatstatuschange", req.body.myUserId);
         } catch (e) {
             res.status(500);
         } finally {

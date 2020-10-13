@@ -6,19 +6,30 @@ type Props = {
     users: Array<UserDataResponseType>;
     myUserId: string;
     onlineUsers: Array<string>;
-    setTargetUser: (user: UserDataResponseType) => void;
+    setTargetUser: (
+        user: UserDataResponseType & {
+            shouldClearNewMessage: boolean;
+        }
+    ) => void;
+    chatWithNewMessages: Array<string>;
 };
 
 export const UserList: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <>
             {props.users.map((user) => {
+                const hasNewMessage = props.chatWithNewMessages.includes(
+                    user.id
+                );
                 return user.id !== props.myUserId ? (
                     <Container
                         key={user.id}
                         className="d-flex align-items-center user-select"
                         onClick={() => {
-                            props.setTargetUser(user);
+                            props.setTargetUser({
+                                ...user,
+                                shouldClearNewMessage: hasNewMessage,
+                            });
                         }}
                     >
                         <div
@@ -29,6 +40,7 @@ export const UserList: React.FunctionComponent<Props> = (props: Props) => {
                             }`}
                         />
                         <p>{user.username}</p>
+                        {hasNewMessage && <p>+NEW</p>}
                     </Container>
                 ) : (
                     <React.Fragment key={user.id} />
