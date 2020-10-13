@@ -6,6 +6,8 @@ import { useDynamicFetch } from "../hooks";
 import { socket } from "../io";
 import { requestIsLoaded } from "../utils";
 import { ChatLog } from "./ChatLog";
+import { ChatEvent } from "../../events";
+import { useDebouncedCallback } from "use-debounce/lib";
 
 type Props = {
     targetUserData: UserDataResponseType & {
@@ -17,7 +19,7 @@ type Props = {
 };
 
 export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
-    const { myUserId, myUsername } = props;
+    const { myUserId, myUsername, onNewMessageClear } = props;
     const { id: theirUserId } = props.targetUserData;
 
     const [text, setText] = React.useState<string>("");
@@ -54,6 +56,12 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
         }
     >("/chat/clearNewMessage", undefined, false);
 
+    const debounceClearNewMessage = useDebouncedCallback(
+        clearNewMessage,
+        1000,
+        { leading: true }
+    );
+
     const [chatData, setChatData] = React.useState<
         List<Omit<MessageData, "sessionId">>
     >(List([]));
@@ -72,20 +80,20 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
     }, [theirUserId, myUserId, getChatData]);
 
     React.useEffect(() => {
-        socket.on("newmessage", onNewMessage);
+        socket.on(ChatEvent.CHAT_NEW_PRIVATE_MESSAGE, onNewMessage);
         return () => {
-            socket.off("newmessage", onNewMessage);
+            socket.off(ChatEvent.CHAT_NEW_PRIVATE_MESSAGE, onNewMessage);
         };
-    }, []);
+    }, [onNewMessage]);
 
     React.useEffect(() => {
         if (requestIsLoaded(chatDataResponse)) {
-            socket.emit("joinchat", chatDataResponse.data.chatId);
+            socket.emit(ChatEvent.CHAT_JOIN, chatDataResponse.data.chatId);
             setChatData(List(chatDataResponse.data.messages));
         }
         return () => {
             if (chatDataResponse.data?.chatId) {
-                socket.emit("leavechat", chatDataResponse.data.chatId);
+                socket.emit(ChatEvent.CHAT_LEAVE, chatDataResponse.data.chatId);
             }
         };
     }, [chatDataResponse, onNewMessage]);
@@ -93,33 +101,37 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
     React.useEffect(() => {
         if (requestIsLoaded(chatDataResponse)) {
             if (props.targetUserData.shouldClearNewMessage) {
-                console.log("clearing new message");
-                clearNewMessage({
+                debounceClearNewMessage.callback({
                     chatId: chatDataResponse.data.chatId,
                     myUserId,
                 });
-                props.onNewMessageClear?.();
+                onNewMessageClear?.();
             }
         }
     }, [
         chatDataResponse,
         props.targetUserData.shouldClearNewMessage,
         myUserId,
-        clearNewMessage,
+        debounceClearNewMessage,
+        onNewMessageClear,
     ]);
 
     const onSubmit = React.useCallback(
         async (e: React.FormEvent<HTMLDivElement>) => {
             e.preventDefault();
             setText("");
-            if (chatDataResponse.data?.chatId) {
+            if (chatDataResponse.data?.chatId && text) {
                 const data = {
                     sendUser: myUsername,
                     content: text,
                     sentTime: new Date().toISOString(),
                 };
                 onNewMessage(data);
-                socket.emit("newmessage", chatDataResponse.data.chatId, data);
+                socket.emit(
+                    ChatEvent.CHAT_NEW_PRIVATE_MESSAGE,
+                    chatDataResponse.data.chatId,
+                    data
+                );
                 await updateData({
                     message: data,
                     chatId: chatDataResponse.data.chatId,
@@ -127,7 +139,14 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
                 });
             }
         },
-        [myUsername, text, chatDataResponse.data, onNewMessage, theirUserId]
+        [
+            myUsername,
+            text,
+            chatDataResponse.data,
+            onNewMessage,
+            theirUserId,
+            updateData,
+        ]
     );
 
     return (

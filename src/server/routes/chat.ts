@@ -10,6 +10,7 @@ import {
 } from "../database";
 import { io } from "../server";
 import { getUserDataFromJWT } from "./utils";
+import { ChatEvent } from "../../events";
 
 export const router = express.Router();
 
@@ -131,7 +132,7 @@ router.post(
                     true
                 );
                 await chatData.save();
-                io.emit("chatstatuschange", req.body.theirUserId);
+                io.emit(ChatEvent.CHAT_STATUS_CHANGE, req.body.theirUserId);
             }
         } catch (e) {
             res.status(500);
@@ -191,7 +192,7 @@ router.post(
             const chatData = await UserToUserChat.findById(req.body.chatId);
             chatData?.usersToHasNewMessageMap.set(req.body.myUserId, false);
             await chatData?.save();
-            io.emit("chatstatuschange", req.body.myUserId);
+            io.emit(ChatEvent.CHAT_STATUS_CHANGE, req.body.myUserId);
         } catch (e) {
             res.status(500);
         } finally {

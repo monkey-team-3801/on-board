@@ -3,6 +3,10 @@ import { MessageData } from "./types";
 export enum ChatEvent {
     CHAT_MESSAGE_SEND = "CHAT_MESSAGE_SEND",
     CHAT_MESSAGE_RECEIVE = "CHAT_MESSAGE_RECEIVE",
+    CHAT_STATUS_CHANGE = "CHAT_STATUS_CHANGE",
+    CHAT_JOIN = "CHAT_JOIN",
+    CHAT_LEAVE = "CHAT_LEAVE",
+    CHAT_NEW_PRIVATE_MESSAGE = "CHAT_NEW_PRIVATE_MESSAGE",
 }
 
 export type ChatMessageSendType = MessageData;

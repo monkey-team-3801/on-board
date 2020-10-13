@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ClassEvent, RoomEvent } from "../events";
+import { ClassEvent, RoomEvent, ChatEvent } from "../events";
 import { UserDataResponseType, RoomType } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ClassesPageContainer } from "./classes";
@@ -63,10 +63,10 @@ export const AppProtectedRoutes = (props: Props) => {
 
     React.useEffect(() => {
         if (id) {
-            socket.on("chatstatuschange", onChatStatusChange);
+            socket.on(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
         }
         return () => {
-            socket.off("chatstatuschange", onChatStatusChange);
+            socket.off(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
         };
     }, [id]);
 
@@ -103,10 +103,7 @@ export const AppProtectedRoutes = (props: Props) => {
                 {...props}
                 username={data?.username}
                 userid={data?.id}
-                displayNewMessageIndicator={
-                    chatsWithNewMessageResponse.data &&
-                    chatsWithNewMessageResponse.data?.length > 0
-                }
+                newMessages={chatsWithNewMessageResponse.data?.length}
             />
             <ClassOpenIndicator
                 {...props}

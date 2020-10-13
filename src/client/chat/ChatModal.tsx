@@ -1,15 +1,14 @@
 import React from "react";
-import { Modal, Container, Row, Col } from "react-bootstrap";
-import { ChatModalStatusContext } from "../context";
-import { ChatModalStatusType } from "../types";
-import { useFetch } from "../hooks";
+import { Col, Container, Modal, Row } from "react-bootstrap";
+import { useDebouncedCallback } from "use-debounce/lib";
+import { GlobalEvent } from "../../events";
 import { UserDataResponseType, UserType } from "../../types";
-import { requestIsLoaded } from "../utils";
+import { ChatModalStatusContext } from "../context";
+import { useFetch } from "../hooks";
+import { socket } from "../io";
+import { ChatModalStatusType } from "../types";
 import { ChatSession } from "./ChatSession";
 import { UserList } from "./components";
-import { socket } from "../io";
-import { RoomEvent, GlobalEvent } from "../../events";
-import { useDebounce, useDebouncedCallback } from "use-debounce/lib";
 
 type Props = ChatModalStatusType & {
     myUserId: string;
@@ -18,6 +17,7 @@ type Props = ChatModalStatusType & {
 };
 
 export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
+    const { open: modalOpen } = props;
     const modalContext = React.useContext(ChatModalStatusContext);
 
     const [userResponse, fetchUsers] = useFetch<Array<UserDataResponseType>>(
@@ -58,18 +58,20 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         1000
     );
 
-    const x = () => {
-        debouncedFetchOnlineUsers.callback();
-    };
-
     React.useEffect(() => {
         fetchOnlineUsers();
-        if (props.open) {
-            socket.on(GlobalEvent.USER_ONLINE_STATUS_CHANGE, x);
+        if (modalOpen) {
+            socket.on(
+                GlobalEvent.USER_ONLINE_STATUS_CHANGE,
+                debouncedFetchOnlineUsers.callback
+            );
         } else {
-            socket.off(GlobalEvent.USER_ONLINE_STATUS_CHANGE, x);
+            socket.off(
+                GlobalEvent.USER_ONLINE_STATUS_CHANGE,
+                debouncedFetchOnlineUsers.callback
+            );
         }
-    }, [props.open]);
+    }, [modalOpen, debouncedFetchOnlineUsers, fetchOnlineUsers]);
 
     React.useEffect(() => {
         if (targetUser && props.chatWithNewMessages.includes(targetUser.id)) {
@@ -82,22 +84,26 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                     : undefined;
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.chatWithNewMessages]);
 
     return (
         <Modal
-            show={props.open}
+            show={modalOpen}
             onHide={modalContext.onClose}
             size="xl"
             centered
             scrollable
             className="chat-modal"
         >
+            <Modal.Header closeButton>
+                <Modal.Title>Messages</Modal.Title>
+            </Modal.Header>
             <Modal.Body>
                 <Container>
                     <Row>
-                        <Col lg="4">
-                            <Row>
+                        <Col lg="4" className="user-list-container">
+                            <Row className="mt-2">
                                 <h1>Coordinators</h1>
                                 <UserList
                                     users={coordinators || []}
@@ -109,7 +115,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     }
                                 />
                             </Row>
-                            <Row>
+                            <Row className="mt-4">
                                 <h1>Tutors</h1>
                                 <UserList
                                     users={tutors || []}
@@ -121,7 +127,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                     }
                                 />
                             </Row>
-                            <Row>
+                            <Row className="mt-4">
                                 <h1>Students</h1>
                                 <UserList
                                     users={students || []}

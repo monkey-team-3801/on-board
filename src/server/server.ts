@@ -224,20 +224,20 @@ io.on("connect", (socket: SocketIO.Socket) => {
         socket.to(data).emit(FileUploadEvent.FILE_DELETED);
     });
 
-    socket.on("joinchat", (chatId) => {
-        console.log("join", chatId);
+    socket.on(ChatEvent.CHAT_JOIN, (chatId: string) => {
         socket.join(chatId);
     });
 
-    socket.on("leavechat", (chatId) => {
-        console.log("leave", chatId);
+    socket.on(ChatEvent.CHAT_LEAVE, (chatId: string) => {
         socket.leave(chatId);
     });
 
-    socket.on("newmessage", (chatId, data) => {
-        console.log("test", chatId);
-        socket.to(chatId).emit("newmessage", data);
-    });
+    socket.on(
+        ChatEvent.CHAT_NEW_PRIVATE_MESSAGE,
+        (chatId: string, data: ChatMessageSendType) => {
+            socket.to(chatId).emit(ChatEvent.CHAT_NEW_PRIVATE_MESSAGE, data);
+        }
+    );
 });
 
 app.use(bodyParser.json());
