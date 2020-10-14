@@ -145,13 +145,19 @@ export const ScheduleRoomForm: React.FunctionComponent<Props> = (
             <Form.Group>
                 <Form.Label>Room colour code</Form.Label>
                 <div className="d-flex justify-content-center">
-                    <TwitterPicker
-                        triangle="hide"
-                        color={props.colourCode}
-                        onChangeComplete={(colour) => {
-                            props.setColourCode(colour.hex);
+                    <div
+                        style={{
+                            border: `1px solid ${props.colourCode}`,
                         }}
-                    />
+                    >
+                        <TwitterPicker
+                            triangle="hide"
+                            color={props.colourCode}
+                            onChangeComplete={(colour) => {
+                                props.setColourCode(colour.hex);
+                            }}
+                        />
+                    </div>
                 </div>
             </Form.Group>
             <ButtonWithLoadingProp
@@ -160,9 +166,6 @@ export const ScheduleRoomForm: React.FunctionComponent<Props> = (
                 loading={props.requestIsLoading}
                 disabled={props.submitting || props.requestIsLoading}
                 invertLoader
-                style={{
-                    backgroundColor: props.colourCode,
-                }}
             >
                 {props.submitText ? props.submitText : "Create"}
             </ButtonWithLoadingProp>

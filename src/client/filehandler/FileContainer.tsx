@@ -1,10 +1,11 @@
 import React from "react";
-import "./FileContainer.less";
 import { FaDownload } from "react-icons/fa";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { useDynamicFetch } from "../hooks";
 import { FileUploadEvent, ResponseFormEvent } from "../../events";
 import { FileUploadType, RoomType } from "../../types";
+import { Button, Container, Row, Col } from "react-bootstrap";
+import "./FileContainer.less";
 
 type Props = {
     id: string;
@@ -78,52 +79,66 @@ export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
     }, []);
 
     return (
-        <div className="file-container">
-            <h1 className="file-list-header">
-                {props.containerType &&
-                props.containerType === FileUploadType.RESPONSE
-                    ? null
-                    : "Uploaded Files"}
-            </h1>
-            <div>
-                {Object.values(props.files).map((file, i) => (
-                    <div className="file-bar" key={i}>
-                        <div>
-                            <div className="file-name">
-                                {file.name}
-                                {" - "}
-                                {sizeDisplay(file.size)}
-                                <br></br>
-                                {"At: "}
-                                {file.time}
-                            </div>
-                            <a
-                                href={`/filehandler/file/${file.id}`}
-                                target="_self"
-                                download
-                                style={{ float: "right" }}
-                            >
-                                <button className="file-dl-btn">
-                                    <FaDownload />
-                                </button>
-                            </a>
-                            {props.userID === file.userId && (
-                                <button
-                                    style={{ float: "right" }}
-                                    className="file-del-btn"
-                                    onClick={() => {
-                                        handleFileDeletion(file.id);
-                                    }}
-                                >
-                                    <RiDeleteBin2Fill />
-                                </button>
-                            )}
-                            <div>Uploaded by: {file.username}</div>
-                            <hr></hr>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+        <Container className="file-container">
+            <Row>
+                <Col>
+                    <h1>
+                        {props.containerType &&
+                        props.containerType === FileUploadType.RESPONSE
+                            ? null
+                            : "Uploaded Files"}
+                    </h1>
+                </Col>
+            </Row>
+            <Row>
+                {props.files.length > 0 ? (
+                    Object.values(props.files).map((file, i) => (
+                        <Container key={i}>
+                            <Row>
+                                <Col lg="8">
+                                    <p>{file.name}</p>
+                                    <p className="text-muted">
+                                        {file.time} - {sizeDisplay(file.size)}
+                                    </p>
+                                    <p className="text-muted">
+                                        Uploader: {file.username}
+                                    </p>
+                                </Col>
+                                <Col lg="4" className="d-flex flex-row-reverse">
+                                    <Button className="d-flex align-items-center">
+                                        <a
+                                            href={`/filehandler/file/${file.id}`}
+                                            target="_self"
+                                            download
+                                            style={{
+                                                color: "unset",
+                                            }}
+                                        >
+                                            <FaDownload />
+                                        </a>
+                                    </Button>
+                                    {props.userID === file.userId && (
+                                        <Button
+                                            onClick={() => {
+                                                handleFileDeletion(file.id);
+                                            }}
+                                            variant="danger"
+                                            className="d-flex align-items-center"
+                                        >
+                                            <RiDeleteBin2Fill />
+                                        </Button>
+                                    )}
+                                </Col>
+                                <hr></hr>
+                            </Row>
+                        </Container>
+                    ))
+                ) : (
+                    <Container className="py-4">
+                        <p className="text-muted">There are no files</p>
+                    </Container>
+                )}
+            </Row>
+        </Container>
     );
 };

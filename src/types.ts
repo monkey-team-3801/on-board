@@ -55,7 +55,7 @@ export type CourseActivityResponseType = CourseActivityUnique & {
     time: number;
     startDate: Date;
     duration: number;
-    day_of_week: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Monday->Sunday in ISO week
+    dayOfWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Monday->Sunday in ISO week
     weeks: Array<1 | 0>;
 };
 

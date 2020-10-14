@@ -723,8 +723,30 @@ router.post(
 router.post(
     "/deleteBreakoutRoom",
     asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
-        await BreakoutSession.findByIdAndDelete(req.body.sessionId);
-        res.end();
+        try {
+            await BreakoutSession.findByIdAndDelete(req.body.sessionId);
+            res.status(200);
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/deleteAllBreakoutRooms",
+    asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
+        try {
+            await BreakoutSession.deleteMany({
+                parentSessionId: req.body.sessionId,
+            });
+            res.status(200);
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
     })
 );
 

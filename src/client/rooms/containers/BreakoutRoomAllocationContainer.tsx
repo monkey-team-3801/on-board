@@ -5,8 +5,11 @@ import { v4 } from "uuid";
 import { UserData } from "../types";
 import { RoomGroupingContainer } from "./RoomGroupingContainer";
 import { useDynamicFetch } from "../../hooks";
+import { ButtonWithLoadingProp } from "../../components";
+import { requestIsLoading } from "../../utils";
 
 type Props = {
+    sessionId: string;
     users: Array<UserData>;
     rooms: OrderedMap<string, OrderedMap<string, UserData>>;
     setRooms: React.Dispatch<
@@ -23,6 +26,15 @@ export const BreakoutRoomAllocationContainer: React.FunctionComponent<Props> = (
         undefined,
         { sessionId: string }
     >("/session/deleteBreakoutRoom", undefined, false);
+
+    const [
+        deleteAllBreakoutRoomResponse,
+        deleteAllBreakoutRooms,
+    ] = useDynamicFetch<undefined, { sessionId: string }>(
+        "/session/deleteAllBreakoutRooms",
+        undefined,
+        false
+    );
 
     const allocateUser = React.useCallback(
         (
@@ -57,17 +69,35 @@ export const BreakoutRoomAllocationContainer: React.FunctionComponent<Props> = (
     return (
         <Container className="allocation">
             <Row className="header-row">
-                <Col>
-                    <Button
-                        variant="success"
-                        size="sm"
-                        onClick={() => {
-                            setRooms(rooms.set(v4(), OrderedMap()));
-                        }}
-                    >
-                        Add Room
-                    </Button>
-                </Col>
+                <Button
+                    variant="success"
+                    size="sm"
+                    disabled={requestIsLoading(deleteAllBreakoutRoomResponse)}
+                    onClick={() => {
+                        setRooms(rooms.set(v4(), OrderedMap()));
+                    }}
+                >
+                    Add Room
+                </Button>
+                <ButtonWithLoadingProp
+                    variant="danger"
+                    size="sm"
+                    className="ml-2"
+                    loading={requestIsLoading(deleteAllBreakoutRoomResponse)}
+                    invertLoader
+                    onClick={async () => {
+                        await deleteAllBreakoutRooms({
+                            sessionId: props.sessionId,
+                        });
+                        props.setRooms((rooms) => {
+                            return rooms
+                                .clear()
+                                .set("main", rooms.get("main")!);
+                        });
+                    }}
+                >
+                    Delete All Rooms
+                </ButtonWithLoadingProp>
             </Row>
             <Row>
                 <Col lg={6}>
