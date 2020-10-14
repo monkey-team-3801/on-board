@@ -1,14 +1,9 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 
 import { MyVideo } from "./MyVideo";
-import { VideoEvent } from "../../events";
 import { Container, Row, Col } from "react-bootstrap";
-import { useFetch } from "../hooks";
-import { requestIsLoaded } from "../utils";
 import "./VideoContainer.less";
-import { VideoPeersResponseType, UserPeer } from "../../types";
 import { RemotePeerVideo } from "./RemotePeerVideo";
-import { PeerId } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
 
 export const FocusedVideoView: React.FunctionComponent<{}> = () => {

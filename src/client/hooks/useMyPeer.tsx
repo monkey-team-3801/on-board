@@ -24,7 +24,7 @@ export const useMyPeer = (
     userId: string,
     sessionId: string
 ): PeerData => {
-    const [myPeer, setMyPeer] = useState<Peer>(() => new Peer(options));
+    const [myPeer] = useState<Peer>(() => new Peer(options));
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
     const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
         Map()
@@ -51,13 +51,13 @@ export const useMyPeer = (
         }
     }, [disableStream, myPeer, peerCalls, peerStreams]);
 
-    const setupPeer = useCallback(() => {
-        console.log("Setup peer");
-        if (!myPeer) {
-            setMyPeer(new Peer(options));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // const setupPeer = useCallback(() => {
+    //     console.log("Setup peer");
+    //     if (!myPeer) {
+    //         setMyPeer(new Peer(options));
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     useEffect(() => {
         if (myPeer) {
@@ -78,7 +78,7 @@ export const useMyPeer = (
                 setMyPeerId(id);
             });
         }
-    }, [myPeer]);
+    }, [cleanUp, myPeer]);
     useEffect(() => {
         if (myStream && myPeerId) {
             socket.emit(VideoEvent.USER_JOIN_ROOM, {
@@ -87,7 +87,7 @@ export const useMyPeer = (
                 peerId: myPeerId,
             });
         }
-    }, [myStream, myPeerId]);
+    }, [myStream, myPeerId, socket, sessionId, userId]);
     useEffect(() => {
         if (myPeerId) {
             myPeer.on("call", (call) => {
@@ -138,7 +138,7 @@ export const useMyPeer = (
                 });
             }
         },
-        [myStream, peerCalls, myPeer, myPeerId]
+        [myPeerId, peerCalls, myStream, enableStream, myPeer]
     );
     const removePeer = useCallback<(peerId: PeerId) => void>(
         (peerId) => {
@@ -199,7 +199,7 @@ export const useMyPeer = (
                 addPeer(usePeer.peerId);
             }
         }
-    }, [response, myPeerId, myStream]);
+    }, [response, myPeerId, myStream, addPeer]);
     // Handle socket interactions
     useEffect(() => {
         // Listen to update event
