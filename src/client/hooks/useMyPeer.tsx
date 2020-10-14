@@ -3,6 +3,8 @@ import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
 import { useMediaStream } from "./useMediaStream";
 import { PeerData } from "../peer";
+import { VideoEvent } from "../../events";
+import { UserPeer } from "../../types";
 
 declare var process: any;
 
@@ -15,7 +17,7 @@ const options: Peer.PeerJSOption = {
     port: process.env.NODE_ENV === "production" ? 443 : 5000,
 };
 
-export const useMyPeer: () => PeerData = () => {
+export const useMyPeer = (socket: SocketIOClient.Socket, userId: string, sessionId: string): PeerData => {
     const [myPeer, setMyPeer] = useState<Peer | undefined>(
         () => new Peer(options)
     );
@@ -68,10 +70,14 @@ export const useMyPeer: () => PeerData = () => {
             });
             myPeer.on("open", (id) => {
                 setMyPeerId(id);
-                // setMyPeer(myPeer);
+                socket.emit(VideoEvent.USER_JOIN_ROOM, {
+                    sessionId,
+                    userId,
+                    peerId: myPeerId,
+                });
             });
         }
-    }, [myPeer, cleanUp]);
+    }, [myPeer, cleanUp, socket]);
     useEffect(() => {
         if (myPeer) {
             myPeer.on("call", (call) => {
@@ -137,6 +143,46 @@ export const useMyPeer: () => PeerData = () => {
         },
         [peerCalls]
     );
+
+    const onSocketAddUser = useCallback(async (userPeer: UserPeer) => {
+        console.log("Calling on socket add user");
+        console.log("new peer", userPeer.peerId);
+        addPeer(userPeer.peerId);
+    }, [addPeer]);
+
+    const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
+        console.log("User leaving room");
+        removePeer(userPeer.peerId);
+    }, [removePeer]);
+
+
+    // Handle socket interactions
+    useEffect(() => {
+        // Listen to update event
+        console.log("Listening, socket connected:", socket.connected);
+        socket.on(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
+        socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
+        // socket.on(VideoEvent.USER_STOP_STREAMING, (peerId: PeerId) => {
+        //     console.log("received user", peerId, "turned of camera");
+        //     const peerStream = peerStreams.get(peerId);
+        //     console.log(peerStream, peerStreams);
+        //     if (peerStream) {
+        //         console.log("Peer Stream exists");
+        //         peerStream.getTracks().forEach(track => {
+        //             console.log("stopping remote tracks");
+        //             track.stop();
+        //         });
+        //     } else {
+        //         console.log("Peer stream doesn't exist");
+        //     }
+        // });
+        // console.log("Use effect running, emitting join room");
+        // socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
+        // return () => {
+        //     socket.off(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
+        //     socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
+        // };
+    }, [socket, onSocketAddUser, onSocketRemoveUser]);
     return {
         peer: myPeer,
         peerId: myPeerId,

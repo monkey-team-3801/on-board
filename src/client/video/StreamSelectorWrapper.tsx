@@ -3,16 +3,20 @@ import { Container, Row, Button } from "react-bootstrap";
 import { FocusedVideoView } from "./FocusedVideoView";
 import { PeerContext } from "../peer";
 import { useMyPeer } from "../hooks/useMyPeer";
-import { VideoEvent } from "../../events";
+import { pauseStream, resumeStream } from "../hooks/useMediaStream";
 
-type Props = { sessionId: string; userId: string; socket: SocketIOClient.Socket };
+type Props = {
+    sessionId: string;
+    userId: string;
+    socket: SocketIOClient.Socket;
+};
 
 export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const {socket} = props;
-    const peerData = useMyPeer();
-    const { enableStream, disableStream, peerId: myPeerId } = peerData;
+    const { socket, userId, sessionId } = props;
+    const peerData = useMyPeer(socket, userId, sessionId);
+    const { stream: myStream, peerId: myPeerId, enableStream } = peerData;
     return (
         <PeerContext.Provider value={peerData}>
             <Container>
@@ -26,7 +30,11 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
                 <Row>
                     <Button
                         onClick={() => {
-                            enableStream();
+                            if (!myStream) {
+                                enableStream();
+                            } else {
+                                resumeStream(myStream);
+                            }
                         }}
                     >
                         Show Camera
@@ -34,8 +42,10 @@ export const StreamSelectorWrapper: React.FunctionComponent<Props> = (
                     <Button onClick={() => {}}>Show Screen</Button>
                     <Button
                         onClick={() => {
-                            disableStream();
-                            socket.emit(VideoEvent.USER_STOP_STREAMING, myPeerId);
+                            if (myStream) {
+                                pauseStream(myStream);
+                            }
+                            // socket.emit(VideoEvent.USER_STOP_STREAMING, myPeerId);
                         }}
                     >
                         Turn off stream

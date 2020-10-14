@@ -11,7 +11,6 @@ export const MyVideo: React.FunctionComponent<Props> = ({ muted }) => {
     const { stream: myStream } = useContext(PeerContext);
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
-        console.log("testing");
         if (myStream) {
             if (videoRef.current) {
                 videoRef.current.srcObject = myStream;

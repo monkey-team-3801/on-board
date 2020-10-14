@@ -21,6 +21,23 @@ const defaultConstraints: MediaStreamConstraints = {
 };
 type MediaType = "camera" | "display" | "none";
 
+const streamSetEnabled = (
+    enabled: boolean
+): ((stream: MediaStream) => void) => {
+    return (stream: MediaStream) => {
+        stream.getTracks().forEach((track) => {
+            track.enabled = enabled;
+        });
+    };
+};
+
+export const pauseStream: (stream: MediaStream) => void = streamSetEnabled(
+    false
+);
+export const resumeStream: (stream: MediaStream) => void = streamSetEnabled(
+    true
+);
+
 export const useMediaStream: () => [
     MediaStream | undefined,
     (constraints?: MediaStreamConstraints) => Promise<void>,
@@ -31,29 +48,32 @@ export const useMediaStream: () => [
         async (constraints: MediaStreamConstraints = defaultConstraints) => {
             if (!stream) {
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia(
+                    const newStream = await navigator.mediaDevices.getUserMedia(
                         constraints
                     );
-                    setStream(stream);
-
+                    setStream(newStream);
                 } catch (e) {
+                    console.log("error setting stream", e);
                     setStream(undefined);
                 }
+            } else {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = true;
+                });
             }
         },
-        []
+        [stream]
     );
 
     const disableMediaStream = useCallback(() => {
         stream?.getTracks().forEach((track) => {
             track.stop();
-            // track.enabled = false;
             stream?.removeTrack(track);
         });
 
         console.log("Turning off stream", stream);
         console.log("Turning off stream tracks", stream?.getTracks());
-        //setStream(undefined);
+        setStream(undefined);
     }, [stream]);
 
     useEffect(() => {
@@ -61,6 +81,6 @@ export const useMediaStream: () => [
         return () => {
             disableMediaStream();
         };
-    }, [enableMediaStream]);
+    }, []);
     return [stream, enableMediaStream, disableMediaStream];
 };

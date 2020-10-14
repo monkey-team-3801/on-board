@@ -11,7 +11,11 @@ import { RemotePeerVideo } from "./RemotePeerVideo";
 import { PeerId } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
 
-type Props = { sessionId: string; userId: string; socket: SocketIOClient.Socket };
+type Props = {
+    sessionId: string;
+    userId: string;
+    socket: SocketIOClient.Socket;
+};
 
 export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     const { sessionId, userId, socket } = props;
@@ -21,13 +25,13 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
         peerId: myPeerId,
         cleanUp: cleanUpPeer,
         stream: myStream,
-        peerStreams
+        peerStreams,
     } = useContext(PeerContext);
     const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }
     >("/videos/peers", { sessionId, userId });
-    console.log("my peer id", myPeerId);
+    // console.log("my peer id", myPeerId);
     useEffect(() => {
         if (requestIsLoaded(response)) {
             setPeerIds(
@@ -40,11 +44,7 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
     useEffect(() => {
         if (myPeerId) {
             socket.connect();
-            socket.emit(VideoEvent.USER_JOIN_ROOM, {
-                sessionId,
-                userId,
-                peerId: myPeerId,
-            });
+
         }
         return () => {
             // socket.emit(VideoEvent.USER_LEAVE_ROOM, {
@@ -53,54 +53,15 @@ export const FocusedVideoView: React.FunctionComponent<Props> = (props) => {
             //     peerId: myPeerId,
             // });
         };
-    }, [myPeerId, sessionId, userId]);
+    }, [socket, myPeerId, sessionId, userId]);
 
     useEffect(() => {
         return () => {
             console.log("cleanup");
             //cleanUpPeer();
-            socket.disconnect();
             //disableMyPeer();
         };
     }, []);
-
-    const onSocketUpdateUsers = useCallback(async (userPeer: UserPeer) => {
-        console.log("new peer", userPeer.peerId);
-        setPeerIds((prev) => [...prev, userPeer.peerId]);
-    }, []);
-
-    const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
-        setPeerIds((prev) =>
-            prev.filter((peerId) => peerId !== userPeer.peerId)
-        );
-    }, []);
-
-    // Handle socket interactions
-    useEffect(() => {
-        // Listen to update event
-        socket.on(VideoEvent.USER_JOIN_ROOM, onSocketUpdateUsers);
-        socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
-        socket.on(VideoEvent.USER_STOP_STREAMING, (peerId: PeerId) => {
-            console.log("received user", peerId, "turned of camera");
-            const peerStream = peerStreams.get(peerId);
-            console.log(peerStream, peerStreams);
-            if (peerStream) {
-                console.log("Peer Stream exists");
-                peerStream.getTracks().forEach(track => {
-                    console.log("stopping remote tracks");
-                    track.stop();
-                });
-            } else {
-                console.log("Peer stream doesn't exist");
-            }
-        });
-        // console.log("Use effect running, emitting join room");
-        // socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
-        return () => {
-            socket.off(VideoEvent.USER_JOIN_ROOM, onSocketUpdateUsers);
-            socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
-        };
-    }, [socket, onSocketUpdateUsers, onSocketRemoveUser, peerStreams]);
 
     // Receive calls
     return (
