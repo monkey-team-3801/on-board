@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import Select from "react-select";
 import { RoomType, SessionInfo } from "../../types";
 import { useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
@@ -24,6 +25,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<string>("");
 
     const [deletedRooms, setDeletedRooms] = React.useState<Array<string>>([]);
 
@@ -56,21 +58,41 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
             if (deletedRooms.includes(session.id)) {
                 return false;
             }
-            return session.name
-                .toLocaleLowerCase()
-                .includes(roomFilterValue.toLocaleLowerCase());
+            return (
+                session.name
+                    .toLocaleLowerCase()
+                    .includes(roomFilterValue.toLocaleLowerCase()) &&
+                (courseFilter === "" || session.courseCode === courseFilter)
+            );
         });
-    }, [roomFilterValue, privateRoomResponse, deletedRooms]);
+    }, [roomFilterValue, privateRoomResponse, deletedRooms, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
             <Row>
-                <Col xl={12}>
+                <Col xl={6}>
+                    <Form.Label>Search rooms</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search rooms..."
                         onChange={(e) => {
                             setRoomFilterValue(e.target.value);
+                        }}
+                    />
+                </Col>
+                <Col xl={6}>
+                    <Form.Label>Filter courses</Form.Label>
+                    <Select
+                        placeholder="Filter course..."
+                        options={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
+                        isClearable
+                        onChange={(value) => {
+                            setCourseFilter(
+                                ((value as unknown) as { value: string } | null)
+                                    ?.value ?? ""
+                            );
                         }}
                     />
                 </Col>

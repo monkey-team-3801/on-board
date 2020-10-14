@@ -27,6 +27,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
     const [roomActiveFilter, setRoomActiveFilter] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<string>("");
 
     const [classroomsResponse, getClassrooms] = useFetch<
         Array<ClassroomSessionData>
@@ -49,28 +50,47 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         }
     }, [classroomsResponse, setLoading]);
 
+    const sortedClassrooms = React.useMemo(() => {
+        return (
+            classroomsResponse.data &&
+            classroomsResponse.data?.sort((a, b) => {
+                return (
+                    new Date(b.startTime).getTime() -
+                    new Date(a.startTime).getTime()
+                );
+            })
+        );
+    }, [classroomsResponse]);
+
     const filteredClassrooms = React.useMemo(() => {
         if (roomActiveFilter === "Active" || !roomActiveFilter) {
-            return classroomsResponse.data?.filter((session) => {
-                return session.name
-                    .toLocaleLowerCase()
-                    .includes(roomFilterValue.toLocaleLowerCase());
+            return sortedClassrooms?.filter((session) => {
+                return (
+                    session.name
+                        .toLocaleLowerCase()
+                        .includes(roomFilterValue.toLocaleLowerCase()) &&
+                    (courseFilter === "" || session.courseCode === courseFilter)
+                );
             });
         }
-    }, [roomFilterValue, roomActiveFilter, classroomsResponse]);
+    }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
 
     const filteredUpcomingRooms = React.useMemo(() => {
         if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
-            return upcomingClassroomsResponse.data?.filter((session) => {
-                return session.name.includes(roomFilterValue);
+            return sortedClassrooms?.filter((session) => {
+                return (
+                    session.name.includes(roomFilterValue) &&
+                    courseFilter &&
+                    (courseFilter === "" || session.courseCode === courseFilter)
+                );
             });
         }
-    }, [roomFilterValue, roomActiveFilter, upcomingClassroomsResponse]);
+    }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
             <Row>
-                <Col xl={6}>
+                <Col xl={4}>
                     <Form.Label>Search rooms</Form.Label>
                     <Form.Control
                         type="text"
@@ -80,7 +100,23 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                         }}
                     />
                 </Col>
-                <Col xl={6}>
+                <Col xl={4}>
+                    <Form.Label>Filter courses</Form.Label>
+                    <Select
+                        placeholder="Filter course..."
+                        options={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
+                        isClearable
+                        onChange={(value) => {
+                            setCourseFilter(
+                                ((value as unknown) as { value: string } | null)
+                                    ?.value ?? ""
+                            );
+                        }}
+                    />
+                </Col>
+                <Col xl={4}>
                     <Form.Label>Filter room status</Form.Label>
                     <Select
                         placeholder="Filter active..."
