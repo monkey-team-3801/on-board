@@ -81,6 +81,6 @@ export const useMediaStream: () => [
         return () => {
             disableMediaStream();
         };
-    }, []);
+    }, [disableMediaStream, enableMediaStream]);
     return [stream, enableMediaStream, disableMediaStream];
 };

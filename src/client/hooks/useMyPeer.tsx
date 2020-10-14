@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
-import { useMediaStream } from "./useMediaStream";
+import { pauseStream, resumeStream, useMediaStream } from "./useMediaStream";
 import { PeerData } from "../peer";
 import { VideoEvent } from "../../events";
 import { UserPeer } from "../../types";
@@ -17,7 +17,11 @@ const options: Peer.PeerJSOption = {
     port: process.env.NODE_ENV === "production" ? 443 : 5000,
 };
 
-export const useMyPeer = (socket: SocketIOClient.Socket, userId: string, sessionId: string): PeerData => {
+export const useMyPeer = (
+    socket: SocketIOClient.Socket,
+    userId: string,
+    sessionId: string
+): PeerData => {
     const [myPeer, setMyPeer] = useState<Peer | undefined>(
         () => new Peer(options)
     );
@@ -42,7 +46,7 @@ export const useMyPeer = (socket: SocketIOClient.Socket, userId: string, session
             disableStream();
             console.log("Cleaning up");
         }
-    }, [myPeer, peerCalls, peerStreams]);
+    }, [disableStream, myPeer, peerCalls, peerStreams]);
 
     const setupPeer = useCallback(() => {
         console.log("Setup peer");
@@ -77,7 +81,7 @@ export const useMyPeer = (socket: SocketIOClient.Socket, userId: string, session
                 });
             });
         }
-    }, [myPeer, cleanUp, socket]);
+    }, [myPeer, cleanUp, socket, sessionId, userId, myPeerId]);
     useEffect(() => {
         if (myPeer) {
             myPeer.on("call", (call) => {
@@ -144,45 +148,67 @@ export const useMyPeer = (socket: SocketIOClient.Socket, userId: string, session
         [peerCalls]
     );
 
-    const onSocketAddUser = useCallback(async (userPeer: UserPeer) => {
-        console.log("Calling on socket add user");
-        console.log("new peer", userPeer.peerId);
-        addPeer(userPeer.peerId);
-    }, [addPeer]);
+    const onSocketAddUser = useCallback(
+        async (userPeer: UserPeer) => {
+            console.log("Calling on socket add user");
+            console.log("new peer", userPeer.peerId);
+            addPeer(userPeer.peerId);
+        },
+        [addPeer]
+    );
 
-    const onSocketRemoveUser = useCallback((userPeer: UserPeer) => {
-        console.log("User leaving room");
-        removePeer(userPeer.peerId);
-    }, [removePeer]);
+    const onSocketRemoveUser = useCallback(
+        (userPeer: UserPeer) => {
+            console.log("User leaving room");
+            removePeer(userPeer.peerId);
+        },
+        [removePeer]
+    );
+    const onUserStopSharing = useCallback(
+        (peerId: PeerId) => {
+            console.log("received user", peerId, "turned of camera");
+            const peerStream = peerStreams.get(peerId);
+            if (peerStream) {
+                pauseStream(peerStream);
+            }
+        },
+        [peerStreams]
+    );
 
+    const onUserStartSharing = useCallback(
+        (peerId: PeerId) => {
+            console.log("received user", peerId, "turn on camera");
 
+            const peerStream = peerStreams.get(peerId);
+            if (peerStream) {
+                resumeStream(peerStream);
+            }
+        },
+        [peerStreams]
+    );
     // Handle socket interactions
     useEffect(() => {
         // Listen to update event
         console.log("Listening, socket connected:", socket.connected);
         socket.on(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
         socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
-        // socket.on(VideoEvent.USER_STOP_STREAMING, (peerId: PeerId) => {
-        //     console.log("received user", peerId, "turned of camera");
-        //     const peerStream = peerStreams.get(peerId);
-        //     console.log(peerStream, peerStreams);
-        //     if (peerStream) {
-        //         console.log("Peer Stream exists");
-        //         peerStream.getTracks().forEach(track => {
-        //             console.log("stopping remote tracks");
-        //             track.stop();
-        //         });
-        //     } else {
-        //         console.log("Peer stream doesn't exist");
-        //     }
-        // });
-        // console.log("Use effect running, emitting join room");
-        // socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
-        // return () => {
-        //     socket.off(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
-        //     socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
-        // };
-    }, [socket, onSocketAddUser, onSocketRemoveUser]);
+        // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
+        // socket.on(VideoEvent.USER_START_STREAMING, onUserStartSharing);
+        socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
+        return () => {
+            socket.off(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
+            socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
+            // socket.off(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
+            // socket.off(VideoEvent.USER_START_STREAMING, onUserStartSharing);
+        };
+    }, [
+        socket,
+        onSocketAddUser,
+        onSocketRemoveUser,
+        onUserStopSharing,
+        sessionId,
+        myPeerId,
+    ]);
     return {
         peer: myPeer,
         peerId: myPeerId,
