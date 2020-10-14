@@ -24,7 +24,9 @@ import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
-// import { StreamSelectorWrapper } from "../video";
+import { useMyPeer } from "../hooks/useMyPeer";
+import { PeerContext } from "../peer";
+import { StreamSelectorWrapper } from "../videostreaming";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -36,9 +38,9 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 ) => {
     const notification = useRef(new Audio("/public/notification.wav"));
     const [soundEnabled, setSoundEnabled] = React.useState<boolean>(false);
-
     const { id: userId } = props.userData;
     const { classroomId: sessionId } = props.match.params;
+    const peerData = useMyPeer(socket, userId, sessionId);
     const [
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
@@ -220,172 +222,177 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container fluid className="classroom-container">
-            <Col md={9}>
-                <header className="d-flex">
+        <PeerContext.Provider value={peerData}>
+            <Container fluid className="classroom-container">
+                <Col md={9}>
+                    <header className="d-flex">
+                        <Container fluid>
+                            <h1>
+                                {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
+                            </h1>
+                            <p>{sessionResponse.data.roomType}</p>
+                            <p>{sessionResponse.data.description}</p>
+                        </Container>
+                        <Container fluid>
+                            <p>{`Start time: ${sessionResponse.data.startTime}, end time: ${sessionResponse.data.endTime}`}</p>
+                        </Container>
+                    </header>
                     <Container fluid>
-                        <h1>
-                            {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
-                        </h1>
-                        <p>{sessionResponse.data.roomType}</p>
-                        <p>{sessionResponse.data.description}</p>
-                    </Container>
-                    <Container fluid>
-                        <p>{`Start time: ${sessionResponse.data.startTime}, end time: ${sessionResponse.data.endTime}`}</p>
-                    </Container>
-                </header>
-                <Container fluid>
-                    <div className="stream-container">
-                        <Row>
-                            <Col md={4}>
-                                <div className="dflex justify-content-center align-items-center presenter-container">
-                                    <div></div>
-                                </div>
-                            </Col>
-                            <Col md={8}>
-                                <Container className="view-control d-flex justify-content-center">
-                                    <Button>Speaker View</Button>
-                                    <Button>Participants View</Button>
-                                </Container>
-                                <Container className="video-container mt-4">
-                                    {/* <StreamSelectorWrapper
-                                        sessionId={props.match.params.classroomId}
-                                        userId={props.userData.id}
-                                    /> */}
-                                </Container>
-                                <Container className="room-control d-flex justify-content-center mt-4">
-                                    <Button
-                                        onClick={() => {
-                                            setBreakoutRoomModalVisible(true);
-                                        }}
-                                    >
-                                        Breakout Rooms
-                                    </Button>
-                                    <Button
-                                        onClick={async () => {
-                                            if (handRaisedRef.current) {
-                                                setRaisedHandUsers(
-                                                    raisedHandUsers.splice(
-                                                        raisedHandUsers.indexOf(
-                                                            userId
-                                                        ),
-                                                        1
-                                                    )
+                        <div className="stream-container">
+                            <Row>
+                                <Col md={4}>
+                                    <div className="dflex justify-content-center align-items-center presenter-container">
+                                        <div></div>
+                                    </div>
+                                </Col>
+                                <Col md={8}>
+                                    <Container className="view-control d-flex justify-content-center">
+                                        <Button>Speaker View</Button>
+                                        <Button>Participants View</Button>
+                                    </Container>
+                                    <Container className="video-container mt-4">
+                                        <StreamSelectorWrapper />
+                                    </Container>
+                                    <Container className="room-control d-flex justify-content-center mt-4">
+                                        <Button
+                                            onClick={() => {
+                                                setBreakoutRoomModalVisible(
+                                                    true
                                                 );
-                                            } else {
-                                                setRaisedHandUsers(
-                                                    raisedHandUsers.concat([
-                                                        userId,
-                                                    ])
+                                            }}
+                                        >
+                                            Breakout Rooms
+                                        </Button>
+                                        <Button
+                                            onClick={async () => {
+                                                if (handRaisedRef.current) {
+                                                    setRaisedHandUsers(
+                                                        raisedHandUsers.splice(
+                                                            raisedHandUsers.indexOf(
+                                                                userId
+                                                            ),
+                                                            1
+                                                        )
+                                                    );
+                                                } else {
+                                                    setRaisedHandUsers(
+                                                        raisedHandUsers.concat([
+                                                            userId,
+                                                        ])
+                                                    );
+                                                }
+                                                setRaisedHandStatus.callback(
+                                                    handRaisedRef.current
                                                 );
-                                            }
-                                            setRaisedHandStatus.callback(
-                                                handRaisedRef.current
-                                            );
-                                            handRaisedRef.current = !handRaisedRef.current;
-                                        }}
-                                    >
-                                        Raise Hand
-                                    </Button>
-                                    <Button>Camera off</Button>
-                                    <Button>Mic off</Button>
-                                    <Button
-                                        onClick={() => {
-                                            setResponsesModalStatus({
-                                                visible: true,
-                                                type: "result",
-                                            });
-                                        }}
-                                    >
-                                        {props.userData.userType ===
-                                        UserType.STUDENT
-                                            ? "View Questions"
-                                            : "View Results"}
-                                    </Button>
-                                    <FileModal
-                                        uploadType={FileUploadType.DOCUMENTS}
-                                        socket={socket}
-                                        sessionID={sessionId}
-                                        userID={props.userData.id}
-                                        updateFiles={getFileData}
-                                        isLoading={requestIsLoading(fileData)}
-                                        files={files}
-                                        roomType={RoomType.CLASS}
-                                    ></FileModal>
-                                    {props.userData.userType ===
-                                        UserType.COORDINATOR && (
+                                                handRaisedRef.current = !handRaisedRef.current;
+                                            }}
+                                        >
+                                            Raise Hand
+                                        </Button>
+                                        <Button>Camera off</Button>
+                                        <Button>Mic off</Button>
                                         <Button
                                             onClick={() => {
                                                 setResponsesModalStatus({
                                                     visible: true,
-                                                    type: "ask",
+                                                    type: "result",
                                                 });
                                             }}
                                         >
-                                            Ask Questions
+                                            {props.userData.userType ===
+                                            UserType.STUDENT
+                                                ? "View Questions"
+                                                : "View Results"}
                                         </Button>
-                                    )}
-                                    <Button
-                                        onClick={() => {
-                                            setSoundEnabled((prev) => {
-                                                return !prev;
-                                            });
-                                        }}
-                                    >
-                                        {soundEnabled ? (
-                                            <MdNotificationsActive />
-                                        ) : (
-                                            <MdNotificationsOff />
+                                        <FileModal
+                                            uploadType={
+                                                FileUploadType.DOCUMENTS
+                                            }
+                                            socket={socket}
+                                            sessionID={sessionId}
+                                            userID={props.userData.id}
+                                            updateFiles={getFileData}
+                                            isLoading={requestIsLoading(
+                                                fileData
+                                            )}
+                                            files={files}
+                                            roomType={RoomType.CLASS}
+                                        />
+                                        {props.userData.userType ===
+                                            UserType.COORDINATOR && (
+                                            <Button
+                                                onClick={() => {
+                                                    setResponsesModalStatus({
+                                                        visible: true,
+                                                        type: "ask",
+                                                    });
+                                                }}
+                                            >
+                                                Ask Questions
+                                            </Button>
                                         )}
-                                    </Button>
-                                </Container>
-                            </Col>
-                        </Row>
-                    </div>
-                </Container>
-            </Col>
-            <Col md={3}>
-                <SidePanelContainer
-                    sessionId={sessionId}
-                    username={props.userData.username}
-                    initialChatLog={sessionResponse.data.messages}
-                    users={sessionUsersResponse.data?.users}
-                    raisedHandUsers={raisedHandUsers.toArray()}
-                    roomType={RoomType.CLASS}
-                    socket={socket}
+                                        <Button
+                                            onClick={() => {
+                                                setSoundEnabled((prev) => {
+                                                    return !prev;
+                                                });
+                                            }}
+                                        >
+                                            {soundEnabled ? (
+                                                <MdNotificationsActive />
+                                            ) : (
+                                                <MdNotificationsOff />
+                                            )}
+                                        </Button>
+                                    </Container>
+                                </Col>
+                            </Row>
+                        </div>
+                    </Container>
+                </Col>
+                <Col md={3}>
+                    <SidePanelContainer
+                        sessionId={sessionId}
+                        username={props.userData.username}
+                        initialChatLog={sessionResponse.data.messages}
+                        users={sessionUsersResponse.data?.users}
+                        raisedHandUsers={raisedHandUsers.toArray()}
+                        roomType={RoomType.CLASS}
+                        socket={socket}
+                    />
+                </Col>
+                <BreakoutRoomModal
+                    userData={sessionUsersResponse.data?.users || []}
+                    visible={createBreakoutRoomModalVisible}
+                    sessionId={props.match.params.classroomId}
+                    handleClose={() => {
+                        setBreakoutRoomModalVisible(false);
+                    }}
                 />
-            </Col>
-            <BreakoutRoomModal
-                userData={sessionUsersResponse.data?.users || []}
-                visible={createBreakoutRoomModalVisible}
-                sessionId={props.match.params.classroomId}
-                handleClose={() => {
-                    setBreakoutRoomModalVisible(false);
-                }}
-            />
-            <BreakoutRoomAllocateIndicator
-                {...props}
-                event={breakoutAllocationEventData}
-                onClose={() => {
-                    setBreakoutAllocationEventData(undefined);
-                }}
-            />
-            <ResponsesModal
-                sid={sessionId}
-                userid={props.userData.id}
-                userType={props.userData.userType}
-                sock={socket}
-                modalVisible={responsesModalStatus.visible}
-                closeModal={() => {
-                    setResponsesModalStatus((prev) => {
-                        return {
-                            ...prev,
-                            visible: false,
-                        };
-                    });
-                }}
-                modalType={responsesModalStatus.type}
-            ></ResponsesModal>
-        </Container>
+                <BreakoutRoomAllocateIndicator
+                    {...props}
+                    event={breakoutAllocationEventData}
+                    onClose={() => {
+                        setBreakoutAllocationEventData(undefined);
+                    }}
+                />
+                <ResponsesModal
+                    sid={sessionId}
+                    userid={props.userData.id}
+                    userType={props.userData.userType}
+                    sock={socket}
+                    modalVisible={responsesModalStatus.visible}
+                    closeModal={() => {
+                        setResponsesModalStatus((prev) => {
+                            return {
+                                ...prev,
+                                visible: false,
+                            };
+                        });
+                    }}
+                    modalType={responsesModalStatus.type}
+                />
+            </Container>
+        </PeerContext.Provider>
     );
 };

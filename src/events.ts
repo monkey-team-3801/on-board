@@ -32,7 +32,8 @@ export type PrivateRoomJoinData = {
 export enum VideoEvent {
     USER_JOIN_ROOM = "USER_JOIN_ROOM",
     USER_LEAVE_ROOM = "USER_LEAVE_ROOM",
-    UPDATE_USERS = "USER_CHANGED",
+    USER_STOP_STREAMING = "USER_STOP_STREAMING",
+    USER_START_STREAMING = "USER_START_STREAMING",
 }
 
 export type PrivateVideoRoomJoinData = {
