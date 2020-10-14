@@ -2,21 +2,19 @@ import { format } from "date-fns/esm";
 import React from "react";
 import { Alert, Container, Form } from "react-bootstrap";
 import Select from "react-select";
+import { v4 } from "uuid";
 import { ExecutingEvent } from "../../events";
-import {
-    CreateAnnouncementJobRequestType,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
+import { CreateAnnouncementJobRequestType } from "../../types";
 import { ButtonWithLoadingProp, SimpleDatepicker } from "../components";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { useDynamicFetch } from "../hooks";
 import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
-import { v4 } from "uuid";
 
 type Props = {
     userId: string;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     refreshKey: number;
+    courses: Array<string>;
 };
 
 export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
@@ -27,15 +25,9 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
         undefined,
         CreateAnnouncementJobRequestType
     >("/job/create", undefined, false);
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
 
     const [title, setTitle] = React.useState<string>("");
     const [content, setContent] = React.useState<string>("");
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
     const [courses, setCourses] = React.useState<Array<CourseOptionType>>([]);
     const [announcementTime, setAnnouncementTime] = React.useState<Date>(
         new Date()
@@ -46,9 +38,8 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     >(false);
 
     React.useEffect(() => {
-        refreshCourseData();
         setCreatingAnnouncements(false);
-    }, [refreshKey, refreshCourseData]);
+    }, [refreshKey]);
 
     const isCourseEmpty = React.useMemo(() => {
         return courses.length === 0;
@@ -57,20 +48,13 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     const isSubmitting: boolean = React.useMemo(() => {
         return (
             requestIsLoading(createAnnouncementResponse) ||
-            requestIsLoading(courseData) ||
             creatingAnnouncements
         );
-    }, [createAnnouncementResponse, courseData, creatingAnnouncements]);
+    }, [createAnnouncementResponse, creatingAnnouncements]);
 
     React.useEffect(() => {
-        if (requestIsLoaded(courseData)) {
-            const options = courseData.data.courses.map((code) => {
-                return { value: code, label: code };
-            });
-            setCourseCodes(options);
-            setLoading(false);
-        }
-    }, [courseData, setLoading]);
+        setLoading(false);
+    }, [setLoading]);
 
     return (
         <Container>
@@ -120,7 +104,9 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                 <Form.Group>
                     <Form.Label>Course</Form.Label>
                     <Select
-                        options={courseCodes}
+                        options={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
                         value={courses}
                         onChange={(value) => {
                             if (value && Array.isArray(value)) {

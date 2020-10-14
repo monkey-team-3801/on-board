@@ -22,6 +22,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                                     <ClassroomDisplayContainer
                                         {...props}
                                         setLoading={setLoading}
+                                        courses={props.userData.courses || []}
                                     />
                                 );
                             }}
@@ -34,6 +35,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                                     <PrivateRoomDisplayContainer
                                         {...props}
                                         setLoading={setLoading}
+                                        courses={props.userData.courses || []}
                                     />
                                 );
                             }}

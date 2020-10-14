@@ -1,10 +1,6 @@
 import React from "react";
 import { Alert, Container } from "react-bootstrap";
-import {
-    UpcomingClassroomSessionData,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
-import { useFetch } from "../hooks";
+import { UpcomingClassroomSessionData } from "../../types";
 import { BaseResponseType, CourseOptionType } from "../types";
 import {
     baseRoomTypeOptions,
@@ -18,6 +14,7 @@ type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     response: BaseResponseType<any>;
     onSubmit: (data: Omit<UpcomingClassroomSessionData, "id">) => Promise<void>;
+    courses: Array<string>;
     submitting?: boolean;
     refreshKey?: number;
 };
@@ -25,17 +22,10 @@ type Props = {
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, refreshKey } = props;
-
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
-
+    const { setLoading } = props;
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
+
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
@@ -51,23 +41,8 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     const [colourCode, setColourCode] = React.useState<string>("#7873f5");
 
     React.useEffect(() => {
-        refreshCourseData();
-    }, [refreshKey, refreshCourseData]);
-
-    React.useEffect(() => {
-        if (requestIsLoaded(courseData)) {
-            const options = courseData.data.courses.map((code) => {
-                return { value: code, label: code };
-            });
-            setCourseCodes(options);
-        }
-    }, [courseData]);
-
-    React.useEffect(() => {
-        if (requestIsLoaded(courseData)) {
-            setLoading(false);
-        }
-    }, [courseData, setLoading]);
+        setLoading(false);
+    }, [setLoading]);
 
     return (
         <Container>
@@ -75,7 +50,9 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                 <ScheduleRoomForm
                     roomName={roomName}
                     description={description}
-                    courseCodes={courseCodes}
+                    courseCodes={props.courses.map((code) => {
+                        return { value: code, label: code };
+                    })}
                     selectedCourse={selectedCourse}
                     roomType={roomType}
                     startingTime={startingTime}
@@ -83,15 +60,12 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     colourCode={colourCode}
                     setRoomName={setRoomName}
                     setDescription={setDescription}
-                    setCourseCodes={setCourseCodes}
                     setSelectedCourse={setSelectedCourse}
                     setRoomType={setRoomType}
                     setStartingTime={setStartingTime}
                     setEndingTime={setEndingTime}
                     setColourCode={setColourCode}
-                    submitting={
-                        props.submitting || requestIsLoading(courseData)
-                    }
+                    submitting={props.submitting}
                     requestIsLoading={requestIsLoading(props.response)}
                     onSubmit={props.onSubmit}
                     submitText={"Create Room"}

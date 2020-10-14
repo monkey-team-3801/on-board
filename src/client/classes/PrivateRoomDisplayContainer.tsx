@@ -11,6 +11,7 @@ import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
+    courses: Array<string>;
 };
 
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
@@ -105,6 +106,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                     );
                 })}
             <EditPrivateRoomModal
+                courses={props.courses}
                 roomSelection={roomSelection}
                 onClose={() => {
                     setRoomSelection(undefined);

@@ -24,9 +24,6 @@ type Props = {
     colourCode: string;
     setRoomName: React.Dispatch<React.SetStateAction<string>>;
     setDescription: React.Dispatch<React.SetStateAction<string>>;
-    setCourseCodes: React.Dispatch<
-        React.SetStateAction<Array<CourseOptionType>>
-    >;
     setSelectedCourse: React.Dispatch<
         React.SetStateAction<CourseOptionType | undefined>
     >;

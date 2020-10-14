@@ -1,11 +1,7 @@
 import React from "react";
 import { Alert, Modal } from "react-bootstrap";
-import {
-    ClassroomSessionData,
-    RoomType,
-    UserEnrolledCoursesResponseType,
-} from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { ClassroomSessionData, RoomType } from "../../types";
+import { useDynamicFetch } from "../hooks";
 import { ScheduleRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
 import {
@@ -23,6 +19,7 @@ type Props = {
               message?: string;
           }
         | undefined;
+    courses: Array<string>;
     onClose: () => void;
     refresh: () => void;
 };
@@ -35,10 +32,6 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
         { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
     >("/session/edit/classroomSession", undefined, false);
 
-    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
-        "/user/courses"
-    );
-
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
     const [roomData, setRoomData] = React.useState<
@@ -47,9 +40,6 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
 
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
@@ -77,14 +67,9 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
     }, [visible]);
 
     React.useEffect(() => {
-        if (roomData && courseData.data) {
+        if (roomData) {
             setRoomName(roomData.name);
             setDescription(roomData.description);
-            setCourseCodes(
-                courseData.data.courses.map((code) => {
-                    return { value: code, label: code };
-                })
-            );
             setSelectedCourse({
                 value: roomData.courseCode,
                 label: roomData.courseCode,
@@ -94,7 +79,7 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
             setEndingTime(new Date(roomData.endTime));
             setColourCode(roomData.colourCode);
         }
-    }, [roomData, courseData]);
+    }, [roomData]);
 
     React.useEffect(() => {
         if (requestHasError(editRoomResponse)) {
@@ -127,7 +112,9 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
                         id={props.roomSelection?.data.id}
                         roomName={roomName}
                         description={description}
-                        courseCodes={courseCodes}
+                        courseCodes={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
                         selectedCourse={selectedCourse}
                         roomType={roomType}
                         startingTime={startingTime}
@@ -135,7 +122,6 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
                         colourCode={colourCode}
                         setRoomName={setRoomName}
                         setDescription={setDescription}
-                        setCourseCodes={setCourseCodes}
                         setSelectedCourse={setSelectedCourse}
                         setRoomType={setRoomType}
                         setStartingTime={setStartingTime}

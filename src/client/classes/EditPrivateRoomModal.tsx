@@ -1,7 +1,6 @@
 import React from "react";
 import { Alert, Modal } from "react-bootstrap";
-import { UserEnrolledCoursesResponseType } from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { useDynamicFetch } from "../hooks";
 import { CreatePrivateRoomForm } from "../rooms/components";
 import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
@@ -13,6 +12,7 @@ type Props = {
         description: string;
         courseCode?: string;
     };
+    courses: Array<string>;
     onClose: () => void;
     refresh: () => void;
 };
@@ -24,10 +24,6 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
         undefined,
         { id?: string; name: string; description: string; courseCode?: string }
     >("/session/edit/privateSession", undefined, false);
-
-    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
-        "/user/courses"
-    );
 
     const [submitting, setSubmitting] = React.useState<boolean>(false);
 
@@ -43,9 +39,6 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
 
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
@@ -63,14 +56,9 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
     }, [visible]);
 
     React.useEffect(() => {
-        if (roomData && courseData.data) {
+        if (roomData) {
             setRoomName(roomData.name);
             setDescription(roomData.description);
-            setCourseCodes(
-                courseData.data.courses.map((code) => {
-                    return { value: code, label: code };
-                })
-            );
             setSelectedCourse(
                 roomData.courseCode
                     ? {
@@ -80,7 +68,7 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
                     : undefined
             );
         }
-    }, [roomData, courseData]);
+    }, [roomData]);
 
     React.useEffect(() => {
         if (requestHasError(editRoomResponse)) {
@@ -113,11 +101,12 @@ export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
                         id={roomData?.id}
                         roomName={roomName}
                         description={description}
-                        courseCodes={courseCodes}
+                        courseCodes={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
                         selectedCourse={selectedCourse}
                         setRoomName={setRoomName}
                         setDescription={setDescription}
-                        setCourseCodes={setCourseCodes}
                         setSelectedCourse={setSelectedCourse}
                         requestIsLoading={requestIsLoading(editRoomResponse)}
                         submitting={submitting}

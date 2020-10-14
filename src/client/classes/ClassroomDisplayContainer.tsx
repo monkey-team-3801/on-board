@@ -12,6 +12,7 @@ import { EditClassroomModal } from "./EditClassroomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
+    courses: Array<string>;
 };
 
 export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
@@ -149,6 +150,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                 })}
             <EditClassroomModal
                 roomSelection={roomSelection}
+                courses={props.courses}
                 onClose={() => {
                     setRoomSelection(undefined);
                 }}

@@ -1,8 +1,7 @@
 import React from "react";
 import { Alert, Button, Container } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { UserEnrolledCoursesResponseType } from "../../types";
-import { useDynamicFetch, useFetch } from "../hooks";
+import { useDynamicFetch } from "../hooks";
 import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 import { CreatePrivateRoomForm } from "./components";
@@ -10,20 +9,16 @@ import { CreatePrivateRoomForm } from "./components";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     refreshKey: number;
+    courses: Array<string>;
 };
 
 export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, refreshKey } = props;
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
+    const { setLoading } = props;
+
     const [roomName, setRoomName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
     const [selectedCourse, setSelectedCourse] = React.useState<
         CourseOptionType | undefined
     >(undefined);
@@ -38,10 +33,6 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
     >("session/create", undefined, false);
 
     React.useEffect(() => {
-        refreshCourseData();
-    }, [refreshKey, refreshCourseData]);
-
-    React.useEffect(() => {
         setLoading(false);
     }, [setLoading]);
 
@@ -52,15 +43,6 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
         }
     }, [createRoomResponse]);
 
-    React.useEffect(() => {
-        if (requestIsLoaded(courseData)) {
-            const options = courseData.data.courses.map((code) => {
-                return { value: code, label: code };
-            });
-            setCourseCodes(options);
-        }
-    }, [courseData]);
-
     const submitting = React.useMemo(() => {
         return requestIsLoading(createRoomResponse);
     }, [createRoomResponse]);
@@ -70,16 +52,17 @@ export const CreatePrivateRoomContainer: React.FunctionComponent<Props> = (
             <CreatePrivateRoomForm
                 roomName={roomName}
                 description={description}
-                courseCodes={courseCodes}
+                courseCodes={props.courses.map((code) => {
+                    return { value: code, label: code };
+                })}
                 selectedCourse={selectedCourse}
                 setRoomName={setRoomName}
                 setDescription={setDescription}
-                setCourseCodes={setCourseCodes}
                 setSelectedCourse={setSelectedCourse}
                 onSubmit={async (data) => {
                     await createRoom(data);
                 }}
-                submitting={submitting || requestIsLoading(courseData)}
+                submitting={submitting}
                 submitText="Create Room"
             >
                 {roomId && (
