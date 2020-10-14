@@ -189,7 +189,6 @@ export const useMyPeer = (
     // Handle socket interactions
     useEffect(() => {
         // Listen to update event
-        console.log("Listening, socket connected:", socket.connected);
         socket.on(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
         socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
         // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
