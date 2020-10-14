@@ -24,19 +24,18 @@ export const useMyPeer = (
     userId: string,
     sessionId: string
 ): PeerData => {
-    const [myPeer, setMyPeer] = useState<Peer>(
-        () => new Peer(options)
-    );
+    const [myPeer, setMyPeer] = useState<Peer>(() => new Peer(options));
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
     const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
         Map()
     );
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
-    );const [response] = useFetch<
+    );
+    const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }
-        >("/videos/peers", { sessionId, userId });
+    >("/videos/peers", { sessionId, userId });
     const [myStream, enableStream, disableStream] = useMediaStream();
     const cleanUp = useCallback(() => {
         if (myPeer) {
@@ -191,7 +190,11 @@ export const useMyPeer = (
     // );
     useEffect(() => {
         if (requestIsLoaded(response) && myPeerId && myStream) {
-            console.log("Adding peers from response", myPeerId, response.data.peers);
+            console.log(
+                "Adding peers from response",
+                myPeerId,
+                response.data.peers
+            );
             for (const usePeer of response.data.peers) {
                 addPeer(usePeer.peerId);
             }
@@ -210,13 +213,7 @@ export const useMyPeer = (
             // socket.off(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
             // socket.off(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         };
-    }, [
-        socket,
-        onSocketAddUser,
-        onSocketRemoveUser,
-        sessionId,
-        myPeerId,
-    ]);
+    }, [socket, onSocketAddUser, onSocketRemoveUser, sessionId, myPeerId]);
     return {
         peer: myPeer,
         peerId: myPeerId,

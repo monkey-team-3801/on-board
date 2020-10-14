@@ -124,11 +124,20 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 session.userReferenceMap.set(userId, 1);
                 await session.save();
                 socket.join(sessionId);
-                socket
-                    .in(sessionId)
-                    .emit(VideoEvent.USER_JOIN_ROOM, { userId, sessionId, peerId });
+                socket.in(sessionId).emit(VideoEvent.USER_JOIN_ROOM, {
+                    userId,
+                    sessionId,
+                    peerId,
+                });
             }
-            console.log("User", userId, "joining video", sessionId,"with peer id", peerId);
+            console.log(
+                "User",
+                userId,
+                "joining video",
+                sessionId,
+                "with peer id",
+                peerId
+            );
             // socket.on(VideoEvent.USER_STOP_STREAMING, (peerId) => {
             //     console.log("user", peerId, "turned of camera.");
             //     socket

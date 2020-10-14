@@ -12,12 +12,9 @@ import { PeerId } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
 
 export const FocusedVideoView: React.FunctionComponent<{}> = () => {
-    const {
-        peer: myPeer,
-        stream: myStream,
-	    peerStreams
-    } = useContext(PeerContext);
-
+    const { peer: myPeer, stream: myStream, peerStreams } = useContext(
+        PeerContext
+    );
 
     // Receive calls
     return (
@@ -30,14 +27,17 @@ export const FocusedVideoView: React.FunctionComponent<{}> = () => {
                         <MyVideo videoStream={myStream} muted={true} />
                     )}
                 </Col>
-                {peerStreams.keySeq().toArray().map((peerId, i) => {
-                    return (
-                        <Col lg={4} key={i}>
-                            <p>{peerId}</p>
-                            <RemotePeerVideo peerId={peerId} />
-                        </Col>
-                    );
-                })}
+                {peerStreams
+                    .keySeq()
+                    .toArray()
+                    .map((peerId, i) => {
+                        return (
+                            <Col lg={4} key={i}>
+                                <p>{peerId}</p>
+                                <RemotePeerVideo peerId={peerId} />
+                            </Col>
+                        );
+                    })}
             </Row>
         </Container>
     );
