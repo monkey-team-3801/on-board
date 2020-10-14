@@ -26,6 +26,7 @@ import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { useMyPeer } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
+import { StreamSelectorWrapper } from "../video/StreamSelectorWrapper";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -251,7 +252,8 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         <Button>Participants View</Button>
                                     </Container>
                                     <Container className="video-container mt-4">
-                                        TODO: Video here
+                                        {/*TODO: Video here*/}
+                                        {/*<StreamSelectorWrapper/>*/}
                                     </Container>
                                     <Container className="room-control d-flex justify-content-center mt-4">
                                         <Button

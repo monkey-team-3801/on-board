@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
-import { pauseStream, resumeStream, useMediaStream } from "./useMediaStream";
+import { useMediaStream } from "./useMediaStream";
 import { PeerData } from "../peer";
 import { VideoEvent } from "../../events";
-import { UserPeer } from "../../types";
+import { UserPeer, VideoPeersResponseType } from "../../types";
+import { useFetch } from "./useFetch";
+import { requestIsLoaded } from "../utils";
 
 declare var process: any;
 
@@ -22,7 +24,7 @@ export const useMyPeer = (
     userId: string,
     sessionId: string
 ): PeerData => {
-    const [myPeer, setMyPeer] = useState<Peer | undefined>(
+    const [myPeer, setMyPeer] = useState<Peer>(
         () => new Peer(options)
     );
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
@@ -31,12 +33,14 @@ export const useMyPeer = (
     );
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
-    );
+    );const [response] = useFetch<
+        VideoPeersResponseType,
+        { sessionId: string; userId: string }
+        >("/videos/peers", { sessionId, userId });
     const [myStream, enableStream, disableStream] = useMediaStream();
     const cleanUp = useCallback(() => {
         if (myPeer) {
             myPeer.disconnect();
-            setMyPeer(undefined);
             setPeerStreams(peerStreams.clear());
             peerCalls.forEach((call) => {
                 call.close();
@@ -68,42 +72,41 @@ export const useMyPeer = (
             });
 
             myPeer.on("error", (error) => {
-                console.log("errored");
-                console.log(error);
+                console.log("error:", error);
                 //cleanUp();
             });
             myPeer.on("open", (id) => {
                 setMyPeerId(id);
-                socket.emit(VideoEvent.USER_JOIN_ROOM, {
-                    sessionId,
-                    userId,
-                    peerId: myPeerId,
-                });
             });
         }
-    }, [myPeer, cleanUp, socket, sessionId, userId, myPeerId]);
+    }, [myPeer]);
     useEffect(() => {
-        if (myPeer) {
+        if (myStream && myPeerId) {
+            socket.emit(VideoEvent.USER_JOIN_ROOM, {
+                sessionId,
+                userId,
+                peerId: myPeerId,
+            });
+        }
+    }, [myStream, myPeerId]);
+    useEffect(() => {
+        if (myPeerId) {
             myPeer.on("call", (call) => {
                 if (myStream) {
-                    console.log(
-                        "Answering call to peer",
-                        call.peer,
-                        "with my stream",
-                        myStream
-                    );
                     call.answer(myStream);
                     setPeerCalls((prev) => prev.set(call.peer, call));
                 }
                 call.on("stream", (stream) => {
-                    console.log("OTHER CALL Receiving stream from", call.peer);
                     setPeerStreams((prev) => prev.set(call.peer, stream));
                 });
             });
         }
-    }, [myPeer, myStream]);
+    }, [myPeer, myStream, myPeerId]);
     const addPeer = useCallback<(peerId: PeerId) => void>(
         async (peerId) => {
+            if (!myPeerId || myPeerId === peerId) {
+                return;
+            }
             if (peerCalls.has(peerId)) {
                 return;
             }
@@ -111,6 +114,7 @@ export const useMyPeer = (
                 await enableStream();
             }
             if (myStream) {
+                console.log("finished add peer check");
                 const call = myPeer?.call(peerId, myStream);
                 if (!call) {
                     console.log("Call is undefined");
@@ -119,7 +123,6 @@ export const useMyPeer = (
                     console.log("Sending peer", peerId, "my stream");
                 }
                 setPeerCalls((prev) => prev.set(peerId, call));
-                console.log("Connecting to Peer", peerId);
                 call.on("stream", (stream) => {
                     console.log("MY CALL Receiving stream from", peerId);
                     setPeerStreams((prev) => prev.set(peerId, stream));
@@ -136,7 +139,7 @@ export const useMyPeer = (
                 });
             }
         },
-        [myStream, peerCalls, myPeer, enableStream]
+        [myStream, peerCalls, myPeer, myPeerId]
     );
     const removePeer = useCallback<(peerId: PeerId) => void>(
         (peerId) => {
@@ -151,7 +154,7 @@ export const useMyPeer = (
     const onSocketAddUser = useCallback(
         async (userPeer: UserPeer) => {
             console.log("Calling on socket add user");
-            console.log("new peer", userPeer.peerId);
+            console.log("new peer", userPeer.peerId, userPeer);
             addPeer(userPeer.peerId);
         },
         [addPeer]
@@ -164,28 +167,36 @@ export const useMyPeer = (
         },
         [removePeer]
     );
-    const onUserStopSharing = useCallback(
-        (peerId: PeerId) => {
-            console.log("received user", peerId, "turned of camera");
-            const peerStream = peerStreams.get(peerId);
-            if (peerStream) {
-                pauseStream(peerStream);
+    // const onUserStopSharing = useCallback(
+    //     (peerId: PeerId) => {
+    //         console.log("received user", peerId, "turned of camera");
+    //         const peerStream = peerStreams.get(peerId);
+    //         if (peerStream) {
+    //             pauseStream(peerStream);
+    //         }
+    //     },
+    //     [peerStreams]
+    // );
+    //
+    // const onUserStartSharing = useCallback(
+    //     (peerId: PeerId) => {
+    //         console.log("received user", peerId, "turn on camera");
+    //
+    //         const peerStream = peerStreams.get(peerId);
+    //         if (peerStream) {
+    //             resumeStream(peerStream);
+    //         }
+    //     },
+    //     [peerStreams]
+    // );
+    useEffect(() => {
+        if (requestIsLoaded(response) && myPeerId && myStream) {
+            console.log("Adding peers from response", myPeerId, response.data.peers);
+            for (const usePeer of response.data.peers) {
+                addPeer(usePeer.peerId);
             }
-        },
-        [peerStreams]
-    );
-
-    const onUserStartSharing = useCallback(
-        (peerId: PeerId) => {
-            console.log("received user", peerId, "turn on camera");
-
-            const peerStream = peerStreams.get(peerId);
-            if (peerStream) {
-                resumeStream(peerStream);
-            }
-        },
-        [peerStreams]
-    );
+        }
+    }, [response, myPeerId, myStream]);
     // Handle socket interactions
     useEffect(() => {
         // Listen to update event
@@ -193,7 +204,6 @@ export const useMyPeer = (
         socket.on(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
         // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
         // socket.on(VideoEvent.USER_START_STREAMING, onUserStartSharing);
-        socket.emit(VideoEvent.USER_JOIN_ROOM, { sessionId, userId: myPeerId });
         return () => {
             socket.off(VideoEvent.USER_JOIN_ROOM, onSocketAddUser);
             socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemoveUser);
@@ -204,7 +214,6 @@ export const useMyPeer = (
         socket,
         onSocketAddUser,
         onSocketRemoveUser,
-        onUserStopSharing,
         sessionId,
         myPeerId,
     ]);
