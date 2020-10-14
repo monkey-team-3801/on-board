@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Container, Row, Button } from "react-bootstrap";
 import { FocusedVideoView } from "./FocusedVideoView";
 import { PeerContext } from "../peer";
-import { pauseStream, resumeStream } from "../hooks/useMediaStream";
+import { turnAudioOff, turnAudioOn, turnVideoOff, turnVideoOn } from "../hooks/useMediaStream";
 
 export const StreamSelectorWrapper: React.FunctionComponent<{}> = () => {
     const { stream: myStream, enableStream } = useContext(PeerContext);
@@ -17,17 +17,37 @@ export const StreamSelectorWrapper: React.FunctionComponent<{}> = () => {
                         if (!myStream) {
                             enableStream();
                         } else {
-                            resumeStream(myStream);
+                            turnAudioOn(myStream);
+                        }
+                    }}
+                >
+                    Unmute
+                </Button>
+                <Button
+                    onClick={() => {
+                        if (myStream) {
+                            turnAudioOff(myStream);
+                        }
+                        // socket.emit(VideoEvent.USER_STOP_STREAMING, myPeerId);
+                    }}
+                >
+                    Mute
+                </Button>
+                <Button
+                    onClick={() => {
+                        if (!myStream) {
+                            enableStream();
+                        } else {
+                            turnVideoOn(myStream);
                         }
                     }}
                 >
                     Show Camera
                 </Button>
-                <Button onClick={() => {}}>Show Screen</Button>
                 <Button
                     onClick={() => {
                         if (myStream) {
-                            pauseStream(myStream);
+                            turnVideoOff(myStream);
                         }
                         // socket.emit(VideoEvent.USER_STOP_STREAMING, myPeerId);
                     }}

@@ -26,7 +26,7 @@ import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { useMyPeer } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
-import { StreamSelectorWrapper } from "../video";
+import { StreamSelectorWrapper } from "../videostreaming";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};

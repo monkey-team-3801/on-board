@@ -1,12 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
 
-declare global {
-    interface MediaDevices {
-        getDisplayMedia: (
-            constraints?: MediaStreamConstraints
-        ) => Promise<MediaStream>;
-    }
-}
 const defaultConstraints: MediaStreamConstraints = {
     video: {
         width: 480,
@@ -19,22 +12,39 @@ const defaultConstraints: MediaStreamConstraints = {
         echoCancellation: true,
     },
 };
-type MediaType = "camera" | "display" | "none";
 
-const streamSetEnabled = (
+
+const streamSetAudioEnabled = (
     enabled: boolean
 ): ((stream: MediaStream) => void) => {
     return (stream: MediaStream) => {
-        stream.getTracks().forEach((track) => {
+        stream.getAudioTracks().forEach((track) => {
             track.enabled = enabled;
         });
     };
 };
 
-export const pauseStream: (stream: MediaStream) => void = streamSetEnabled(
+export const turnAudioOff: (stream: MediaStream) => void = streamSetAudioEnabled(
     false
 );
-export const resumeStream: (stream: MediaStream) => void = streamSetEnabled(
+export const turnAudioOn: (stream: MediaStream) => void = streamSetAudioEnabled(
+    true
+);
+
+const streamSetVideoEnabled = (
+    enabled: boolean
+): ((stream: MediaStream) => void) => {
+    return (stream: MediaStream) => {
+        stream.getVideoTracks().forEach((track) => {
+            track.enabled = enabled;
+        });
+    };
+};
+
+export const turnVideoOff: (stream: MediaStream) => void = streamSetVideoEnabled(
+    false
+);
+export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
     true
 );
 
