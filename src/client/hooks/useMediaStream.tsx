@@ -13,7 +13,6 @@ const defaultConstraints: MediaStreamConstraints = {
     },
 };
 
-
 const streamSetAudioEnabled = (
     enabled: boolean
 ): ((stream: MediaStream) => void) => {
@@ -24,9 +23,9 @@ const streamSetAudioEnabled = (
     };
 };
 
-export const turnAudioOff: (stream: MediaStream) => void = streamSetAudioEnabled(
-    false
-);
+export const turnAudioOff: (
+    stream: MediaStream
+) => void = streamSetAudioEnabled(false);
 export const turnAudioOn: (stream: MediaStream) => void = streamSetAudioEnabled(
     true
 );
@@ -41,9 +40,9 @@ const streamSetVideoEnabled = (
     };
 };
 
-export const turnVideoOff: (stream: MediaStream) => void = streamSetVideoEnabled(
-    false
-);
+export const turnVideoOff: (
+    stream: MediaStream
+) => void = streamSetVideoEnabled(false);
 export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
     true
 );

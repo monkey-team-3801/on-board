@@ -2,7 +2,12 @@ import React, { useContext } from "react";
 import { Container, Row, Button } from "react-bootstrap";
 import { FocusedVideoView } from "./FocusedVideoView";
 import { PeerContext } from "../peer";
-import { turnAudioOff, turnAudioOn, turnVideoOff, turnVideoOn } from "../hooks/useMediaStream";
+import {
+    turnAudioOff,
+    turnAudioOn,
+    turnVideoOff,
+    turnVideoOn,
+} from "../hooks/useMediaStream";
 
 export const StreamSelectorWrapper: React.FunctionComponent<{}> = () => {
     const { stream: myStream, enableStream } = useContext(PeerContext);
