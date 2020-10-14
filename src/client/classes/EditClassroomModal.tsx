@@ -29,7 +29,10 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
 ) => {
     const [editRoomResponse, editRoom] = useDynamicFetch<
         undefined,
-        { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
+        {
+            data: Omit<ClassroomSessionData, "messages" | "open">;
+            type: RoomType;
+        }
     >("/session/edit/classroomSession", undefined, false);
 
     const [submitting, setSubmitting] = React.useState<boolean>(false);
@@ -132,7 +135,7 @@ export const EditClassroomModal: React.FunctionComponent<Props> = (
                         onSubmit={async (
                             data: Omit<
                                 ClassroomSessionData,
-                                "messages" | "id"
+                                "messages" | "id" | "open"
                             > & { id?: string }
                         ) => {
                             if (data.id) {

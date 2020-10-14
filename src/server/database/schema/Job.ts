@@ -4,7 +4,7 @@ import { ExecutingEvent } from "../../../events";
 import { ObjectId } from "mongodb";
 
 export interface IJob extends mongoose.Document, BaseJob {
-    _id: ObjectId;
+    _id: string;
 }
 
 const JobSchema = new mongoose.Schema<IJob>({

@@ -22,7 +22,6 @@ type Props = Partial<UpcomingClassroomSessionData> & {
     id?: string;
     size: "sm" | "lg";
     canEdit?: boolean;
-    canJoin?: boolean;
     onJoinClick?: () => void;
     onEditClick?: () => void;
     onDeleteClick?: () => void;
@@ -112,7 +111,7 @@ export const ClassContainer: React.FunctionComponent<Props> = (
             >
                 <Container className="button-container">
                     <Row>
-                        {props.canJoin ? (
+                        {props.type !== RoomType.UPCOMING ? (
                             <Button
                                 variant="primary peach-gradient"
                                 onClick={props.onJoinClick}

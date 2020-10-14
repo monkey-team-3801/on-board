@@ -162,6 +162,7 @@ router.post(
                             colourCode: session.colourCode,
                             createdBy: session.createdBy,
                             createdByUsername: user?.username,
+                            open: session.open,
                         };
                     })
                 );
@@ -193,57 +194,44 @@ router.post(
         {},
         { limit?: number }
     >(async (req, res, next) => {
-        if (req.headers.authorization) {
-            const user = await getUserDataFromJWT(req.headers.authorization);
-            if (user) {
-                try {
-                    const query: Array<ClassOpenJob & IJob> = (await Job.find({
-                        executingEvent: ExecutingEvent.CLASS_OPEN,
-                    })) as Array<ClassOpenJob & IJob>;
-
-                    const jobs = query
-                        .filter((job) => {
-                            return user.courses.includes(job.data.courseCode);
-                        })
-                        .sort((a, b) => {
-                            return (
-                                new Date(a.data.startTime).getTime() -
-                                new Date(b.data.startTime).getTime()
-                            );
-                        });
-
-                    if (jobs) {
-                        res.json(
-                            await Promise.all(
-                                jobs.map(async (job) => {
-                                    const session = job.data;
-                                    const user = await User.findById(
-                                        session.createdBy
-                                    );
-                                    return {
-                                        id: job._id.toHexString(),
-                                        name: session.name,
-                                        roomType: session.roomType,
-                                        description: session.description,
-                                        courseCode: session.courseCode,
-                                        startTime: session.startTime,
-                                        endTime: session.endTime,
-                                        colourCode: session.colourCode,
-                                        createdBy: job.createdBy,
-                                        createdByUsername: user?.username,
-                                    };
-                                })
-                            )
+        try {
+            const sessions = await ClassroomSession.find({ open: false });
+            if (sessions && req.headers.authorization) {
+                const currentUser = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                const query = await Promise.all(
+                    sessions.map(async (session) => {
+                        const user = await User.findById(session.createdBy);
+                        return {
+                            id: session._id,
+                            name: session.name,
+                            roomType: session.roomType,
+                            description: session.description,
+                            courseCode: session.courseCode,
+                            messages: session.messages,
+                            startTime: session.startTime,
+                            endTime: session.endTime,
+                            colourCode: session.colourCode,
+                            createdBy: session.createdBy,
+                            createdByUsername: user?.username,
+                            open: session.open,
+                        };
+                    })
+                );
+                res.json(
+                    query.filter((session) => {
+                        return currentUser?.courses.includes(
+                            session.courseCode
                         );
-                    }
-                } catch (e) {
-                    console.log("error", e);
-                    res.status(500);
-                    next(new Error("Unexpected error has occured."));
-                }
+                    })
+                );
             }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
         }
-
         res.end();
     })
 );
@@ -310,6 +298,7 @@ router.post(
                         startTime: session.startTime,
                         endTime: session.endTime,
                         colourCode: session.colourCode,
+                        open: session.open,
                     });
                 }
             } catch (e) {
@@ -330,44 +319,42 @@ router.post(
         { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
     >(async (req, res, next) => {
         try {
-            if (req.body.type === RoomType.CLASS) {
-                const data = req.body.data;
-                const errorMessage = classFormDataHasError(data);
-                if (errorMessage) {
-                    res.status(500)
-                        .json({
-                            message: errorMessage,
-                        })
-                        .end();
-                    return;
-                }
-                if (new Date(data.endTime).getTime() < new Date().getTime()) {
-                    await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
-                        ...req.body.data,
+            // TODO FIX THIS SHIT
+            const data = req.body.data;
+            const errorMessage = classFormDataHasError(data);
+            if (errorMessage) {
+                res.status(500)
+                    .json({
+                        message: errorMessage,
+                    })
+                    .end();
+                return;
+            }
+            if (new Date(data.endTime).getTime() < new Date().getTime()) {
+                await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
+                    ...req.body.data,
+                });
+            } else {
+                const session = await ClassroomSession.findByIdAndDelete(
+                    req.body.data.id
+                );
+                if (session) {
+                    const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
+                    schedulerHandler.addNewJob({
+                        jobDate: req.body.data.startTime,
+                        executingEvent: ExecutingEvent.CLASS_OPEN,
+                        data: {
+                            ...data,
+                        },
                     });
-                } else {
-                    const session = await ClassroomSession.findByIdAndDelete(
-                        req.body.data.id
-                    );
-                    if (session) {
-                        const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
-                        schedulerHandler.addNewJob({
-                            jobDate: req.body.data.startTime,
-                            executingEvent: ExecutingEvent.CLASS_OPEN,
-                            createdBy: session.createdBy,
-                            data: {
-                                ...data,
-                            },
-                        });
-                    }
                 }
-            } else if (req.body.type === RoomType.UPCOMING) {
+            }
+            if (req.body.type === RoomType.UPCOMING) {
                 const job = await Job.findById(req.body.data.id);
                 if (job) {
                     const updatedJob: BaseJob = {
                         jobDate: req.body.data.startTime,
                         executingEvent: ExecutingEvent.CLASS_OPEN,
-                        createdBy: job.createdBy,
                         data: {
                             ...job.data,
                             ...req.body.data,
@@ -378,6 +365,7 @@ router.post(
                     scheduleHandler.addNewJob(updatedJob);
                 }
             }
+
             res.status(200);
         } catch (e) {
             console.log("error", e);
@@ -474,6 +462,7 @@ router.post(
                 await BreakoutSession.deleteMany({
                     parentSessionId: req.body.id,
                 });
+                await Job.findByIdAndDelete(req.body.id);
             } catch (e) {
                 res.status(500);
             } finally {

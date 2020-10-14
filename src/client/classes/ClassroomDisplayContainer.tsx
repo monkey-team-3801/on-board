@@ -33,10 +33,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         Array<ClassroomSessionData>
     >("session/classroomSessions");
 
-    const [upcomingClassroomsResponse, getUpcomingClassrooms] = useFetch<
-        Array<Omit<ClassroomSessionData, "messages">>
-    >("session/upcomingClassroomSessions");
-
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
             history.push(`/classroom/${id}`);
@@ -50,21 +46,9 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
         }
     }, [classroomsResponse, setLoading]);
 
-    const sortedClassrooms = React.useMemo(() => {
-        return (
-            classroomsResponse.data &&
-            classroomsResponse.data?.sort((a, b) => {
-                return (
-                    new Date(b.startTime).getTime() -
-                    new Date(a.startTime).getTime()
-                );
-            })
-        );
-    }, [classroomsResponse]);
-
     const filteredClassrooms = React.useMemo(() => {
         if (roomActiveFilter === "Active" || !roomActiveFilter) {
-            return sortedClassrooms?.filter((session) => {
+            return classroomsResponse.data?.filter((session) => {
                 return (
                     session.name
                         .toLocaleLowerCase()
@@ -73,19 +57,19 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                 );
             });
         }
-    }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
+    }, [roomFilterValue, roomActiveFilter, classroomsResponse, courseFilter]);
 
-    const filteredUpcomingRooms = React.useMemo(() => {
-        if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
-            return sortedClassrooms?.filter((session) => {
-                return (
-                    session.name.includes(roomFilterValue) &&
-                    courseFilter &&
-                    (courseFilter === "" || session.courseCode === courseFilter)
-                );
-            });
-        }
-    }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
+    // const filteredUpcomingRooms = React.useMemo(() => {
+    //     if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
+    //         return sortedClassrooms?.filter((session) => {
+    //             return (
+    //                 session.name.includes(roomFilterValue) &&
+    //                 courseFilter &&
+    //                 (courseFilter === "" || session.courseCode === courseFilter)
+    //             );
+    //         });
+    //     }
+    // }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
@@ -141,7 +125,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             {...session}
                             key={session.id}
                             canEdit={props.userData.id === session.createdBy}
-                            canJoin
                             onJoinClick={() => {
                                 onRoomJoinClick(session.id);
                             }}
@@ -156,11 +139,15 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             }}
                             isRefreshing={requestIsLoading(classroomsResponse)}
                             size="lg"
-                            type={RoomType.CLASS}
+                            type={
+                                session.open
+                                    ? RoomType.CLASS
+                                    : RoomType.UPCOMING
+                            }
                         />
                     );
                 })}
-            {filteredUpcomingRooms &&
+            {/* {filteredUpcomingRooms &&
                 filteredUpcomingRooms.map((session, i) => {
                     return (
                         <ClassContainer
@@ -183,7 +170,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             type={RoomType.UPCOMING}
                         />
                     );
-                })}
+                })} */}
             <EditClassroomModal
                 roomSelection={roomSelection}
                 courses={props.courses}
@@ -192,7 +179,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                 }}
                 refresh={() => {
                     getClassrooms();
-                    getUpcomingClassrooms();
                 }}
             />
         </Container>

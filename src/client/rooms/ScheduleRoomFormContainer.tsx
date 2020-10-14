@@ -13,7 +13,9 @@ import { ScheduleRoomForm } from "./components";
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     response: BaseResponseType<any>;
-    onSubmit: (data: Omit<UpcomingClassroomSessionData, "id">) => Promise<void>;
+    onSubmit: (
+        data: Omit<UpcomingClassroomSessionData, "id" | "open">
+    ) => Promise<void>;
     courses: Array<string>;
     submitting?: boolean;
     refreshKey?: number;

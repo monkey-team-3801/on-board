@@ -120,7 +120,6 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                 await getPrivateRooms();
                             }}
                             isRefreshing={requestIsLoading(privateRoomResponse)}
-                            canJoin
                             size="lg"
                             type={RoomType.PRIVATE}
                             setDeletedRooms={setDeletedRooms}

@@ -28,12 +28,11 @@ export const CreateClassroomContainer: React.FunctionComponent<Props> = (
             refreshKey={props.refreshKey}
             courses={props.courses}
             onSubmit={async (
-                data: Omit<UpcomingClassroomSessionData, "id">
+                data: Omit<UpcomingClassroomSessionData, "id" | "open">
             ) => {
                 await createClassroom({
-                    jobDate: data.startTime,
                     executingEvent: ExecutingEvent.CLASS_OPEN,
-                    data,
+                    ...data,
                 });
             }}
         />

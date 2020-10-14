@@ -34,7 +34,9 @@ type Props = {
     requestIsLoading?: boolean;
     submitting?: boolean;
     onSubmit: (
-        data: Omit<ClassroomSessionData, "messages" | "id"> & { id?: string }
+        data: Omit<ClassroomSessionData, "messages" | "id" | "open"> & {
+            id?: string;
+        }
     ) => Promise<void>;
     submitText?: string;
 };
