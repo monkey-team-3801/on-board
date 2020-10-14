@@ -57,3 +57,8 @@ export type BreakoutAllocationEventData =
           roomIndex: number;
       }
     | undefined;
+
+export type ChatModalStatusType = {
+    open: boolean;
+    selectedId?: string;
+};

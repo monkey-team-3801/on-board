@@ -1,6 +1,6 @@
 import express from "express";
 
-import { User } from "../database/schema";
+import { User, SessionUsers } from "../database/schema";
 import { asyncHandler } from "../utils";
 import {
     CreateUserRequestType,
@@ -140,4 +140,59 @@ router.post(
             res.end();
         }
     )
+);
+
+router.post(
+    "/getAllUserInCourse",
+    asyncHandler<Array<UserDataResponseType>, {}, { userID: string }>(
+        async (req, res) => {
+            try {
+                if (req.headers.authorization) {
+                    const currentUser = await getUserDataFromJWT(
+                        req.headers.authorization
+                    );
+                    const users = await User.find({
+                        courses: {
+                            $in: currentUser?.courses || [],
+                        },
+                    })
+                        .select("username")
+                        .select("userType")
+                        .select("_id")
+                        .select("courses");
+                    res.json(
+                        users.map((user) => {
+                            return {
+                                id: user._id.toHexString(),
+                                username: user.username,
+                                userType: user.userType,
+                                courses: user.courses,
+                            };
+                        })
+                    );
+                }
+                res.status(200);
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/online",
+    asyncHandler<Array<string>>(async (req, res) => {
+        try {
+            const users = await SessionUsers.findOne({ sessionId: "global" });
+            res.json(Array.from(users?.userReferenceMap.keys() || [])).status(
+                200
+            );
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
 );

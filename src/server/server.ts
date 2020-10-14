@@ -15,6 +15,7 @@ import {
     ResponseFormEvent,
     RoomEvent,
     VideoEvent,
+    GlobalEvent,
 } from "../events";
 import { Database, SessionUsers } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
@@ -77,6 +78,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 session.userReferenceMap.set(userId, 1);
                 await session.save();
                 io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
+                io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
             }
             console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
@@ -88,6 +90,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     await session.save();
                     socket.leave(sessionId);
                     io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
+                    io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
                     console.log("User", userId, "leaving", sessionId);
                 } else {
                     session.userReferenceMap.set(
@@ -223,6 +226,21 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(FileUploadEvent.FILE_DELETED, (data) => {
         socket.to(data).emit(FileUploadEvent.FILE_DELETED);
     });
+
+    socket.on(ChatEvent.CHAT_JOIN, (chatId: string) => {
+        socket.join(chatId);
+    });
+
+    socket.on(ChatEvent.CHAT_LEAVE, (chatId: string) => {
+        socket.leave(chatId);
+    });
+
+    socket.on(
+        ChatEvent.CHAT_NEW_PRIVATE_MESSAGE,
+        (chatId: string, data: ChatMessageSendType) => {
+            socket.to(chatId).emit(ChatEvent.CHAT_NEW_PRIVATE_MESSAGE, data);
+        }
+    );
 });
 
 app.use(bodyParser.json());
@@ -308,6 +326,19 @@ database.connect().then(() => {
         const scheduleHandler = ScheduleHandler.getInstance();
         // Queue all existing jobs.
         await scheduleHandler.queueExistingJobs();
+
+        await SessionUsers.findOneAndUpdate(
+            { sessionId: "global" },
+            {
+                sessionId: "global",
+                userReferenceMap: new Map(),
+            },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true,
+            }
+        );
         // await VideoSession.updateMany(
         //     {},
         //     {
