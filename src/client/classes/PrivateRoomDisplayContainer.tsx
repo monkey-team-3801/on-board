@@ -12,13 +12,13 @@ import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
-    courses: Array<string>;
+    courses?: Array<string>;
 };
 
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, history } = props;
+    const { setLoading, history, courses } = props;
 
     const [privateRoomResponse, getPrivateRooms] = useFetch<Array<SessionInfo>>(
         "session/privateSessions"
@@ -47,11 +47,11 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     React.useEffect(() => {
-        if (requestIsLoaded(privateRoomResponse)) {
+        if (requestIsLoaded(privateRoomResponse) && courses) {
             setLoading(false);
             setDeletedRooms([]);
         }
-    }, [privateRoomResponse, setLoading]);
+    }, [privateRoomResponse, setLoading, courses]);
 
     const filteredRooms = React.useMemo(() => {
         return privateRoomResponse.data?.filter((session) => {
@@ -84,7 +84,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                     <Form.Label>Filter courses</Form.Label>
                     <Select
                         placeholder="Filter course..."
-                        options={props.courses.map((code) => {
+                        options={props.courses?.map((code) => {
                             return { value: code, label: code };
                         })}
                         isClearable
@@ -128,7 +128,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                     );
                 })}
             <EditPrivateRoomModal
-                courses={props.courses}
+                courses={props.courses || []}
                 roomSelection={roomSelection}
                 onClose={() => {
                     setRoomSelection(undefined);

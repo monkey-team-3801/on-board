@@ -12,13 +12,13 @@ import { EditClassroomModal } from "./EditClassroomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
-    courses: Array<string>;
+    courses?: Array<string>;
 };
 
 export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, history } = props;
+    const { setLoading, history, courses } = props;
 
     const [roomSelection, setRoomSelection] = React.useState<
         | { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
@@ -41,10 +41,10 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     React.useEffect(() => {
-        if (requestIsLoaded(classroomsResponse)) {
+        if (requestIsLoaded(classroomsResponse) && courses) {
             setLoading(false);
         }
-    }, [classroomsResponse, setLoading]);
+    }, [classroomsResponse, setLoading, courses]);
 
     const filteredClassrooms = React.useMemo(() => {
         const openOrUpcoming = classroomsResponse.data?.filter((session) => {
@@ -84,7 +84,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                     <Form.Label>Filter courses</Form.Label>
                     <Select
                         placeholder="Filter course..."
-                        options={props.courses.map((code) => {
+                        options={props.courses?.map((code) => {
                             return { value: code, label: code };
                         })}
                         isClearable
@@ -142,7 +142,7 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                 })}
             <EditClassroomModal
                 roomSelection={roomSelection}
-                courses={props.courses}
+                courses={props.courses || []}
                 onClose={() => {
                     setRoomSelection(undefined);
                 }}
