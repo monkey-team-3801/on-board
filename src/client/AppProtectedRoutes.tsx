@@ -22,6 +22,7 @@ import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
+import { ProfilePage } from "./user/ProfilePage";
 import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
@@ -242,6 +243,14 @@ export const AppProtectedRoutes = (props: Props) => {
                         authData={authData}
                         render={(routerProps: RouteComponentProps) => {
                             return <Timetable />;
+                        }}
+                    />
+
+                    <SecuredRoute
+                        path="/profile"
+                        authData={authData}
+                        render={(routerProps: RouteComponentProps) => {
+                            return <ProfilePage userID={id} />;
                         }}
                     />
                 </Switch>
