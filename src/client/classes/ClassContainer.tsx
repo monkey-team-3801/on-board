@@ -36,11 +36,10 @@ export const ClassContainer: React.FunctionComponent<Props> = (
 ) => {
     const { startTime: startTimeIso, endTime: endTimeIso } = props;
 
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete/classroom",
+    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        false
-    );
+        SessionDeleteRequestType
+    >("session/delete/classroom", undefined, false);
 
     const [deletePrivateRoomResponse, deletePrivateRoom] = useDynamicFetch<
         undefined,
@@ -144,9 +143,12 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                     <Button
                                         variant="info"
                                         onClick={props.onEditClick}
-                                        disabled={requestIsLoading(
-                                            deletePrivateRoomResponse
-                                        )}
+                                        disabled={
+                                            requestIsLoading(
+                                                deletePrivateRoomResponse
+                                            ) ||
+                                            requestIsLoading(deleteRoomResponse)
+                                        }
                                     >
                                         Edit
                                     </Button>
@@ -181,9 +183,12 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                 props.onDeleteClick?.();
                                             }
                                         }}
-                                        loading={requestIsLoading(
-                                            deletePrivateRoomResponse
-                                        )}
+                                        loading={
+                                            requestIsLoading(
+                                                deletePrivateRoomResponse
+                                            ) ||
+                                            requestIsLoading(deleteRoomResponse)
+                                        }
                                         invertLoader
                                     >
                                         Delete
