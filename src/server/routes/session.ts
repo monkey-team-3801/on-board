@@ -38,7 +38,7 @@ import {
     classFormDataHasError,
     createNewSession,
 } from "../utils";
-import { getUserDataFromJWT } from "./utils";
+import { getUserDataFromJWT, getAllClassroomSessions } from "./utils";
 
 export const router = express.Router();
 
@@ -142,46 +142,25 @@ router.post(
         {}
     >(async (req, res, next) => {
         try {
-            const sessions = await ClassroomSession.find().sort({
-                startTime: -1,
-            });
-            if (sessions && req.headers.authorization) {
+            if (req.headers.authorization) {
                 const currentUser = await getUserDataFromJWT(
                     req.headers.authorization
                 );
-                const query = await Promise.all(
-                    sessions.map(async (session) => {
-                        const user = await User.findById(session.createdBy);
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            roomType: session.roomType,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                            messages: session.messages,
-                            startTime: session.startTime,
-                            endTime: session.endTime,
-                            colourCode: session.colourCode,
-                            createdBy: session.createdBy,
-                            createdByUsername: user?.username,
-                            open: session.open,
-                        };
-                    })
-                );
-                res.json(
-                    query.filter((session) => {
-                        return currentUser?.courses.includes(
-                            session.courseCode
-                        );
-                    })
-                );
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(currentUser)
+                    );
+                } else {
+                    res.status(402);
+                }
             }
         } catch (e) {
             console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
         }
-        res.end();
     })
 );
 
@@ -197,44 +176,29 @@ router.post(
         { limit?: number }
     >(async (req, res, next) => {
         try {
-            const sessions = await ClassroomSession.find({ open: false });
-            if (sessions && req.headers.authorization) {
+            if (req.headers.authorization) {
                 const currentUser = await getUserDataFromJWT(
                     req.headers.authorization
                 );
-                const query = await Promise.all(
-                    sessions.map(async (session) => {
-                        const user = await User.findById(session.createdBy);
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            roomType: session.roomType,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                            messages: session.messages,
-                            startTime: session.startTime,
-                            endTime: session.endTime,
-                            colourCode: session.colourCode,
-                            createdBy: session.createdBy,
-                            createdByUsername: user?.username,
-                            open: session.open,
-                        };
-                    })
-                );
-                res.json(
-                    query.filter((session) => {
-                        return currentUser?.courses.includes(
-                            session.courseCode
-                        );
-                    })
-                );
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(
+                            currentUser,
+                            "upcoming",
+                            req.body.limit
+                        )
+                    );
+                } else {
+                    res.status(402);
+                }
             }
         } catch (e) {
             console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
         }
-        res.end();
     })
 );
 
