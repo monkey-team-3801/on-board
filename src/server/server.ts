@@ -16,6 +16,8 @@ import {
     RoomEvent,
     VideoEvent,
     GlobalEvent,
+    PrivateVideoRoomShareScreenData,
+    PrivateVideoRoomStopSharingData,
 } from "../events";
 import { Database, SessionUsers } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
@@ -164,6 +166,54 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     await session.save();
                 }
             });
+        }
+    );
+
+    socket.on(
+        VideoEvent.USER_START_SCREEN_SHARING,
+        async (userData: PrivateVideoRoomShareScreenData) => {
+            const { sessionId, userId, peerId } = userData;
+            const session = await VideoSession.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            // Too many sharing users
+            if (session.numScreensAllowed <= session.sharingUsers.size) {
+                return;
+            }
+            session.sharingUsers.set(userId, peerId);
+            await session.save();
+            socket.join(sessionId);
+            socket
+                .in(sessionId)
+                .emit(VideoEvent.USER_START_SCREEN_SHARING, userData);
+            socket.on("disconnect", () => {
+                session.sharingUsers.delete(userId);
+                socket
+                    .in(sessionId)
+                    .emit(VideoEvent.USER_STOP_STREAMING, userData);
+            });
+        }
+    );
+
+    socket.on(
+        VideoEvent.USER_STOP_STREAMING,
+        async (userData: PrivateVideoRoomStopSharingData) => {
+            const { sessionId, userId } = userData;
+            const session = await VideoSession.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            if (!session.sharingUsers.has(userId)) {
+                return;
+            }
+            session.sharingUsers.delete(userId);
+            await session.save();
+            socket.in(sessionId).emit(VideoEvent.USER_STOP_STREAMING, userData);
         }
     );
 

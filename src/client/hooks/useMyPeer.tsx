@@ -27,6 +27,12 @@ export const useMyPeer = (
     const [peerStreams, setPeerStreams] = useState<Map<string, MediaStream>>(
         Map()
     );
+    const [sharingStreams, setSharingStreams] = useState<
+        Map<string, MediaStream>
+    >(Map());
+    const [sharingCalls, setSharingCalls] = useState<
+        Map<string, MediaConnection>
+    >(Map());
     const [response] = useFetch<
         VideoPeersResponseType,
         { sessionId: string; userId: string }

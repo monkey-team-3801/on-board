@@ -39,6 +39,18 @@ export enum VideoEvent {
     FORCE_STOP_SCREEN_SHARING = "FORCE_STOP_SCREEN_SHARING",
 }
 
+export type PrivateVideoRoomStopSharingData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
+
+export type PrivateVideoRoomShareScreenData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
+
 export type PrivateVideoRoomJoinData = {
     sessionId: string;
     peerId: string;
