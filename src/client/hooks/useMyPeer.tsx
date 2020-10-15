@@ -7,24 +7,19 @@ import { VideoEvent } from "../../events";
 import { UserPeer, VideoPeersResponseType } from "../../types";
 import { useFetch } from "./useFetch";
 import { requestIsLoaded } from "../utils";
+import { peerOptions } from "../peer/peer";
 
 declare var process: any;
 
 export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
-const options: Peer.PeerJSOption = {
-    host: "/",
-    path: "/peerServer",
-    secure: process.env.NODE_ENV === "production",
-    port: process.env.NODE_ENV === "production" ? 443 : 5000,
-};
 
 export const useMyPeer = (
     socket: SocketIOClient.Socket,
     userId: string,
     sessionId: string
 ): PeerData => {
-    const [myPeer] = useState<Peer>(() => new Peer(options));
+    const [myPeer] = useState<Peer>(() => new Peer(peerOptions));
     const [myPeerId, setMyPeerId] = useState<PeerId>("");
     const [peerCalls, setPeerCalls] = useState<Map<string, MediaConnection>>(
         Map()
