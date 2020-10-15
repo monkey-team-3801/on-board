@@ -3,7 +3,11 @@ import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
 import { ChatEvent, ClassEvent, RoomEvent } from "../events";
-import { RoomType, UserDataResponseType } from "../types";
+import {
+    RoomType,
+    UserDataResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ChatModal } from "./chat";
 import { ClassesPageContainer } from "./classes";
@@ -35,6 +39,10 @@ export const AppProtectedRoutes = (props: Props) => {
     const [chatsWithNewMessageResponse, fetchChatsWithNewMessage] = useFetch<
         Array<string>
     >("/chat/hasNewMessage");
+
+    const [coursesResponse, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const userData = React.useMemo(() => {
         return {
@@ -122,6 +130,7 @@ export const AppProtectedRoutes = (props: Props) => {
                             chatWithNewMessages={
                                 chatsWithNewMessageResponse.data || []
                             }
+                            courses={coursesResponse.data?.courses || []}
                         />
                     );
                 }}
@@ -138,9 +147,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -155,9 +165,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -176,9 +187,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -195,10 +207,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.PRIVATE}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -215,10 +228,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.BREAKOUT}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}

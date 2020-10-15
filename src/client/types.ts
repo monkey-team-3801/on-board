@@ -1,4 +1,4 @@
-import { UserType } from "../types";
+import { UserType, UserEnrolledCoursesResponseType } from "../types";
 
 export enum RequestState {
     LOADING,
@@ -33,9 +33,10 @@ export type TopLayerContainerProps = {
     userData: {
         username: string;
         id: string;
-        courses: Array<string>;
         userType: UserType;
     };
+    coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
+    refreshCourses?: () => Promise<void>;
 };
 
 export type CourseOptionType = {
