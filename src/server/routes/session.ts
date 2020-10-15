@@ -142,7 +142,9 @@ router.post(
         {}
     >(async (req, res, next) => {
         try {
-            const sessions = await ClassroomSession.find();
+            const sessions = await ClassroomSession.find().sort({
+                startTime: -1,
+            });
             if (sessions && req.headers.authorization) {
                 const currentUser = await getUserDataFromJWT(
                     req.headers.authorization
@@ -319,7 +321,6 @@ router.post(
         { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
     >(async (req, res, next) => {
         try {
-            // TODO FIX THIS SHIT
             const data = req.body.data;
             const errorMessage = classFormDataHasError(data);
             if (errorMessage) {
@@ -330,42 +331,34 @@ router.post(
                     .end();
                 return;
             }
+            console.log(req.body);
             if (new Date(data.endTime).getTime() < new Date().getTime()) {
                 await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
                     ...req.body.data,
                 });
             } else {
-                const session = await ClassroomSession.findByIdAndDelete(
-                    req.body.data.id
+                const session = await ClassroomSession.findByIdAndUpdate(
+                    req.body.data.id,
+                    {
+                        ...req.body.data,
+                        open: false,
+                    }
                 );
                 if (session) {
-                    const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
-                    schedulerHandler.addNewJob({
+                    const schedulerHandler: ScheduleHandler<{
+                        id: string;
+                    }> = ScheduleHandler.getInstance();
+                    await schedulerHandler.removeQueuedJob(session._id);
+                    await schedulerHandler.addNewJob({
+                        jobId: session._id,
                         jobDate: req.body.data.startTime,
                         executingEvent: ExecutingEvent.CLASS_OPEN,
                         data: {
-                            ...data,
+                            id: session._id,
                         },
                     });
                 }
             }
-            if (req.body.type === RoomType.UPCOMING) {
-                const job = await Job.findById(req.body.data.id);
-                if (job) {
-                    const updatedJob: BaseJob = {
-                        jobDate: req.body.data.startTime,
-                        executingEvent: ExecutingEvent.CLASS_OPEN,
-                        data: {
-                            ...job.data,
-                            ...req.body.data,
-                        },
-                    };
-                    const scheduleHandler = ScheduleHandler.getInstance();
-                    scheduleHandler.removeQueuedJob(job._id);
-                    scheduleHandler.addNewJob(updatedJob);
-                }
-            }
-
             res.status(200);
         } catch (e) {
             console.log("error", e);

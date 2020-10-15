@@ -14,6 +14,8 @@ import {
     SessionDeleteRequestType,
     CreateClassroomJobRequestType,
     AnyJobRequestType,
+    ClassOpenJob,
+    AnnouncementJob,
 } from "../../types";
 import { ScheduleHandler } from "../jobs";
 import { getUserDataFromJWT } from "./utils";
@@ -50,7 +52,7 @@ router.post(
                         user._id.toHexString()
                     );
                     await schedulerHandler.addNewJob({
-                        _id: session._id,
+                        jobId: session._id,
                         executingEvent: ExecutingEvent.CLASS_OPEN,
                         jobDate: job.startTime,
                         data: {
@@ -77,6 +79,14 @@ router.post(
                         .end();
                     return;
                 }
+                schedulerHandler.addNewJob({
+                    ...job,
+                    executingEvent: ExecutingEvent.ANNOUNCEMENT,
+                    data: {
+                        ...job.data,
+                        userId: user._id,
+                    },
+                });
             }
             // console.log(
             //     "Job scheduled",
@@ -89,11 +99,7 @@ router.post(
             // );
             // const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
             // console.log("adding", user.id);
-            // schedulerHandler.addNewJob({
-            //     ...req.body,
-            //     createdBy: user.id,
-            // });
-            res.end();
+            res.status(200).end();
         }
     )
 );
@@ -109,7 +115,7 @@ router.post(
                 const job = await Job.findByIdAndDelete(req.body.id);
                 if (job) {
                     const scheduleHandler = ScheduleHandler.getInstance();
-                    scheduleHandler.removeQueuedJob(job._id);
+                    scheduleHandler.removeQueuedJob(job.jobId);
                 }
             } catch (e) {
                 res.status(500);

@@ -28,6 +28,7 @@ type Props = Partial<UpcomingClassroomSessionData> & {
     isRefreshing?: boolean;
     type: RoomType;
     setDeletedRooms?: React.Dispatch<React.SetStateAction<Array<string>>>;
+    currentUserId: string;
 };
 
 export const ClassContainer: React.FunctionComponent<Props> = (
@@ -37,12 +38,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
 
     const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
         "session/delete/classroom",
-        undefined,
-        false
-    );
-
-    const [, deleteJob] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "job/delete",
         undefined,
         false
     );
@@ -111,12 +106,16 @@ export const ClassContainer: React.FunctionComponent<Props> = (
             >
                 <Container className="button-container">
                     <Row>
-                        {props.type !== RoomType.UPCOMING ? (
+                        {props.open ||
+                        props.createdBy === props.currentUserId ? (
                             <Button
                                 variant="primary peach-gradient"
                                 onClick={props.onJoinClick}
                             >
-                                Join
+                                {!props.open &&
+                                props.createdBy === props.currentUserId
+                                    ? "Join (Instructor)"
+                                    : "Join"}
                             </Button>
                         ) : (
                             <OverlayTrigger
@@ -162,13 +161,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                     RoomType.CLASS
                                                 ) {
                                                     await deleteRoom({
-                                                        id: props.id,
-                                                    });
-                                                } else if (
-                                                    props.type ===
-                                                    RoomType.UPCOMING
-                                                ) {
-                                                    await deleteJob({
                                                         id: props.id,
                                                     });
                                                 } else if (

@@ -98,7 +98,6 @@ export enum RoomType {
     CLASS,
     PRIVATE,
     BREAKOUT,
-    UPCOMING,
 }
 
 export type SessionRequestType = {
@@ -141,7 +140,7 @@ export type UserDataResponseType = {
 // };
 
 export interface BaseJob<T = any> {
-    _id?: string;
+    jobId: string;
     jobDate: string;
     executingEvent: ExecutingEvent;
     data: T;

@@ -123,6 +123,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                             size="lg"
                             type={RoomType.PRIVATE}
                             setDeletedRooms={setDeletedRooms}
+                            currentUserId={props.userData.id}
                         />
                     );
                 })}

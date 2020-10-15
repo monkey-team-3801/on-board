@@ -1,21 +1,21 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { UserEnrolledCoursesResponseType } from "../../types";
 import { ContainerWrapper } from "../components";
+import { useFetch } from "../hooks";
 import { TopLayerContainerProps } from "../types";
 import { ClassroomDisplayContainer } from "./ClassroomDisplayContainer";
 import { PrivateRoomDisplayContainer } from "./PrivateRoomDisplayContainer";
-import { useFetch } from "../hooks";
-import { UserEnrolledCoursesResponseType } from "../../types";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
 export const ClassesPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
 
     return (
         <div className="classes-page">

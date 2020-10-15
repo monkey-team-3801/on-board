@@ -47,29 +47,25 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     }, [classroomsResponse, setLoading]);
 
     const filteredClassrooms = React.useMemo(() => {
-        if (roomActiveFilter === "Active" || !roomActiveFilter) {
-            return classroomsResponse.data?.filter((session) => {
-                return (
-                    session.name
-                        .toLocaleLowerCase()
-                        .includes(roomFilterValue.toLocaleLowerCase()) &&
-                    (courseFilter === "" || session.courseCode === courseFilter)
-                );
-            });
-        }
-    }, [roomFilterValue, roomActiveFilter, classroomsResponse, courseFilter]);
+        const openOrUpcoming = classroomsResponse.data?.filter((session) => {
+            if (!roomActiveFilter) {
+                return session;
+            } else if (roomActiveFilter === "Active") {
+                return session.open;
+            } else {
+                return !session.open;
+            }
+        });
 
-    // const filteredUpcomingRooms = React.useMemo(() => {
-    //     if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
-    //         return sortedClassrooms?.filter((session) => {
-    //             return (
-    //                 session.name.includes(roomFilterValue) &&
-    //                 courseFilter &&
-    //                 (courseFilter === "" || session.courseCode === courseFilter)
-    //             );
-    //         });
-    //     }
-    // }, [roomFilterValue, roomActiveFilter, sortedClassrooms, courseFilter]);
+        return openOrUpcoming?.filter((session) => {
+            return (
+                session.name
+                    .toLocaleLowerCase()
+                    .includes(roomFilterValue.toLocaleLowerCase()) &&
+                (courseFilter === "" || session.courseCode === courseFilter)
+            );
+        });
+    }, [roomFilterValue, roomActiveFilter, classroomsResponse, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
@@ -139,38 +135,11 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             }}
                             isRefreshing={requestIsLoading(classroomsResponse)}
                             size="lg"
-                            type={
-                                session.open
-                                    ? RoomType.CLASS
-                                    : RoomType.UPCOMING
-                            }
+                            type={RoomType.CLASS}
+                            currentUserId={props.userData.id}
                         />
                     );
                 })}
-            {/* {filteredUpcomingRooms &&
-                filteredUpcomingRooms.map((session, i) => {
-                    return (
-                        <ClassContainer
-                            {...session}
-                            key={session.id}
-                            canEdit={props.userData.id === session.createdBy}
-                            onEditClick={() => {
-                                setRoomSelection({
-                                    data: session,
-                                    type: RoomType.UPCOMING,
-                                });
-                            }}
-                            onDeleteClick={async () => {
-                                await getUpcomingClassrooms();
-                            }}
-                            isRefreshing={requestIsLoading(
-                                upcomingClassroomsResponse
-                            )}
-                            size="lg"
-                            type={RoomType.UPCOMING}
-                        />
-                    );
-                })} */}
             <EditClassroomModal
                 roomSelection={roomSelection}
                 courses={props.courses}

@@ -10,24 +10,25 @@ import { User, ClassroomSession } from "../database/schema";
 import { AnnouncementEvent, ClassEvent } from "../../events";
 
 const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
-    // console.log("Running job", job.jobDate, job.createdBy);
+    console.log("Running announcement job", job);
     const user = await User.findById(job.data.userId);
     const course = await Course.findOne({ code: job.data.courseCode });
-    if (user) {
-        course?.announcements?.push({
+    if (user && course) {
+        course.announcements.push({
             ...job.data,
             userId: user.id,
             username: user.username,
             date: job.jobDate,
         });
+        await course.save();
+        io.in(`${job.data.courseCode}_ANNOUNCEMENT`).emit(
+            AnnouncementEvent.NEW
+        );
     }
-    await course?.save();
-    io.in(`${job.data.courseCode}_ANNOUNCEMENT`).emit(AnnouncementEvent.NEW);
 };
 
 const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
     console.log("Running class job", job);
-
     const session = await ClassroomSession.findByIdAndUpdate(job.data.id, {
         open: true,
     });

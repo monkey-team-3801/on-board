@@ -84,6 +84,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <UpcomingClassesContainer
                                         setLoading={setLoading}
+                                        userId={props.userData.id}
                                     />
                                 );
                             }}

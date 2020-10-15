@@ -66,6 +66,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                     await Promise.all(
                         courses.map(async (option) => {
                             await createAnnouncement({
+                                jobId: v4(),
                                 jobDate: announcementTime.toISOString(),
                                 executingEvent: ExecutingEvent.ANNOUNCEMENT,
                                 data: {

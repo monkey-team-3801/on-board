@@ -1,10 +1,7 @@
 import schedule from "node-schedule";
-import { ObjectId } from "mongodb";
-
-import { Job, IJob } from "../database/schema";
 import { BaseJob } from "../../types";
+import { IJob, Job } from "../database/schema";
 import { jobRunner } from "./job-runner";
-import { v4 } from "uuid";
 
 /**
  * Basic handler for job scheduling.
@@ -25,7 +22,7 @@ export class ScheduleHandler<T = any> {
         (await Job.find()).forEach((job: IJob) => {
             if (new Date(job.jobDate).getTime() < new Date().getTime()) {
                 // Discard old jobs.
-                this.removeJobReference(job._id);
+                this.removeJobReference(job.jobId);
             } else {
                 // Queue new jobs for exexution.
                 console.log("Job queued", job.jobDate);
@@ -40,10 +37,10 @@ export class ScheduleHandler<T = any> {
      */
     private async queueNewJob(job: IJob): Promise<void> {
         this.jobMap.set(
-            job._id,
+            job.jobId,
             schedule.scheduleJob(new Date(job.jobDate), () => {
                 jobRunner(job);
-                this.removeQueuedJob(job._id);
+                this.removeQueuedJob(job.jobId);
             })
         );
     }
@@ -65,10 +62,6 @@ export class ScheduleHandler<T = any> {
             } else {
                 const jobReference: IJob = await Job.create({
                     ...job,
-                    _id: job._id || v4(),
-                    jobDate: job.jobDate,
-                    executingEvent: job.executingEvent,
-                    data: job.data,
                 });
                 this.queueNewJob(jobReference);
             }
@@ -91,7 +84,7 @@ export class ScheduleHandler<T = any> {
      * @param id ID of job to remove.
      */
     private async removeJobReference(id: string): Promise<void> {
-        await Job.deleteOne({ _id: id });
+        await Job.deleteOne({ jobId: id });
     }
 
     /**
