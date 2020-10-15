@@ -1,13 +1,9 @@
-import { io } from "../server";
-import { BaseJob, AnnouncementJob, ClassOpenJob } from "../../types";
-import {
-    isAnnouncementJob,
-    isClassOpenJob,
-    createNewClassroomSession,
-} from "../utils";
-import { Course } from "../database";
-import { User, ClassroomSession } from "../database/schema";
 import { AnnouncementEvent, ClassEvent } from "../../events";
+import { AnnouncementJob, BaseJob, ClassOpenJob } from "../../types";
+import { Course } from "../database";
+import { ClassroomSession, User } from "../database/schema";
+import { io } from "../server";
+import { isAnnouncementJob, isClassOpenJob } from "../utils";
 
 const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
     console.log("Running announcement job", job);

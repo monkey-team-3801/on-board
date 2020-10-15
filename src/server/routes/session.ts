@@ -1,8 +1,6 @@
 import express from "express";
 import { ExecutingEvent } from "../../events";
 import {
-    BaseJob,
-    ClassOpenJob,
     ClassroomSessionData,
     GetCanvasRequestType,
     GetCanvasResponseType,
@@ -17,7 +15,6 @@ import {
 import {
     BreakoutSession,
     ClassroomSession,
-    IJob,
     Job,
     Session,
     SessionCanvas,
@@ -38,7 +35,7 @@ import {
     classFormDataHasError,
     createNewSession,
 } from "../utils";
-import { getUserDataFromJWT, getAllClassroomSessions } from "./utils";
+import { getAllClassroomSessions, getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 

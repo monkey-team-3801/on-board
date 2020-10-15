@@ -1,26 +1,16 @@
 import express from "express";
-
+import { ExecutingEvent } from "../../events";
+import { AnyJobRequestType, SessionDeleteRequestType } from "../../types";
+import { ClassroomSession, Job } from "../database";
+import { ScheduleHandler } from "../jobs";
 import {
     asyncHandler,
-    isClassOpenJob,
-    isAnnouncementJob,
     classFormDataHasError,
     createNewClassroomSession,
-    isCreateClassroomRequestType,
     isCreateAnnouncementRequestType,
+    isCreateClassroomRequestType,
 } from "../utils";
-import {
-    BaseJob,
-    SessionDeleteRequestType,
-    CreateClassroomJobRequestType,
-    AnyJobRequestType,
-    ClassOpenJob,
-    AnnouncementJob,
-} from "../../types";
-import { ScheduleHandler } from "../jobs";
 import { getUserDataFromJWT } from "./utils";
-import { Job, ClassroomSession } from "../database";
-import { ExecutingEvent } from "../../events";
 
 export const router = express.Router();
 
