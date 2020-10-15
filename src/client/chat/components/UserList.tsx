@@ -6,6 +6,7 @@ import { FiAlertOctagon } from "react-icons/fi";
 type Props = {
     users: Array<UserDataResponseType>;
     myUserId: string;
+    targetUserId?: string;
     onlineUsers: Array<string>;
     setTargetUser: (
         user: UserDataResponseType & {
@@ -13,11 +14,17 @@ type Props = {
         }
     ) => void;
     chatWithNewMessages: Array<string>;
+    headerText?: string;
 };
 
 export const UserList: React.FunctionComponent<Props> = (props: Props) => {
+    if (props.users.length === 0) {
+        return <></>;
+    }
+
     return (
         <>
+            <h1>{props.headerText}</h1>
             {props.users.map((user) => {
                 const hasNewMessage = props.chatWithNewMessages.includes(
                     user.id
@@ -25,7 +32,9 @@ export const UserList: React.FunctionComponent<Props> = (props: Props) => {
                 return user.id !== props.myUserId ? (
                     <Container
                         key={user.id}
-                        className="user-select"
+                        className={`user-select ${
+                            props.targetUserId === user.id ? "selected" : ""
+                        }`}
                         onClick={() => {
                             props.setTargetUser({
                                 ...user,

@@ -150,39 +150,42 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                 <p className="text-muted">No results...</p>
                             )}
                             <Row className="mt-2">
-                                <h1>Coordinators</h1>
                                 <UserList
                                     users={coordinators || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Coordinators"
                                 />
                             </Row>
                             <Row className="mt-4">
-                                <h1>Tutors</h1>
                                 <UserList
                                     users={tutors || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Tutors"
                                 />
                             </Row>
                             <Row className="mt-4">
-                                <h1>Students</h1>
                                 <UserList
                                     users={students || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Students"
                                 />
                             </Row>
                         </Col>
