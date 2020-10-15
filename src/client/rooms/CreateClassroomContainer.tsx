@@ -5,8 +5,8 @@ import {
     UpcomingClassroomSessionData,
 } from "../../types";
 import { useDynamicFetch } from "../hooks";
+import { requestIsLoading } from "../utils";
 import { ScheduleRoomFormContainer } from "./ScheduleRoomFormContainer";
-import { requestIsLoading, requestIsLoaded } from "../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +28,7 @@ export const CreateClassroomContainer: React.FunctionComponent<Props> = (
             response={createClassroomResponse}
             refreshKey={props.refreshKey}
             courses={props.courses}
-            submitting={requestIsLoaded(createClassroomResponse)}
+            submitting={requestIsLoading(createClassroomResponse)}
             onSubmit={async (
                 data: Omit<UpcomingClassroomSessionData, "id" | "open">
             ) => {

@@ -19,7 +19,6 @@ type Props = {
     courses: Array<string>;
     submitting?: boolean;
     refreshKey?: number;
-    successText?: string;
 };
 
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
@@ -74,7 +73,7 @@ export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
                     submitText={"Create Room"}
                 />
             }
-            {requestIsLoaded(props.response) && props.submitting && (
+            {requestIsLoaded(props.response) && (
                 <Alert variant="success">Successfully created room</Alert>
             )}
             {new Date().getTime() > startingTime.getTime() && (
