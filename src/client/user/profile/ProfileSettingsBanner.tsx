@@ -1,5 +1,5 @@
 import React from "react";
-import { ProfilePictureContainer } from "./ProfilePictureContainer";
+import { ProfilePictureContainer } from "../ProfilePictureContainer";
 
 type Props = {
     userID: string;

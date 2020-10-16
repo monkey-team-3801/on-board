@@ -22,7 +22,7 @@ import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
-import { ProfileSettings } from "./user/ProfileSettings";
+import { ProfileSettings } from "./user/profile/ProfileSettings";
 import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
