@@ -83,6 +83,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                     <Form.Label>Course</Form.Label>
                     <Select
                         options={courseCodes}
+                        value={enrolledCourse}
                         onChange={(value) => {
                             if (value && Array.isArray(value)) {
                                 setEnrolledCourses(value);

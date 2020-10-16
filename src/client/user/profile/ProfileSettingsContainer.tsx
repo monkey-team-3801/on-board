@@ -1,6 +1,7 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import { EnrolmentOptionsContainer } from "./EnrolmentOptionsContainer";
+import { Container, Row } from "react-bootstrap";
+import { ContainerWrapper } from "../../components";
+import { EnrolFormContainer } from "../../courses";
 import { GeneralOptionsContainer } from "./GeneralOptionsContainer";
 
 type Props = {
@@ -12,21 +13,29 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     return (
-        <Container fluid>
-            <Row style={{ paddingTop: "2%" }}>
-                <Col xs={5}>
-                    <h2>User Details</h2>
-                    <hr></hr>
-                    <Row>
-                        <GeneralOptionsContainer {...props} />
-                    </Row>
-                </Col>
-
-                <Col>
-                    <h2>Enrolment</h2>
-                    <hr></hr>
-                    <EnrolmentOptionsContainer {...props} />
-                </Col>
+        <Container style={{ paddingTop: "2%" }}>
+            <h2>User Details</h2>
+            <hr></hr>
+            <Row>
+                <GeneralOptionsContainer {...props} />
+            </Row>
+            <h2>Enrolment</h2>
+            <hr></hr>
+            <h6>
+                Courses you are enrolled in are displayed below. Use the
+                dropdown to add/remove courses.
+            </h6>
+            <Row>
+                <ContainerWrapper>
+                    {(setLoading) => {
+                        return (
+                            <EnrolFormContainer
+                                userId={props.userID}
+                                setLoading={setLoading}
+                            />
+                        );
+                    }}
+                </ContainerWrapper>
             </Row>
         </Container>
     );
