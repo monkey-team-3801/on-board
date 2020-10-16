@@ -27,10 +27,16 @@ export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
 
     const handleSubmitUsername = async () => {
         await changeUsername({ userID: props.userID, newName: username });
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
     };
 
     const handleSubmitPassword = async () => {
         await changePassword({ userID: props.userID, password: password });
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
     };
 
     return (
@@ -67,7 +73,7 @@ export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
                             )}
                             {requestIsLoaded(userResData) && (
                                 <p style={{ color: "red" }}>
-                                    Username has been successfully changed.
+                                    Username has been successfully changed!
                                 </p>
                             )}
                             <br></br>
@@ -91,7 +97,7 @@ export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
                             </Button>
                             {requestIsLoaded(passwordResData) && (
                                 <p style={{ color: "red" }}>
-                                    Password has been successfully changed
+                                    Password has been successfully changed!
                                 </p>
                             )}
                         </Form.Group>
