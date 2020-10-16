@@ -45,7 +45,7 @@ export const UserList: React.FunctionComponent<Props> = (props: Props) => {
                     >
                         <Row className="d-flex">
                             <Col className="d-flex align-items-center">
-                                <ProfilePicture id={user.id} />
+                                <ProfilePicture userId={user.id} />
                                 <p className="ml-3 text-truncate">
                                     {user.username}
                                 </p>
