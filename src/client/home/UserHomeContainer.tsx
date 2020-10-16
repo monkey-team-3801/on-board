@@ -1,9 +1,11 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { AnnouncementEvent } from "../../events";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
+import { useSocket } from "../hooks";
 import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
@@ -18,8 +20,26 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { userData, coursesResponse } = props;
+    const { courses } = userData;
+    const componentDidMount = React.useCallback(
+        (socket: SocketIOClient.Socket) => {
+            return socket.emit(
+                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+                {
+                    courses,
+                }
+            );
+        },
+        [courses]
+    );
 
-    const [refreshKey] = React.useState<number>(0);
+    useSocket(AnnouncementEvent.NEW, undefined, componentDidMount, () => {
+        setRefreshKey((k) => {
+            return k + 1;
+        });
+    });
+
+    const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
     return (
         <div className="homepage">
