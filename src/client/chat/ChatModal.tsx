@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Container, Modal, Row } from "react-bootstrap";
+import { Col, Container, Modal, Row, Form } from "react-bootstrap";
 import { useDebouncedCallback } from "use-debounce/lib";
 import { GlobalEvent } from "../../events";
 import { UserDataResponseType, UserType } from "../../types";
@@ -9,11 +9,13 @@ import { socket } from "../io";
 import { ChatModalStatusType } from "../types";
 import { ChatSession } from "./ChatSession";
 import { UserList } from "./components";
+import Select from "react-select";
 
 type Props = ChatModalStatusType & {
     myUserId: string;
     myUsername: string;
     chatWithNewMessages: Array<string>;
+    courses: Array<string>;
 };
 
 export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
@@ -35,23 +37,35 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         | undefined
     >();
 
-    const coordinators = React.useMemo(() => {
+    const [userFilter, setUserFilter] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<string>("");
+
+    const filteredUsers = React.useMemo(() => {
         return userResponse.data?.filter((user) => {
+            return (
+                user.username.toLowerCase().includes(userFilter) &&
+                (courseFilter === "" || user.courses.includes(courseFilter))
+            );
+        });
+    }, [userFilter, courseFilter, userResponse]);
+
+    const coordinators = React.useMemo(() => {
+        return filteredUsers?.filter((user) => {
             return user.userType === UserType.COORDINATOR;
         });
-    }, [userResponse]);
+    }, [filteredUsers]);
 
     const tutors = React.useMemo(() => {
-        return userResponse.data?.filter((user) => {
+        return filteredUsers?.filter((user) => {
             return user.userType === UserType.TUTOR;
         });
-    }, [userResponse]);
+    }, [filteredUsers]);
 
     const students = React.useMemo(() => {
-        return userResponse.data?.filter((user) => {
+        return filteredUsers?.filter((user) => {
             return user.userType === UserType.STUDENT;
         });
-    }, [userResponse]);
+    }, [filteredUsers]);
 
     const debouncedFetchOnlineUsers = useDebouncedCallback(
         fetchOnlineUsers,
@@ -103,40 +117,75 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                 <Container>
                     <Row>
                         <Col lg="4" className="user-list-container">
+                            <Row>
+                                <Container>
+                                    <Form.Label>Search user</Form.Label>
+                                    <Form.Control
+                                        className="mb-3"
+                                        type="text"
+                                        placeholder="Search users..."
+                                        onChange={(e) => {
+                                            setUserFilter(e.target.value);
+                                        }}
+                                    />
+                                    <Form.Label>Filter courses</Form.Label>
+                                    <Select
+                                        className="mb-3"
+                                        placeholder="Filter course..."
+                                        options={props.courses?.map((code) => {
+                                            return { value: code, label: code };
+                                        })}
+                                        isClearable
+                                        onChange={(value) => {
+                                            setCourseFilter(
+                                                ((value as unknown) as {
+                                                    value: string;
+                                                } | null)?.value ?? ""
+                                            );
+                                        }}
+                                    />
+                                </Container>
+                            </Row>
+                            {filteredUsers?.length === 0 && (
+                                <p className="text-muted">No results...</p>
+                            )}
                             <Row className="mt-2">
-                                <h1>Coordinators</h1>
                                 <UserList
                                     users={coordinators || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Coordinators"
                                 />
                             </Row>
                             <Row className="mt-4">
-                                <h1>Tutors</h1>
                                 <UserList
                                     users={tutors || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Tutors"
                                 />
                             </Row>
                             <Row className="mt-4">
-                                <h1>Students</h1>
                                 <UserList
                                     users={students || []}
+                                    targetUserId={targetUser?.id}
                                     myUserId={props.myUserId}
                                     onlineUsers={onlineUserResponse.data || []}
                                     setTargetUser={setTargetUser}
                                     chatWithNewMessages={
                                         props.chatWithNewMessages
                                     }
+                                    headerText="Students"
                                 />
                             </Row>
                         </Col>

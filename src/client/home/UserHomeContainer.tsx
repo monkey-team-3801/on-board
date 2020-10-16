@@ -6,31 +6,26 @@ import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
-import { useSocket, useFetch } from "../hooks";
+import { useSocket } from "../hooks";
 import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
+import { requestIsLoaded } from "../utils";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
-import { UserEnrolledCoursesResponseType } from "../../types";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userData } = props;
-    const { courses } = userData;
-
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
+    const { userData, coursesResponse, refreshCourses } = props;
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
+    const announcementSubscribe = React.useCallback(
+        (socket: SocketIOClient.Socket, courses: Array<string>) => {
             return socket.emit(
                 AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
                 {
@@ -38,13 +33,13 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 }
             );
         },
-        [courses]
+        []
     );
 
     const { socket } = useSocket(
         AnnouncementEvent.NEW,
         undefined,
-        componentDidMount,
+        undefined,
         () => {
             setRefreshKey((k) => {
                 return k + 1;
@@ -52,12 +47,18 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         }
     );
 
+    React.useEffect(() => {
+        if (requestIsLoaded(coursesResponse)) {
+            announcementSubscribe(socket, coursesResponse.data.courses);
+        }
+    }, [announcementSubscribe, coursesResponse, socket]);
+
     const refreshAnnouncements = React.useCallback(() => {
         setRefreshKey((k) => {
             return k + 1;
         });
-        refreshCourseData();
-    }, [refreshCourseData]);
+        refreshCourses?.();
+    }, [refreshCourses]);
 
     return (
         <div className="homepage">
@@ -97,7 +98,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <CreatePrivateRoomContainer
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
-                                        courses={courseData.data?.courses || []}
+                                        courses={
+                                            coursesResponse.data?.courses || []
+                                        }
                                         {...props}
                                     />
                                 );
@@ -111,7 +114,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <CreateClassroomContainer
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
-                                        courses={courseData.data?.courses || []}
+                                        courses={
+                                            coursesResponse.data?.courses || []
+                                        }
                                     />
                                 );
                             }}
@@ -130,7 +135,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refreshKey={refreshKey}
                                         userId={userData.id}
                                         setLoading={setLoading}
-                                        courses={courseData.data?.courses || []}
+                                        courses={
+                                            coursesResponse.data?.courses || []
+                                        }
                                     />
                                 );
                             }}
@@ -145,7 +152,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refresh={refreshAnnouncements}
                                         userId={userData.id}
                                         socket={socket}
-                                        courses={courseData.data?.courses || []}
+                                        courses={
+                                            coursesResponse.data?.courses || []
+                                        }
                                     />
                                 );
                             }}
@@ -159,7 +168,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         userId={userData.id}
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
-                                        courses={courseData.data?.courses || []}
+                                        courses={
+                                            coursesResponse.data?.courses || []
+                                        }
                                     />
                                 );
                             }}
