@@ -88,7 +88,7 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                         <div className="profile">
                                             <ProfilePicture
                                                 userId={announcement.userId}
-                                                classNames="profile-image"
+                                                className="profile-image"
                                                 openChatOnClick
                                             />
                                         </div>

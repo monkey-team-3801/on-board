@@ -6,6 +6,7 @@ import {
 } from "./types";
 
 import { ResponseType } from "./types";
+import { UserType } from "../types";
 
 /**
  * Type guard to check if a request was loaded.
@@ -85,3 +86,14 @@ export const baseRoomTypeOptions = [
         label: "Studio",
     },
 ];
+
+export const userTypeToClass = (userType: UserType) => {
+    switch (userType) {
+        case UserType.STUDENT:
+            return "student";
+        case UserType.TUTOR:
+            return "tutor";
+        case UserType.COORDINATOR:
+            return "coordinator";
+    }
+};

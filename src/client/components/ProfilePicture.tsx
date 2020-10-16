@@ -5,7 +5,8 @@ import { ChatModalStatusContext } from "../context";
 
 type Props = {
     userId: string;
-    classNames?: string;
+    className?: string;
+    imgClassName?: string;
     openChatOnClick?: boolean;
 };
 
@@ -13,10 +14,11 @@ export const ProfilePicture = (props: Props) => {
     const modalContext = React.useContext(ChatModalStatusContext);
 
     return (
-        <MDBView hover={props.openChatOnClick} className={props.classNames}>
+        <MDBView hover={props.openChatOnClick} className={props.className}>
             <img
                 src={`/filehandler/getPfp/${props.userId}`}
                 alt="user profile"
+                className={props.imgClassName}
             />
             {props.openChatOnClick && (
                 <MDBMask
