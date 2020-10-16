@@ -2,6 +2,7 @@ import React from "react";
 import { UserDataResponseType } from "../../../types";
 import { Container, Row, Col } from "react-bootstrap";
 import { FiAlertOctagon } from "react-icons/fi";
+import { ProfilePicture } from "../../components";
 
 type Props = {
     users: Array<UserDataResponseType>;
@@ -44,10 +45,7 @@ export const UserList: React.FunctionComponent<Props> = (props: Props) => {
                     >
                         <Row className="d-flex">
                             <Col className="d-flex align-items-center">
-                                <img
-                                    src={`/filehandler/getPfp/${user.id}`}
-                                    alt="profile"
-                                />
+                                <ProfilePicture id={user.id} />
                                 <p className="ml-3 text-truncate">
                                     {user.username}
                                 </p>

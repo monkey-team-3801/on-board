@@ -4,7 +4,7 @@ import { ChatModalStatusType } from "../types";
 type ChatModalContextType = {
     status: ChatModalStatusType;
     onClose?: () => void;
-    onOpen?: () => void;
+    onOpen?: (selectedId?: string) => void;
 };
 
 export const ChatModalStatusContext = React.createContext<ChatModalContextType>(

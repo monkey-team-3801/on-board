@@ -62,7 +62,6 @@ export const AppProtectedRoutes = (props: Props) => {
     const onChatStatusChange = React.useCallback(
         (targetUserId?: string) => {
             if (id === targetUserId) {
-                console.log("status change", id, targetUserId);
                 fetchChatsWithNewMessage();
             }
         },

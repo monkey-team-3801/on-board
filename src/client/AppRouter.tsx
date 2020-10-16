@@ -29,11 +29,12 @@ export const AppRouter: React.FunctionComponent<{}> = () => {
                                 };
                             });
                         },
-                        onOpen: () => {
+                        onOpen: (selectedId?: string) => {
                             setChatModalStatus((prev) => {
                                 return {
                                     ...prev,
                                     open: true,
+                                    selectedId,
                                 };
                             });
                         },
