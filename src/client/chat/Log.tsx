@@ -37,6 +37,7 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
                         <br></br>
                         {content}
                         <br></br>
+
                         {` (${format(
                             new Date(sentTime),
                             "MM/dd hh:mm"
