@@ -10,7 +10,6 @@ import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    refresh: () => void;
     userId: string;
     socket: SocketIOClient.Socket;
     courses: Array<string>;
@@ -19,17 +18,13 @@ type Props = {
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, refresh, socket, setLoading } = props;
+    const { userId, setLoading, socket } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
-
-    const refreshAnnouncements = React.useCallback(() => {
-        refresh();
-    }, [refresh]);
 
     const [enrolCourseResponse, enrolInCourses] = useDynamicFetch<
         undefined,
         EnrolCourseRequestType
-    >("/user/enrol", undefined, false, refreshAnnouncements);
+    >("/user/enrol", undefined, false);
 
     const [courseCodes, setCourseCodes] = React.useState<
         Array<CourseOptionType>
@@ -88,7 +83,6 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                     <Form.Label>Course</Form.Label>
                     <Select
                         options={courseCodes}
-                        value={enrolledCourse}
                         onChange={(value) => {
                             if (value && Array.isArray(value)) {
                                 setEnrolledCourses(value);

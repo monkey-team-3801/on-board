@@ -12,9 +12,6 @@ export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Container>
-            <h2>General</h2>
-            <h5>Change your personal details here.</h5>
-            <hr></hr>
             <Row>
                 <Col>
                     <Form>

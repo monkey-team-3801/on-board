@@ -1,12 +1,9 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
-import { AnnouncementEvent } from "../../events";
 import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
-import { EnrolFormContainer } from "../courses";
-import { useSocket } from "../hooks";
 import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
@@ -20,45 +17,9 @@ type Props = RouteComponentProps & TopLayerContainerProps & {};
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userData, coursesResponse, refreshCourses } = props;
+    const { userData, coursesResponse } = props;
 
-    const [refreshKey, setRefreshKey] = React.useState<number>(0);
-
-    const announcementSubscribe = React.useCallback(
-        (socket: SocketIOClient.Socket, courses: Array<string>) => {
-            return socket.emit(
-                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
-                {
-                    courses,
-                }
-            );
-        },
-        []
-    );
-
-    const { socket } = useSocket(
-        AnnouncementEvent.NEW,
-        undefined,
-        undefined,
-        () => {
-            setRefreshKey((k) => {
-                return k + 1;
-            });
-        }
-    );
-
-    React.useEffect(() => {
-        if (requestIsLoaded(coursesResponse)) {
-            announcementSubscribe(socket, coursesResponse.data.courses);
-        }
-    }, [announcementSubscribe, coursesResponse, socket]);
-
-    const refreshAnnouncements = React.useCallback(() => {
-        setRefreshKey((k) => {
-            return k + 1;
-        });
-        refreshCourses?.();
-    }, [refreshCourses]);
+    const [refreshKey] = React.useState<number>(0);
 
     return (
         <div className="homepage">
@@ -135,23 +96,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refreshKey={refreshKey}
                                         userId={userData.id}
                                         setLoading={setLoading}
-                                        courses={
-                                            coursesResponse.data?.courses || []
-                                        }
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        <ContainerWrapper title="Course Enrolment">
-                            {(setLoading) => {
-                                return (
-                                    <EnrolFormContainer
-                                        setLoading={setLoading}
-                                        refresh={refreshAnnouncements}
-                                        userId={userData.id}
-                                        socket={socket}
                                         courses={
                                             coursesResponse.data?.courses || []
                                         }
