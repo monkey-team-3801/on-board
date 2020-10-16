@@ -76,7 +76,13 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Header>Settings</Dropdown.Header>
-                        <Dropdown.Item>Profile</Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => {
+                                props.history.push("/profile");
+                            }}
+                        >
+                            Profile
+                        </Dropdown.Item>
                         <Dropdown.Divider />
                         <Dropdown.Item
                             onClick={() => {
