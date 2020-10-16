@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { AvatarSettings } from "./AvatarSettings";
 
 type Props = {
     userID: string;
@@ -10,45 +11,34 @@ export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     return (
-        <div style={{ width: "70%" }}>
+        <Container>
             <h2>General</h2>
             <h5>Change your personal details here.</h5>
             <hr></hr>
-            <Form>
-                <Form.Group>
-                    <Form.Label>
-                        <h6>Username</h6>
-                    </Form.Label>
-                    <Form.Control defaultValue={props.username}></Form.Control>
-                    <Button size="sm">Change</Button>
-                    <br></br>
-                    <Form.Label>
-                        <h6>Change Your Password</h6>
-                    </Form.Label>
-                    <Form.Control></Form.Control>
-                    <Button size="sm">Change</Button>
-                </Form.Group>
-                <br></br>
-                <h4>Details</h4>
-                <hr></hr>
-                <Form.Group>
-                    <Form.Label>
-                        <h6>Real Name</h6>
-                    </Form.Label>
-                    <Form.Control defaultValue={"test"}></Form.Control>
-                    <br></br>
-                    <Form.Label>
-                        <h6>Location</h6>
-                    </Form.Label>
-                    <Form.Control defaultValue={"test"}></Form.Control>
-                    <br></br>
-                    <Form.Label>
-                        <h6>Phone Number</h6>
-                    </Form.Label>
-                    <Form.Control defaultValue={"test"}></Form.Control>
-                    <Button size="sm">Save</Button>
-                </Form.Group>
-            </Form>
-        </div>
+            <Row>
+                <Col>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>
+                                <h6>Username</h6>
+                            </Form.Label>
+                            <Form.Control
+                                defaultValue={props.username}
+                            ></Form.Control>
+                            <Button size="sm">Change</Button>
+                            <br></br>
+                            <Form.Label>
+                                <h6>Password</h6>
+                            </Form.Label>
+                            <Form.Control></Form.Control>
+                            <Button size="sm">Change</Button>
+                        </Form.Group>
+                    </Form>
+                </Col>
+                <Col md="auto">
+                    <AvatarSettings {...props} />
+                </Col>
+            </Row>
+        </Container>
     );
 };

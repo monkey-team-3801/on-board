@@ -1,5 +1,8 @@
 import React from "react";
+import { FileUploadType } from "../../../types";
+import { UploadContainer } from "../../filehandler/UploadContainer";
 import { ProfilePictureContainer } from "../ProfilePictureContainer";
+import "./Settings.less";
 
 type Props = {
     userID: string;
@@ -10,10 +13,10 @@ export const AvatarSettings: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     return (
-        <div id="banner">
-            <h2>Avatar</h2>
+        <div className="avatar-settings">
             <ProfilePictureContainer userId={props.userID} />
-            <h3>{props.username}</h3>
+            <UploadContainer {...props} uploadType={FileUploadType.PROFILE} />
+            <h4>Avatar</h4>
         </div>
     );
 };
