@@ -14,6 +14,7 @@ import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
+import { UserInfoContainer } from "./containers";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -124,6 +125,22 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                     </Row>
                 </Col>
                 <Col xl="6" lg="6" md="12">
+                    <Row>
+                        <ContainerWrapper
+                            className="user-info-container"
+                            title="Your Profile"
+                        >
+                            {(setLoading) => {
+                                return (
+                                    <UserInfoContainer
+                                        setLoading={setLoading}
+                                        coursesResponse={coursesResponse}
+                                        {...props.userData}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
                     <Row>
                         <ContainerWrapper
                             className="announcements-container"
