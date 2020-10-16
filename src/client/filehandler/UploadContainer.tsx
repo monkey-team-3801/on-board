@@ -78,6 +78,7 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
+            window.location.reload();
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
             formData.append("document", IdData);
             await uploadFile(formData);

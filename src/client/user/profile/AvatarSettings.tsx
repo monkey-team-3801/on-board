@@ -18,8 +18,7 @@ export const AvatarSettings: React.FunctionComponent<Props> = (
             <h6 className="mt-2">Profile Picture</h6>
             <ProfilePictureContainer userId={props.userID} />
             <UploadContainer {...props} uploadType={FileUploadType.PROFILE} />
-
-            <div style={{ display: "inline" }}>
+            <div>
                 <MdEdit className="editIcon" size={42} color={"white"} />
             </div>
         </div>
