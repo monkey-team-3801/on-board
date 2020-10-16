@@ -1,13 +1,16 @@
 import React from "react";
 import { Col, Container, Nav, NavItem, Row } from "react-bootstrap";
-import { ProfileOptionsContainer } from "./ProfileOptionsContainer";
-import { ProfilePictureContainer } from "./ProfilePictureContainer";
+import { GeneralOptionsContainer } from "./GeneralOptionsContainer";
+import { ProfileSettingsBanner } from "./ProfileSettingsBanner";
 
 type Props = {
     userID: string;
+    username: string;
 };
 
-export const ProfilePage: React.FunctionComponent<Props> = (props: Props) => {
+export const ProfileSettings: React.FunctionComponent<Props> = (
+    props: Props
+) => {
     const [navState, setNavState] = React.useState<number>(0);
 
     return (
@@ -34,12 +37,20 @@ export const ProfilePage: React.FunctionComponent<Props> = (props: Props) => {
                                     setNavState(1);
                                 }}
                             >
-                                Enrolment
+                                Avatar
                             </Nav.Link>
                             <Nav.Link
                                 active={navState === 2}
                                 onClick={() => {
                                     setNavState(2);
+                                }}
+                            >
+                                Enrolment
+                            </Nav.Link>
+                            <Nav.Link
+                                active={navState === 3}
+                                onClick={() => {
+                                    setNavState(3);
                                 }}
                             >
                                 Account
@@ -49,12 +60,12 @@ export const ProfilePage: React.FunctionComponent<Props> = (props: Props) => {
                 </Col>
                 <Col>
                     <Row>
-                        <Col>
-                            <ProfileOptionsContainer />
-                        </Col>
-                        <Col>
-                            <ProfilePictureContainer userId={props.userID} />
-                        </Col>
+                        <ProfileSettingsBanner
+                            {...props}
+                        ></ProfileSettingsBanner>
+                    </Row>
+                    <Row>
+                        <GeneralOptionsContainer />
                     </Row>
                 </Col>
             </Row>
