@@ -6,13 +6,14 @@ type Props = {
     username: string;
 };
 
-export const ProfileSettingsBanner: React.FunctionComponent<Props> = (
+export const AvatarSettings: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     return (
-        <div>
+        <div id="banner">
+            <h2>Avatar</h2>
             <ProfilePictureContainer userId={props.userID} />
-            <h1>{props.username}</h1>
+            <h3>{props.username}</h3>
         </div>
     );
 };

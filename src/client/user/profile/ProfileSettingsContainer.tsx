@@ -1,14 +1,14 @@
 import React from "react";
 import { Col, Container, Nav, NavItem, Row } from "react-bootstrap";
 import { GeneralOptionsContainer } from "./GeneralOptionsContainer";
-import { ProfileSettingsBanner } from "./ProfileSettingsBanner";
+import { AvatarSettings } from "./AvatarSettings";
 
 type Props = {
     userID: string;
     username: string;
 };
 
-export const ProfileSettings: React.FunctionComponent<Props> = (
+export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const [navState, setNavState] = React.useState<number>(0);
@@ -19,11 +19,13 @@ export const ProfileSettings: React.FunctionComponent<Props> = (
                 <h1>Settings</h1>
             </Row>
             <Row>
-                <Col>
-                    <Nav variant="pills" defaultActiveKey="general">
-                        <NavItem className="flex-column">
+                <Col xs={2}>
+                    <Nav variant="pills">
+                        <NavItem
+                            className="flex-column"
+                            style={{ width: "100%" }}
+                        >
                             <Nav.Link
-                                eventKey="general"
                                 active={navState === 0}
                                 onClick={() => {
                                     setNavState(0);
@@ -60,12 +62,12 @@ export const ProfileSettings: React.FunctionComponent<Props> = (
                 </Col>
                 <Col>
                     <Row>
-                        <ProfileSettingsBanner
-                            {...props}
-                        ></ProfileSettingsBanner>
-                    </Row>
-                    <Row>
-                        <GeneralOptionsContainer />
+                        <Col xs={8}>
+                            <GeneralOptionsContainer {...props} />
+                        </Col>
+                        <Col xs={1}>
+                            <AvatarSettings {...props} />
+                        </Col>
                     </Row>
                 </Col>
             </Row>
