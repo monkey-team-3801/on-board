@@ -6,13 +6,14 @@ import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
 import { EnrolFormContainer } from "../courses";
-import { useSocket } from "../hooks";
+import { useSocket, useFetch } from "../hooks";
 import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
+import { UserEnrolledCoursesResponseType } from "../../types";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
@@ -21,6 +22,10 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
 ) => {
     const { userData } = props;
     const { courses } = userData;
+
+    const [courseData, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
@@ -51,7 +56,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         setRefreshKey((k) => {
             return k + 1;
         });
-    }, []);
+        refreshCourseData();
+    }, [refreshCourseData]);
 
     return (
         <div className="homepage">
@@ -78,6 +84,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <UpcomingClassesContainer
                                         setLoading={setLoading}
+                                        userId={props.userData.id}
                                     />
                                 );
                             }}
@@ -90,6 +97,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <CreatePrivateRoomContainer
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
+                                        courses={courseData.data?.courses || []}
                                         {...props}
                                     />
                                 );
@@ -103,6 +111,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <CreateClassroomContainer
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}
@@ -121,6 +130,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refreshKey={refreshKey}
                                         userId={userData.id}
                                         setLoading={setLoading}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}
@@ -135,6 +145,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refresh={refreshAnnouncements}
                                         userId={userData.id}
                                         socket={socket}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}
@@ -148,6 +159,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         userId={userData.id}
                                         setLoading={setLoading}
                                         refreshKey={refreshKey}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}

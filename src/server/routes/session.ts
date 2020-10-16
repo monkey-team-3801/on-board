@@ -1,8 +1,6 @@
 import express from "express";
 import { ExecutingEvent } from "../../events";
 import {
-    BaseJob,
-    ClassOpenJob,
     ClassroomSessionData,
     GetCanvasRequestType,
     GetCanvasResponseType,
@@ -17,7 +15,6 @@ import {
 import {
     BreakoutSession,
     ClassroomSession,
-    IJob,
     Job,
     Session,
     SessionCanvas,
@@ -38,7 +35,7 @@ import {
     classFormDataHasError,
     createNewSession,
 } from "../utils";
-import { getUserDataFromJWT } from "./utils";
+import { getAllClassroomSessions, getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -142,43 +139,25 @@ router.post(
         {}
     >(async (req, res, next) => {
         try {
-            const sessions = await ClassroomSession.find();
-            if (sessions && req.headers.authorization) {
+            if (req.headers.authorization) {
                 const currentUser = await getUserDataFromJWT(
                     req.headers.authorization
                 );
-                const query = await Promise.all(
-                    sessions.map(async (session) => {
-                        const user = await User.findById(session.createdBy);
-                        return {
-                            id: session._id,
-                            name: session.name,
-                            roomType: session.roomType,
-                            description: session.description,
-                            courseCode: session.courseCode,
-                            messages: session.messages,
-                            startTime: session.startTime,
-                            endTime: session.endTime,
-                            colourCode: session.colourCode,
-                            createdBy: session.createdBy,
-                            createdByUsername: user?.username,
-                        };
-                    })
-                );
-                res.json(
-                    query.filter((session) => {
-                        return currentUser?.courses.includes(
-                            session.courseCode
-                        );
-                    })
-                );
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(currentUser)
+                    );
+                } else {
+                    res.status(402);
+                }
             }
         } catch (e) {
             console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
         }
-        res.end();
     })
 );
 
@@ -193,58 +172,30 @@ router.post(
         {},
         { limit?: number }
     >(async (req, res, next) => {
-        if (req.headers.authorization) {
-            const user = await getUserDataFromJWT(req.headers.authorization);
-            if (user) {
-                try {
-                    const query: Array<ClassOpenJob & IJob> = (await Job.find({
-                        executingEvent: ExecutingEvent.CLASS_OPEN,
-                    })) as Array<ClassOpenJob & IJob>;
-
-                    const jobs = query
-                        .filter((job) => {
-                            return user.courses.includes(job.data.courseCode);
-                        })
-                        .sort((a, b) => {
-                            return (
-                                new Date(a.data.startTime).getTime() -
-                                new Date(b.data.startTime).getTime()
-                            );
-                        });
-
-                    if (jobs) {
-                        res.json(
-                            await Promise.all(
-                                jobs.map(async (job) => {
-                                    const session = job.data;
-                                    const user = await User.findById(
-                                        session.createdBy
-                                    );
-                                    return {
-                                        id: job._id.toHexString(),
-                                        name: session.name,
-                                        roomType: session.roomType,
-                                        description: session.description,
-                                        courseCode: session.courseCode,
-                                        startTime: session.startTime,
-                                        endTime: session.endTime,
-                                        colourCode: session.colourCode,
-                                        createdBy: job.createdBy,
-                                        createdByUsername: user?.username,
-                                    };
-                                })
-                            )
-                        );
-                    }
-                } catch (e) {
-                    console.log("error", e);
-                    res.status(500);
-                    next(new Error("Unexpected error has occured."));
+        try {
+            if (req.headers.authorization) {
+                const currentUser = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(
+                            currentUser,
+                            "upcoming",
+                            req.body.limit
+                        )
+                    );
+                } else {
+                    res.status(402);
                 }
             }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
         }
-
-        res.end();
     })
 );
 
@@ -310,6 +261,7 @@ router.post(
                         startTime: session.startTime,
                         endTime: session.endTime,
                         colourCode: session.colourCode,
+                        open: session.open,
                     });
                 }
             } catch (e) {
@@ -330,52 +282,42 @@ router.post(
         { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
     >(async (req, res, next) => {
         try {
-            if (req.body.type === RoomType.CLASS) {
-                const data = req.body.data;
-                const errorMessage = classFormDataHasError(data);
-                if (errorMessage) {
-                    res.status(500)
-                        .json({
-                            message: errorMessage,
-                        })
-                        .end();
-                    return;
-                }
-                if (new Date(data.endTime).getTime() < new Date().getTime()) {
-                    await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
+            const data = req.body.data;
+            const errorMessage = classFormDataHasError(data);
+            if (errorMessage) {
+                res.status(500)
+                    .json({
+                        message: errorMessage,
+                    })
+                    .end();
+                return;
+            }
+            console.log(req.body);
+            if (new Date(data.endTime).getTime() < new Date().getTime()) {
+                await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
+                    ...req.body.data,
+                });
+            } else {
+                const session = await ClassroomSession.findByIdAndUpdate(
+                    req.body.data.id,
+                    {
                         ...req.body.data,
-                    });
-                } else {
-                    const session = await ClassroomSession.findByIdAndDelete(
-                        req.body.data.id
-                    );
-                    if (session) {
-                        const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
-                        schedulerHandler.addNewJob({
-                            jobDate: req.body.data.startTime,
-                            executingEvent: ExecutingEvent.CLASS_OPEN,
-                            createdBy: session.createdBy,
-                            data: {
-                                ...data,
-                            },
-                        });
+                        open: false,
                     }
-                }
-            } else if (req.body.type === RoomType.UPCOMING) {
-                const job = await Job.findById(req.body.data.id);
-                if (job) {
-                    const updatedJob: BaseJob = {
+                );
+                if (session) {
+                    const schedulerHandler: ScheduleHandler<{
+                        id: string;
+                    }> = ScheduleHandler.getInstance();
+                    await schedulerHandler.removeQueuedJob(session._id);
+                    await schedulerHandler.addNewJob({
+                        jobId: session._id,
                         jobDate: req.body.data.startTime,
                         executingEvent: ExecutingEvent.CLASS_OPEN,
-                        createdBy: job.createdBy,
                         data: {
-                            ...job.data,
-                            ...req.body.data,
+                            id: session._id,
                         },
-                    };
-                    const scheduleHandler = ScheduleHandler.getInstance();
-                    scheduleHandler.removeQueuedJob(job._id);
-                    scheduleHandler.addNewJob(updatedJob);
+                    });
                 }
             }
             res.status(200);
@@ -474,6 +416,7 @@ router.post(
                 await BreakoutSession.deleteMany({
                     parentSessionId: req.body.id,
                 });
+                await Job.findByIdAndDelete(req.body.id);
             } catch (e) {
                 res.status(500);
             } finally {

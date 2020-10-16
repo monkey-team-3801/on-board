@@ -22,13 +22,13 @@ type Props = Partial<UpcomingClassroomSessionData> & {
     id?: string;
     size: "sm" | "lg";
     canEdit?: boolean;
-    canJoin?: boolean;
     onJoinClick?: () => void;
     onEditClick?: () => void;
     onDeleteClick?: () => void;
     isRefreshing?: boolean;
     type: RoomType;
     setDeletedRooms?: React.Dispatch<React.SetStateAction<Array<string>>>;
+    currentUserId: string;
 };
 
 export const ClassContainer: React.FunctionComponent<Props> = (
@@ -36,17 +36,10 @@ export const ClassContainer: React.FunctionComponent<Props> = (
 ) => {
     const { startTime: startTimeIso, endTime: endTimeIso } = props;
 
-    const [, deleteRoom] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "session/delete/classroom",
+    const [deleteRoomResponse, deleteRoom] = useDynamicFetch<
         undefined,
-        false
-    );
-
-    const [, deleteJob] = useDynamicFetch<undefined, SessionDeleteRequestType>(
-        "job/delete",
-        undefined,
-        false
-    );
+        SessionDeleteRequestType
+    >("session/delete/classroom", undefined, false);
 
     const [deletePrivateRoomResponse, deletePrivateRoom] = useDynamicFetch<
         undefined,
@@ -112,12 +105,16 @@ export const ClassContainer: React.FunctionComponent<Props> = (
             >
                 <Container className="button-container">
                     <Row>
-                        {props.canJoin ? (
+                        {props.open ||
+                        props.createdBy === props.currentUserId ? (
                             <Button
                                 variant="primary peach-gradient"
                                 onClick={props.onJoinClick}
                             >
-                                Join
+                                {!props.open &&
+                                props.createdBy === props.currentUserId
+                                    ? "Join (Instructor)"
+                                    : "Join"}
                             </Button>
                         ) : (
                             <OverlayTrigger
@@ -146,9 +143,12 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                     <Button
                                         variant="info"
                                         onClick={props.onEditClick}
-                                        disabled={requestIsLoading(
-                                            deletePrivateRoomResponse
-                                        )}
+                                        disabled={
+                                            requestIsLoading(
+                                                deletePrivateRoomResponse
+                                            ) ||
+                                            requestIsLoading(deleteRoomResponse)
+                                        }
                                     >
                                         Edit
                                     </Button>
@@ -163,13 +163,6 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                     RoomType.CLASS
                                                 ) {
                                                     await deleteRoom({
-                                                        id: props.id,
-                                                    });
-                                                } else if (
-                                                    props.type ===
-                                                    RoomType.UPCOMING
-                                                ) {
-                                                    await deleteJob({
                                                         id: props.id,
                                                     });
                                                 } else if (
@@ -190,9 +183,12 @@ export const ClassContainer: React.FunctionComponent<Props> = (
                                                 props.onDeleteClick?.();
                                             }
                                         }}
-                                        loading={requestIsLoading(
-                                            deletePrivateRoomResponse
-                                        )}
+                                        loading={
+                                            requestIsLoading(
+                                                deletePrivateRoomResponse
+                                            ) ||
+                                            requestIsLoading(deleteRoomResponse)
+                                        }
                                         invertLoader
                                     >
                                         Delete
