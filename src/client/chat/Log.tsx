@@ -18,7 +18,11 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
 
                 <div className="message-container">
                     <p className="self">
-                        {`${sendUser}: ${content} (${format(
+                        {`${sendUser}: `}
+                        <br></br>
+                        {content}
+                        <br></br>
+                        {` (${format(
                             new Date(sentTime),
                             "MM/dd hh:mm"
                         )})`}
@@ -28,11 +32,15 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
         } else {
             return (
                 <div className="message-container">
-                    <p>
-                        {`(${format(
+                    <p >
+                        {`${sendUser}: `}
+                        <br></br>
+                        {content}
+                        <br></br>
+                        {` (${format(
                             new Date(sentTime),
                             "MM/dd hh:mm"
-                        )}) ${sendUser}: ${content}`}
+                        )})`}
                     </p>
                 </ div>
             );
