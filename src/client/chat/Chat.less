@@ -1,28 +1,45 @@
 .chat-container {
     padding: 10px;
+    max-width:400px!important;
     .chat-log-container {
         height: 200px;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 0 !important;
+        max-width: 400px!important;
+        .message-container{
+            display: inline-block;
+            padding: 0 0 0 10px;
+            vertical-align: top;
+            width: 92%;
+            margin-top: 4%;
+        }
         .self p {
             text-align: right;
             background-color: #abc5cf !important;
+            margin: 0;
+            padding: 5px 10px 5px 12px;
+            width: 100%;
         }
 
         .self {
-            margin-left: 15%;
+            overflow: hidden;
+            margin: 26px 20px;
             float: right;
+            width: 65%;
+            margin-left: 40% ;
         }
         .log {
-            float: left;
+           float: left;
+           clear: both;
         }
     }
     .log p {
         background-color: white;
         border-radius: 18px;
-        padding: 5%;
-        margin-top: 3%;
+        width: 100%;
+        padding: 5px 10px 5px 12px;
+        margin: 0;
     }
     .send-chat {
         margin-top: 5%;

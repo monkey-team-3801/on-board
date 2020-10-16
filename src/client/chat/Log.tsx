@@ -15,21 +15,26 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
     const messageType: React.ReactNode = React.useMemo(() => {
         if (currentUser === sendUser) {
             return (
-                <p className="self">
-                    {`${sendUser}: ${content} (${format(
-                        new Date(sentTime),
-                        "MM/dd hh:mm"
-                    )})`}
-                </p>
+
+                <div className="message-container">
+                    <p className="self">
+                        {`${sendUser}: ${content} (${format(
+                            new Date(sentTime),
+                            "MM/dd hh:mm"
+                        )})`}
+                    </p>
+                </div>
             );
         } else {
             return (
-                <p>
-                    {`(${format(
-                        new Date(sentTime),
-                        "MM/dd hh:mm"
-                    )}) ${sendUser}: ${content}`}
-                </p>
+                <div className="message-container">
+                    <p>
+                        {`(${format(
+                            new Date(sentTime),
+                            "MM/dd hh:mm"
+                        )}) ${sendUser}: ${content}`}
+                    </p>
+                </ div>
             );
         }
     }, [sendUser, currentUser, sentTime, content]);
