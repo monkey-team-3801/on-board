@@ -16,6 +16,8 @@ export type PeerData = {
     stream: MediaStream | undefined;
     peerCalls: Map<string, MediaConnection>;
     peerStreams: Map<string, MediaStream>;
+    sharingCalls: Map<string, MediaConnection>;
+    sharingStreams: Map<string, MediaStream>;
     addPeer: (peerId: PeerId) => void;
     removePeer: (peerId: PeerId) => void;
     enableStream: () => void;
@@ -29,6 +31,8 @@ export const PeerContext = createContext<PeerData>({
     stream: undefined,
     peerCalls: Map(),
     peerStreams: Map(),
+    sharingCalls: Map(),
+    sharingStreams: Map(),
     addPeer: (peerId) => {},
     removePeer: (peerId) => {},
     enableStream: () => {},

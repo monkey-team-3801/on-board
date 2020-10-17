@@ -189,8 +189,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
             socket
                 .in(sessionId)
                 .emit(VideoEvent.USER_START_SCREEN_SHARING, userData);
-            socket.on("disconnect", () => {
+            socket.on("disconnect", async () => {
                 session.sharingUsers.delete(userId);
+                await session.save();
                 socket
                     .in(sessionId)
                     .emit(VideoEvent.USER_STOP_STREAMING, userData);
@@ -202,6 +203,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
         VideoEvent.USER_STOP_STREAMING,
         async (userData: PrivateVideoRoomStopSharingData) => {
             const { sessionId, userId } = userData;
+            console.log("User", userId, "stops sharing");
             const session = await VideoSession.findOne({
                 sessionId,
             });
