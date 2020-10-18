@@ -35,7 +35,9 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
             </Row>
             <Row>
                 <Col xs="auto">
-                    <Button onClick={async () => await setupScreenSharing()}>
+                    <Button onClick={async () => {
+                        await setupScreenSharing();
+                    }}>
                         Start Sharing
                     </Button>
                 </Col>
