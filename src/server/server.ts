@@ -240,9 +240,15 @@ io.on("connect", (socket: SocketIO.Socket) => {
             if (!videoSession.sharingUsers.has(targetId)) {
                 return;
             }
-            if (!(sender.courses.includes(session.courseCode) && sender.userType > UserType.STUDENT)) {
+            if (
+                !(
+                    sender.courses.includes(session.courseCode) &&
+                    sender.userType > UserType.STUDENT
+                )
+            ) {
                 io.to(socket.id).emit(VideoEvent.OPERATION_DENIED, {
-                    reason: "You don't have permission to close other people's streams."
+                    reason:
+                        "You don't have permission to close other people's streams.",
                 });
                 return;
             }

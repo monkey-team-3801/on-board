@@ -13,11 +13,12 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
     props
 ) => {
     const { userId, sessionId } = props;
-    const { setupScreenSharing, stopScreenSharing, forceStopScreenSharing } = useScreenSharing(
-        userId,
-        sessionId
-    );
-    const [forceStopText, setForceStopText] = useState<string>("")
+    const {
+        setupScreenSharing,
+        stopScreenSharing,
+        forceStopScreenSharing,
+    } = useScreenSharing(userId, sessionId);
+    const [forceStopText, setForceStopText] = useState<string>("");
     const { sharingStreams } = useContext(PeerContext);
     return (
         <>
@@ -25,7 +26,7 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
                 {sharingStreams
                     .entrySeq()
                     .toArray()
-                    .map(([userId, {stream}]) => (
+                    .map(([userId, { stream }]) => (
                         <Col xs="auto" key={userId}>
                             User: {userId}
                             <StreamVideo muted={true} stream={stream} />
@@ -44,10 +45,12 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
                     </Button>
                 </Col>
                 <Col xs="auto">
-                    <Form onSubmit={e => {
-                        e.preventDefault();
-                        forceStopScreenSharing(forceStopText);
-                    }}>
+                    <Form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            forceStopScreenSharing(forceStopText);
+                        }}
+                    >
                         <Form.Row>
                             <Col xs="auto">
                                 <Form.Control
@@ -65,7 +68,6 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
                             </Col>
                         </Form.Row>
                     </Form>
-
                 </Col>
             </Row>
         </>

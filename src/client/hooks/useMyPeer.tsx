@@ -7,7 +7,7 @@ import {
     PrivateVideoRoomForceStopSharingData,
     PrivateVideoRoomShareScreenData,
     PrivateVideoRoomStopSharingData,
-    VideoEvent
+    VideoEvent,
 } from "../../events";
 import { UserPeer, VideoPeersResponseType } from "../../types";
 import { useFetch } from "./useFetch";
@@ -169,7 +169,7 @@ export const useMyPeer = (
         (userData: PrivateVideoRoomShareScreenData) => void
     >(
         async (userData) => {
-            const {userId, peerId} = userData;
+            const { userId, peerId } = userData;
             if (!myStream) {
                 await enableStream();
             }
@@ -180,12 +180,16 @@ export const useMyPeer = (
             if (!call) {
                 return;
             }
-            setSharingCalls(sharingCalls.set(userId, {
-                peerId,
-                call
-            }));
+            setSharingCalls(
+                sharingCalls.set(userId, {
+                    peerId,
+                    call,
+                })
+            );
             call.on("stream", (stream) => {
-                setSharingStreams(sharingStreams.set(userId, {peerId, stream}));
+                setSharingStreams(
+                    sharingStreams.set(userId, { peerId, stream })
+                );
             });
             call.on("close", () => {
                 setSharingCalls(sharingCalls.delete(userId));
@@ -277,7 +281,7 @@ export const useMyPeer = (
     useEffect(() => {
         if (requestIsLoaded(sharingResponse) && myPeerId) {
             Object.entries(sharingResponse.data).forEach(([userId, peerId]) => {
-                addSharingPeer({userId, peerId, sessionId});
+                addSharingPeer({ userId, peerId, sessionId });
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,7 +296,10 @@ export const useMyPeer = (
             onSocketUserStartScreenShare
         );
         socket.on(VideoEvent.USER_STOP_STREAMING, onSocketUserStopScreenShare);
-        socket.on(VideoEvent.FORCE_STOP_SCREEN_SHARING, onSocketUserForceStopScreenShare);
+        socket.on(
+            VideoEvent.FORCE_STOP_SCREEN_SHARING,
+            onSocketUserForceStopScreenShare
+        );
         // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
         // socket.on(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         return () => {
@@ -306,7 +313,10 @@ export const useMyPeer = (
                 VideoEvent.USER_STOP_STREAMING,
                 onSocketUserStopScreenShare
             );
-            socket.off(VideoEvent.FORCE_STOP_SCREEN_SHARING, onSocketUserForceStopScreenShare);
+            socket.off(
+                VideoEvent.FORCE_STOP_SCREEN_SHARING,
+                onSocketUserForceStopScreenShare
+            );
             // socket.off(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
             // socket.off(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         };

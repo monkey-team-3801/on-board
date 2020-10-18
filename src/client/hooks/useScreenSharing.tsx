@@ -19,7 +19,7 @@ export type ScreenSharingData = {
     sharing: boolean;
     setupScreenSharing: () => void;
     stopScreenSharing: () => void;
-    forceStopScreenSharing: (targetId: string) => void
+    forceStopScreenSharing: (targetId: string) => void;
 };
 
 const socket = socketIOClient("/");
@@ -61,9 +61,16 @@ export const useScreenSharing = (
         setSharing(false);
     }, [screenStream, mySharingPeer, mySharingPeerId, sessionId, userId]);
 
-    const forceStopScreenSharing = useCallback((targetId: string) => {
-        socket.emit(VideoEvent.FORCE_STOP_SCREEN_SHARING, {senderId: userId, targetId, sessionId});
-    }, [userId, sessionId]);
+    const forceStopScreenSharing = useCallback(
+        (targetId: string) => {
+            socket.emit(VideoEvent.FORCE_STOP_SCREEN_SHARING, {
+                senderId: userId,
+                targetId,
+                sessionId,
+            });
+        },
+        [userId, sessionId]
+    );
 
     const setupScreenSharing = useCallback(async () => {
         // Get stream
@@ -99,12 +106,15 @@ export const useScreenSharing = (
                 userId,
                 sessionId,
             });
-            socket.on(VideoEvent.FORCE_STOP_SCREEN_SHARING, (data: PrivateVideoRoomForceStopSharingData) => {
-                const {targetId, sessionId: stoppedSessionId} = data;
-                if (userId === targetId && sessionId === stoppedSessionId) {
-                    stopScreenSharing();
+            socket.on(
+                VideoEvent.FORCE_STOP_SCREEN_SHARING,
+                (data: PrivateVideoRoomForceStopSharingData) => {
+                    const { targetId, sessionId: stoppedSessionId } = data;
+                    if (userId === targetId && sessionId === stoppedSessionId) {
+                        stopScreenSharing();
+                    }
                 }
-            });
+            );
         });
         newPeer.on("error", (err) => {
             console.log(err);
@@ -124,6 +134,6 @@ export const useScreenSharing = (
         sharing,
         setupScreenSharing,
         stopScreenSharing,
-        forceStopScreenSharing
+        forceStopScreenSharing,
     };
 };
