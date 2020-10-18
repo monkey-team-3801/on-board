@@ -3,7 +3,12 @@ import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
 import { useMediaStream } from "./useMediaStream";
 import { PeerData } from "../peer";
-import { PrivateVideoRoomShareScreenData, VideoEvent } from "../../events";
+import {
+    PrivateVideoRoomForceStopSharingData,
+    PrivateVideoRoomShareScreenData,
+    PrivateVideoRoomStopSharingData,
+    VideoEvent
+} from "../../events";
 import { UserPeer, VideoPeersResponseType } from "../../types";
 import { useFetch } from "./useFetch";
 import { requestIsLoaded } from "../utils";
@@ -28,10 +33,22 @@ export const useMyPeer = (
         Map()
     );
     const [sharingStreams, setSharingStreams] = useState<
-        Map<string, MediaStream>
+        Map<
+            string,
+            {
+                peerId: string;
+                stream: MediaStream;
+            }
+        >
     >(Map());
     const [sharingCalls, setSharingCalls] = useState<
-        Map<string, MediaConnection>
+        Map<
+            string,
+            {
+                peerId: string;
+                call: MediaConnection;
+            }
+        >
     >(Map());
     const [peerResponse] = useFetch<
         VideoPeersResponseType,
@@ -148,8 +165,11 @@ export const useMyPeer = (
         [peerCalls]
     );
 
-    const addSharingPeer = useCallback<(peerId: string) => void>(
-        async (peerId) => {
+    const addSharingPeer = useCallback<
+        (userData: PrivateVideoRoomShareScreenData) => void
+    >(
+        async (userData) => {
+            const {userId, peerId} = userData;
             if (!myStream) {
                 await enableStream();
             }
@@ -160,31 +180,34 @@ export const useMyPeer = (
             if (!call) {
                 return;
             }
-            setSharingCalls(sharingCalls.set(peerId, call));
+            setSharingCalls(sharingCalls.set(userId, {
+                peerId,
+                call
+            }));
             call.on("stream", (stream) => {
-                setSharingStreams(sharingStreams.set(peerId, stream));
+                setSharingStreams(sharingStreams.set(userId, {peerId, stream}));
             });
             call.on("close", () => {
-                setSharingCalls(sharingCalls.delete(peerId));
-                setSharingStreams(sharingStreams.delete(peerId));
+                setSharingCalls(sharingCalls.delete(userId));
+                setSharingStreams(sharingStreams.delete(userId));
             });
             call.on("error", (error) => {
                 console.log("streaming peer call error", error);
-                setSharingStreams(sharingStreams.delete(peerId));
-                setSharingCalls(sharingCalls.delete(peerId));
+                setSharingStreams(sharingStreams.delete(userId));
+                setSharingCalls(sharingCalls.delete(userId));
             });
         },
         [enableStream, myPeer, sharingCalls, sharingStreams, myPeerId, myStream]
     );
 
-    const removeSharingPeer = useCallback<(peerId: string) => void>(
-        (peerId) => {
-            const call = sharingCalls.get(peerId);
-            if (call) {
-                call.close();
+    const removeSharingPeer = useCallback<(sharingUserId: string) => void>(
+        (sharingUserId) => {
+            const callEntry = sharingCalls.get(sharingUserId);
+            if (callEntry) {
+                callEntry.call.close();
             }
-            setSharingCalls(sharingCalls.delete(peerId));
-            setSharingStreams(sharingStreams.delete(peerId));
+            setSharingCalls(sharingCalls.delete(sharingUserId));
+            setSharingStreams(sharingStreams.delete(sharingUserId));
         },
         [sharingCalls, sharingStreams]
     );
@@ -205,15 +228,19 @@ export const useMyPeer = (
 
     const onSocketUserStartScreenShare = useCallback(
         (userData: PrivateVideoRoomShareScreenData) => {
-            const { peerId } = userData;
-            addSharingPeer(peerId);
+            addSharingPeer(userData);
         },
         [addSharingPeer]
     );
     const onSocketUserStopScreenShare = useCallback(
-        (userData: PrivateVideoRoomShareScreenData) => {
-            const { peerId } = userData;
-            removeSharingPeer(peerId);
+        (userData: PrivateVideoRoomStopSharingData) => {
+            removeSharingPeer(userData.userId);
+        },
+        [removeSharingPeer]
+    );
+    const onSocketUserForceStopScreenShare = useCallback(
+        (userData: PrivateVideoRoomForceStopSharingData) => {
+            removeSharingPeer(userData.targetId);
         },
         [removeSharingPeer]
     );
@@ -249,8 +276,8 @@ export const useMyPeer = (
     }, [peerResponse, myPeerId, myStream, addPeer]);
     useEffect(() => {
         if (requestIsLoaded(sharingResponse) && myPeerId) {
-            Object.values(sharingResponse.data).forEach((value) => {
-                addSharingPeer(value);
+            Object.entries(sharingResponse.data).forEach(([userId, peerId]) => {
+                addSharingPeer({userId, peerId, sessionId});
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -265,6 +292,7 @@ export const useMyPeer = (
             onSocketUserStartScreenShare
         );
         socket.on(VideoEvent.USER_STOP_STREAMING, onSocketUserStopScreenShare);
+        socket.on(VideoEvent.FORCE_STOP_SCREEN_SHARING, onSocketUserForceStopScreenShare);
         // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
         // socket.on(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         return () => {
@@ -278,6 +306,7 @@ export const useMyPeer = (
                 VideoEvent.USER_STOP_STREAMING,
                 onSocketUserStopScreenShare
             );
+            socket.off(VideoEvent.FORCE_STOP_SCREEN_SHARING, onSocketUserForceStopScreenShare);
             // socket.off(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
             // socket.off(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         };

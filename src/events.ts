@@ -40,6 +40,12 @@ export enum VideoEvent {
     OPERATION_DENIED = "OPERATION_DENIED",
 }
 
+export type PrivateVideoRoomForceStopSharingData = {
+    sessionId: string;
+    senderId: string;
+    targetId: string;
+};
+
 export type PrivateVideoRoomStopSharingData = {
     sessionId: string;
     peerId: string;

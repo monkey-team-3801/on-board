@@ -18,8 +18,9 @@ import {
     GlobalEvent,
     PrivateVideoRoomShareScreenData,
     PrivateVideoRoomStopSharingData,
+    PrivateVideoRoomForceStopSharingData,
 } from "../events";
-import { Database, SessionUsers } from "./database";
+import { ClassroomSession, Database, SessionUsers, User } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
 import { ScheduleHandler } from "./jobs";
 import {
@@ -35,6 +36,7 @@ import {
     videoRoute,
 } from "./routes";
 import { asyncHandler } from "./utils";
+import { UserType } from "../types";
 
 dotenv.config();
 
@@ -206,7 +208,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
         VideoEvent.USER_STOP_STREAMING,
         async (userData: PrivateVideoRoomStopSharingData) => {
             const { sessionId, userId } = userData;
-            console.log("User", userId, "stops sharing");
             const session = await VideoSession.findOne({
                 sessionId,
             });
@@ -218,7 +219,45 @@ io.on("connect", (socket: SocketIO.Socket) => {
             }
             session.sharingUsers.delete(userId);
             await session.save();
+            console.log("User", userId, "stops sharing");
             socket.in(sessionId).emit(VideoEvent.USER_STOP_STREAMING, userData);
+        }
+    );
+
+    socket.on(
+        VideoEvent.FORCE_STOP_SCREEN_SHARING,
+        async (userData: PrivateVideoRoomForceStopSharingData) => {
+            const { senderId, targetId, sessionId } = userData;
+            console.log("Force stop event emitted");
+            const videoSession = await VideoSession.findOne({
+                sessionId,
+            });
+            const session = await ClassroomSession.findById(sessionId);
+            const sender = await User.findById(senderId);
+            if (!session || !videoSession || !sender) {
+                return;
+            }
+            if (!videoSession.sharingUsers.has(targetId)) {
+                return;
+            }
+            if (!(sender.courses.includes(session.courseCode) && sender.userType > UserType.STUDENT)) {
+                io.to(socket.id).emit(VideoEvent.OPERATION_DENIED, {
+                    reason: "You don't have permission to close other people's streams."
+                });
+                return;
+            }
+            videoSession.sharingUsers.delete(targetId);
+            await videoSession.save();
+            socket
+                .in(sessionId)
+                .emit(VideoEvent.FORCE_STOP_SCREEN_SHARING, userData);
+            console.log(
+                "User",
+                senderId,
+                "forces user",
+                targetId,
+                "to stop sharing"
+            );
         }
     );
 

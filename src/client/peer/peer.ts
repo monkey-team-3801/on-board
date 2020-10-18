@@ -16,8 +16,20 @@ export type PeerData = {
     stream: MediaStream | undefined;
     peerCalls: Map<string, MediaConnection>;
     peerStreams: Map<string, MediaStream>;
-    sharingCalls: Map<string, MediaConnection>;
-    sharingStreams: Map<string, MediaStream>;
+    sharingCalls: Map<
+        string,
+        {
+            peerId: string;
+            call: MediaConnection;
+        }
+    >;
+    sharingStreams: Map<
+        string,
+        {
+            peerId: string;
+            stream: MediaStream;
+        }
+    >;
     addPeer: (peerId: PeerId) => void;
     removePeer: (peerId: PeerId) => void;
     enableStream: () => void;
