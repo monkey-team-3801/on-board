@@ -16,6 +16,7 @@ interface IClassroomSession extends ISession {
     raisedHandUsers: Array<string>;
     roomType: string;
     colourCode: string;
+    open: boolean;
 }
 
 interface IBreakoutSession extends ISession {
@@ -44,6 +45,7 @@ const ClassroomSessionSchema = new mongoose.Schema<IClassroomSession>({
     files: { type: Array, default: [] },
     colourCode: { type: String },
     createdBy: { type: String },
+    open: { type: Boolean, default: false },
 });
 
 const BreakoutSessionSchema = new mongoose.Schema<IBreakoutSession>({

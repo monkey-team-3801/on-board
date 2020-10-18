@@ -1,6 +1,7 @@
 import React from "react";
 import { UserData } from "../types";
 import { UserType } from "../../../types";
+import { ProfilePicture } from "../../components";
 
 type Props = Omit<UserData, "allocated"> & {
     children?: React.ReactNode;
@@ -26,11 +27,7 @@ export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <div className="user-display">
-            <img
-                src={`/filehandler/getPfp/${id}`}
-                alt="profile"
-                className={additionalClass}
-            />
+            <ProfilePicture userId={id} classNames={additionalClass} />
             <div className="username">
                 <p className="text-truncate">{username}</p>
             </div>

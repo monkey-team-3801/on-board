@@ -12,12 +12,13 @@ import { EditClassroomModal } from "./EditClassroomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
+    courses?: Array<string>;
 };
 
 export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, history } = props;
+    const { setLoading, history, courses } = props;
 
     const [roomSelection, setRoomSelection] = React.useState<
         | { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
@@ -26,14 +27,11 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
     const [roomActiveFilter, setRoomActiveFilter] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<string>("");
 
     const [classroomsResponse, getClassrooms] = useFetch<
         Array<ClassroomSessionData>
     >("session/classroomSessions");
-
-    const [upcomingClassroomsResponse, getUpcomingClassrooms] = useFetch<
-        Array<Omit<ClassroomSessionData, "messages">>
-    >("session/upcomingClassroomSessions");
 
     const onRoomJoinClick = React.useCallback(
         (id: string) => {
@@ -43,33 +41,36 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     React.useEffect(() => {
-        if (requestIsLoaded(classroomsResponse)) {
+        if (requestIsLoaded(classroomsResponse) && courses) {
             setLoading(false);
         }
-    }, [classroomsResponse, setLoading]);
+    }, [classroomsResponse, setLoading, courses]);
 
     const filteredClassrooms = React.useMemo(() => {
-        if (roomActiveFilter === "Active" || !roomActiveFilter) {
-            return classroomsResponse.data?.filter((session) => {
-                return session.name
-                    .toLocaleLowerCase()
-                    .includes(roomFilterValue.toLocaleLowerCase());
-            });
-        }
-    }, [roomFilterValue, roomActiveFilter, classroomsResponse]);
+        const openOrUpcoming = classroomsResponse.data?.filter((session) => {
+            if (!roomActiveFilter) {
+                return session;
+            } else if (roomActiveFilter === "Active") {
+                return session.open;
+            } else {
+                return !session.open;
+            }
+        });
 
-    const filteredUpcomingRooms = React.useMemo(() => {
-        if (roomActiveFilter === "Upcoming" || !roomActiveFilter) {
-            return upcomingClassroomsResponse.data?.filter((session) => {
-                return session.name.includes(roomFilterValue);
-            });
-        }
-    }, [roomFilterValue, roomActiveFilter, upcomingClassroomsResponse]);
+        return openOrUpcoming?.filter((session) => {
+            return (
+                session.name
+                    .toLocaleLowerCase()
+                    .includes(roomFilterValue.toLocaleLowerCase()) &&
+                (courseFilter === "" || session.courseCode === courseFilter)
+            );
+        });
+    }, [roomFilterValue, roomActiveFilter, classroomsResponse, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
             <Row>
-                <Col xl={6}>
+                <Col xl={4}>
                     <Form.Label>Search rooms</Form.Label>
                     <Form.Control
                         type="text"
@@ -79,7 +80,23 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                         }}
                     />
                 </Col>
-                <Col xl={6}>
+                <Col xl={4}>
+                    <Form.Label>Filter courses</Form.Label>
+                    <Select
+                        placeholder="Filter course..."
+                        options={props.courses?.map((code) => {
+                            return { value: code, label: code };
+                        })}
+                        isClearable
+                        onChange={(value) => {
+                            setCourseFilter(
+                                ((value as unknown) as { value: string } | null)
+                                    ?.value ?? ""
+                            );
+                        }}
+                    />
+                </Col>
+                <Col xl={4}>
                     <Form.Label>Filter room status</Form.Label>
                     <Select
                         placeholder="Filter active..."
@@ -104,7 +121,6 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             {...session}
                             key={session.id}
                             canEdit={props.userData.id === session.createdBy}
-                            canJoin
                             onJoinClick={() => {
                                 onRoomJoinClick(session.id);
                             }}
@@ -120,41 +136,18 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                             isRefreshing={requestIsLoading(classroomsResponse)}
                             size="lg"
                             type={RoomType.CLASS}
-                        />
-                    );
-                })}
-            {filteredUpcomingRooms &&
-                filteredUpcomingRooms.map((session, i) => {
-                    return (
-                        <ClassContainer
-                            {...session}
-                            key={session.id}
-                            canEdit={props.userData.id === session.createdBy}
-                            onEditClick={() => {
-                                setRoomSelection({
-                                    data: session,
-                                    type: RoomType.UPCOMING,
-                                });
-                            }}
-                            onDeleteClick={async () => {
-                                await getUpcomingClassrooms();
-                            }}
-                            isRefreshing={requestIsLoading(
-                                upcomingClassroomsResponse
-                            )}
-                            size="lg"
-                            type={RoomType.UPCOMING}
+                            currentUserId={props.userData.id}
                         />
                     );
                 })}
             <EditClassroomModal
                 roomSelection={roomSelection}
+                courses={props.courses || []}
                 onClose={() => {
                     setRoomSelection(undefined);
                 }}
                 refresh={() => {
                     getClassrooms();
-                    getUpcomingClassrooms();
                 }}
             />
         </Container>

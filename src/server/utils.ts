@@ -8,6 +8,9 @@ import {
     ClassOpenJob,
     ClassroomSessionData,
     UpcomingClassroomSessionData,
+    CreateClassroomJobRequestType,
+    CreateAnnouncementJobRequestType,
+    AnyJobRequestType,
 } from "../types";
 import { Session } from "./database";
 import { ClassroomSession, SessionUsers } from "./database/schema";
@@ -51,6 +54,18 @@ export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
     return job.executingEvent === ExecutingEvent.CLASS_OPEN;
 };
 
+export const isCreateClassroomRequestType = (
+    type: AnyJobRequestType
+): type is CreateClassroomJobRequestType => {
+    return type.executingEvent === ExecutingEvent.CLASS_OPEN;
+};
+
+export const isCreateAnnouncementRequestType = (
+    type: AnyJobRequestType
+): type is CreateAnnouncementJobRequestType => {
+    return type.executingEvent === ExecutingEvent.ANNOUNCEMENT;
+};
+
 export const createNewSession = async (
     name: string,
     description: string,
@@ -67,8 +82,10 @@ export const createNewSession = async (
     });
 };
 
-export const createNewClassroomSession = async (job: ClassOpenJob) => {
-    const data = job.data;
+export const createNewClassroomSession = async (
+    data: CreateClassroomJobRequestType,
+    createdBy: string
+) => {
     const session = await ClassroomSession.create({
         name: data.name,
         messages: [],
@@ -80,7 +97,8 @@ export const createNewClassroomSession = async (job: ClassOpenJob) => {
         raisedHandUsers: [],
         files: [],
         colourCode: data.colourCode,
-        createdBy: job.createdBy,
+        createdBy,
+        open: false,
     });
     await SessionUsers.create({
         sessionId: session._id,
@@ -98,7 +116,9 @@ export const createNewClassroomSession = async (job: ClassOpenJob) => {
 };
 
 export const classFormDataHasError = (
-    data: ClassroomSessionData | UpcomingClassroomSessionData
+    data:
+        | Omit<ClassroomSessionData, "open" | "messages" | "id">
+        | UpcomingClassroomSessionData
 ): string | undefined => {
     if (!data.name) {
         return "Room name should not be empty";

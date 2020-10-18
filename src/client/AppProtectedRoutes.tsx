@@ -3,7 +3,11 @@ import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
 import { ChatEvent, ClassEvent, RoomEvent } from "../events";
-import { RoomType, UserDataResponseType } from "../types";
+import {
+    RoomType,
+    UserDataResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ChatModal } from "./chat";
 import { ClassesPageContainer } from "./classes";
@@ -36,6 +40,10 @@ export const AppProtectedRoutes = (props: Props) => {
         Array<string>
     >("/chat/hasNewMessage");
 
+    const [coursesResponse, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
+
     const userData = React.useMemo(() => {
         return {
             username: data?.username,
@@ -54,7 +62,6 @@ export const AppProtectedRoutes = (props: Props) => {
     const onChatStatusChange = React.useCallback(
         (targetUserId?: string) => {
             if (id === targetUserId) {
-                console.log("status change", id, targetUserId);
                 fetchChatsWithNewMessage();
             }
         },
@@ -122,6 +129,7 @@ export const AppProtectedRoutes = (props: Props) => {
                             chatWithNewMessages={
                                 chatsWithNewMessageResponse.data || []
                             }
+                            courses={coursesResponse.data?.courses || []}
                         />
                     );
                 }}
@@ -138,9 +146,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -155,9 +164,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -176,9 +186,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -195,10 +206,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.PRIVATE}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -215,10 +227,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.BREAKOUT}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}

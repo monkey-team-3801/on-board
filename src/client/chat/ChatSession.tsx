@@ -154,6 +154,13 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
             {requestIsLoaded(chatDataResponse) ? (
                 <Container fluid className="chat-container">
                     <Row>
+                        <p className="text-muted">
+                            You are chatting with{" "}
+                            {props.targetUserData.username}
+                        </p>
+                    </Row>
+                    <hr />
+                    <Row>
                         <ChatLog
                             messages={chatData.toArray()}
                             currentUser={props.myUsername}

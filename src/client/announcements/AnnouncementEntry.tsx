@@ -2,7 +2,7 @@ import { format } from "date-fns/esm";
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { CourseAnnouncementsType } from "../../types";
-import { ButtonWithLoadingProp } from "../components";
+import { ButtonWithLoadingProp, ProfilePicture } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoading } from "../utils";
 
@@ -86,12 +86,10 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                 <Row className="mt-4">
                                     <Container fluid className="user-container">
                                         <div className="profile">
-                                            <img
-                                                src={`/filehandler/getPfp/${
-                                                    announcement.userId || ""
-                                                }`}
-                                                alt="profile"
-                                                className="profile-image"
+                                            <ProfilePicture
+                                                userId={announcement.userId}
+                                                classNames="profile-image"
+                                                openChatOnClick
                                             />
                                         </div>
                                         <div className="user">
