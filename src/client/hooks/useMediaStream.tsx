@@ -90,6 +90,7 @@ export const useMediaStream: () => [
         return () => {
             disableMediaStream();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return [stream, enableMediaStream, disableMediaStream];
 };

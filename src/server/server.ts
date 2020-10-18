@@ -181,6 +181,9 @@ io.on("connect", (socket: SocketIO.Socket) => {
             }
             // Too many sharing users
             if (session.numScreensAllowed <= session.sharingUsers.size) {
+                io.to(socket.id).emit(VideoEvent.OPERATION_DENIED, {
+                    reason: `Maximum number of sharing screens allowed reached: ${session.numScreensAllowed}`,
+                });
                 return;
             }
             session.sharingUsers.set(userId, peerId);

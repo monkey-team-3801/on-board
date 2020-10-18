@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { useScreenSharing } from "../hooks/useScreenSharing";
 import { StreamVideo } from "./StreamVideo";
 import { Button, Col, Row } from "react-bootstrap";
@@ -14,12 +14,8 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
 ) => {
     const { userId, sessionId } = props;
     const {
-        peer,
-        peerId,
-        screenStream,
         setupScreenSharing,
         stopScreenSharing,
-        sharing,
     } = useScreenSharing(userId, sessionId);
     const { sharingStreams } = useContext(PeerContext);
     return (
