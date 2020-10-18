@@ -17,7 +17,7 @@ export type ScreenSharingData = {
     peerId: string;
     screenStream: MediaStream | undefined;
     sharing: boolean;
-    setupScreenSharing: () => void;
+    setupScreenSharing: () => Promise<void>;
     stopScreenSharing: () => void;
     forceStopScreenSharing: (targetId: string) => void;
 };
@@ -72,7 +72,7 @@ export const useScreenSharing = (
         [userId, sessionId]
     );
 
-    const setupScreenSharing = useCallback(async () => {
+    const setupScreenSharing = useCallback<() => Promise<void>>(async () => {
         // Get stream
         if (sharing) {
             return;
