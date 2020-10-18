@@ -328,6 +328,7 @@ export const useMyPeer = (
         myPeerId,
         onSocketUserStartScreenShare,
         onSocketUserStopScreenShare,
+        onSocketUserForceStopScreenShare
     ]);
     // }, [myPeerId, myStream]);
     return {
