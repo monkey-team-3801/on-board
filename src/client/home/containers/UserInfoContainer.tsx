@@ -77,14 +77,14 @@ export const UserInfoContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row className="mt-4">
                 <Col>
-                    <h1>Courses</h1>
+                    <h1>Enrolled Courses</h1>
                 </Col>
             </Row>
             <Row>
                 <Col>
                     {requestIsLoaded(courseDetailsResponse) &&
                         Object.keys(courseDetailsResponse.data).map(
-                            (courseCode) => {
+                            (courseCode, index) => {
                                 return (
                                     <CourseDetailsContainer
                                         key={courseCode}
@@ -93,6 +93,13 @@ export const UserInfoContainer: React.FunctionComponent<Props> = (
                                             courseDetailsResponse.data[
                                                 courseCode
                                             ]
+                                        }
+                                        showHr={
+                                            index !==
+                                            Object.keys(
+                                                courseDetailsResponse.data
+                                            ).length -
+                                                1
                                         }
                                     />
                                 );

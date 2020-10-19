@@ -1,11 +1,12 @@
 import React from "react";
+import { Container, Row } from "react-bootstrap";
 import { UserDataResponseType, UserType } from "../../../types";
-import { Container, Row, Col } from "react-bootstrap";
-import { ProfilePicture } from "../../components/ProfilePicture";
+import { CourseStaffList } from "./CourseStaffList";
 
 type Props = {
     courseCode: string;
     userData: Array<Omit<UserDataResponseType, "courses">>;
+    showHr?: boolean;
 };
 
 export const CourseDetailsContainer: React.FunctionComponent<Props> = (
@@ -30,59 +31,9 @@ export const CourseDetailsContainer: React.FunctionComponent<Props> = (
             <Row>
                 <h2>{props.courseCode}</h2>
             </Row>
-            <Row>
-                <p className="text-muted">Coordinators</p>
-            </Row>
-            <Row>
-                {coordinators.map((user) => {
-                    return (
-                        <Col lg="3" className="my-1">
-                            <Row>
-                                <Col lg="4">
-                                    <Row>
-                                        <ProfilePicture
-                                            userId={user.id}
-                                            imgClassName="course-user-profile"
-                                            openChatOnClick
-                                        />
-                                    </Row>
-                                </Col>
-                                <Col lg="8">
-                                    <Row>
-                                        <p>{user.username}</p>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Col>
-                    );
-                })}
-            </Row>
-            {/* <Row> TODO DO THIS
-                <p className="text-muted">Tutors</p>
-            </Row>
-            <Row>
-                {tutors.map((user) => {
-                    return (
-                        <Col lg="3" className="my-1">
-                            <Row>
-                                <Col lg="4">
-                                    <Row>
-                                        <ProfilePicture
-                                            userId={user.id}
-                                            imgClassName="course-user-profile"
-                                        />
-                                    </Row>
-                                </Col>
-                                <Col lg="8">
-                                    <Row>
-                                        <p>{user.username}</p>
-                                    </Row>
-                                </Col>
-                            </Row>
-                        </Col>
-                    );
-                })}
-            </Row> */}
+            <CourseStaffList header="Coordinators" users={coordinators} />
+            <CourseStaffList header="Tutors" users={tutors} />
+            {props.showHr && <hr />}
         </Container>
     );
 };
