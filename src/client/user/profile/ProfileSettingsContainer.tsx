@@ -17,9 +17,7 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
                 <GeneralOptionsContainer
                     userID={props.userData.id}
                     username={props.userData.username}
-                    refreshUserData={async () =>
-                        props.refreshUserData?.()
-                    }
+                    refreshUserData={async () => props.refreshUserData?.()}
                 />
             </Row>
             <h2>Enrolment</h2>
