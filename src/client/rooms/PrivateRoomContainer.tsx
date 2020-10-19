@@ -93,7 +93,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
-                                        <Container fluid className="d-flex">
+                                        <Container fluid className="d-flex text-wrap ">
                                             <a
                                                 href="/home"
                                                 className="back-button-icon"
@@ -106,17 +106,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             >
                                                 Back{" "}
                                             </a>
-
-                                            <h1 className="session-name">{`${sessionData.name}`}</h1>
-                                            <p>{sessionData.description}</p>
-
+                                            <span className="session-name">
+                                                <h1 >{`${sessionData.name}`}</h1>
+                                                <span className="session-description text-break">
+                                                    <p >{sessionData.description}</p>
+                                                </span>
+                                            </span>
                                             <Container
                                                 fluid
                                                 className="progress-bar-container"
                                             >
                                                 <span className="start-time">
                                                     14:00
-                                                </span>
+                                                        </span>
                                                 <div className="progress">
                                                     <div
                                                         className="progress-bar "
