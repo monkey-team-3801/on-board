@@ -18,7 +18,7 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
                     userID={props.userData.id}
                     username={props.userData.username}
                     refreshUserData={async () =>
-                        await props.refreshUserData?.()
+                        props.refreshUserData?.()
                     }
                 />
             </Row>
