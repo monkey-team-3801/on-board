@@ -2,14 +2,21 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ClassEvent } from "../events";
-import { UserDataResponseType, RoomType } from "../types";
+import { ChatEvent, ClassEvent, RoomEvent } from "../events";
+import {
+    RoomType,
+    UserDataResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
+import { ChatModal } from "./chat";
 import { ClassesPageContainer } from "./classes";
 import { Loader } from "./components";
+import { ChatModalStatusContext } from "./context";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
 import { ClassOpenIndicator } from "./Indicators";
+import { socket } from "./io";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
@@ -29,6 +36,14 @@ export const AppProtectedRoutes = (props: Props) => {
 
     const [authData] = useFetch<never>("/auth");
 
+    const [chatsWithNewMessageResponse, fetchChatsWithNewMessage] = useFetch<
+        Array<string>
+    >("/chat/hasNewMessage");
+
+    const [coursesResponse, refreshCourseData] = useFetch<
+        UserEnrolledCoursesResponseType
+    >("/user/courses");
+
     const userData = React.useMemo(() => {
         return {
             username: data?.username,
@@ -44,9 +59,41 @@ export const AppProtectedRoutes = (props: Props) => {
     );
     const { username, id, courses, userType } = userData;
 
+    const onChatStatusChange = React.useCallback(
+        (targetUserId?: string) => {
+            if (id === targetUserId) {
+                fetchChatsWithNewMessage();
+            }
+        },
+        [id, fetchChatsWithNewMessage]
+    );
+
+    React.useEffect(() => {
+        if (id) {
+            socket.on(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
+        }
+        return () => {
+            socket.off(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
+        };
+    }, [id, onChatStatusChange]);
+
     React.useEffect(() => {
         setEventData(event);
     }, [event]);
+
+    React.useEffect(() => {
+        if (userData.id) {
+            socket.connect().emit(RoomEvent.SESSION_JOIN, {
+                sessionId: "global",
+                userId: userData.id,
+            });
+        }
+        return () => {
+            if (userData.id) {
+                socket.disconnect();
+            }
+        };
+    }, [userData]);
 
     if (!requestIsLoaded(userDataResponse)) {
         return <Loader full />;
@@ -59,7 +106,12 @@ export const AppProtectedRoutes = (props: Props) => {
 
     return (
         <>
-            <Navbar {...props} username={data?.username} userid={data?.id} />
+            <Navbar
+                {...props}
+                username={data?.username}
+                userid={data?.id}
+                newMessages={chatsWithNewMessageResponse.data?.length}
+            />
             <ClassOpenIndicator
                 {...props}
                 event={eventData}
@@ -67,7 +119,22 @@ export const AppProtectedRoutes = (props: Props) => {
                     setEventData(undefined);
                 }}
             />
-            <Container fluid className="pr-0">
+            <ChatModalStatusContext.Consumer>
+                {(context) => {
+                    return (
+                        <ChatModal
+                            {...context.status}
+                            myUserId={id}
+                            myUsername={username}
+                            chatWithNewMessages={
+                                chatsWithNewMessageResponse.data || []
+                            }
+                            courses={coursesResponse.data?.courses || []}
+                        />
+                    );
+                }}
+            </ChatModalStatusContext.Consumer>
+            <Container fluid style={{ marginTop: "50px" }}>
                 <Switch>
                     <SecuredRoute
                         path="/home"
@@ -79,9 +146,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -96,9 +164,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -117,9 +186,10 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -136,10 +206,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.PRIVATE}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}
@@ -156,10 +227,11 @@ export const AppProtectedRoutes = (props: Props) => {
                                     userData={{
                                         username,
                                         id,
-                                        courses,
                                         userType,
                                     }}
                                     roomType={RoomType.BREAKOUT}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}

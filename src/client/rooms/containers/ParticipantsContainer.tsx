@@ -12,7 +12,7 @@ type Props = {
 export const ParticipantsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { users } = props;
+    const { users, raisedHandUsers } = props;
 
     const [filterValue, setFilterValue] = React.useState<string>("");
 
@@ -23,6 +23,12 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
                   return user.username.includes(filterValue);
               });
     }, [filterValue, users]);
+
+    const sortedUsers = React.useMemo(() => {
+        return filteredUsers.sort((user) => {
+            return raisedHandUsers.includes(user.id) ? -1 : 1;
+        });
+    }, [filteredUsers, raisedHandUsers]);
 
     return (
         <Container>
@@ -37,8 +43,8 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
                 <AiIcons.AiOutlineSearch />
             </Container>
             <Participants
-                users={filteredUsers}
-                raisedHandUsers={props.raisedHandUsers}
+                users={sortedUsers}
+                raisedHandUsers={raisedHandUsers}
             />
         </Container>
     );

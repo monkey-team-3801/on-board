@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import Select from "react-select";
 import { RoomType, SessionInfo } from "../../types";
 import { useFetch } from "../hooks";
 import { UserData } from "../rooms/types";
@@ -11,18 +12,22 @@ import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userData: UserData;
+    courses?: Array<string>;
 };
 
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading, history } = props;
+    const { setLoading, history, courses } = props;
 
     const [privateRoomResponse, getPrivateRooms] = useFetch<Array<SessionInfo>>(
         "session/privateSessions"
     );
 
     const [roomFilterValue, setRoomFilterValue] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<string>("");
+
+    const [deletedRooms, setDeletedRooms] = React.useState<Array<string>>([]);
 
     const [roomSelection, setRoomSelection] = React.useState<
         | {
@@ -42,28 +47,52 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     );
 
     React.useEffect(() => {
-        if (requestIsLoaded(privateRoomResponse)) {
+        if (requestIsLoaded(privateRoomResponse) && courses) {
             setLoading(false);
+            setDeletedRooms([]);
         }
-    }, [privateRoomResponse, setLoading]);
+    }, [privateRoomResponse, setLoading, courses]);
 
     const filteredRooms = React.useMemo(() => {
         return privateRoomResponse.data?.filter((session) => {
-            return session.name
-                .toLocaleLowerCase()
-                .includes(roomFilterValue.toLocaleLowerCase());
+            if (deletedRooms.includes(session.id)) {
+                return false;
+            }
+            return (
+                session.name
+                    .toLocaleLowerCase()
+                    .includes(roomFilterValue.toLocaleLowerCase()) &&
+                (courseFilter === "" || session.courseCode === courseFilter)
+            );
         });
-    }, [roomFilterValue, privateRoomResponse]);
+    }, [roomFilterValue, privateRoomResponse, deletedRooms, courseFilter]);
 
     return (
         <Container fluid className="pt-2">
             <Row>
-                <Col xl={12}>
+                <Col xl={6}>
+                    <Form.Label>Search rooms</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search rooms..."
                         onChange={(e) => {
                             setRoomFilterValue(e.target.value);
+                        }}
+                    />
+                </Col>
+                <Col xl={6}>
+                    <Form.Label>Filter courses</Form.Label>
+                    <Select
+                        placeholder="Filter course..."
+                        options={props.courses?.map((code) => {
+                            return { value: code, label: code };
+                        })}
+                        isClearable
+                        onChange={(value) => {
+                            setCourseFilter(
+                                ((value as unknown) as { value: string } | null)
+                                    ?.value ?? ""
+                            );
                         }}
                     />
                 </Col>
@@ -91,13 +120,15 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                 await getPrivateRooms();
                             }}
                             isRefreshing={requestIsLoading(privateRoomResponse)}
-                            canJoin
                             size="lg"
                             type={RoomType.PRIVATE}
+                            setDeletedRooms={setDeletedRooms}
+                            currentUserId={props.userData.id}
                         />
                     );
                 })}
             <EditPrivateRoomModal
+                courses={props.courses || []}
                 roomSelection={roomSelection}
                 onClose={() => {
                     setRoomSelection(undefined);

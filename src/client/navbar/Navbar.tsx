@@ -1,17 +1,22 @@
 import React from "react";
-import { Dropdown } from "react-bootstrap";
-import { Link, RouteComponentProps } from "react-router-dom";
-
+import { Button, Dropdown } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
-import "./Navbar.less";
+import { Link, RouteComponentProps } from "react-router-dom";
+import { RoomEvent } from "../../events";
+import { ChatModalStatusContext } from "../context";
+import { socket } from "../io";
 import { LocalStorageKey } from "../types";
+import "./Navbar.less";
 
 type Props = RouteComponentProps & {
     username?: string;
     userid?: string;
+    newMessages?: number;
 };
 
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
+    const modalContext = React.useContext(ChatModalStatusContext);
+
     return (
         <nav className="on-board-nav">
             <div className="nav-control left">
@@ -41,13 +46,31 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                     </Link>
                 </div>
             </div>
-            <div className="nav-control right">
+            <div className="nav-control right d-flex align-items-center">
                 <div className="welcome">
                     <p>
                         Welcome {props.username} ({props.userid})
                     </p>
                 </div>
-                <Dropdown className="dropdown-override">
+                <Button
+                    className="message-modal-button position-relative d-flex"
+                    onClick={() => {
+                        modalContext.onOpen?.();
+                    }}
+                >
+                    <p>Chat</p>
+                    {props.newMessages ? (
+                        <div className="messages-count-orb">
+                            {props.newMessages}
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+                </Button>
+                <Dropdown
+                    id="nav-profile-dropdown"
+                    className="dropdown-override"
+                >
                     <Dropdown.Toggle>
                         <AiIcons.AiOutlineMenu className="icon" />
                     </Dropdown.Toggle>
@@ -62,6 +85,10 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                                     ""
                                 );
                                 props.history.replace("/");
+                                socket.emit(RoomEvent.SESSION_LEAVE, {
+                                    sessionId: "global",
+                                    userId: props.userid,
+                                });
                             }}
                         >
                             Logout

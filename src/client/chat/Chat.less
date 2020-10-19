@@ -54,3 +54,40 @@
     .send-char input::placeholder {
     }
 }
+
+.private-chat {
+    .chat-log-container {
+        height: 600px;
+    }
+}
+
+.chat-modal {
+    .orb {
+        width: 12px;
+        height: 12px;
+        border-radius: 5px;
+        transform: translateY(2px);
+    }
+    .user-list-container {
+        height: 800px;
+        overflow-y: auto;
+    }
+    .user-select {
+        padding-bottom: 3px;
+        cursor: pointer;
+        &:hover {
+            background-color: #966fff11;
+        }
+        img {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+        .notification {
+            transform: translateY(2px);
+        }
+        &.selected {
+            background-color: #966fff11;
+        }
+    }
+}

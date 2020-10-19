@@ -4,10 +4,8 @@ import Select from "react-select";
 import {
     GetAnnouncementsRequestType,
     GetAnnouncementsResponseType,
-    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { useFetch } from "../hooks";
-import { CourseOptionType } from "../types";
 import { requestIsLoaded } from "../utils";
 import { AnnouncementEntry } from "./AnnouncementEntry";
 import "./Announcements.less";
@@ -16,6 +14,7 @@ type Props = {
     userId: string;
     refreshKey: number;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    courses: Array<string>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
@@ -32,31 +31,14 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     const [announcementsData, refresh] = useFetch<
         GetAnnouncementsResponseType,
         GetAnnouncementsRequestType
-    >("/courses/announcements", apiData);
+    >("/courses/announcements", apiData, false);
 
-    const [courseData, refreshCourseData] = useFetch<
-        UserEnrolledCoursesResponseType
-    >("/user/courses");
-
-    const [courseCodes, setCourseCodes] = React.useState<
-        Array<CourseOptionType>
-    >([]);
     const [textFilter, setTextFilter] = React.useState<string>("");
     const [courseFilter, setCourseFilter] = React.useState<Array<string>>([]);
 
     React.useEffect(() => {
         refresh();
-        refreshCourseData();
-    }, [refreshKey, refresh, refreshCourseData]);
-
-    React.useEffect(() => {
-        if (requestIsLoaded(courseData)) {
-            const options = courseData.data.courses.map((code) => {
-                return { value: code, label: code };
-            });
-            setCourseCodes(options);
-        }
-    }, [courseData]);
+    }, [refreshKey, refresh]);
 
     React.useEffect(() => {
         if (requestIsLoaded(announcementsData)) {
@@ -81,8 +63,30 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
 
     return (
         <>
-            <Row className="mt-3">
+            <Container className="announcement-list">
+                <Row className="d-flex justify-content-center">
+                    <p className="text-muted">You have reached the top...</p>
+                </Row>
+                {filteredAnnouncements &&
+                    filteredAnnouncements.map((announcement, i) => {
+                        return (
+                            <React.Fragment key={i}>
+                                <Row className="announcement mt-5 mb-5">
+                                    <AnnouncementEntry
+                                        announcement={announcement}
+                                        currentUser={props.userId}
+                                        onDelete={async () => {
+                                            await refresh();
+                                        }}
+                                    />
+                                </Row>
+                            </React.Fragment>
+                        );
+                    })}
+            </Container>
+            <Row>
                 <Col xl={6}>
+                    <Form.Label>Filter text</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Search..."
@@ -92,9 +96,12 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
                 <Col xl={6}>
+                    <Form.Label>Filter courses</Form.Label>
                     <Select
                         placeholder="Filter course..."
-                        options={courseCodes}
+                        options={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
                         isClearable
                         isMulti
                         onChange={(option) => {
@@ -109,25 +116,6 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
             </Row>
-            <Container className="announcement-list mt-2">
-                {filteredAnnouncements &&
-                    filteredAnnouncements.map((announcement, i) => {
-                        return (
-                            <React.Fragment key={i}>
-                                <Row className="announcement my-4">
-                                    <AnnouncementEntry
-                                        announcement={announcement}
-                                        currentUser={props.userId}
-                                        onDelete={async () => {
-                                            await refresh();
-                                        }}
-                                    />
-                                </Row>
-                                <hr />
-                            </React.Fragment>
-                        );
-                    })}
-            </Container>
         </>
     );
 };

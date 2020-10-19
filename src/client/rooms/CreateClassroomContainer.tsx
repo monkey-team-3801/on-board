@@ -5,11 +5,13 @@ import {
     UpcomingClassroomSessionData,
 } from "../../types";
 import { useDynamicFetch } from "../hooks";
+import { requestIsLoading } from "../utils";
 import { ScheduleRoomFormContainer } from "./ScheduleRoomFormContainer";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     refreshKey: number;
+    courses: Array<string>;
 };
 
 export const CreateClassroomContainer: React.FunctionComponent<Props> = (
@@ -25,13 +27,14 @@ export const CreateClassroomContainer: React.FunctionComponent<Props> = (
             setLoading={props.setLoading}
             response={createClassroomResponse}
             refreshKey={props.refreshKey}
+            courses={props.courses}
+            submitting={requestIsLoading(createClassroomResponse)}
             onSubmit={async (
-                data: Omit<UpcomingClassroomSessionData, "id">
+                data: Omit<UpcomingClassroomSessionData, "id" | "open">
             ) => {
                 await createClassroom({
-                    jobDate: data.startTime,
                     executingEvent: ExecutingEvent.CLASS_OPEN,
-                    data,
+                    ...data,
                 });
             }}
         />

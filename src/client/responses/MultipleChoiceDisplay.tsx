@@ -93,6 +93,7 @@ export const MultipleChoiceDisplay = (props: Props) => {
                             onChange={() => {
                                 handleCheck(x, i);
                             }}
+                            className="py-2"
                             disabled={userAnswered.data.found || submitting}
                         ></Form.Check>
                     ))}

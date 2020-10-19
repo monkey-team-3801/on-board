@@ -199,7 +199,7 @@ router.get(
                 }
             }
         } catch {
-            //
+            res.status(500);
         }
         readFile("public/default_user.jpg", (err, data) => {
             if (err) {
@@ -252,24 +252,29 @@ router.post(
     "/deleteFile",
     asyncHandler<undefined, {}, { sid: string; fileId: string; uid: string }>(
         async (req, res) => {
-            const fileQuery = await File.findById(req.body.fileId);
-            const sessionQuery = await Session.findById(req.body.sid);
+            try {
+                const fileQuery = await File.findById(req.body.fileId);
+                const sessionQuery = await Session.findById(req.body.sid);
 
-            if (fileQuery && sessionQuery) {
-                if (fileQuery.owner !== req.body.uid) {
-                    res.status(500).end();
-                } else if (!sessionQuery.files?.includes(fileQuery.id)) {
-                    res.status(500).end();
-                } else if (fileQuery.sessionID !== sessionQuery.id) {
-                    res.status(500).end();
-                } else {
-                    await sessionQuery.updateOne({
-                        $pull: { files: fileQuery.id },
-                    });
-                    await fileQuery.deleteOne();
-                    await sessionQuery.save();
-                    res.status(200).end();
+                if (fileQuery && sessionQuery) {
+                    if (fileQuery.owner !== req.body.uid) {
+                        res.status(500);
+                    } else if (!sessionQuery.files?.includes(fileQuery.id)) {
+                        res.status(500);
+                    } else if (fileQuery.sessionID !== sessionQuery.id) {
+                        res.status(500);
+                    } else {
+                        await sessionQuery.updateOne({
+                            $pull: { files: fileQuery.id },
+                        });
+                        await fileQuery.deleteOne();
+                        res.status(200);
+                    }
                 }
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
             }
         }
     )

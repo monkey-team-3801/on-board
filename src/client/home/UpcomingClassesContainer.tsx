@@ -7,6 +7,7 @@ import { requestIsLoaded } from "../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    userId: string;
 };
 
 export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
@@ -33,7 +34,7 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Container className="classes-list">
                     {data.length === 0 ? (
-                        <p className="text-center m-0">
+                        <p className="text-center m-0 text-muted">
                             You have no upcoming classes, are you enrolled in
                             the right courses?
                         </p>
@@ -44,7 +45,8 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
                                     key={i}
                                     {...session}
                                     size="sm"
-                                    type={RoomType.UPCOMING}
+                                    type={RoomType.CLASS}
+                                    currentUserId={props.userId}
                                 />
                             );
                         })

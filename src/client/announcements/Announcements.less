@@ -3,10 +3,10 @@
 .announcements-container {
     background-color: @content-bg;
     header {
-        width: 100%;
-        h1 {
-            text-align: center;
-            font-size: 25px;
+        .orb {
+            height: 12px;
+            width: 12px;
+            border-radius: 6px;
         }
     }
     .announcement-list {
@@ -14,25 +14,15 @@
         overflow: auto;
         overflow-x: hidden;
         .announcement {
-            header {
-                border-left: 5px solid grey;
-                p,
-                h2,
-                h3 {
-                    margin: 0;
-                    font-family: "Source Sans Pro";
-                }
-                h2 {
-                    font-size: 20px;
-                    font-weight: 600;
-                }
-                h3 {
-                    font-size: 18px;
-                }
+            h1 {
+                font-size: 1.2em;
             }
+            .info-left {
+                border-right: 1px solid lighten(@primary, 20%);
+            }
+
             .message,
             .user-container {
-                border-left: 5px solid transparent;
                 display: flex;
                 width: 100%;
                 align-items: center;
@@ -48,13 +38,12 @@
                     p,
                     h4 {
                         margin: 0;
-                        font-family: "Source Sans Pro";
                     }
                 }
             }
             .date {
                 font-size: 10px;
-                font-weight: 500;
+                font-weight: 600;
                 color: #3c519f;
             }
         }

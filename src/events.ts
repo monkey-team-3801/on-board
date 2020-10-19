@@ -3,11 +3,19 @@ import { MessageData } from "./types";
 export enum ChatEvent {
     CHAT_MESSAGE_SEND = "CHAT_MESSAGE_SEND",
     CHAT_MESSAGE_RECEIVE = "CHAT_MESSAGE_RECEIVE",
+    CHAT_STATUS_CHANGE = "CHAT_STATUS_CHANGE",
+    CHAT_JOIN = "CHAT_JOIN",
+    CHAT_LEAVE = "CHAT_LEAVE",
+    CHAT_NEW_PRIVATE_MESSAGE = "CHAT_NEW_PRIVATE_MESSAGE",
 }
 
 export type ChatMessageSendType = MessageData;
 
 export type ChatMessageReceiveType = MessageData;
+
+export enum GlobalEvent {
+    USER_ONLINE_STATUS_CHANGE = "USER_ONLINE_STATUS_CHANGE",
+}
 
 export enum RoomEvent {
     PRIVATE_ROOM_JOIN = "PRIVATE_ROOM_JOIN",
@@ -24,8 +32,31 @@ export type PrivateRoomJoinData = {
 export enum VideoEvent {
     USER_JOIN_ROOM = "USER_JOIN_ROOM",
     USER_LEAVE_ROOM = "USER_LEAVE_ROOM",
-    UPDATE_USERS = "USER_CHANGED",
+    USER_STOP_STREAMING = "USER_STOP_STREAMING",
+    USER_START_STREAMING = "USER_START_STREAMING",
+    USER_START_SCREEN_SHARING = "USER_START_SCREEN_SHARING",
+    USER_STOP_SCREEN_SHARING = "USER_STOP_SCREEN_SHARING",
+    FORCE_STOP_SCREEN_SHARING = "FORCE_STOP_SCREEN_SHARING",
+    OPERATION_DENIED = "OPERATION_DENIED",
 }
+
+export type PrivateVideoRoomForceStopSharingData = {
+    sessionId: string;
+    senderId: string;
+    targetId: string;
+};
+
+export type PrivateVideoRoomStopSharingData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
+
+export type PrivateVideoRoomShareScreenData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
 
 export type PrivateVideoRoomJoinData = {
     sessionId: string;
