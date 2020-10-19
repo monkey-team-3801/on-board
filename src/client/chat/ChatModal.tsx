@@ -209,7 +209,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                             </Row>
                         </Col>
                         <Col lg="8">
-                            {targetUser && (
+                            {targetUser ? (
                                 <ChatSession
                                     targetUserData={targetUser}
                                     myUserId={props.myUserId}
@@ -225,6 +225,10 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                                         });
                                     }}
                                 />
+                            ) : (
+                                <p className="text-muted text-center">
+                                    Select a user from the left to chat
+                                </p>
                             )}
                         </Col>
                     </Row>
