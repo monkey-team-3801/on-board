@@ -137,12 +137,6 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                     </header>
                                     <Container fluid>
                                         <Row>
-                                            <DrawingCanvas
-                                                sessionId={sessionData.id}
-                                                socket={socket}
-                                            />
-                                        </Row>
-                                        <Row>
                                             <FileModal
                                                 uploadType={
                                                     FileUploadType.DOCUMENTS
@@ -154,6 +148,10 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 files={files}
                                                 roomType={props.roomType}
                                             ></FileModal>
+                                            <DrawingCanvas
+                                                sessionId={sessionData.id}
+                                                socket={socket}
+                                            />
                                         </Row>
                                     </Container>
                                 </Col>
