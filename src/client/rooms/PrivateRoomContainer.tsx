@@ -89,7 +89,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 </Button>
                             </Row>
                         )}
-                        <Container fluid className="private-room-container">
+                        <Container fluid className="private-room-container pr-0">
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
@@ -157,7 +157,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         </Row>
                                     </Container>
                                 </Col>
-                                <Col md={3}>
+                                <Col md={3} className="pr-0">
                                     <SidePanelContainer
                                         sessionId={roomId}
                                         username={props.userData.username}
