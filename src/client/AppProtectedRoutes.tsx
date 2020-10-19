@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ChatEvent, ClassEvent, RoomEvent } from "../events";
+import { ChatEvent, ClassEvent, RoomEvent, AnnouncementEvent } from "../events";
 import {
     RoomType,
     UserDataResponseType,
@@ -68,6 +68,18 @@ export const AppProtectedRoutes = (props: Props) => {
         },
         [id, fetchChatsWithNewMessage]
     );
+
+    React.useEffect(() => {
+        if (requestIsLoaded(coursesResponse)) {
+            socket.emit(
+                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
+                {
+                    courses: coursesResponse.data.courses,
+                }
+            );
+        }
+
+    }, [coursesResponse]);
 
     React.useEffect(() => {
         if (id) {
@@ -252,8 +264,14 @@ export const AppProtectedRoutes = (props: Props) => {
                         render={(routerProps: RouteComponentProps) => {
                             return (
                                 <ProfileSettingsContainer
-                                    userID={id}
-                                    username={username}
+                                    {...routerProps}
+                                    userData={{
+                                        username,
+                                        id,
+                                        userType,
+                                    }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
                                 />
                             );
                         }}

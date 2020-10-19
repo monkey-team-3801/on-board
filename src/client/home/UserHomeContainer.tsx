@@ -10,7 +10,6 @@ import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
-import { requestIsLoaded } from "../utils";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
@@ -20,20 +19,8 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { userData, coursesResponse } = props;
-    const { courses } = userData;
-    const componentDidMount = React.useCallback(
-        (socket: SocketIOClient.Socket) => {
-            return socket.emit(
-                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
-                {
-                    courses,
-                }
-            );
-        },
-        [courses]
-    );
 
-    useSocket(AnnouncementEvent.NEW, undefined, componentDidMount, () => {
+    useSocket(AnnouncementEvent.NEW, undefined, undefined, () => {
         setRefreshKey((k) => {
             return k + 1;
         });

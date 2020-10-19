@@ -3,11 +3,9 @@ import { Container, Row } from "react-bootstrap";
 import { ContainerWrapper } from "../../components";
 import { EnrolFormContainer } from "../../courses";
 import { GeneralOptionsContainer } from "./GeneralOptionsContainer";
+import { TopLayerContainerProps } from "../../types";
 
-type Props = {
-    userID: string;
-    username: string;
-};
+type Props = TopLayerContainerProps;
 
 export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
     props: Props
@@ -17,7 +15,10 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
             <h2>User Details</h2>
             <hr></hr>
             <Row>
-                <GeneralOptionsContainer {...props} />
+                <GeneralOptionsContainer
+                    userID={props.userData.id}
+                    username={props.userData.username}
+                />
             </Row>
             <h2>Enrolment</h2>
             <hr></hr>
@@ -30,8 +31,10 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
                     {(setLoading) => {
                         return (
                             <EnrolFormContainer
-                                userId={props.userID}
+                                coursesResponse={props.coursesResponse}
+                                userId={props.userData.id}
                                 setLoading={setLoading}
+                                refreshCourses={async () => await props.refreshCourses?.()}
                             />
                         );
                     }}
