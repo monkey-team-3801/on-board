@@ -51,7 +51,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
         props.initialChatLog,
         undefined,
         transformData,
-        () => { },
+        () => {},
         props.socket
     );
 

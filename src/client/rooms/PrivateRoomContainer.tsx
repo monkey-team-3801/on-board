@@ -89,11 +89,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 </Button>
                             </Row>
                         )}
-                        <Container fluid className="private-room-container pr-0">
+                        <Container
+                            fluid
+                            className="private-room-container pr-0"
+                        >
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
-                                        <Container fluid className="d-flex text-wrap ">
+                                        <Container
+                                            fluid
+                                            className="d-flex text-wrap "
+                                        >
                                             <a
                                                 href="/home"
                                                 className="back-button-icon"
@@ -107,9 +113,13 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 Back{" "}
                                             </a>
                                             <span className="session-name">
-                                                <h1 >{`${sessionData.name}`}</h1>
+                                                <h1>{`${sessionData.name}`}</h1>
                                                 <span className="session-description text-break">
-                                                    <p >{sessionData.description}</p>
+                                                    <p>
+                                                        {
+                                                            sessionData.description
+                                                        }
+                                                    </p>
                                                 </span>
                                             </span>
                                             <Container
@@ -118,7 +128,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             >
                                                 <span className="start-time">
                                                     14:00
-                                                        </span>
+                                                </span>
                                                 <div className="progress">
                                                     <div
                                                         className="progress-bar "
