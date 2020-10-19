@@ -12,11 +12,14 @@ import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer"
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
+import { UserInfoContainer } from "./containers";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
-import { UserInfoContainer } from "./containers";
 
-type Props = RouteComponentProps & TopLayerContainerProps & {};
+type Props = RouteComponentProps &
+    TopLayerContainerProps & {
+        onlineUsers: Array<string>;
+    };
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
@@ -135,6 +138,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <UserInfoContainer
                                         setLoading={setLoading}
                                         coursesResponse={coursesResponse}
+                                        onlineUsers={props.onlineUsers}
                                         {...props.userData}
                                     />
                                 );

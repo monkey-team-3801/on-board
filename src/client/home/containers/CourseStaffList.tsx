@@ -1,11 +1,12 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
-import { ProfilePicture } from "../../components";
+import { Col, Row } from "react-bootstrap";
 import { UserDataResponseType } from "../../../types";
+import { ProfilePicture } from "../../components";
 
 type Props = {
     header?: string;
     users: Array<Omit<UserDataResponseType, "courses">>;
+    onlineUsers: Array<string>;
 };
 
 export const CourseStaffList: React.FunctionComponent<Props> = (
@@ -13,7 +14,7 @@ export const CourseStaffList: React.FunctionComponent<Props> = (
 ) => {
     return (
         <>
-            <Row className="mt-2 mb-1">
+            <Row className="mt-1 mb-1">
                 <p className="text-muted">{props.header}</p>
             </Row>
             <Row>
@@ -30,6 +31,10 @@ export const CourseStaffList: React.FunctionComponent<Props> = (
                                                 userId={user.id}
                                                 imgClassName="course-user-profile"
                                                 openChatOnClick
+                                                showStatusOrb
+                                                online={props.onlineUsers.includes(
+                                                    user.id
+                                                )}
                                             />
                                         </Row>
                                     </Col>

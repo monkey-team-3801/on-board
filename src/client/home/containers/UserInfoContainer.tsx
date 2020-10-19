@@ -1,19 +1,14 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { ProfilePicture } from "../../components/ProfilePicture";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import {
-    UserType,
-    CourseResponseType,
-    UserEnrolledCoursesResponseType,
     UserDataResponseType,
+    UserEnrolledCoursesResponseType,
+    UserType,
 } from "../../../types";
-import {
-    userTypeToClass,
-    requestIsLoading,
-    requestIsLoaded,
-} from "../../utils";
-import { useFetch, useDynamicFetch } from "../../hooks";
+import { ProfilePicture } from "../../components/ProfilePicture";
+import { useDynamicFetch } from "../../hooks";
 import { BaseResponseType } from "../../types";
+import { requestIsLoaded, userTypeToClass } from "../../utils";
 import { CourseDetailsContainer } from "./CourseDetailsContainer";
 
 type Props = {
@@ -22,6 +17,7 @@ type Props = {
     id: string;
     username: string;
     userType: UserType;
+    onlineUsers: Array<string>;
 };
 
 export const UserInfoContainer: React.FunctionComponent<Props> = (
@@ -89,6 +85,7 @@ export const UserInfoContainer: React.FunctionComponent<Props> = (
                                     <CourseDetailsContainer
                                         key={courseCode}
                                         courseCode={courseCode}
+                                        onlineUsers={props.onlineUsers}
                                         userData={
                                             courseDetailsResponse.data[
                                                 courseCode

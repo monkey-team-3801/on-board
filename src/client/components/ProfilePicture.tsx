@@ -8,6 +8,8 @@ type Props = {
     className?: string;
     imgClassName?: string;
     openChatOnClick?: boolean;
+    showStatusOrb?: boolean;
+    online?: boolean;
 };
 
 export const ProfilePicture = (props: Props) => {
@@ -20,6 +22,15 @@ export const ProfilePicture = (props: Props) => {
                 alt="user profile"
                 className={props.imgClassName}
             />
+            {props.showStatusOrb && (
+                <div
+                    className={`orb ${
+                        props.online
+                            ? "tempting-azure-gradient"
+                            : "heavy-rain-gradient"
+                    }`}
+                />
+            )}
             {props.openChatOnClick && (
                 <MDBMask
                     className="flex-center"
