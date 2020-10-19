@@ -4,7 +4,7 @@ import Select from "react-select";
 import {
     CourseListResponseType,
     EnrolCourseRequestType,
-    UserEnrolledCoursesResponseType
+    UserEnrolledCoursesResponseType,
 } from "../../types";
 import { ButtonWithLoadingProp, Loader } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";

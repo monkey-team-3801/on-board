@@ -2,7 +2,11 @@ import React from "react";
 import { Alert, Col, Container, Form, Row } from "react-bootstrap";
 import { ButtonWithLoadingProp } from "../../components";
 import { useDynamicFetch } from "../../hooks";
-import { requestHasError, requestIsLoaded, requestIsLoading } from "../../utils";
+import {
+    requestHasError,
+    requestIsLoaded,
+    requestIsLoading,
+} from "../../utils";
 import { AvatarSettings } from "./AvatarSettings";
 
 type Props = {

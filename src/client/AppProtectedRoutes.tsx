@@ -32,7 +32,9 @@ export const AppProtectedRoutes = (props: Props) => {
         ClassOpenEventData | undefined
     >();
 
-    const [userDataResponse, refreshUserData] = useFetch<UserDataResponseType>("/user/data");
+    const [userDataResponse, refreshUserData] = useFetch<UserDataResponseType>(
+        "/user/data"
+    );
     const { data } = userDataResponse;
 
     const [authData] = useFetch<never>("/auth");
@@ -71,14 +73,10 @@ export const AppProtectedRoutes = (props: Props) => {
 
     React.useEffect(() => {
         if (requestIsLoaded(coursesResponse)) {
-            socket.emit(
-                AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,
-                {
-                    courses: coursesResponse.data.courses,
-                }
-            );
+            socket.emit(AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE, {
+                courses: coursesResponse.data.courses,
+            });
         }
-
     }, [coursesResponse]);
 
     React.useEffect(() => {
