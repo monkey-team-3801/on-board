@@ -1,5 +1,7 @@
 import React from "react";
+
 import { RGBColor, SketchPicker } from "react-color";
+
 
 type Props = {
     onChange?: (colour: RGBColor) => void;
@@ -13,6 +15,8 @@ export const ColourPicker: React.FunctionComponent<Props> = (props: Props) => {
         a: 1,
     });
 
+
+
     return (
         <div>
             <SketchPicker
@@ -24,6 +28,7 @@ export const ColourPicker: React.FunctionComponent<Props> = (props: Props) => {
                     props.onChange?.(colour.rgb);
                 }}
             />
+
         </div>
     );
 };

@@ -11,6 +11,7 @@ import {
 import { ColourPicker } from "../colour";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded, throttle } from "../utils";
+import { AiFillEdit } from "react-icons/ai";
 import "./Canvas.less";
 
 type Props = {
@@ -33,6 +34,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     const isDrawing: React.MutableRefObject<boolean> = React.useRef<boolean>(
         false
     );
+    const [show, setShow] = React.useState<boolean>(false);
 
     const position: React.MutableRefObject<any> = React.useRef<{
         x?: number;
@@ -241,7 +243,15 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
         <Container className="drawing-canvas" fluid>
             <Row>
                 <Col className="colour-picker" lg={2}>
-                    <Form.Control
+
+                    <Button onClick={() => {
+                        setShow((show) => {
+                            return !show;
+                        });
+                    }}>
+                        <AiFillEdit />
+                    </Button>
+                    {show ? <Form.Control
                         type="range"
                         value={penSize}
                         min={1}
@@ -249,12 +259,12 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                         onChange={(e) => {
                             setPenSize(Number(e.target.value));
                         }}
-                    />
-                    <ColourPicker
+                    /> : null}
+                    {show ? <ColourPicker
                         onChange={(colour) => {
                             setPenColour(colour);
                         }}
-                    />
+                    /> : null}
                     <Button
                         className="clear-button"
                         onClick={async () => {
