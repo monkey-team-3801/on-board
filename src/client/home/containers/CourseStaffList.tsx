@@ -23,7 +23,7 @@ export const CourseStaffList: React.FunctionComponent<Props> = (
                 ) : (
                     props.users.map((user) => {
                         return (
-                            <Col lg="3" className="my-1">
+                            <Col lg="3" className="my-1" key={user.id}>
                                 <Row>
                                     <Col lg="4">
                                         <Row>

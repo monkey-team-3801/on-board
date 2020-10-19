@@ -273,7 +273,9 @@ router.post(
     >(async (req, res) => {
         try {
             if (req.headers.authorization) {
-                const user = getUserDataFromJWT(req.headers.authorization);
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
                 if (user) {
                     const courseUserMap = new Map<
                         string,
