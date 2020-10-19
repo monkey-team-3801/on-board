@@ -87,7 +87,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     }
 
     return (
-        <Container fluid className="chat-container">
+        <Container fluid className="chat-container pl-0">
             <Row>
                 <ChatLog messages={data || []} currentUser={props.username} />
             </Row>
