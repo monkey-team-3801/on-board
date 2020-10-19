@@ -7,7 +7,7 @@ export const peerOptions: Peer.PeerJSOption = {
     host: "/",
     path: "/peerServer",
     secure: process.env.NODE_ENV === "production",
-    port: process.env.NODE_ENV === "production" ? 443 : 5000,
+    // port: process.env.NODE_ENV === "production" ? 443 : 5000,
 };
 
 export type PeerData = {
