@@ -12,7 +12,11 @@ export class Database {
 
     public async connect(): Promise<void> {
         return new Promise((resolve, reject) => {
-            mongoose.connect(this.uri, { useNewUrlParser: true });
+            mongoose.connect(this.uri, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useFindAndModify: false,
+            });
 
             const connection = mongoose.connection;
             connection.on("error", (error) => {

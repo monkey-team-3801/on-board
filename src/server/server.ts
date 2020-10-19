@@ -16,8 +16,11 @@ import {
     RoomEvent,
     VideoEvent,
     GlobalEvent,
+    PrivateVideoRoomShareScreenData,
+    PrivateVideoRoomStopSharingData,
+    PrivateVideoRoomForceStopSharingData,
 } from "../events";
-import { Database, SessionUsers } from "./database";
+import { ClassroomSession, Database, SessionUsers, User } from "./database";
 import { VideoSession } from "./database/schema/VideoSession";
 import { ScheduleHandler } from "./jobs";
 import {
@@ -33,6 +36,7 @@ import {
     videoRoute,
 } from "./routes";
 import { asyncHandler } from "./utils";
+import { UserType } from "../types";
 
 dotenv.config();
 
@@ -164,6 +168,102 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     await session.save();
                 }
             });
+        }
+    );
+
+    socket.on(
+        VideoEvent.USER_START_SCREEN_SHARING,
+        async (userData: PrivateVideoRoomShareScreenData) => {
+            const { sessionId, userId, peerId } = userData;
+            const session = await VideoSession.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            // Too many sharing users
+            if (session.numScreensAllowed <= session.sharingUsers.size) {
+                io.to(socket.id).emit(VideoEvent.OPERATION_DENIED, {
+                    reason: `Maximum number of sharing screens allowed reached: ${session.numScreensAllowed}`,
+                });
+                return;
+            }
+            session.sharingUsers.set(userId, peerId);
+            await session.save();
+            socket.join(sessionId);
+            socket
+                .in(sessionId)
+                .emit(VideoEvent.USER_START_SCREEN_SHARING, userData);
+            socket.on("disconnect", async () => {
+                session.sharingUsers.delete(userId);
+                await session.save();
+                socket
+                    .in(sessionId)
+                    .emit(VideoEvent.USER_STOP_STREAMING, userData);
+            });
+        }
+    );
+
+    socket.on(
+        VideoEvent.USER_STOP_STREAMING,
+        async (userData: PrivateVideoRoomStopSharingData) => {
+            const { sessionId, userId } = userData;
+            const session = await VideoSession.findOne({
+                sessionId,
+            });
+            if (!session) {
+                return;
+            }
+            if (!session.sharingUsers.has(userId)) {
+                return;
+            }
+            session.sharingUsers.delete(userId);
+            await session.save();
+            console.log("User", userId, "stops sharing");
+            socket.in(sessionId).emit(VideoEvent.USER_STOP_STREAMING, userData);
+        }
+    );
+
+    socket.on(
+        VideoEvent.FORCE_STOP_SCREEN_SHARING,
+        async (userData: PrivateVideoRoomForceStopSharingData) => {
+            const { senderId, targetId, sessionId } = userData;
+            console.log("Force stop event emitted");
+            const videoSession = await VideoSession.findOne({
+                sessionId,
+            });
+            const session = await ClassroomSession.findById(sessionId);
+            const sender = await User.findById(senderId);
+            if (!session || !videoSession || !sender) {
+                return;
+            }
+            if (!videoSession.sharingUsers.has(targetId)) {
+                return;
+            }
+            if (
+                !(
+                    sender.courses.includes(session.courseCode) &&
+                    sender.userType > UserType.STUDENT
+                )
+            ) {
+                io.to(socket.id).emit(VideoEvent.OPERATION_DENIED, {
+                    reason:
+                        "You don't have permission to close other people's streams.",
+                });
+                return;
+            }
+            videoSession.sharingUsers.delete(targetId);
+            await videoSession.save();
+            socket
+                .in(sessionId)
+                .emit(VideoEvent.FORCE_STOP_SCREEN_SHARING, userData);
+            console.log(
+                "User",
+                senderId,
+                "forces user",
+                targetId,
+                "to stop sharing"
+            );
         }
     );
 

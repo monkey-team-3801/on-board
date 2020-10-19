@@ -26,7 +26,7 @@ import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { useMyPeer } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
-import { StreamSelectorWrapper } from "../videostreaming";
+import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -251,7 +251,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         <Button>Participants View</Button>
                                     </Container>
                                     <Container className="video-container mt-4">
-                                        <StreamSelectorWrapper />
+                                        {/*<StreamSelectorWrapper />*/}
+                                        <ScreenSharingContainer
+                                            userId={userId}
+                                            sessionId={sessionId}
+                                        />
                                     </Container>
                                     <Container className="room-control d-flex justify-content-center mt-4">
                                         <Button

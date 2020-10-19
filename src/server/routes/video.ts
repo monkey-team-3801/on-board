@@ -1,7 +1,11 @@
 import express from "express";
 import { asyncHandler } from "../utils";
 import { VideoSession } from "../database/schema/VideoSession";
-import { VideoSessionResponseType, VideoPeersResponseType } from "../../types";
+import {
+    VideoSessionResponseType,
+    VideoPeersResponseType,
+    VideoScreenSharingUsersType,
+} from "../../types";
 import { v4 as uuid } from "uuid";
 export const router = express.Router();
 
@@ -48,6 +52,27 @@ router.post(
             //     console.log("error", e);
             //     res.status(500).end();
             // }
+        }
+    )
+);
+
+router.post(
+    "/:sessionId/sharing",
+    asyncHandler<VideoScreenSharingUsersType, { sessionId: string }, {}>(
+        async (req, res) => {
+            try {
+                const session = await VideoSession.findOne({
+                    sessionId: req.params.sessionId,
+                });
+                if (!session) {
+                    res.status(404).end();
+                    return;
+                }
+                res.json(session.sharingUsers);
+            } catch (e) {
+                console.log("error", e);
+                res.status(500).end();
+            }
         }
     )
 );
