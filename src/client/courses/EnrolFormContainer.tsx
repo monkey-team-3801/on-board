@@ -1,29 +1,25 @@
 import React from "react";
 import { Alert, Button, Container, Form } from "react-bootstrap";
 import Select from "react-select";
-import { AnnouncementEvent } from "../../events";
 import {
     CourseListResponseType,
     EnrolCourseRequestType,
-    UserEnrolledCoursesResponseType,
+    UserEnrolledCoursesResponseType
 } from "../../types";
-import { ButtonWithLoadingProp } from "../components";
+import { ButtonWithLoadingProp, Loader } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
-import { CourseOptionType, BaseResponseType } from "../types";
+import { BaseResponseType, CourseOptionType } from "../types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
-import { socket } from "../io";
 
 type Props = {
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     userId: string;
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
-    refreshCourses: () => Promise<void>;
 };
 
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { userId, setLoading, coursesResponse } = props;
+    const { userId, coursesResponse } = props;
     const [courseData] = useFetch<CourseListResponseType>("/courses/list");
 
     const [enrolCourseResponse, enrolInCourses] = useDynamicFetch<
@@ -37,6 +33,8 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
     const [enrolledCourse, setEnrolledCourses] = React.useState<
         Array<CourseOptionType>
     >([]);
+
+    const [loading, setLoading] = React.useState<boolean>(true);
 
     const initialCoursesRef = React.useRef<Array<CourseOptionType>>([]);
 
@@ -56,13 +54,26 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
             });
             initialCoursesRef.current = options;
             setEnrolledCourses(options);
+        }
+    }, [coursesResponse]);
+
+    React.useEffect(() => {
+        if (requestIsLoaded(courseData) && requestIsLoaded(coursesResponse)) {
             setLoading(false);
         }
-    }, [coursesResponse, setLoading]);
+    }, [courseData, coursesResponse]);
 
     const isSubmitting: boolean = React.useMemo(() => {
         return requestIsLoading(enrolCourseResponse);
     }, [enrolCourseResponse]);
+
+    if (loading) {
+        return (
+            <Container className="mt-2">
+                <Loader />
+            </Container>
+        );
+    }
 
     return (
         <Container>
@@ -75,11 +86,9 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                         courses: enrolledCourse.map((course) => course.value),
                     };
                     await enrolInCourses(data);
-                    await props.refreshCourses();
                 }}
             >
                 <Form.Group>
-                    <Form.Label>Course</Form.Label>
                     <Select
                         options={courseCodes}
                         value={enrolledCourse}
@@ -96,6 +105,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                 </Form.Group>
                 <Form.Row>
                     <ButtonWithLoadingProp
+                        size="sm"
                         variant="primary"
                         type="submit"
                         invertLoader
@@ -106,7 +116,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                     <Button
                         variant="light"
                         size="sm"
-                        className="mu-1 ml-1"
+                        className="ml-1"
                         onClick={() => {
                             setEnrolledCourses(initialCoursesRef.current);
                         }}

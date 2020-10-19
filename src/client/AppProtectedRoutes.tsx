@@ -32,7 +32,7 @@ export const AppProtectedRoutes = (props: Props) => {
         ClassOpenEventData | undefined
     >();
 
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const [userDataResponse, refreshUserData] = useFetch<UserDataResponseType>("/user/data");
     const { data } = userDataResponse;
 
     const [authData] = useFetch<never>("/auth");
@@ -272,6 +272,7 @@ export const AppProtectedRoutes = (props: Props) => {
                                     }}
                                     coursesResponse={coursesResponse}
                                     refreshCourses={refreshCourseData}
+                                    refreshUserData={refreshUserData}
                                 />
                             );
                         }}

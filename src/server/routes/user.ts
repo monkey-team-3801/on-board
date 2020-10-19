@@ -206,16 +206,18 @@ router.post(
                     username: req.body.newName,
                 });
                 if (newNameQuery) {
-                    throw Error();
+                    throw new Error();
                 } else {
                     await User.findByIdAndUpdate(req.body.userID, {
                         username: req.body.newName,
                     });
-                    res.status(200).end();
+                    res.status(200);
                 }
             } catch (e) {
                 res.status(500);
                 next(new Error("Username is already taken"));
+            } finally {
+                res.end();
             }
         }
     )
