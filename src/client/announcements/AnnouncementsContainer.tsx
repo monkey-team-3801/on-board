@@ -15,6 +15,7 @@ type Props = {
     refreshKey: number;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     courses: Array<string>;
+    onlineUsers: Array<string>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
@@ -78,6 +79,9 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                                         onDelete={async () => {
                                             await refresh();
                                         }}
+                                        isUserOnline={props.onlineUsers.includes(
+                                            announcement.userId
+                                        )}
                                     />
                                 </Row>
                             </React.Fragment>

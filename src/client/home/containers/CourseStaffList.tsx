@@ -29,7 +29,7 @@ export const CourseStaffList: React.FunctionComponent<Props> = (
                                         <Row>
                                             <ProfilePicture
                                                 userId={user.id}
-                                                imgClassName="course-user-profile"
+                                                imgClassName="course-user-profile profile-pic-with-orb"
                                                 openChatOnClick
                                                 showStatusOrb
                                                 online={props.onlineUsers.includes(

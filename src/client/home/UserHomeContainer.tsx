@@ -156,6 +156,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refreshKey={refreshKey}
                                         userId={userData.id}
                                         setLoading={setLoading}
+                                        onlineUsers={props.onlineUsers}
                                         courses={
                                             coursesResponse.data?.courses || []
                                         }
