@@ -8,6 +8,7 @@ import { requestIsLoaded } from "../utils";
 import { ChatLog } from "./ChatLog";
 import { ChatEvent } from "../../events";
 import { useDebouncedCallback } from "use-debounce/lib";
+import { Loader } from "../components";
 
 type Props = {
     targetUserData: UserDataResponseType & {
@@ -188,7 +189,7 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
                     </Row>
                 </Container>
             ) : (
-                <div>loading</div>
+                <Loader />
             )}
         </Container>
     );

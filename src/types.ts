@@ -239,6 +239,8 @@ export type VideoPeersResponseType = {
     peers: Array<UserPeer>;
 };
 
+export type VideoScreenSharingUsersType = Map<string, string>;
+
 export type BreakoutRoomData = {
     name: string;
     roomId: string;

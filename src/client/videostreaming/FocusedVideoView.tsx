@@ -18,9 +18,7 @@ export const FocusedVideoView: React.FunctionComponent<{}> = () => {
                 <Col lg={4}>
                     <p>You</p>
                     {myStream ? "Stream exists" : "Stream not exists"}
-                    {myStream && myPeer && (
-                        <MyVideo videoStream={myStream} muted={true} />
-                    )}
+                    {myStream && myPeer && <MyVideo muted={true} />}
                 </Col>
                 {peerStreams
                     .keySeq()

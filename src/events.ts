@@ -34,7 +34,29 @@ export enum VideoEvent {
     USER_LEAVE_ROOM = "USER_LEAVE_ROOM",
     USER_STOP_STREAMING = "USER_STOP_STREAMING",
     USER_START_STREAMING = "USER_START_STREAMING",
+    USER_START_SCREEN_SHARING = "USER_START_SCREEN_SHARING",
+    USER_STOP_SCREEN_SHARING = "USER_STOP_SCREEN_SHARING",
+    FORCE_STOP_SCREEN_SHARING = "FORCE_STOP_SCREEN_SHARING",
+    OPERATION_DENIED = "OPERATION_DENIED",
 }
+
+export type PrivateVideoRoomForceStopSharingData = {
+    sessionId: string;
+    senderId: string;
+    targetId: string;
+};
+
+export type PrivateVideoRoomStopSharingData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
+
+export type PrivateVideoRoomShareScreenData = {
+    sessionId: string;
+    peerId: string;
+    userId: string;
+};
 
 export type PrivateVideoRoomJoinData = {
     sessionId: string;

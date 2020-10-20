@@ -2,11 +2,12 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ChatEvent, ClassEvent, RoomEvent, GlobalEvent } from "../events";
+import { useDebouncedCallback } from "use-debounce/lib";
+import { AnnouncementEvent, ChatEvent, ClassEvent, GlobalEvent, RoomEvent } from "../events";
 import {
     RoomType,
     UserDataResponseType,
-    UserEnrolledCoursesResponseType,
+    UserEnrolledCoursesResponseType
 } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ChatModal } from "./chat";
@@ -22,8 +23,8 @@ import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
+import { ProfileSettingsContainer } from "./user/profile/ProfileSettingsContainer";
 import { requestIsLoaded } from "./utils";
-import { useDebouncedCallback } from "use-debounce/lib";
 
 type Props = RouteComponentProps;
 
@@ -32,7 +33,9 @@ export const AppProtectedRoutes = (props: Props) => {
         ClassOpenEventData | undefined
     >();
 
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const [userDataResponse, refreshUserData] = useFetch<UserDataResponseType>(
+        "/user/data"
+    );
     const { data } = userDataResponse;
 
     const [authData] = useFetch<never>("/auth");
@@ -77,6 +80,14 @@ export const AppProtectedRoutes = (props: Props) => {
         },
         [id, fetchChatsWithNewMessage]
     );
+
+    React.useEffect(() => {
+        if (requestIsLoaded(coursesResponse)) {
+            socket.emit(AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE, {
+                courses: coursesResponse.data.courses,
+            });
+        }
+    }, [coursesResponse]);
 
     React.useEffect(() => {
         if (id) {
@@ -267,6 +278,26 @@ export const AppProtectedRoutes = (props: Props) => {
                         authData={authData}
                         render={(routerProps: RouteComponentProps) => {
                             return <Timetable />;
+                        }}
+                    />
+
+                    <SecuredRoute
+                        path="/profile"
+                        authData={authData}
+                        render={(routerProps: RouteComponentProps) => {
+                            return (
+                                <ProfileSettingsContainer
+                                    {...routerProps}
+                                    userData={{
+                                        username,
+                                        id,
+                                        userType,
+                                    }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
+                                    refreshUserData={refreshUserData}
+                                />
+                            );
                         }}
                     />
                 </Switch>
