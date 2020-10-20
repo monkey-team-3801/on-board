@@ -29,6 +29,7 @@ export const FileModal = (props: Props) => {
     return (
         <div>
             <Button
+                className="file-modal"
                 onClick={() => {
                     setShowModal(true);
                 }}

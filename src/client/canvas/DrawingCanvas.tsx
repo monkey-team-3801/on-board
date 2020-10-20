@@ -243,28 +243,33 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
         <Container className="drawing-canvas" fluid>
             <Row>
                 <Col className="colour-picker" lg={2}>
-
-                    <Button onClick={() => {
-                        setShow((show) => {
-                            return !show;
-                        });
-                    }}>
+                    <Button
+                        onClick={() => {
+                            setShow((show) => {
+                                return !show;
+                            });
+                        }}
+                    >
                         <AiFillEdit />
                     </Button>
-                    {show ? <Form.Control
-                        type="range"
-                        value={penSize}
-                        min={1}
-                        max={100}
-                        onChange={(e) => {
-                            setPenSize(Number(e.target.value));
-                        }}
-                    /> : null}
-                    {show ? <ColourPicker
-                        onChange={(colour) => {
-                            setPenColour(colour);
-                        }}
-                    /> : null}
+                    {show ? (
+                        <Form.Control
+                            type="range"
+                            value={penSize}
+                            min={1}
+                            max={100}
+                            onChange={(e) => {
+                                setPenSize(Number(e.target.value));
+                            }}
+                        />
+                    ) : null}
+                    {show ? (
+                        <ColourPicker
+                            onChange={(colour) => {
+                                setPenColour(colour);
+                            }}
+                        />
+                    ) : null}
                     <Button
                         className="clear-button"
                         onClick={async () => {
