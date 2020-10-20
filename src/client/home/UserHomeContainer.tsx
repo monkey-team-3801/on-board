@@ -10,10 +10,14 @@ import { CreateClassroomContainer } from "../rooms";
 import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
+import { UserInfoContainer } from "./containers";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
-type Props = RouteComponentProps & TopLayerContainerProps & {};
+type Props = RouteComponentProps &
+    TopLayerContainerProps & {
+        onlineUsers: Array<string>;
+    };
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
@@ -94,6 +98,23 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 <Col xl="6" lg="6" md="12">
                     <Row>
                         <ContainerWrapper
+                            className="user-info-container"
+                            title="Your Profile"
+                        >
+                            {(setLoading) => {
+                                return (
+                                    <UserInfoContainer
+                                        setLoading={setLoading}
+                                        coursesResponse={coursesResponse}
+                                        onlineUsers={props.onlineUsers}
+                                        {...props.userData}
+                                    />
+                                );
+                            }}
+                        </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        <ContainerWrapper
                             className="announcements-container"
                             title="Announcements"
                         >
@@ -103,6 +124,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                         refreshKey={refreshKey}
                                         userId={userData.id}
                                         setLoading={setLoading}
+                                        onlineUsers={props.onlineUsers}
                                         courses={
                                             coursesResponse.data?.courses || []
                                         }
