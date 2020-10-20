@@ -97,3 +97,7 @@ export const userTypeToClass = (userType: UserType) => {
             return "coordinator";
     }
 };
+
+export const isStaff = (userType: UserType) => {
+    return !(userType === UserType.STUDENT);
+};
