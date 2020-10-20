@@ -3,11 +3,17 @@ import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce/lib";
-import { AnnouncementEvent, ChatEvent, ClassEvent, GlobalEvent, RoomEvent } from "../events";
+import {
+    AnnouncementEvent,
+    ChatEvent,
+    ClassEvent,
+    GlobalEvent,
+    RoomEvent,
+} from "../events";
 import {
     RoomType,
     UserDataResponseType,
-    UserEnrolledCoursesResponseType
+    UserEnrolledCoursesResponseType,
 } from "../types";
 import { SecuredRoute } from "./auth/SecuredRoute";
 import { ChatModal } from "./chat";
