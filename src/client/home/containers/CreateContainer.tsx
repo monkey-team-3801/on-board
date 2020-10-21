@@ -4,9 +4,16 @@ import { HomeModalType } from "../types";
 
 type Props = {
     showModal: Function;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CreateContainer = (props: Props) => {
+    const { setLoading } = props;
+
+    React.useEffect(() => {
+        setLoading(false);
+    }, [setLoading]);
+
     return (
         <Container>
             <Row>
