@@ -1,5 +1,5 @@
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { TwitterPicker } from "react-color";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -88,59 +88,73 @@ export const ScheduleRoomForm: React.FunctionComponent<Props> = (
                     disabled={props.submitting}
                 />
             </Form.Group>
-            <Form.Group>
-                <Form.Label>Type</Form.Label>
-                <CreatableSelect
-                    options={baseRoomTypeOptions}
-                    value={props.roomType}
-                    onChange={(option) => {
-                        if (isOptionType(option)) {
-                            props.setRoomType(option);
-                        }
-                    }}
-                    isDisabled={props.submitting}
-                />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Course</Form.Label>
-                <Select
-                    options={props.courseCodes}
-                    value={props.selectedCourse}
-                    onChange={(option) => {
-                        if (isOptionType(option)) {
-                            props.setSelectedCourse(option);
-                        }
-                    }}
-                    isDisabled={props.submitting}
-                    required
-                    styles={{
-                        control: (style) => ({
-                            ...style,
-                            borderColor: isCourseEmpty ? "red" : "initial",
-                        }),
-                    }}
-                />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Class start time</Form.Label>
-                <SimpleDatepicker
-                    time={props.startingTime}
-                    onChange={(time) => {
-                        props.setStartingTime(time);
-                    }}
-                    disabled={props.submitting}
-                />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Class end time</Form.Label>
-                <SimpleDatepicker
-                    time={props.endingTime}
-                    onChange={(time) => {
-                        props.setEndingTime(time);
-                    }}
-                    disabled={props.submitting}
-                />
-            </Form.Group>
+            <Row>
+                <Col>
+                    <Form.Group>
+                        <Form.Label>Type</Form.Label>
+                        <CreatableSelect
+                            options={baseRoomTypeOptions}
+                            value={props.roomType}
+                            onChange={(option) => {
+                                if (isOptionType(option)) {
+                                    props.setRoomType(option);
+                                }
+                            }}
+                            isDisabled={props.submitting}
+                        />
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group>
+                        <Form.Label>Course</Form.Label>
+                        <Select
+                            options={props.courseCodes}
+                            value={props.selectedCourse}
+                            onChange={(option) => {
+                                if (isOptionType(option)) {
+                                    props.setSelectedCourse(option);
+                                }
+                            }}
+                            isDisabled={props.submitting}
+                            required
+                            styles={{
+                                control: (style) => ({
+                                    ...style,
+                                    borderColor: isCourseEmpty
+                                        ? "red"
+                                        : "initial",
+                                }),
+                            }}
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <Form.Group>
+                        <Form.Label>Class start time</Form.Label>
+                        <SimpleDatepicker
+                            time={props.startingTime}
+                            onChange={(time) => {
+                                props.setStartingTime(time);
+                            }}
+                            disabled={props.submitting}
+                        />
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group>
+                        <Form.Label>Class end time</Form.Label>
+                        <SimpleDatepicker
+                            time={props.endingTime}
+                            onChange={(time) => {
+                                props.setEndingTime(time);
+                            }}
+                            disabled={props.submitting}
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
             <Form.Group>
                 <Form.Label>Room colour code</Form.Label>
                 <div className="d-flex justify-content-center">
