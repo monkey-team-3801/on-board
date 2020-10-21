@@ -33,9 +33,12 @@ export const CreateContainerModal = (props: Props) => {
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        { modalContent === HomeModalType.CLASSROOM && "Create Classroom" }
-                        { modalContent === HomeModalType.PRIVATE_ROOM && "Create Private Room" }
-                        { modalContent === HomeModalType.ANNOUNCEMENT && "Create Announcement" }
+                        {modalContent === HomeModalType.CLASSROOM &&
+                            "Create Classroom"}
+                        {modalContent === HomeModalType.PRIVATE_ROOM &&
+                            "Create Private Room"}
+                        {modalContent === HomeModalType.ANNOUNCEMENT &&
+                            "Create Announcement"}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

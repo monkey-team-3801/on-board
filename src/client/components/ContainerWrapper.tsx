@@ -30,9 +30,12 @@ export const ContainerWrapper: React.FunctionComponent<Props> = (
 
     return (
         <Container className="content-container my-4" fluid>
-            <Card className={`content-internal ${props.className || ""}`} style={{
-                boxShadow: props.noShadow ? "none" : undefined,
-            }}>
+            <Card
+                className={`content-internal ${props.className || ""}`}
+                style={{
+                    boxShadow: props.noShadow ? "none" : undefined,
+                }}
+            >
                 {props.title && (
                     <Card.Header className="purple-gradient">
                         <h1 className="m-0">{props.title}</h1>

@@ -52,8 +52,14 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>
-                        {(
-                            <ContainerWrapper title={isStaff(userData.userType) ? "Staff Tools" : "Tools"}>
+                        {
+                            <ContainerWrapper
+                                title={
+                                    isStaff(userData.userType)
+                                        ? "Staff Tools"
+                                        : "Tools"
+                                }
+                            >
                                 {(setLoading) => {
                                     return (
                                         <CreateContainer
@@ -64,7 +70,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     );
                                 }}
                             </ContainerWrapper>
-                        )}
+                        }
                     </Row>
                     <Row>
                         <ContainerWrapper className="calendar" title="Calendar">
