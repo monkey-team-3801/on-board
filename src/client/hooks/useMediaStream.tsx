@@ -48,14 +48,14 @@ export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
 );
 
 export const useMediaStream: () => [
-    MediaStream | undefined,
+    MediaStream,
     (constraints?: MediaStreamConstraints) => Promise<void>,
     () => void
 ] = () => {
-    const [stream, setStream] = useState<MediaStream | undefined>(undefined);
+    const [stream, setStream] = useState<MediaStream>(new MediaStream());
     const enableMediaStream = useCallback(
         async (constraints: MediaStreamConstraints = defaultConstraints) => {
-            if (!stream) {
+            if (stream.getTracks().length === 0) {
                 try {
                     const newStream = await navigator.mediaDevices.getUserMedia(
                         constraints
@@ -63,7 +63,6 @@ export const useMediaStream: () => [
                     setStream(newStream);
                 } catch (e) {
                     console.log("error setting stream", e);
-                    setStream(undefined);
                 }
             } else {
                 stream.getTracks().forEach((track) => {
@@ -75,14 +74,12 @@ export const useMediaStream: () => [
     );
 
     const disableMediaStream = useCallback(() => {
-        stream?.getTracks().forEach((track) => {
+        stream.getTracks().forEach((track) => {
             track.stop();
-            stream?.removeTrack(track);
+            stream.removeTrack(track);
         });
 
         console.log("Turning off stream", stream);
-        console.log("Turning off stream tracks", stream?.getTracks());
-        setStream(undefined);
     }, [stream]);
 
     useEffect(() => {

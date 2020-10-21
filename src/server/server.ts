@@ -194,6 +194,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
             socket
                 .in(sessionId)
                 .emit(VideoEvent.USER_START_SCREEN_SHARING, userData);
+            console.log("User", userId, "starts screen sharing");
             socket.on("disconnect", async () => {
                 session.sharingUsers.delete(userId);
                 await session.save();

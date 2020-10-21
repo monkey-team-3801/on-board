@@ -77,6 +77,7 @@ export const useScreenSharing = (
         if (sharing) {
             return;
         }
+        console.log("First return");
         let stream: MediaStream;
         try {
             stream = await navigator.mediaDevices.getDisplayMedia({
@@ -88,6 +89,7 @@ export const useScreenSharing = (
             console.log("Error getting screen from user", e);
             return;
         }
+        console.log("Second return");
 
         // Create new peer
         const newPeer = new Peer(peerOptions);
@@ -106,6 +108,7 @@ export const useScreenSharing = (
                 userId,
                 sessionId,
             });
+            console.log("Emitting screen sharing event");
             socket.on(
                 VideoEvent.FORCE_STOP_SCREEN_SHARING,
                 (data: PrivateVideoRoomForceStopSharingData) => {
