@@ -270,7 +270,6 @@ router.post(
                             $pull: { files: fileQuery.id },
                         });
                         await fileQuery.deleteOne();
-                        await sessionQuery.save();
                         res.status(200);
                     }
                 }
