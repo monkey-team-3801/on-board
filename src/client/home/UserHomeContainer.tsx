@@ -52,13 +52,14 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>
-                        {isStaff(userData.userType) && (
-                            <ContainerWrapper title="Staff Tools">
+                        {(
+                            <ContainerWrapper title={isStaff(userData.userType) ? "Staff Tools" : "Tools"}>
                                 {(setLoading) => {
                                     return (
                                         <CreateContainer
                                             showModal={handleShowModal}
                                             setLoading={setLoading}
+                                            userType={userData.userType}
                                         />
                                     );
                                 }}

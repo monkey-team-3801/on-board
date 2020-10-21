@@ -10,10 +10,13 @@ import {
 } from "mdbreact";
 import React from "react";
 import { HomeModalType } from "../types";
+import { isStaff } from "../../utils";
+import { UserType } from "../../../types";
 
 type Props = {
     showModal: Function;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    userType: UserType
 };
 
 export const CreateContainer = (props: Props) => {
@@ -25,8 +28,8 @@ export const CreateContainer = (props: Props) => {
 
     return (
         <MDBCardGroup>
-            <MDBCol md="12" lg="4">
-                <MDBCard>
+            { isStaff(props.userType) && <MDBCol md="12" lg="4">
+                <MDBCard className="card-internal">
                     <MDBCardImage
                         className="img-fluid"
                         src="/public/classroom.jpg"
@@ -43,14 +46,15 @@ export const CreateContainer = (props: Props) => {
                                 props.showModal(HomeModalType.CLASSROOM);
                             }}
                             size="sm"
+                            className="peach-gradient ml-0 mt-2"
                         >
                             Create a Classroom
                         </MDBBtn>
                     </MDBCardBody>
                 </MDBCard>
-            </MDBCol>
+            </MDBCol>}
             <MDBCol md="12" lg="4">
-                <MDBCard>
+                <MDBCard className="card-internal">
                     <MDBCardImage
                         className="img-fluid"
                         src="/public/privateroom.png"
@@ -66,14 +70,15 @@ export const CreateContainer = (props: Props) => {
                                 props.showModal(HomeModalType.PRIVATE_ROOM);
                             }}
                             size="sm"
+                            className="peach-gradient ml-0 mt-2"
                         >
                             Create Private Room
                         </MDBBtn>
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>
-            <MDBCol md="12" lg="4">
-                <MDBCard>
+            { isStaff(props.userType) &&  <MDBCol md="12" lg="4">
+                <MDBCard className="card-internal">
                     <MDBCardImage
                         className="img-fluid"
                         src="/public/announcement.png"
@@ -90,12 +95,13 @@ export const CreateContainer = (props: Props) => {
                                 props.showModal(HomeModalType.ANNOUNCEMENT);
                             }}
                             size="sm"
+                            className="peach-gradient ml-0 mt-2"
                         >
                             Create Announcement
                         </MDBBtn>
                     </MDBCardBody>
                 </MDBCard>
-            </MDBCol>
+            </MDBCol>}
         </MDBCardGroup>
     );
 };

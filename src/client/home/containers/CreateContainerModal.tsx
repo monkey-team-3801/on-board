@@ -32,11 +32,15 @@ export const CreateContainerModal = (props: Props) => {
                 scrollable
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Create</Modal.Title>
+                    <Modal.Title>
+                        { modalContent === HomeModalType.CLASSROOM && "Create Classroom" }
+                        { modalContent === HomeModalType.PRIVATE_ROOM && "Create Private Room" }
+                        { modalContent === HomeModalType.ANNOUNCEMENT && "Create Announcement" }
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {modalContent === HomeModalType.CLASSROOM && (
-                        <ContainerWrapper>
+                        <ContainerWrapper noShadow>
                             {(setLoading) => {
                                 return (
                                     <CreateClassroomContainer
@@ -49,7 +53,7 @@ export const CreateContainerModal = (props: Props) => {
                         </ContainerWrapper>
                     )}
                     {modalContent === HomeModalType.PRIVATE_ROOM && (
-                        <ContainerWrapper>
+                        <ContainerWrapper noShadow>
                             {(setLoading) => {
                                 return (
                                     <CreatePrivateRoomContainer
@@ -61,7 +65,7 @@ export const CreateContainerModal = (props: Props) => {
                         </ContainerWrapper>
                     )}
                     {modalContent === HomeModalType.ANNOUNCEMENT && (
-                        <ContainerWrapper>
+                        <ContainerWrapper noShadow>
                             {(setLoading) => {
                                 return (
                                     <CreateAnnouncementsForm
