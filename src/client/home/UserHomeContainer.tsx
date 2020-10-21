@@ -12,6 +12,7 @@ import { UserInfoContainer } from "./containers";
 import { CreateContainer } from "./containers/CreateContainer";
 import { CreateContainerModal } from "./containers/CreateContainerModal";
 import "./Homepage.less";
+import { HomeModalType } from "./types";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
 type Props = RouteComponentProps &
@@ -33,7 +34,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
 
     const [showModal, setShowModal] = React.useState<boolean>(false);
-    const [modalContent, setModalContent] = React.useState<number>(-1);
+    const [modalContent, setModalContent] = React.useState<HomeModalType>(
+        HomeModalType.CLASSROOM
+    );
 
     const handleShowModal = (content: number) => {
         setShowModal(true);

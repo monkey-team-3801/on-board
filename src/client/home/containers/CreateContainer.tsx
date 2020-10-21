@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Jumbotron, Row } from "react-bootstrap";
+import { HomeModalType } from "../types";
 
 type Props = {
     showModal: Function;
@@ -18,7 +19,7 @@ export const CreateContainer = (props: Props) => {
                         </p>
                         <Button
                             onClick={() => {
-                                props.showModal(0);
+                                props.showModal(HomeModalType.CLASSROOM);
                             }}
                         >
                             Create a New Classroom
@@ -31,7 +32,7 @@ export const CreateContainer = (props: Props) => {
                         <p>Smaller rooms ideal for tutorials and meetings.</p>
                         <Button
                             onClick={() => {
-                                props.showModal(1);
+                                props.showModal(HomeModalType.PRIVATE_ROOM);
                             }}
                         >
                             Create a New Private Room
@@ -44,7 +45,7 @@ export const CreateContainer = (props: Props) => {
                         <p>Notify others of important course information.</p>
                         <Button
                             onClick={() => {
-                                props.showModal(2);
+                                props.showModal(HomeModalType.ANNOUNCEMENT);
                             }}
                         >
                             Create an Announcement

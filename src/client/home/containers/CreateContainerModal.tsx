@@ -7,12 +7,13 @@ import {
     CreateClassroomContainer,
     CreatePrivateRoomContainer,
 } from "../../rooms";
+import { HomeModalType } from "../types";
 
 type Props = RouteComponentProps & {
     closeModal: Function;
     refreshKey: number;
     showModal: boolean;
-    modalContent: number;
+    modalContent: HomeModalType;
     courses: Array<string>;
     userId: string;
 };
@@ -34,7 +35,7 @@ export const CreateContainerModal = (props: Props) => {
                     <Modal.Title>Create</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {modalContent === 0 && (
+                    {modalContent === HomeModalType.CLASSROOM && (
                         <ContainerWrapper>
                             {(setLoading) => {
                                 return (
@@ -47,7 +48,7 @@ export const CreateContainerModal = (props: Props) => {
                             }}
                         </ContainerWrapper>
                     )}
-                    {modalContent === 1 && (
+                    {modalContent === HomeModalType.PRIVATE_ROOM && (
                         <ContainerWrapper>
                             {(setLoading) => {
                                 return (
@@ -59,7 +60,7 @@ export const CreateContainerModal = (props: Props) => {
                             }}
                         </ContainerWrapper>
                     )}
-                    {modalContent === 2 && (
+                    {modalContent === HomeModalType.ANNOUNCEMENT && (
                         <ContainerWrapper>
                             {(setLoading) => {
                                 return (
