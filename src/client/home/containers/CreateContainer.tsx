@@ -42,6 +42,7 @@ export const CreateContainer = (props: Props) => {
                             onClick={() => {
                                 props.showModal(HomeModalType.CLASSROOM);
                             }}
+                            size="sm"
                         >
                             Create a Classroom
                         </MDBBtn>
@@ -64,6 +65,7 @@ export const CreateContainer = (props: Props) => {
                             onClick={() => {
                                 props.showModal(HomeModalType.PRIVATE_ROOM);
                             }}
+                            size="sm"
                         >
                             Create Private Room
                         </MDBBtn>
@@ -87,6 +89,7 @@ export const CreateContainer = (props: Props) => {
                             onClick={() => {
                                 props.showModal(HomeModalType.ANNOUNCEMENT);
                             }}
+                            size="sm"
                         >
                             Create Announcement
                         </MDBBtn>
