@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { RouteComponentProps } from "react-router-dom";
 import {
     UserDataResponseType,
     UserEnrolledCoursesResponseType,
@@ -11,7 +12,7 @@ import { BaseResponseType } from "../../types";
 import { requestIsLoaded, userTypeToClass } from "../../utils";
 import { CourseDetailsContainer } from "./CourseDetailsContainer";
 
-type Props = {
+type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
     id: string;
@@ -66,7 +67,13 @@ export const UserInfoContainer: React.FunctionComponent<Props> = (
                     </Row>
                 </Col>
                 <Col lg="2">
-                    <Button size="sm" variant="light">
+                    <Button
+                        size="sm"
+                        variant="light"
+                        onClick={() => {
+                            props.history.push("/profile");
+                        }}
+                    >
                         Edit
                     </Button>
                 </Col>
