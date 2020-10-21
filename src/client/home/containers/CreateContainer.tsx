@@ -82,8 +82,8 @@ export const CreateContainer = (props: Props) => {
                     <MDBCardBody>
                         <MDBCardTitle>Annoucements</MDBCardTitle>
                         <MDBCardText>
-                            Notify Students and Staff of Important Course
-                            Information.
+                            Notify students and staff of important course
+                            information.
                         </MDBCardText>
                         <MDBBtn
                             onClick={() => {
