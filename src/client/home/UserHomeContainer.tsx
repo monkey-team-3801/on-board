@@ -105,8 +105,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 return (
                                     <UserInfoContainer
                                         setLoading={setLoading}
-                                        coursesResponse={coursesResponse}
-                                        onlineUsers={props.onlineUsers}
+                                        {...props}
                                         {...props.userData}
                                     />
                                 );
