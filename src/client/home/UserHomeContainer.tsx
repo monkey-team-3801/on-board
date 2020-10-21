@@ -2,15 +2,14 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
-import { CreateAnnouncementsForm } from "../announcements";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
 import { ContainerWrapper } from "../components";
 import { useSocket } from "../hooks";
-import { CreateClassroomContainer } from "../rooms";
-import { CreatePrivateRoomContainer } from "../rooms/CreatePrivateRoomContainer";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
 import { UserInfoContainer } from "./containers";
+import { CreateContainer } from "./containers/CreateContainer";
+import { CreateContainerModal } from "./containers/CreateContainerModal";
 import "./Homepage.less";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 
@@ -31,6 +30,18 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     });
 
     const [refreshKey, setRefreshKey] = React.useState<number>(0);
+
+    const [showModal, setShowModal] = React.useState<boolean>(false);
+    const [modalContent, setModalContent] = React.useState<number>(-1);
+
+    const handleShowModal = (content: number) => {
+        setShowModal(true);
+        setModalContent(content);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
     return (
         <div className="homepage">
@@ -64,36 +75,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <ContainerWrapper title="Create Private Room">
-                            {(setLoading) => {
-                                return (
-                                    <CreatePrivateRoomContainer
-                                        setLoading={setLoading}
-                                        refreshKey={refreshKey}
-                                        courses={
-                                            coursesResponse.data?.courses || []
-                                        }
-                                        {...props}
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
+                        <CreateContainer showModal={handleShowModal} />
                     </Row>
-                    <Row>
-                        <ContainerWrapper title="Create Classroom">
-                            {(setLoading) => {
-                                return (
-                                    <CreateClassroomContainer
-                                        setLoading={setLoading}
-                                        refreshKey={refreshKey}
-                                        courses={
-                                            coursesResponse.data?.courses || []
-                                        }
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
+                    <Row></Row>
                 </Col>
                 <Col xl="6" lg="6" md="12">
                     <Row>
@@ -133,24 +117,17 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             }}
                         </ContainerWrapper>
                     </Row>
-                    <Row>
-                        <ContainerWrapper title="Create Announcements">
-                            {(setLoading) => {
-                                return (
-                                    <CreateAnnouncementsForm
-                                        userId={userData.id}
-                                        setLoading={setLoading}
-                                        refreshKey={refreshKey}
-                                        courses={
-                                            coursesResponse.data?.courses || []
-                                        }
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
                 </Col>
             </Row>
+            <CreateContainerModal
+                refreshKeyValue={refreshKey}
+                userId={userData.id}
+                courses={coursesResponse.data?.courses || []}
+                closeModal={handleCloseModal}
+                showModal={showModal}
+                modalContent={modalContent}
+                {...props}
+            />
         </div>
     );
 };
