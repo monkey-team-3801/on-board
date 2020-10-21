@@ -25,7 +25,7 @@ export const CreateContainer = (props: Props) => {
 
     return (
         <MDBCardGroup>
-            <MDBCol>
+            <MDBCol md="12" lg="4">
                 <MDBCard>
                     <MDBCardImage
                         className="img-fluid"
@@ -48,7 +48,7 @@ export const CreateContainer = (props: Props) => {
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>
-            <MDBCol>
+            <MDBCol md="12" lg="4">
                 <MDBCard>
                     <MDBCardImage
                         className="img-fluid"
@@ -70,7 +70,7 @@ export const CreateContainer = (props: Props) => {
                     </MDBCardBody>
                 </MDBCard>
             </MDBCol>
-            <MDBCol>
+            <MDBCol md="12" lg="4">
                 <MDBCard>
                     <MDBCardImage
                         className="img-fluid"
