@@ -271,7 +271,6 @@ router.post(
                         });
                         await fileQuery.deleteOne();
                         await sessionQuery.save();
-                        await fileQuery.save();
                         res.status(200);
                     }
                 }
