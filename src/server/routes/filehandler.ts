@@ -254,7 +254,9 @@ router.post(
         async (req, res) => {
             try {
                 const fileQuery = await File.findById(req.body.fileId);
-                const sessionQuery = await Session.findById(req.body.sid);
+                const sessionQuery =
+                    (await Session.findById(req.body.sid)) ||
+                    (await ClassroomSession.findById(req.body.sid));
 
                 if (fileQuery && sessionQuery) {
                     if (fileQuery.owner !== req.body.uid) {
@@ -268,6 +270,8 @@ router.post(
                             $pull: { files: fileQuery.id },
                         });
                         await fileQuery.deleteOne();
+                        await sessionQuery.save();
+                        await fileQuery.save();
                         res.status(200);
                     }
                 }
@@ -281,11 +285,11 @@ router.post(
 );
 
 // Currently only accepts jpg and png file types for images. Add more later if needed.
+// NOTE: This does not prevent corrupted files.
 function verifyImageSignature(data: Buffer): string {
     let values: string = data.toString("hex");
     values = values.slice(0, 8);
 
-    // Set this to whatever type in the switch.
     let imgSig: string = "";
 
     // Verify file signature
