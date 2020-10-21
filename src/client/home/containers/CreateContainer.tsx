@@ -1,5 +1,14 @@
+import {
+    MDBBtn,
+    MDBCard,
+    MDBCardBody,
+    MDBCardGroup,
+    MDBCardImage,
+    MDBCardText,
+    MDBCardTitle,
+    MDBCol,
+} from "mdbreact";
 import React from "react";
-import { Button, Col, Container, Jumbotron, Row } from "react-bootstrap";
 import { HomeModalType } from "../types";
 
 type Props = {
@@ -15,51 +24,75 @@ export const CreateContainer = (props: Props) => {
     }, [setLoading]);
 
     return (
-        <Container>
-            <Row>
-                <Col>
-                    <Jumbotron>
-                        <h1>Classrooms</h1>
-                        <p>
-                            Large, collabrative rooms for lectures and
+        <MDBCardGroup>
+            <MDBCol>
+                <MDBCard>
+                    <MDBCardImage
+                        className="img-fluid"
+                        src="/public/classroom.jpg"
+                        waves
+                    />
+                    <MDBCardBody>
+                        <MDBCardTitle>Classrooms</MDBCardTitle>
+                        <MDBCardText>
+                            Large, collaborative rooms for lectures and
                             presentations.
-                        </p>
-                        <Button
+                        </MDBCardText>
+                        <MDBBtn
                             onClick={() => {
                                 props.showModal(HomeModalType.CLASSROOM);
                             }}
                         >
-                            Create a New Classroom
-                        </Button>
-                    </Jumbotron>
-                </Col>
-                <Col>
-                    <Jumbotron>
-                        <h1>Private Rooms</h1>
-                        <p>Smaller rooms ideal for tutorials and meetings.</p>
-                        <Button
+                            Create a Classroom
+                        </MDBBtn>
+                    </MDBCardBody>
+                </MDBCard>
+            </MDBCol>
+            <MDBCol>
+                <MDBCard>
+                    <MDBCardImage
+                        className="img-fluid"
+                        src="/public/privateroom.png"
+                        waves
+                    />
+                    <MDBCardBody>
+                        <MDBCardTitle>Private Rooms</MDBCardTitle>
+                        <MDBCardText>
+                            Smaller rooms ideal for tutorials and meetings.
+                        </MDBCardText>
+                        <MDBBtn
                             onClick={() => {
                                 props.showModal(HomeModalType.PRIVATE_ROOM);
                             }}
                         >
-                            Create a New Private Room
-                        </Button>
-                    </Jumbotron>
-                </Col>
-                <Col>
-                    <Jumbotron>
-                        <h1>Announcements</h1>
-                        <p>Notify others of important course information.</p>
-                        <Button
+                            Create Private Room
+                        </MDBBtn>
+                    </MDBCardBody>
+                </MDBCard>
+            </MDBCol>
+            <MDBCol>
+                <MDBCard>
+                    <MDBCardImage
+                        className="img-fluid"
+                        src="/public/announcement.png"
+                        waves
+                    />
+                    <MDBCardBody>
+                        <MDBCardTitle>Annoucements</MDBCardTitle>
+                        <MDBCardText>
+                            Notify Students and Staff of Important Course
+                            Information.
+                        </MDBCardText>
+                        <MDBBtn
                             onClick={() => {
                                 props.showModal(HomeModalType.ANNOUNCEMENT);
                             }}
                         >
-                            Create an Announcement
-                        </Button>
-                    </Jumbotron>
-                </Col>
-            </Row>
-        </Container>
+                            Create Announcement
+                        </MDBBtn>
+                    </MDBCardBody>
+                </MDBCard>
+            </MDBCol>
+        </MDBCardGroup>
     );
 };

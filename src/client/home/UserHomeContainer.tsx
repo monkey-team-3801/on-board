@@ -52,6 +52,20 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             <Row>
                 <Col xl="6" lg="6" md="12">
                     <Row>
+                        {isStaff(userData.userType) && (
+                            <ContainerWrapper title="Staff Tools">
+                                {(setLoading) => {
+                                    return (
+                                        <CreateContainer
+                                            showModal={handleShowModal}
+                                            setLoading={setLoading}
+                                        />
+                                    );
+                                }}
+                            </ContainerWrapper>
+                        )}
+                    </Row>
+                    <Row>
                         <ContainerWrapper className="calendar" title="Calendar">
                             {(setLoading) => {
                                 return (
@@ -78,20 +92,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                             }}
                         </ContainerWrapper>
                     </Row>
-                    <Row>
-                        {isStaff(userData.userType) && (
-                            <ContainerWrapper title="Staff Tools">
-                                {(setLoading) => {
-                                    return (
-                                        <CreateContainer
-                                            showModal={handleShowModal}
-                                            setLoading={setLoading}
-                                        />
-                                    );
-                                }}
-                            </ContainerWrapper>
-                        )}
-                    </Row>
+
                     <Row></Row>
                 </Col>
                 <Col xl="6" lg="6" md="12">
