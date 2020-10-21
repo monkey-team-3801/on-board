@@ -7,6 +7,7 @@ import { ContainerWrapper } from "../components";
 import { useSocket } from "../hooks";
 import { Calendar } from "../timetable";
 import { TopLayerContainerProps } from "../types";
+import { isStaff } from "../utils";
 import { UserInfoContainer } from "./containers";
 import { CreateContainer } from "./containers/CreateContainer";
 import { CreateContainerModal } from "./containers/CreateContainerModal";
@@ -75,7 +76,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                         </ContainerWrapper>
                     </Row>
                     <Row>
-                        <CreateContainer showModal={handleShowModal} />
+                        {isStaff(userData.userType) && (
+                            <CreateContainer showModal={handleShowModal} />
+                        )}
                     </Row>
                     <Row></Row>
                 </Col>
@@ -120,7 +123,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                 </Col>
             </Row>
             <CreateContainerModal
-                refreshKeyValue={refreshKey}
+                refreshKey={refreshKey}
                 userId={userData.id}
                 courses={coursesResponse.data?.courses || []}
                 closeModal={handleCloseModal}

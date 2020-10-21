@@ -10,7 +10,7 @@ import {
 
 type Props = RouteComponentProps & {
     closeModal: Function;
-    refreshKeyValue: number;
+    refreshKey: number;
     showModal: boolean;
     modalContent: number;
     courses: Array<string>;
@@ -40,8 +40,8 @@ export const CreateContainerModal = (props: Props) => {
                                 return (
                                     <CreateClassroomContainer
                                         setLoading={setLoading}
-                                        refreshKey={props.refreshKeyValue}
                                         courses={props.courses || []}
+                                        refreshKey={props.refreshKey}
                                     />
                                 );
                             }}
@@ -53,7 +53,6 @@ export const CreateContainerModal = (props: Props) => {
                                 return (
                                     <CreatePrivateRoomContainer
                                         setLoading={setLoading}
-                                        refreshKey={props.refreshKeyValue}
                                         {...props}
                                     />
                                 );
@@ -67,8 +66,8 @@ export const CreateContainerModal = (props: Props) => {
                                     <CreateAnnouncementsForm
                                         userId={props.userId}
                                         setLoading={setLoading}
-                                        refreshKey={props.refreshKeyValue}
                                         courses={props.courses || []}
+                                        refreshKey={props.refreshKey}
                                     />
                                 );
                             }}

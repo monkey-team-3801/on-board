@@ -41,7 +41,7 @@ export const CreateContainer = (props: Props) => {
                 <Col>
                     <Jumbotron>
                         <h1>Announcements</h1>
-                        <p>Important information regarding coursework.</p>
+                        <p>Notify others of important course information.</p>
                         <Button
                             onClick={() => {
                                 props.showModal(2);
