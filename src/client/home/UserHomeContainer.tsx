@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { AnnouncementEvent } from "../../events";
 import { AnnouncementsContainer } from "../announcements/AnnouncementsContainer";
@@ -14,16 +14,25 @@ import { CreateContainerModal } from "./containers/CreateContainerModal";
 import "./Homepage.less";
 import { HomeModalType } from "./types";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
+import { UserHeaderJumbotron } from "./UserHeaderJumbotron";
 
 type Props = RouteComponentProps &
     TopLayerContainerProps & {
         onlineUsers: Array<string>;
+        newMessages?: number;
     };
 
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { userData, coursesResponse } = props;
+
+    const [upcomingClassesAmount, setUpcomingClassesAmount] = React.useState<
+        number
+    >(0);
+
+    // TODO Set this when Mike is ready.
+    const [eventsAmount] = React.useState<number>(0);
 
     useSocket(AnnouncementEvent.NEW, undefined, undefined, () => {
         setRefreshKey((k) => {
@@ -46,32 +55,23 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
     const handleCloseModal = () => {
         setShowModal(false);
     };
-
     return (
         <div className="homepage">
+            <Container fluid>
+                <Row>
+                    <Col className="p-0">
+                        <UserHeaderJumbotron
+                            {...props}
+                            username={props.userData.username}
+                            newMessagesAmount={props.newMessages ?? 0}
+                            upcomingClassesAmount={upcomingClassesAmount}
+                            eventsAmount={eventsAmount}
+                        />
+                    </Col>
+                </Row>
+            </Container>
             <Row>
                 <Col xl="6" lg="6" md="12">
-                    <Row>
-                        {
-                            <ContainerWrapper
-                                title={
-                                    isStaff(userData.userType)
-                                        ? "Staff Tools"
-                                        : "Tools"
-                                }
-                            >
-                                {(setLoading) => {
-                                    return (
-                                        <CreateContainer
-                                            showModal={handleShowModal}
-                                            setLoading={setLoading}
-                                            userType={userData.userType}
-                                        />
-                                    );
-                                }}
-                            </ContainerWrapper>
-                        }
-                    </Row>
                     <Row>
                         <ContainerWrapper className="calendar" title="Calendar">
                             {(setLoading) => {
@@ -94,6 +94,9 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                     <UpcomingClassesContainer
                                         setLoading={setLoading}
                                         userId={props.userData.id}
+                                        setUpcomingClassesAmount={
+                                            setUpcomingClassesAmount
+                                        }
                                     />
                                 );
                             }}
@@ -138,6 +141,27 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 );
                             }}
                         </ContainerWrapper>
+                    </Row>
+                    <Row>
+                        {
+                            <ContainerWrapper
+                                title={
+                                    isStaff(userData.userType)
+                                        ? "Staff Tools"
+                                        : "Tools"
+                                }
+                            >
+                                {(setLoading) => {
+                                    return (
+                                        <CreateContainer
+                                            showModal={handleShowModal}
+                                            setLoading={setLoading}
+                                            userType={userData.userType}
+                                        />
+                                    );
+                                }}
+                            </ContainerWrapper>
+                        }
                     </Row>
                 </Col>
             </Row>
