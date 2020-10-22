@@ -77,7 +77,6 @@ export const useScreenSharing = (
         if (sharing) {
             return;
         }
-        console.log("First return");
         let stream: MediaStream;
         try {
             stream = await navigator.mediaDevices.getDisplayMedia({
@@ -89,7 +88,6 @@ export const useScreenSharing = (
             console.log("Error getting screen from user", e);
             return;
         }
-        console.log("Second return");
 
         // Create new peer
         const newPeer = new Peer(peerOptions);
@@ -124,7 +122,12 @@ export const useScreenSharing = (
         });
         // Answer people's call
         newPeer.on("call", (call) => {
+            console.log("SCREEN PEER: Receiving call from", call.peer, "answering with stream", stream);
             call.answer(stream);
+            call.on("stream", () => {
+                console.log("Receiving streams from", call.peer);
+                call.answer(stream);
+            });
         });
         setMySharingPeer(newPeer);
         setSharing(true);

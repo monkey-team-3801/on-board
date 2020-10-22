@@ -50,17 +50,37 @@ export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
 export const useMediaStream: () => [
     MediaStream,
     (constraints?: MediaStreamConstraints) => Promise<void>,
-    () => void
+    () => void,
+    boolean
 ] = () => {
-    const [stream, setStream] = useState<MediaStream>(new MediaStream());
+    const emptyAudioTrack = useCallback<() => MediaStreamTrack>(() => {
+        let ctx = new AudioContext();
+        const oscillator = ctx.createOscillator();
+        const dest = ctx.createMediaStreamDestination();
+        oscillator.connect(dest);
+        oscillator.start();
+        return Object.assign(dest.stream.getAudioTracks()[0], {enabled: false});
+    }, []);
+
+    const emptyVideoTrack = useCallback<(width: number, height: number) => MediaStreamTrack>((width: number, height: number) => {
+        let canvas: HTMLCanvasElement = Object.assign(document.createElement("canvas"), {width, height});
+        canvas.getContext("2d")?.fillRect(0, 0, width, height);
+        let stream = canvas.captureStream(30);
+        return Object.assign(stream.getVideoTracks()[0], {enabled: false});
+    }, []);
+
+    let blackSilence = useCallback<(width: number, height: number) => MediaStream>((width: number, height: number) => new MediaStream([emptyVideoTrack(width, height), emptyAudioTrack()]), []);
+    const [stream, setStream] = useState<MediaStream>(() => blackSilence(480, 360));
+    const [streamEnabled, setStreamEnabled] = useState<boolean>(false);
     const enableMediaStream = useCallback(
         async (constraints: MediaStreamConstraints = defaultConstraints) => {
-            if (stream.getTracks().length === 0) {
+            if (!streamEnabled) {
                 try {
                     const newStream = await navigator.mediaDevices.getUserMedia(
                         constraints
                     );
                     setStream(newStream);
+                    setStreamEnabled(true);
                 } catch (e) {
                     console.log("error setting stream", e);
                 }
@@ -70,7 +90,7 @@ export const useMediaStream: () => [
                 });
             }
         },
-        [stream]
+        [stream, streamEnabled]
     );
 
     const disableMediaStream = useCallback(() => {
@@ -78,7 +98,7 @@ export const useMediaStream: () => [
             track.stop();
             stream.removeTrack(track);
         });
-
+        setStreamEnabled(false);
         console.log("Turning off stream", stream);
     }, [stream]);
 
@@ -89,5 +109,5 @@ export const useMediaStream: () => [
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    return [stream, enableMediaStream, disableMediaStream];
+    return [stream, enableMediaStream, disableMediaStream, streamEnabled];
 };

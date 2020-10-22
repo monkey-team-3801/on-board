@@ -15,7 +15,11 @@ import { requestIsLoaded } from "../utils";
 import { peerOptions } from "../peer/peer";
 
 declare var process: any;
-
+declare global {
+    interface HTMLCanvasElement {
+        captureStream: (frameRate?: number) => MediaStream
+    }
+}
 export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
 
@@ -57,7 +61,8 @@ export const useMyPeer = (
     const [sharingResponse] = useFetch<{ [key: string]: string }>(
         `/videos/${sessionId}/sharing`
     );
-    const [myStream, enableStream, disableStream] = useMediaStream();
+
+    const [myStream, enableStream, disableStream, streamEnabled] = useMediaStream();
     const cleanUp = useCallback(() => {
         if (myPeer) {
             myPeer.disconnect();
@@ -96,7 +101,7 @@ export const useMyPeer = (
             });
             myPeer.on("open", (id) => {
                 setMyPeerId(id);
-                console.log("Peer opening");
+                console.log("Peer opening", id);
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,14 +121,16 @@ export const useMyPeer = (
             myPeer.on("call", (call) => {
 
                 console.log("Receving call from peer", call.peer);
-                call.answer(myStream);
+                if (streamEnabled) {
+                    call.answer(myStream);
+                }
                 setPeerCalls((prev) => prev.set(call.peer, call));
                 call.on("stream", (stream) => {
                     setPeerStreams((prev) => prev.set(call.peer, stream));
                 });
             });
         }
-    }, [myPeer, myStream, myPeerId]);
+    }, [myPeer, myStream, myPeerId, streamEnabled]);
     const addPeer = useCallback<(peerId: PeerId) => void>(
         async (peerId) => {
             if (!myPeerId || myPeerId === peerId) {
@@ -131,6 +138,9 @@ export const useMyPeer = (
             }
             if (peerCalls.has(peerId)) {
                 return;
+            }
+            if (!streamEnabled) {
+                await enableStream();
             }
             const call = myPeer?.call(peerId, myStream);
             if (!call) {
@@ -150,7 +160,7 @@ export const useMyPeer = (
                 setPeerStreams((prev) => prev.delete(peerId));
             });
         },
-        [myPeerId, peerCalls, myStream, myPeer]
+        [myPeerId, peerCalls, myStream, myPeer, streamEnabled, enableStream]
     );
     const removePeer = useCallback<(peerId: PeerId) => void>(
         (peerId) => {
@@ -170,8 +180,8 @@ export const useMyPeer = (
             if (!myPeerId) {
                 return;
             }
-            console.log("my peer id exists");
-            const call = myPeer.call(peerId, myStream!);
+            console.log("Calling peer", peerId);
+            const call = myPeer.call(peerId, myStream);
             if (!call) {
                 return;
             }

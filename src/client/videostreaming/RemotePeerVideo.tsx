@@ -19,7 +19,7 @@ export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId }) => {
                 await addPeer(peerId);
                 if (currentRef) {
                     currentRef.srcObject = peerStreams.get(peerId)!;
-                    console.log(peerStreams.get(peerId));
+                    // console.log(peerStreams.get(peerId));
                     currentRef.addEventListener("loadedmetadata", playVideo);
                 }
             }
