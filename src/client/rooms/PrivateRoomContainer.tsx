@@ -122,6 +122,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                     <SidePanelContainer
                                         sessionId={roomId}
                                         username={props.userData.username}
+                                        myUserId={props.userData.id}
                                         initialChatLog={sessionData.messages}
                                         users={users}
                                         raisedHandUsers={[]}

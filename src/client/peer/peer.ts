@@ -30,8 +30,9 @@ export type PeerData = {
             stream: MediaStream;
         }
     >;
-    addPeer: (peerId: PeerId) => void;
-    removePeer: (peerId: PeerId) => void;
+    userIdToPeerIdMap: Map<string, string>;
+    addPeer: (peerId: PeerId, theirUserId?: string) => void;
+    removePeer: (peerId: PeerId, theirUserId?: string) => void;
     enableStream: () => void;
     disableStream: () => void;
     cleanUp: () => void;
@@ -45,6 +46,7 @@ export const PeerContext = createContext<PeerData>({
     peerStreams: Map(),
     sharingCalls: Map(),
     sharingStreams: Map(),
+    userIdToPeerIdMap: Map(),
     addPeer: (peerId) => {},
     removePeer: (peerId) => {},
     enableStream: () => {},
