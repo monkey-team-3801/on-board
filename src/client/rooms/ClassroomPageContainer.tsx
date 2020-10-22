@@ -213,14 +213,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <div className="stream-container">
                         <Row>
                             <Col md={4}>
-                                <div className="dflex justify-content-center align-items-center presenter-container">
+                                <Container className="dflex justify-content-center align-items-center presenter-container">
                                     <div className="presenter-picture">
-
+                                        {/* Picture */}
                                     </div>
                                     <div className="presenter-name">
                                         Example Name
                                     </div>
-                                </div>
+                                </Container>
                             </Col>
                             <Col md={8}>
                                 <Container className="view-control d-flex justify-content-center">
