@@ -15,6 +15,7 @@ import "./Homepage.less";
 import { HomeModalType } from "./types";
 import { UpcomingClassesContainer } from "./UpcomingClassesContainer";
 import { UserHeaderJumbotron } from "./UserHeaderJumbotron";
+import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps &
     TopLayerContainerProps & {
@@ -56,7 +57,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
         setShowModal(false);
     };
     return (
-        <div className="homepage">
+        <div className="homepage" style={{ overflow: "hidden" }}>
             <Container fluid>
                 <Row>
                     <Col className="p-0">
@@ -72,99 +73,106 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             </Container>
             <Row>
                 <Col xl="6" lg="6" md="12">
-                    <Row>
-                        <ContainerWrapper className="calendar" title="Calendar">
-                            {(setLoading) => {
-                                return (
-                                    <Calendar
-                                        setLoading={setLoading}
-                                        sessions={[]}
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        <ContainerWrapper
-                            className="classes-container"
-                            title="Classes"
-                        >
-                            {(setLoading) => {
-                                return (
-                                    <UpcomingClassesContainer
-                                        setLoading={setLoading}
-                                        userId={props.userData.id}
-                                        setUpcomingClassesAmount={
-                                            setUpcomingClassesAmount
-                                        }
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-
-                    <Row></Row>
-                </Col>
-                <Col xl="6" lg="6" md="12">
-                    <Row>
-                        <ContainerWrapper
-                            className="user-info-container"
-                            title="Your Profile"
-                        >
-                            {(setLoading) => {
-                                return (
-                                    <UserInfoContainer
-                                        setLoading={setLoading}
-                                        {...props}
-                                        {...props.userData}
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        <ContainerWrapper
-                            className="announcements-container"
-                            title="Announcements"
-                        >
-                            {(setLoading) => {
-                                return (
-                                    <AnnouncementsContainer
-                                        refreshKey={refreshKey}
-                                        userId={userData.id}
-                                        setLoading={setLoading}
-                                        onlineUsers={props.onlineUsers}
-                                        courses={
-                                            coursesResponse.data?.courses || []
-                                        }
-                                    />
-                                );
-                            }}
-                        </ContainerWrapper>
-                    </Row>
-                    <Row>
-                        {
+                    <FadeIn delay={100}>
+                        <Row>
                             <ContainerWrapper
-                                title={
-                                    isStaff(userData.userType)
-                                        ? "Staff Tools"
-                                        : "Tools"
-                                }
+                                className="calendar"
+                                title="Calendar"
                             >
                                 {(setLoading) => {
                                     return (
-                                        <CreateContainer
-                                            showModal={handleShowModal}
+                                        <Calendar
                                             setLoading={setLoading}
-                                            userType={userData.userType}
+                                            sessions={[]}
                                         />
                                     );
                                 }}
                             </ContainerWrapper>
-                        }
-                    </Row>
+                        </Row>
+                        <Row>
+                            <ContainerWrapper
+                                className="classes-container"
+                                title="Classes"
+                            >
+                                {(setLoading) => {
+                                    return (
+                                        <UpcomingClassesContainer
+                                            setLoading={setLoading}
+                                            userId={props.userData.id}
+                                            setUpcomingClassesAmount={
+                                                setUpcomingClassesAmount
+                                            }
+                                        />
+                                    );
+                                }}
+                            </ContainerWrapper>
+                        </Row>
+                    </FadeIn>
+                </Col>
+                <Col xl="6" lg="6" md="12">
+                    <FadeIn delay={100}>
+                        <Row>
+                            <ContainerWrapper
+                                className="user-info-container"
+                                title="Your Profile"
+                            >
+                                {(setLoading) => {
+                                    return (
+                                        <UserInfoContainer
+                                            setLoading={setLoading}
+                                            {...props}
+                                            {...props.userData}
+                                        />
+                                    );
+                                }}
+                            </ContainerWrapper>
+                        </Row>
+                        <Row>
+                            <ContainerWrapper
+                                className="announcements-container"
+                                title="Announcements"
+                            >
+                                {(setLoading) => {
+                                    return (
+                                        <AnnouncementsContainer
+                                            refreshKey={refreshKey}
+                                            userId={userData.id}
+                                            setLoading={setLoading}
+                                            onlineUsers={props.onlineUsers}
+                                            courses={
+                                                coursesResponse.data?.courses ||
+                                                []
+                                            }
+                                        />
+                                    );
+                                }}
+                            </ContainerWrapper>
+                        </Row>
+                        <Row>
+                            {
+                                <ContainerWrapper
+                                    title={
+                                        isStaff(userData.userType)
+                                            ? "Staff Tools"
+                                            : "Tools"
+                                    }
+                                >
+                                    {(setLoading) => {
+                                        return (
+                                            <CreateContainer
+                                                showModal={handleShowModal}
+                                                setLoading={setLoading}
+                                                userType={userData.userType}
+                                            />
+                                        );
+                                    }}
+                                </ContainerWrapper>
+                            }
+                        </Row>
+                    </FadeIn>
                 </Col>
             </Row>
+
             <CreateContainerModal
                 refreshKey={refreshKey}
                 userId={userData.id}
