@@ -52,7 +52,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                     <Container className="section-header">
                         <h6>Chat</h6>
                     </Container>
-                    <Container fluid className="chat-outer-container pl-0">
+                    <Container fluid className="chat-outer-container">
                         <ChatContainer
                             roomId={props.sessionId}
                             username={props.username}
