@@ -23,8 +23,7 @@
 .presenter-container {
     font-family: Raleway;
     height: 100%;
-    padding: 20%;
-    background-color: @page-bg;
+    padding-top: 40%;
     .presenter-name {
         font-family: Raleway;
         font-weight: 600;
@@ -40,14 +39,21 @@
         margin: auto;
         border-radius: 200px;
         background-color: lightblue;
-        border-color: #4f4f4f;
     }
 }
 
 .head-panel {
     background-color: @page-bg;
     padding-top: 1%;
-    width: 100%;
+    text-align: center;
+    align-items: center;
+}
+
+.back-btn {
+    color: black;
+    &:hover {
+        color: white;
+    }
 }
 
 .room-control button {
@@ -56,11 +62,6 @@
 
 .first-btn {
     border-radius: 15px 0px 0px 15px;
-    font-family: Raleway !important;
-}
-
-.setting-btn {
-    border-radius: 0px;
 }
 
 .end-btn {
@@ -109,9 +110,10 @@
     }
 }
 
-.view-switch {
+.view-control {
     padding-left: 25%;
     padding-right: 25%;
+    width: 100%;
 }
 
 .participant-btn {

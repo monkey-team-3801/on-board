@@ -21,7 +21,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Container className="panel">
-            <Row className="mt-4">
+            <Row className="mt-2">
                 <div className="panel-container tutors-container">
                     <Container>
                         <h4>Tutors</h4>

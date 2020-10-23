@@ -233,187 +233,174 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
     return (
         <PeerContext.Provider value={peerData}>
-            <Container fluid className="classroom-container">
-                <Col md={9}>
-                    <header className="d-flex head-panel">
-                        <Container fluid>
-                            <Button>
+            <Row>
+                <Col>
+                    <Row className="head-panel">
+                        <Col xs={1.5}>
+                            <Button className="justify-content-center back-btn">
                                 <AiIcons.AiOutlineArrowLeft className="icon" />
                                 back
                             </Button>
+                        </Col>
+                        <Col xs={3}>
                             <h1>
-                                {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
+                                {`${sessionResponse.data.courseCode} - ${sessionResponse.data.roomType}`}
                             </h1>
-                            <p>{sessionResponse.data.roomType}</p>
-                            <p>{sessionResponse.data.description}</p>
-                        </Container>
-                        <Container fluid className="time-remaining">
+                        </Col>
+                        <Col>
                             <p>{`Start time: ${sessionResponse.data.startTime}`}</p>
                             <p>{`end time: ${sessionResponse.data.endTime}`}</p>
-                        </Container>
-                    </header>
-                    <Container fluid>
-                        <div className="stream-container">
-                            <Row>
-                                <Col>
-                                    <Container className="presenter-container">
-                                        <div className="presenter-picture">
-                                            {/* Picture */}
-                                        </div>
-                                        <div className="presenter-name">
-                                            Example Name
-                                        </div>
-                                    </Container>
-                                </Col>
-                                <Col md={8}>
-                                    <ButtonGroup className="view-control d-flex justify-content-center view-switch">
-                                        <Button className="speaker-btn">
-                                            Speaker View
-                                        </Button>
-                                        <Button className="participant-btn">
-                                            Participants View
-                                        </Button>
-                                    </ButtonGroup>
-                                    <Container className="video-container mt-4">
-                                        {/* <StreamSelectorWrapper
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <div className="presenter-container">
+                                <div className="presenter-picture">
+                                    {/* Picture */}
+                                </div>
+                                <div className="presenter-name">
+                                    Example Name
+                                </div>
+                            </div>
+                        </Col>
+                        <Col md={8}>
+                            <ButtonGroup
+                                className="view-control mt-4d-flex justify-content-center"
+                                size="sm"
+                            >
+                                <Button className="speaker-btn">
+                                    Speaker View
+                                </Button>
+                                <Button className="participant-btn">
+                                    Participants View
+                                </Button>
+                            </ButtonGroup>
+                            <Container className="video-container mt-4">
+                                {/* <StreamSelectorWrapper
                                         sessionId={props.match.params.classroomId}
                                         userId={props.userData.id}
                                     /> */}
-                                    </Container>
-                                    <Container className="setting-container room-control d-flex justify-content-center mt-4">
-                                        <ButtonGroup>
-                                            <Button
-                                                className="first-btn"
-                                                onClick={() => {
-                                                    setBreakoutRoomModalVisible(
-                                                        true
-                                                    );
-                                                }}
-                                            >
-                                                <AiIcons.AiOutlineTeam className="setting-icon" />
-                                                <p className="icon-label">
-                                                    Breakout Rooms
-                                                </p>
-                                            </Button>
-                                            <Button
-                                                className="setting-btn"
-                                                onClick={async () => {
-                                                    if (handRaisedRef.current) {
-                                                        setRaisedHandUsers(
-                                                            raisedHandUsers.splice(
-                                                                raisedHandUsers.indexOf(
-                                                                    userId
-                                                                ),
-                                                                1
-                                                            )
-                                                        );
-                                                    } else {
-                                                        setRaisedHandUsers(
-                                                            raisedHandUsers.concat(
-                                                                [userId]
-                                                            )
-                                                        );
-                                                    }
-                                                    setRaisedHandStatus.callback(
-                                                        handRaisedRef.current
-                                                    );
-                                                    handRaisedRef.current = !handRaisedRef.current;
-                                                }}
-                                            >
-                                                <FaIcons.FaRegHandPaper className="setting-icon" />
+                            </Container>
+                            <Container className="setting-container room-control d-flex justify-content-center mt-4">
+                                <ButtonGroup size="sm">
+                                    <Button
+                                        className="first-btn"
+                                        onClick={() => {
+                                            setBreakoutRoomModalVisible(true);
+                                        }}
+                                    >
+                                        <AiIcons.AiOutlineTeam className="setting-icon" />
+                                        <p className="icon-label">
+                                            Breakout Rooms
+                                        </p>
+                                    </Button>
+                                    <Button
+                                        className="setting-btn"
+                                        onClick={async () => {
+                                            if (handRaisedRef.current) {
+                                                setRaisedHandUsers(
+                                                    raisedHandUsers.splice(
+                                                        raisedHandUsers.indexOf(
+                                                            userId
+                                                        ),
+                                                        1
+                                                    )
+                                                );
+                                            } else {
+                                                setRaisedHandUsers(
+                                                    raisedHandUsers.concat([
+                                                        userId,
+                                                    ])
+                                                );
+                                            }
+                                            setRaisedHandStatus.callback(
+                                                handRaisedRef.current
+                                            );
+                                            handRaisedRef.current = !handRaisedRef.current;
+                                        }}
+                                    >
+                                        <FaIcons.FaRegHandPaper className="setting-icon" />
 
-                                                <p className="icon-label">
-                                                    Raise Hand
-                                                </p>
-                                            </Button>
-                                            <Button className="setting-btn">
-                                                {/* <BiIcons.BiVideo className="setting-icon" /> */}
-                                                <BiIcons.BiVideoOff className="setting-icon" />
-                                                {/* video icons for video on and off */}
-                                                <p className="icon-label">
-                                                    Camera off
-                                                </p>
-                                            </Button>
-                                            <Button className="setting-btn">
-                                                {/* <BiIcons.BiMicrophone className="setting-icon" /> */}
-                                                <BiIcons.BiMicrophoneOff className="setting-icon" />
-                                                {/* icons for mic on and off */}
-                                                <p className="icon-label">
-                                                    Mic off
-                                                </p>
-                                            </Button>
-                                            <Button
-                                                className="setting-btn"
-                                                onClick={() => {
-                                                    setResponsesModalStatus({
-                                                        visible: true,
-                                                        type: "result",
-                                                    });
-                                                }}
-                                            >
-                                                <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
-                                                {props.userData.userType ===
-                                                UserType.STUDENT ? (
-                                                    <p className="icon-label">
-                                                        View Questions
-                                                    </p>
-                                                ) : (
-                                                    <p>View Results</p>
-                                                )}
-                                            </Button>
-                                            <Button
-                                                onClick={() => {
-                                                    setShowFileModal(true);
-                                                }}
-                                                className="setting-btn"
-                                            >
-                                                <AiIcons.AiOutlineUpload className="setting-icon" />
-                                                <p className="icon-label">
-                                                    View Files
-                                                </p>
-                                            </Button>
-                                            {props.userData.userType ===
-                                                UserType.COORDINATOR && (
-                                                <Button
-                                                    onClick={() => {
-                                                        setResponsesModalStatus(
-                                                            {
-                                                                visible: true,
-                                                                type: "ask",
-                                                            }
-                                                        );
-                                                    }}
-                                                    className="setting-btn"
-                                                >
-                                                    <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
-                                                    <p className="icon-label">
-                                                        Ask Questions
-                                                    </p>
-                                                </Button>
-                                            )}
-                                            <Button
-                                                className="end-btn"
-                                                onClick={() => {
-                                                    setSoundEnabled((prev) => {
-                                                        return !prev;
-                                                    });
-                                                }}
-                                            >
-                                                {soundEnabled ? (
-                                                    <MdNotificationsActive className="setting-icon" />
-                                                ) : (
-                                                    <MdNotificationsOff className="setting-icon" />
-                                                )}
-                                                <p className="icon-label">
-                                                    Toggle Notifications
-                                                </p>
-                                            </Button>
-                                        </ButtonGroup>
-                                    </Container>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Container>
+                                        <p className="icon-label">Raise Hand</p>
+                                    </Button>
+                                    <Button className="setting-btn">
+                                        {/* <BiIcons.BiVideo className="setting-icon" /> */}
+                                        <BiIcons.BiVideoOff className="setting-icon" />
+                                        {/* video icons for video on and off */}
+                                        <p className="icon-label">Camera off</p>
+                                    </Button>
+                                    <Button className="setting-btn">
+                                        {/* <BiIcons.BiMicrophone className="setting-icon" /> */}
+                                        <BiIcons.BiMicrophoneOff className="setting-icon" />
+                                        {/* icons for mic on and off */}
+                                        <p className="icon-label">Mic off</p>
+                                    </Button>
+                                    <Button
+                                        className="setting-btn"
+                                        onClick={() => {
+                                            setResponsesModalStatus({
+                                                visible: true,
+                                                type: "result",
+                                            });
+                                        }}
+                                    >
+                                        <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
+                                        {props.userData.userType ===
+                                        UserType.STUDENT ? (
+                                            <p className="icon-label">
+                                                View Questions
+                                            </p>
+                                        ) : (
+                                            <p>View Results</p>
+                                        )}
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            setShowFileModal(true);
+                                        }}
+                                        className="setting-btn"
+                                    >
+                                        <AiIcons.AiOutlineUpload className="setting-icon" />
+                                        <p className="icon-label">View Files</p>
+                                    </Button>
+                                    {props.userData.userType ===
+                                        UserType.COORDINATOR && (
+                                        <Button
+                                            onClick={() => {
+                                                setResponsesModalStatus({
+                                                    visible: true,
+                                                    type: "ask",
+                                                });
+                                            }}
+                                            className="setting-btn"
+                                        >
+                                            <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
+                                            <p className="icon-label">
+                                                Ask Questions
+                                            </p>
+                                        </Button>
+                                    )}
+                                    <Button
+                                        className="end-btn"
+                                        onClick={() => {
+                                            setSoundEnabled((prev) => {
+                                                return !prev;
+                                            });
+                                        }}
+                                    >
+                                        {soundEnabled ? (
+                                            <MdNotificationsActive className="setting-icon" />
+                                        ) : (
+                                            <MdNotificationsOff className="setting-icon" />
+                                        )}
+                                        <p className="icon-label">
+                                            Toggle Notifications
+                                        </p>
+                                    </Button>
+                                </ButtonGroup>
+                            </Container>
+                        </Col>
+                    </Row>
                 </Col>
                 <Col md={3}>
                     <SidePanelContainer
@@ -427,46 +414,46 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                         myUserId={props.userData.id}
                     />
                 </Col>
-                <BreakoutRoomModal
-                    userData={sessionUsersResponse.data?.users || []}
-                    visible={createBreakoutRoomModalVisible}
-                    sessionId={props.match.params.classroomId}
-                    handleClose={() => {
-                        setBreakoutRoomModalVisible(false);
-                    }}
-                />
-                <BreakoutRoomListModal
-                    {...props}
-                    visible={breakoutRoomListModalVisible}
-                    sessionId={props.match.params.classroomId}
-                    handleClose={() => {
-                        setBreakoutRoomListModalVisible(false);
-                    }}
-                />
-                <BreakoutRoomAllocateIndicator
-                    {...props}
-                    event={breakoutAllocationEventData}
-                    onClose={() => {
-                        setBreakoutAllocationEventData(undefined);
-                    }}
-                />
-                <ResponsesModal
-                    sid={sessionId}
-                    userid={props.userData.id}
-                    userType={props.userData.userType}
-                    sock={socket}
-                    modalVisible={responsesModalStatus.visible}
-                    closeModal={() => {
-                        setResponsesModalStatus((prev) => {
-                            return {
-                                ...prev,
-                                visible: false,
-                            };
-                        });
-                    }}
-                    modalType={responsesModalStatus.type}
-                ></ResponsesModal>
-            </Container>
+            </Row>
+            <BreakoutRoomModal
+                userData={sessionUsersResponse.data?.users || []}
+                visible={createBreakoutRoomModalVisible}
+                sessionId={props.match.params.classroomId}
+                handleClose={() => {
+                    setBreakoutRoomModalVisible(false);
+                }}
+            />
+            <BreakoutRoomListModal
+                {...props}
+                visible={breakoutRoomListModalVisible}
+                sessionId={props.match.params.classroomId}
+                handleClose={() => {
+                    setBreakoutRoomListModalVisible(false);
+                }}
+            />
+            <BreakoutRoomAllocateIndicator
+                {...props}
+                event={breakoutAllocationEventData}
+                onClose={() => {
+                    setBreakoutAllocationEventData(undefined);
+                }}
+            />
+            <ResponsesModal
+                sid={sessionId}
+                userid={props.userData.id}
+                userType={props.userData.userType}
+                sock={socket}
+                modalVisible={responsesModalStatus.visible}
+                closeModal={() => {
+                    setResponsesModalStatus((prev) => {
+                        return {
+                            ...prev,
+                            visible: false,
+                        };
+                    });
+                }}
+                modalType={responsesModalStatus.type}
+            ></ResponsesModal>
             <FileModal
                 uploadType={FileUploadType.DOCUMENTS}
                 socket={socket}
