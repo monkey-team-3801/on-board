@@ -23,7 +23,7 @@ export const Progress: React.FunctionComponent<Props> = (props: Props) => {
                     }}
                 ></div>
             </div>
-            <span className="end-time ml-2">format(endTime, "hh:mm")</span>
+            <span className="end-time ml-2">{format(endTime, "hh:mm")}</span>
         </Container>
     );
 };
