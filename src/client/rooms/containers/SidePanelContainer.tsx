@@ -8,6 +8,7 @@ import { ParticipantsContainer } from "./ParticipantsContainer";
 type Props = {
     sessionId: string;
     username: string;
+    myUserId: string;
     initialChatLog: Array<Omit<MessageData, "sessionId">>;
     users?: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
@@ -36,6 +37,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                         <ParticipantsContainer
                             users={props.users}
                             raisedHandUsers={props.raisedHandUsers}
+                            myUserId={props.myUserId}
                         />
                     ) : (
                         <Loader />

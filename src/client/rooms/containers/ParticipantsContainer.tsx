@@ -6,6 +6,7 @@ import { Participants } from "../components";
 type Props = {
     users: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
+    myUserId: string;
 };
 
 export const ParticipantsContainer: React.FunctionComponent<Props> = (
@@ -40,6 +41,7 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
             <Participants
                 users={sortedUsers}
                 raisedHandUsers={raisedHandUsers}
+                myUserId={props.myUserId}
             />
         </Container>
     );

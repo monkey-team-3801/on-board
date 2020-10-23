@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import Peer, { MediaConnection } from "peerjs";
 import { Map } from "immutable";
-import { useMediaStream } from "./useMediaStream";
-import { PeerData } from "../peer";
+import Peer, { MediaConnection } from "peerjs";
+import { useCallback, useEffect, useState } from "react";
 import {
     PrivateVideoRoomForceStopSharingData,
     PrivateVideoRoomShareScreenData,
@@ -10,9 +8,11 @@ import {
     VideoEvent,
 } from "../../events";
 import { UserPeer, VideoPeersResponseType } from "../../types";
-import { useFetch } from "./useFetch";
-import { requestIsLoaded } from "../utils";
+import { PeerData } from "../peer";
 import { peerOptions } from "../peer/peer";
+import { requestIsLoaded } from "../utils";
+import { useFetch } from "./useFetch";
+import { useMediaStream } from "./useMediaStream";
 
 declare var process: any;
 
@@ -102,6 +102,7 @@ export const useMyPeer = (
     }, [myPeer]);
     useEffect(() => {
         if (myStream && myPeerId) {
+            console.log("emitting");
             socket.emit(VideoEvent.USER_JOIN_ROOM, {
                 sessionId,
                 userId,
@@ -122,8 +123,18 @@ export const useMyPeer = (
             });
         }
     }, [myPeer, myStream, myPeerId]);
-    const addPeer = useCallback<(peerId: PeerId) => void>(
-        async (peerId) => {
+
+    const [userIdToPeerIdMap, setUserIdToPeerIdMap] = useState<
+        Map<string, string>
+    >(Map());
+
+    const addPeer = useCallback<(peerId: PeerId, theirUserId?: string) => void>(
+        async (peerId, theirUserId) => {
+            if (theirUserId) {
+                setUserIdToPeerIdMap((mapping) => {
+                    return mapping.set(theirUserId, peerId);
+                });
+            }
             if (!myPeerId || myPeerId === peerId) {
                 return;
             }
@@ -155,12 +166,19 @@ export const useMyPeer = (
         },
         [myPeerId, peerCalls, myStream, enableStream, myPeer]
     );
-    const removePeer = useCallback<(peerId: PeerId) => void>(
-        (peerId) => {
+    const removePeer = useCallback<
+        (peerId: PeerId, theirUserId?: string) => void
+    >(
+        (peerId, theirUserId) => {
             setPeerStreams((prev) => prev.delete(peerId));
             const remoteCall = peerCalls.get(peerId);
             remoteCall?.close();
             setPeerCalls((prev) => prev.delete(peerId));
+            if (theirUserId) {
+                setUserIdToPeerIdMap((mapping) => {
+                    return mapping.delete(theirUserId);
+                });
+            }
         },
         [peerCalls]
     );
@@ -218,14 +236,14 @@ export const useMyPeer = (
 
     const onSocketAddPeer = useCallback(
         async (userPeer: UserPeer) => {
-            addPeer(userPeer.peerId);
+            addPeer(userPeer.peerId, userPeer.userId);
         },
         [addPeer]
     );
 
     const onSocketRemovePeer = useCallback(
         (userPeer: UserPeer) => {
-            removePeer(userPeer.peerId);
+            removePeer(userPeer.peerId, userPeer.userId);
         },
         [removePeer]
     );
@@ -274,7 +292,7 @@ export const useMyPeer = (
     useEffect(() => {
         if (requestIsLoaded(peerResponse) && myPeerId && myStream) {
             for (const userPeer of peerResponse.data.peers) {
-                addPeer(userPeer.peerId);
+                addPeer(userPeer.peerId, userPeer.userId);
             }
         }
     }, [peerResponse, myPeerId, myStream, addPeer]);
@@ -339,6 +357,7 @@ export const useMyPeer = (
         peerStreams,
         sharingCalls,
         sharingStreams,
+        userIdToPeerIdMap,
         addPeer,
         removePeer,
         enableStream,
