@@ -7,11 +7,11 @@ import "./UploadContainer.less";
 
 type Props = {
     uploadType: FileUploadType;
-    sessionID: string;
-    socket: SocketIOClient.Socket;
+    sessionID?: string;
+    socket?: SocketIOClient.Socket;
     userID: string;
     updateFiles?: Function;
-    roomType: RoomType;
+    roomType?: RoomType;
     formID?: string;
     back?: Function;
 };
@@ -78,11 +78,15 @@ export const UploadContainer: React.FunctionComponent<Props> = (
 
         if (props.uploadType === FileUploadType.PROFILE) {
             await uploadPfp(formData);
+            window.location.reload();
         } else if (props.uploadType === FileUploadType.DOCUMENTS) {
             formData.append("document", IdData);
             await uploadFile(formData);
 
-            props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
+            if (props.socket) {
+                props.socket.emit(FileUploadEvent.NEW_FILE, props.sessionID);
+            }
+
             if (props.updateFiles) {
                 props.updateFiles({
                     id: props.sessionID,
@@ -93,7 +97,13 @@ export const UploadContainer: React.FunctionComponent<Props> = (
         } else if (props.uploadType === FileUploadType.RESPONSE) {
             formData.append("document", IdData);
             await uploadFile(formData);
-            props.socket.emit(ResponseFormEvent.NEW_RESPONSE, props.sessionID);
+            if (props.socket) {
+                props.socket.emit(
+                    ResponseFormEvent.NEW_RESPONSE,
+                    props.sessionID
+                );
+            }
+
             setTimeout(() => {
                 if (props.back) {
                     props.back();

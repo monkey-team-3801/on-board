@@ -196,3 +196,45 @@ router.post(
         }
     })
 );
+
+router.post(
+    "/changeUsername",
+    asyncHandler<undefined, {}, { userID: string; newName: string }>(
+        async (req, res, next) => {
+            try {
+                const newNameQuery = await User.findOne({
+                    username: req.body.newName,
+                });
+                if (newNameQuery) {
+                    throw new Error();
+                } else {
+                    await User.findByIdAndUpdate(req.body.userID, {
+                        username: req.body.newName,
+                    });
+                    res.status(200);
+                }
+            } catch (e) {
+                res.status(500);
+                next(new Error("Username is already taken"));
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/changePassword",
+    asyncHandler<undefined, {}, { userID: string; password: string }>(
+        async (req, res) => {
+            try {
+                await User.findByIdAndUpdate(req.body.userID, {
+                    password: hashPassword(req.body.password),
+                });
+                res.status(200).end();
+            } catch (e) {
+                res.status(500).end();
+            }
+        }
+    )
+);

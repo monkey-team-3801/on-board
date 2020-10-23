@@ -10,6 +10,7 @@ type Props = {
     announcement: CourseAnnouncementsType & { username: string };
     currentUser: string;
     onDelete?: () => Promise<void>;
+    isUserOnline: boolean;
 };
 
 export const AnnouncementEntry: React.FunctionComponent<Props> = (
@@ -88,8 +89,11 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                         <div className="profile">
                                             <ProfilePicture
                                                 userId={announcement.userId}
-                                                classNames="profile-image"
+                                                className="profile-image"
+                                                imgClassName="profile-pic-with-orb"
                                                 openChatOnClick
+                                                showStatusOrb
+                                                online={props.isUserOnline}
                                             />
                                         </div>
                                         <div className="user">

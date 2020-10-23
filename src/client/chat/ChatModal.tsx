@@ -1,15 +1,12 @@
 import React from "react";
-import { Col, Container, Modal, Row, Form } from "react-bootstrap";
-import { useDebouncedCallback } from "use-debounce/lib";
-import { GlobalEvent } from "../../events";
+import { Col, Container, Form, Modal, Row } from "react-bootstrap";
+import Select from "react-select";
 import { UserDataResponseType, UserType } from "../../types";
 import { ChatModalStatusContext } from "../context";
 import { useFetch } from "../hooks";
-import { socket } from "../io";
-import { ChatModalStatusType } from "../types";
+import { BaseResponseType, ChatModalStatusType } from "../types";
 import { ChatSession } from "./ChatSession";
 import { UserList } from "./components";
-import Select from "react-select";
 
 type Props = ChatModalStatusType & {
     myUserId: string;
@@ -17,18 +14,15 @@ type Props = ChatModalStatusType & {
     chatWithNewMessages: Array<string>;
     courses: Array<string>;
     selectedId?: string;
+    onlineUserResponse: BaseResponseType<Array<string>>;
 };
 
 export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
-    const { open: modalOpen, selectedId, myUserId } = props;
+    const { open: modalOpen, selectedId, myUserId, onlineUserResponse } = props;
     const modalContext = React.useContext(ChatModalStatusContext);
 
     const [userResponse] = useFetch<Array<UserDataResponseType>>(
         "/user/getAllUserInCourse"
-    );
-
-    const [onlineUserResponse, fetchOnlineUsers] = useFetch<Array<string>>(
-        "/user/online"
     );
 
     const [targetUser, setTargetUser] = React.useState<
@@ -68,14 +62,8 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
         });
     }, [filteredUsers]);
 
-    const debouncedFetchOnlineUsers = useDebouncedCallback(
-        fetchOnlineUsers,
-        1000
-    );
-
     React.useEffect(() => {
         if (modalOpen) {
-            fetchOnlineUsers();
             if (selectedId !== myUserId && userResponse.data) {
                 const selectedUser = userResponse.data.find((user) => {
                     return user.id === selectedId;
@@ -87,24 +75,8 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
                     });
                 }
             }
-            socket.on(
-                GlobalEvent.USER_ONLINE_STATUS_CHANGE,
-                debouncedFetchOnlineUsers.callback
-            );
-        } else {
-            socket.off(
-                GlobalEvent.USER_ONLINE_STATUS_CHANGE,
-                debouncedFetchOnlineUsers.callback
-            );
         }
-    }, [
-        modalOpen,
-        debouncedFetchOnlineUsers,
-        fetchOnlineUsers,
-        selectedId,
-        userResponse,
-        myUserId,
-    ]);
+    }, [modalOpen, selectedId, userResponse, myUserId]);
 
     React.useEffect(() => {
         if (targetUser && props.chatWithNewMessages.includes(targetUser.id)) {

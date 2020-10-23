@@ -20,7 +20,7 @@ import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import "./classroom.less";
-import { BreakoutRoomModal } from "./components/";
+import { BreakoutRoomModal, BreakoutRoomListModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
@@ -44,6 +44,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     const [
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
+    ] = React.useState<boolean>(false);
+
+    const [
+        breakoutRoomListModalVisible,
+        setBreakoutRoomListModalVisible,
     ] = React.useState<boolean>(false);
     const [responsesModalStatus, setResponsesModalStatus] = React.useState<{
         visible: boolean;
@@ -265,6 +270,15 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                                 );
                                             }}
                                         >
+                                            Manage Breakout Rooms
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setBreakoutRoomListModalVisible(
+                                                    true
+                                                );
+                                            }}
+                                        >
                                             Breakout Rooms
                                         </Button>
                                         <Button
@@ -371,6 +385,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     sessionId={props.match.params.classroomId}
                     handleClose={() => {
                         setBreakoutRoomModalVisible(false);
+                    }}
+                />
+                <BreakoutRoomListModal
+                    {...props}
+                    visible={breakoutRoomListModalVisible}
+                    sessionId={props.match.params.classroomId}
+                    handleClose={() => {
+                        setBreakoutRoomListModalVisible(false);
                     }}
                 />
                 <BreakoutRoomAllocateIndicator

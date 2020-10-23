@@ -2,7 +2,14 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Switch from "react-bootstrap/esm/Switch";
 import { RouteComponentProps } from "react-router-dom";
-import { ChatEvent, ClassEvent, RoomEvent } from "../events";
+import { useDebouncedCallback } from "use-debounce/lib";
+import {
+    AnnouncementEvent,
+    ChatEvent,
+    ClassEvent,
+    GlobalEvent,
+    RoomEvent,
+} from "../events";
 import {
     RoomType,
     UserDataResponseType,
@@ -22,6 +29,7 @@ import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
 import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
+import { ProfileSettingsContainer } from "./user/profile/ProfileSettingsContainer";
 import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
@@ -31,7 +39,9 @@ export const AppProtectedRoutes = (props: Props) => {
         ClassOpenEventData | undefined
     >();
 
-    const [userDataResponse] = useFetch<UserDataResponseType>("/user/data");
+    const [userDataResponse, refreshUserData] = useFetch<UserDataResponseType>(
+        "/user/data"
+    );
     const { data } = userDataResponse;
 
     const [authData] = useFetch<never>("/auth");
@@ -43,6 +53,15 @@ export const AppProtectedRoutes = (props: Props) => {
     const [coursesResponse, refreshCourseData] = useFetch<
         UserEnrolledCoursesResponseType
     >("/user/courses");
+
+    const [onlineUserResponse, fetchOnlineUsers] = useFetch<Array<string>>(
+        "/user/online"
+    );
+
+    const debouncedFetchOnlineUsers = useDebouncedCallback(
+        fetchOnlineUsers,
+        1000
+    );
 
     const userData = React.useMemo(() => {
         return {
@@ -69,6 +88,14 @@ export const AppProtectedRoutes = (props: Props) => {
     );
 
     React.useEffect(() => {
+        if (requestIsLoaded(coursesResponse)) {
+            socket.emit(AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE, {
+                courses: coursesResponse.data.courses,
+            });
+        }
+    }, [coursesResponse]);
+
+    React.useEffect(() => {
         if (id) {
             socket.on(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
         }
@@ -76,6 +103,19 @@ export const AppProtectedRoutes = (props: Props) => {
             socket.off(ChatEvent.CHAT_STATUS_CHANGE, onChatStatusChange);
         };
     }, [id, onChatStatusChange]);
+
+    React.useEffect(() => {
+        socket.on(
+            GlobalEvent.USER_ONLINE_STATUS_CHANGE,
+            debouncedFetchOnlineUsers.callback
+        );
+        return () => {
+            socket.off(
+                GlobalEvent.USER_ONLINE_STATUS_CHANGE,
+                debouncedFetchOnlineUsers.callback
+            );
+        };
+    }, [debouncedFetchOnlineUsers]);
 
     React.useEffect(() => {
         setEventData(event);
@@ -130,6 +170,7 @@ export const AppProtectedRoutes = (props: Props) => {
                                 chatsWithNewMessageResponse.data || []
                             }
                             courses={coursesResponse.data?.courses || []}
+                            onlineUserResponse={onlineUserResponse}
                         />
                     );
                 }}
@@ -150,6 +191,7 @@ export const AppProtectedRoutes = (props: Props) => {
                                     }}
                                     coursesResponse={coursesResponse}
                                     refreshCourses={refreshCourseData}
+                                    onlineUsers={onlineUserResponse?.data || []}
                                 />
                             );
                         }}
@@ -242,6 +284,26 @@ export const AppProtectedRoutes = (props: Props) => {
                         authData={authData}
                         render={(routerProps: RouteComponentProps) => {
                             return <Timetable />;
+                        }}
+                    />
+
+                    <SecuredRoute
+                        path="/profile"
+                        authData={authData}
+                        render={(routerProps: RouteComponentProps) => {
+                            return (
+                                <ProfileSettingsContainer
+                                    {...routerProps}
+                                    userData={{
+                                        username,
+                                        id,
+                                        userType,
+                                    }}
+                                    coursesResponse={coursesResponse}
+                                    refreshCourses={refreshCourseData}
+                                    refreshUserData={refreshUserData}
+                                />
+                            );
                         }}
                     />
                 </Switch>

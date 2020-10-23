@@ -37,6 +37,7 @@ export type TopLayerContainerProps = {
     };
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
     refreshCourses?: () => Promise<void>;
+    refreshUserData?: () => Promise<void>;
 };
 
 export type CourseOptionType = {
