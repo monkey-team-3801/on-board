@@ -16,7 +16,7 @@ export const Log: React.FunctionComponent<Props> = (props: Props) => {
         if (currentUser === sendUser) {
             return (
                 <div className="message-container">
-                    <p className="self">
+                    <p className="self ">
                         {`${sendUser}: `}
                         <br></br>
                         {content}
