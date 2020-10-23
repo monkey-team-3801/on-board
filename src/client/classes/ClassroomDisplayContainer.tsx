@@ -8,6 +8,7 @@ import { UserData } from "../rooms/types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ClassContainer } from "./ClassContainer";
 import { EditClassroomModal } from "./EditClassroomModal";
+import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -114,32 +115,41 @@ export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
             </Row>
-            {filteredClassrooms &&
-                filteredClassrooms.map((session, i) => {
-                    return (
-                        <ClassContainer
-                            {...session}
-                            key={session.id}
-                            canEdit={props.userData.id === session.createdBy}
-                            onJoinClick={() => {
-                                onRoomJoinClick(session.id);
-                            }}
-                            onEditClick={() => {
-                                setRoomSelection({
-                                    data: session,
-                                    type: RoomType.CLASS,
-                                });
-                            }}
-                            onDeleteClick={async () => {
-                                await getClassrooms();
-                            }}
-                            isRefreshing={requestIsLoading(classroomsResponse)}
-                            size="lg"
-                            type={RoomType.CLASS}
-                            currentUserId={props.userData.id}
-                        />
-                    );
-                })}
+
+            {filteredClassrooms && (
+                <FadeIn delay={100}>
+                    {filteredClassrooms.map((session, i) => {
+                        return (
+                            <ClassContainer
+                                {...session}
+                                key={session.id}
+                                canEdit={
+                                    props.userData.id === session.createdBy
+                                }
+                                onJoinClick={() => {
+                                    onRoomJoinClick(session.id);
+                                }}
+                                onEditClick={() => {
+                                    setRoomSelection({
+                                        data: session,
+                                        type: RoomType.CLASS,
+                                    });
+                                }}
+                                onDeleteClick={async () => {
+                                    await getClassrooms();
+                                }}
+                                isRefreshing={requestIsLoading(
+                                    classroomsResponse
+                                )}
+                                size="lg"
+                                type={RoomType.CLASS}
+                                currentUserId={props.userData.id}
+                            />
+                        );
+                    })}
+                </FadeIn>
+            )}
+
             <EditClassroomModal
                 roomSelection={roomSelection}
                 courses={props.courses || []}

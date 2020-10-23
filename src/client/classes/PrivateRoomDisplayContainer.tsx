@@ -8,6 +8,7 @@ import { UserData } from "../rooms/types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ClassContainer } from "./ClassContainer";
 import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
+import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps & {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -97,36 +98,43 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                     />
                 </Col>
             </Row>
-            {filteredRooms &&
-                filteredRooms.map((session, i) => {
-                    return (
-                        <ClassContainer
-                            {...session}
-                            key={session.id}
-                            canEdit={props.userData.id === session.createdBy}
-                            onJoinClick={() => {
-                                onRoomJoinClick(session.id);
-                            }}
-                            onEditClick={() => {
-                                setRoomSelection({
-                                    id: session.id,
-                                    name: session.name,
-                                    description: session.description,
-                                    courseCode: session.courseCode,
-                                });
-                            }}
-                            courseCode={session?.courseCode || "PRIVATE"}
-                            onDeleteClick={async () => {
-                                await getPrivateRooms();
-                            }}
-                            isRefreshing={requestIsLoading(privateRoomResponse)}
-                            size="lg"
-                            type={RoomType.PRIVATE}
-                            setDeletedRooms={setDeletedRooms}
-                            currentUserId={props.userData.id}
-                        />
-                    );
-                })}
+            {filteredRooms && (
+                <FadeIn delay={100}>
+                    {filteredRooms.map((session, i) => {
+                        return (
+                            <ClassContainer
+                                {...session}
+                                key={session.id}
+                                canEdit={
+                                    props.userData.id === session.createdBy
+                                }
+                                onJoinClick={() => {
+                                    onRoomJoinClick(session.id);
+                                }}
+                                onEditClick={() => {
+                                    setRoomSelection({
+                                        id: session.id,
+                                        name: session.name,
+                                        description: session.description,
+                                        courseCode: session.courseCode,
+                                    });
+                                }}
+                                courseCode={session?.courseCode || "PRIVATE"}
+                                onDeleteClick={async () => {
+                                    await getPrivateRooms();
+                                }}
+                                isRefreshing={requestIsLoading(
+                                    privateRoomResponse
+                                )}
+                                size="lg"
+                                type={RoomType.PRIVATE}
+                                setDeletedRooms={setDeletedRooms}
+                                currentUserId={props.userData.id}
+                            />
+                        );
+                    })}
+                </FadeIn>
+            )}
             <EditPrivateRoomModal
                 courses={props.courses || []}
                 roomSelection={roomSelection}
