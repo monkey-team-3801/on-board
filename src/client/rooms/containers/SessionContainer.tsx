@@ -30,7 +30,7 @@ export const SessionContainer: React.FunctionComponent<Props> = (
     const { roomType, children, roomId, userId } = props;
 
     const peerData = useMyPeer(socket, userId, roomId);
-    
+
     const [sessionResponse] = useFetch<SessionData, { id: string }>(
         `/session/${
             roomType === RoomType.PRIVATE

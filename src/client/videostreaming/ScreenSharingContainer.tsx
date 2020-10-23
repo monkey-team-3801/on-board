@@ -33,7 +33,9 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
                                 <StreamVideo muted={true} stream={stream} />
                             </Col>
                         ))}
-                        {sharingStreams.size === 0 && <p className="text-muted">No active streams...</p>}
+                    {sharingStreams.size === 0 && (
+                        <p className="text-muted">No active streams...</p>
+                    )}
                 </Row>
             </Container>
             <Row className="d-flex justify-content-center mt-3">

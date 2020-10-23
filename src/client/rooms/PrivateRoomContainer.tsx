@@ -6,17 +6,16 @@ import {
     FileUploadType,
     RoomType,
     SessionData,
-    UserDataResponseType,
+    UserDataResponseType
 } from "../../types";
 import { DrawingCanvas } from "../canvas";
 import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch } from "../hooks";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
-import { Progress } from "./components";
+import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import { SessionContainer, SidePanelContainer } from "./containers";
 import "./PrivateRoom.less";
-import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {

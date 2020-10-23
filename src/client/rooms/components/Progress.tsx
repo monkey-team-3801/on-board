@@ -10,10 +10,11 @@ type Props = {
 export const Progress: React.FunctionComponent<Props> = (props: Props) => {
     const { startTime, endTime } = props;
 
-
     return (
         <Container className="d-flex align-items-center">
-            <span className="start-time mr-2">{format(startTime, "hh:mm")}</span>
+            <span className="start-time mr-2">
+                {format(startTime, "hh:mm")}
+            </span>
             <div className="progress-bar">
                 <div
                     className="progress-inner"
