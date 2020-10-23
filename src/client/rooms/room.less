@@ -20,7 +20,6 @@
     }
 }
 
-
 .presenter-container {
     font-family: Raleway;
     height: 100%;
@@ -41,33 +40,22 @@
         margin: auto;
         border-radius: 200px;
         background-color: lightblue;
-        border-color: #4F4F4F;
+        border-color: #4f4f4f;
     }
 }
 
 .head-panel {
     background-color: @page-bg;
-    padding: 25px;
+    padding-top: 1%;
+    width: 100%;
 }
 
 .room-control button {
     background-color: @page-bg;
-    
-}
-
-.back-button {
-    border: none;
-    :hover{
-        color: grey;
-    }
-}
-
-.back-button:hover {
-    color: grey; 
 }
 
 .first-btn {
-    border-radius: 15px 0px 0px 15px;    
+    border-radius: 15px 0px 0px 15px;
     font-family: Raleway !important;
 }
 
@@ -79,44 +67,31 @@
     border-radius: 0px 15px 15px 0px;
 }
 
-.first-btn, .setting-btn, .end-btn, .file-btn {
+.first-btn,
+.setting-btn,
+.end-btn,
+.file-btn {
     background-color: lightgrey !important;
-    color: #4F4F4F;
-    // min-width: 100px;
-    min-width: 20%;
-    max-width: 100px;
-    height: 90px;
+    color: black;
     font-size: 10px;
-    font-family: Raleway !important; 
+    font-family: Raleway !important;
     font-weight: 600;
     &:hover {
         background-color: darken(grey, 10%) !important;
     }
     &:focus {
         box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
-        color: #4F4F4F !important;
+        color: #4f4f4f !important;
     }
     &:active {
         background-color: darken(grey, 10%) !important;
     }
 }
 
-.file-btn {
-    // background-color: rgba(0,0,0,0) !important;
-    width:100px;
-    color: #4F4F4F;
-    font-size: 10px;
-    font-family: "Raleway";
-    font-weight: 600;
-    &:focus {
-        box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
-        color: #4F4F4F !important;
-    }
-}
-
-.speaker-btn, .participant-btn {
+.speaker-btn,
+.participant-btn {
     background-color: @content-bg !important;
-    color: #4F4F4F !important;
+    color: black !important;
     font-family: Raleway;
     font-weight: 600;
     align-content: center;
@@ -129,9 +104,14 @@
     }
     &:active {
         background-color: @content-bg !important;
-        color: #4F4F4F;
+        color: #4f4f4f;
         font-weight: 800;
     }
+}
+
+.view-switch {
+    padding-left: 25%;
+    padding-right: 25%;
 }
 
 .participant-btn {
@@ -139,6 +119,6 @@
 }
 
 .setting-icon {
-    font-size: 40px;
-    margin: 10px 10px 0px 10px;  
+    font-size: 20px;
+    margin: 10px 10px 0px 10px;
 }

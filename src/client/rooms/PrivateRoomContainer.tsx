@@ -44,6 +44,8 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
         true
     );
 
+    const [showFileModal, setShowFileModal] = React.useState<boolean>(false);
+
     const [files, setFiles] = React.useState<
         Array<{
             id: string;
@@ -104,17 +106,13 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             />
                                         </Row>
                                         <Row>
-                                            <FileModal
-                                                uploadType={
-                                                    FileUploadType.DOCUMENTS
-                                                }
-                                                socket={socket}
-                                                sessionID={roomId}
-                                                userID={props.userData.id}
-                                                updateFiles={getFileData}
-                                                files={files}
-                                                roomType={props.roomType}
-                                            ></FileModal>
+                                            <Button
+                                                onClick={() => {
+                                                    setShowFileModal(true);
+                                                }}
+                                            >
+                                                Files
+                                            </Button>
                                         </Row>
                                     </Container>
                                 </Col>
@@ -132,6 +130,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 </Col>
                             </Row>
                         </Container>
+                        <FileModal
+                            uploadType={FileUploadType.DOCUMENTS}
+                            socket={socket}
+                            sessionID={roomId}
+                            userID={props.userData.id}
+                            updateFiles={getFileData}
+                            files={files}
+                            roomType={props.roomType}
+                            showModal={showFileModal}
+                            setShowModal={setShowFileModal}
+                        ></FileModal>
                     </>
                 );
             }}

@@ -1,6 +1,6 @@
 import { List } from "immutable";
 import React, { useRef } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 // import { StreamSelectorWrapper } from "../video";
 import * as AiIcons from "react-icons/ai";
 import * as BiIcons from "react-icons/bi";
@@ -48,6 +48,8 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
     ] = React.useState<boolean>(false);
+
+    const [showFileModal, setShowFileModal] = React.useState<boolean>(false);
 
     const [
         breakoutRoomListModalVisible,
@@ -235,10 +237,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 <Col md={9}>
                     <header className="d-flex head-panel">
                         <Container fluid>
-                            <button className="back-button">
+                            <Button>
                                 <AiIcons.AiOutlineArrowLeft className="icon" />
                                 back
-                            </button>
+                            </Button>
                             <h1>
                                 {`${sessionResponse.data.courseCode} - ${sessionResponse.data.name}`}
                             </h1>
@@ -253,8 +255,8 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <Container fluid>
                         <div className="stream-container">
                             <Row>
-                                <Col md={4}>
-                                    <Container className="dflex justify-content-center align-items-center presenter-container">
+                                <Col>
+                                    <Container className="presenter-container">
                                         <div className="presenter-picture">
                                             {/* Picture */}
                                         </div>
@@ -264,22 +266,22 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     </Container>
                                 </Col>
                                 <Col md={8}>
-                                    <Container className="view-control d-flex justify-content-center">
+                                    <ButtonGroup className="view-control d-flex justify-content-center view-switch">
                                         <Button className="speaker-btn">
                                             Speaker View
                                         </Button>
                                         <Button className="participant-btn">
                                             Participants View
                                         </Button>
-                                    </Container>
+                                    </ButtonGroup>
                                     <Container className="video-container mt-4">
                                         {/* <StreamSelectorWrapper
                                         sessionId={props.match.params.classroomId}
                                         userId={props.userData.id}
                                     /> */}
                                     </Container>
-                                    <Container className="setting-container">
-                                        <Container className="room-control d-flex justify-content-center mt-4">
+                                    <Container className="setting-container room-control d-flex justify-content-center mt-4">
+                                        <ButtonGroup>
                                             <Button
                                                 className="first-btn"
                                                 onClick={() => {
@@ -351,23 +353,24 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                             >
                                                 <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
                                                 {props.userData.userType ===
-                                                UserType.STUDENT
-                                                    ? "View Questions"
-                                                    : "View Results"}
+                                                UserType.STUDENT ? (
+                                                    <p className="icon-label">
+                                                        View Questions
+                                                    </p>
+                                                ) : (
+                                                    <p>View Results</p>
+                                                )}
                                             </Button>
-                                            <Button className="end-btn">
+                                            <Button
+                                                onClick={() => {
+                                                    setShowFileModal(true);
+                                                }}
+                                                className="setting-btn"
+                                            >
                                                 <AiIcons.AiOutlineUpload className="setting-icon" />
-                                                <FileModal
-                                                    uploadType={
-                                                        FileUploadType.DOCUMENTS
-                                                    }
-                                                    socket={socket}
-                                                    sessionID={sessionId}
-                                                    userID={props.userData.id}
-                                                    updateFiles={getFileData}
-                                                    files={files}
-                                                    roomType={RoomType.CLASS}
-                                                ></FileModal>
+                                                <p className="icon-label">
+                                                    View Files
+                                                </p>
                                             </Button>
                                             {props.userData.userType ===
                                                 UserType.COORDINATOR && (
@@ -380,6 +383,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                                             }
                                                         );
                                                     }}
+                                                    className="setting-btn"
                                                 >
                                                     <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
                                                     <p className="icon-label">
@@ -388,19 +392,23 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                                 </Button>
                                             )}
                                             <Button
-                                            onClick={() => {
-                                                setSoundEnabled((prev) => {
-                                                    return !prev;
-                                                });
-                                            }}
-                                        >
-                                            {soundEnabled ? (
-                                                <MdNotificationsActive />
-                                            ) : (
-                                                <MdNotificationsOff />
-                                            )}
-                                        </Button>
-                                        </Container>
+                                                className="end-btn"
+                                                onClick={() => {
+                                                    setSoundEnabled((prev) => {
+                                                        return !prev;
+                                                    });
+                                                }}
+                                            >
+                                                {soundEnabled ? (
+                                                    <MdNotificationsActive className="setting-icon" />
+                                                ) : (
+                                                    <MdNotificationsOff className="setting-icon" />
+                                                )}
+                                                <p className="icon-label">
+                                                    Toggle Notifications
+                                                </p>
+                                            </Button>
+                                        </ButtonGroup>
                                     </Container>
                                 </Col>
                             </Row>
@@ -459,6 +467,17 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     modalType={responsesModalStatus.type}
                 ></ResponsesModal>
             </Container>
+            <FileModal
+                uploadType={FileUploadType.DOCUMENTS}
+                socket={socket}
+                sessionID={sessionId}
+                userID={props.userData.id}
+                updateFiles={getFileData}
+                files={files}
+                roomType={RoomType.CLASS}
+                showModal={showFileModal}
+                setShowModal={setShowFileModal}
+            ></FileModal>
         </PeerContext.Provider>
     );
 };

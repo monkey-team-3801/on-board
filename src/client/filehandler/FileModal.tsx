@@ -21,25 +21,17 @@ type Props = {
     }>;
     roomType: RoomType;
     isLoading?: boolean;
+    setShowModal: Function;
+    showModal: boolean;
 };
 
 export const FileModal = (props: Props) => {
-    const [showModal, setShowModal] = React.useState<boolean>(false);
-
     return (
         <div>
-            <Button
-                className="file-btn"
-                onClick={() => {
-                    setShowModal(true);
-                }}
-            >
-                Files
-            </Button>
             <Modal
-                show={showModal}
+                show={props.showModal}
                 onHide={() => {
-                    setShowModal(false);
+                    props.setShowModal(false);
                 }}
                 size="xl"
                 scrollable={true}
@@ -62,7 +54,7 @@ export const FileModal = (props: Props) => {
                     <Button
                         variant="primary"
                         onClick={() => {
-                            setShowModal(false);
+                            props.setShowModal(false);
                         }}
                     >
                         Close
