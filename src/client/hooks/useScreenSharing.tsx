@@ -122,7 +122,12 @@ export const useScreenSharing = (
         });
         // Answer people's call
         newPeer.on("call", (call) => {
-            console.log("SCREEN PEER: Receiving call from", call.peer, "answering with stream", stream);
+            console.log(
+                "SCREEN PEER: Receiving call from",
+                call.peer,
+                "answering with stream",
+                stream
+            );
             call.answer(stream);
             call.on("stream", () => {
                 console.log("Receiving streams from", call.peer);

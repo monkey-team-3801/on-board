@@ -59,18 +59,36 @@ export const useMediaStream: () => [
         const dest = ctx.createMediaStreamDestination();
         oscillator.connect(dest);
         oscillator.start();
-        return Object.assign(dest.stream.getAudioTracks()[0], {enabled: false});
+        return Object.assign(dest.stream.getAudioTracks()[0], {
+            enabled: false,
+        });
     }, []);
 
-    const emptyVideoTrack = useCallback<(width: number, height: number) => MediaStreamTrack>((width: number, height: number) => {
-        let canvas: HTMLCanvasElement = Object.assign(document.createElement("canvas"), {width, height});
+    const emptyVideoTrack = useCallback<
+        (width: number, height: number) => MediaStreamTrack
+    >((width: number, height: number) => {
+        let canvas: HTMLCanvasElement = Object.assign(
+            document.createElement("canvas"),
+            { width, height }
+        );
         canvas.getContext("2d")?.fillRect(0, 0, width, height);
         let stream = canvas.captureStream(30);
-        return Object.assign(stream.getVideoTracks()[0], {enabled: false});
+        return Object.assign(stream.getVideoTracks()[0], { enabled: false });
     }, []);
 
-    let blackSilence = useCallback<(width: number, height: number) => MediaStream>((width: number, height: number) => new MediaStream([emptyVideoTrack(width, height), emptyAudioTrack()]), []);
-    const [stream, setStream] = useState<MediaStream>(() => blackSilence(480, 360));
+    let blackSilence = useCallback<
+        (width: number, height: number) => MediaStream
+    >(
+        (width: number, height: number) =>
+            new MediaStream([
+                emptyVideoTrack(width, height),
+                emptyAudioTrack(),
+            ]),
+        []
+    );
+    const [stream, setStream] = useState<MediaStream>(() =>
+        blackSilence(480, 360)
+    );
     const [streamEnabled, setStreamEnabled] = useState<boolean>(false);
     const enableMediaStream = useCallback(
         async (constraints: MediaStreamConstraints = defaultConstraints) => {
