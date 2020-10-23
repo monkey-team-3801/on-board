@@ -8,6 +8,8 @@ import { Loader } from "../../components";
 import { useFetch } from "../../hooks";
 import { requestIsLoaded } from "../../utils";
 import "../room.less";
+import { PeerContext } from "../../peer";
+import { useMyPeer } from "../../hooks/useMyPeer";
 
 type Props = {
     roomId: string;
@@ -26,6 +28,9 @@ export const SessionContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
     const { roomType, children, roomId, userId } = props;
+
+    const peerData = useMyPeer(socket, userId, roomId);
+    
     const [sessionResponse] = useFetch<SessionData, { id: string }>(
         `/session/${
             roomType === RoomType.PRIVATE
@@ -78,12 +83,14 @@ export const SessionContainer: React.FunctionComponent<Props> = (
     }
 
     return (
-        <Container fluid>
-            {children(
-                sessionResponse.data,
-                sessionUsersResponse.data?.users,
-                socket
-            )}
-        </Container>
+        <PeerContext.Provider value={peerData}>
+            <Container fluid>
+                {children(
+                    sessionResponse.data,
+                    sessionUsersResponse.data?.users,
+                    socket
+                )}
+            </Container>
+        </PeerContext.Provider>
     );
 };

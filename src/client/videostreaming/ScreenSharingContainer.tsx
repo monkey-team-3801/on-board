@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useScreenSharing } from "../hooks/useScreenSharing";
 import { StreamVideo } from "./StreamVideo";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Container } from "react-bootstrap";
 import { PeerContext } from "../peer";
 
 type Prop = {
@@ -22,18 +22,21 @@ export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
     const { sharingStreams } = useContext(PeerContext);
     return (
         <>
-            <Row>
-                {sharingStreams
-                    .entrySeq()
-                    .toArray()
-                    .map(([userId, { stream }]) => (
-                        <Col xs="auto" key={userId}>
-                            User: {userId}
-                            <StreamVideo muted={true} stream={stream} />
-                        </Col>
-                    ))}
-            </Row>
-            <Row>
+            <Container className="screen-sharing-container d-flex justify-content-center align-items-center">
+                <Row>
+                    {sharingStreams
+                        .entrySeq()
+                        .toArray()
+                        .map(([userId, { stream }]) => (
+                            <Col xs="auto" key={userId}>
+                                User: {userId}
+                                <StreamVideo muted={true} stream={stream} />
+                            </Col>
+                        ))}
+                        {sharingStreams.size === 0 && <p className="text-muted">No active streams...</p>}
+                </Row>
+            </Container>
+            <Row className="d-flex justify-content-center mt-3">
                 <Col xs="auto">
                     <Button
                         onClick={async () => {

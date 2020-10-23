@@ -21,6 +21,7 @@ type Props = {
     }>;
     roomType: RoomType;
     isLoading?: boolean;
+    size?: "sm" | "lg";
 };
 
 export const FileModal = (props: Props) => {
@@ -30,6 +31,7 @@ export const FileModal = (props: Props) => {
         <div>
             <Button
                 className="file-modal"
+                size={props.size}
                 onClick={() => {
                     setShowModal(true);
                 }}
