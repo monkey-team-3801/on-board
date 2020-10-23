@@ -1,6 +1,6 @@
 import express from "express";
 
-import { User } from "../database/schema";
+import { User, SessionUsers } from "../database/schema";
 import { asyncHandler } from "../utils";
 import {
     CreateUserRequestType,
@@ -121,4 +121,120 @@ router.post(
         }
         res.end();
     })
+);
+
+router.post(
+    "/getUserById",
+    asyncHandler<UserDataResponseType | undefined, {}, { userID: string }>(
+        async (req, res) => {
+            const user = await User.findById(req.body.userID);
+
+            if (user) {
+                res.json({
+                    id: user._id.toHexString(),
+                    username: user.username,
+                    userType: user.userType,
+                    courses: user.courses,
+                });
+            }
+            res.end();
+        }
+    )
+);
+
+router.post(
+    "/getAllUserInCourse",
+    asyncHandler<Array<UserDataResponseType>, {}, { userID: string }>(
+        async (req, res) => {
+            try {
+                if (req.headers.authorization) {
+                    const currentUser = await getUserDataFromJWT(
+                        req.headers.authorization
+                    );
+                    const users = await User.find({
+                        courses: {
+                            $in: currentUser?.courses || [],
+                        },
+                    })
+                        .select("username")
+                        .select("userType")
+                        .select("_id")
+                        .select("courses");
+                    res.json(
+                        users.map((user) => {
+                            return {
+                                id: user._id.toHexString(),
+                                username: user.username,
+                                userType: user.userType,
+                                courses: user.courses,
+                            };
+                        })
+                    );
+                }
+                res.status(200);
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/online",
+    asyncHandler<Array<string>>(async (req, res) => {
+        try {
+            const users = await SessionUsers.findOne({ sessionId: "global" });
+            res.json(Array.from(users?.userReferenceMap.keys() || [])).status(
+                200
+            );
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/changeUsername",
+    asyncHandler<undefined, {}, { userID: string; newName: string }>(
+        async (req, res, next) => {
+            try {
+                const newNameQuery = await User.findOne({
+                    username: req.body.newName,
+                });
+                if (newNameQuery) {
+                    throw new Error();
+                } else {
+                    await User.findByIdAndUpdate(req.body.userID, {
+                        username: req.body.newName,
+                    });
+                    res.status(200);
+                }
+            } catch (e) {
+                res.status(500);
+                next(new Error("Username is already taken"));
+            } finally {
+                res.end();
+            }
+        }
+    )
+);
+
+router.post(
+    "/changePassword",
+    asyncHandler<undefined, {}, { userID: string; password: string }>(
+        async (req, res) => {
+            try {
+                await User.findByIdAndUpdate(req.body.userID, {
+                    password: hashPassword(req.body.password),
+                });
+                res.status(200).end();
+            } catch (e) {
+                res.status(500).end();
+            }
+        }
+    )
 );

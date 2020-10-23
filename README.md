@@ -40,7 +40,8 @@ Online collaboration and learning environment powered by SocketIO.
 ### Developing
 
 1. Run `npm install`
-2. Run `npm run start-client-dev` to initialise the client or `npm run start-server-dev` to initialise the server.
+2. Run `npm run start-client-dev` to initialise the client or
+   `npm run start-server-dev` to initialise the server.
 
 ### Building
 
@@ -60,8 +61,6 @@ For manual deployment setup your container to run `npm start` (after building).
 
 🟠 [JZ4012](https://github.com/JZ4012) 🟠
 
-🟡 [Kas-kb](https://github.com/Kas-kb) 🟡
-
 🟢 [mike-fam](https://github.com/mike-fam) 🟢
 
 🔵 [oscardunstan](https://github.com/oscardunstan) 🔵
@@ -70,4 +69,4 @@ For manual deployment setup your container to run `npm start` (after building).
 
 Happy swinging!
 
-🙈🐵🙈🐵
+ðŸ™ˆðŸµðŸ™ˆðŸµ

@@ -1,19 +1,20 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { UpcomingClassroomSessionData } from "../../types";
+import { RoomType, UpcomingClassroomSessionData } from "../../types";
+import { ClassContainer } from "../classes";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
-import "./Classes.less";
-import { UpcomingClass } from "./UpcomingClass";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setUpcomingClassesAmount: React.Dispatch<React.SetStateAction<number>>;
+    userId: string;
 };
 
 export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
+    const { setLoading, setUpcomingClassesAmount } = props;
     const [classroomsResponse] = useFetch<
         Array<UpcomingClassroomSessionData>,
         {}
@@ -26,21 +27,30 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
         if (requestIsLoaded(classroomsResponse)) {
             setLoading(false);
             setData(classroomsResponse.data);
+            setUpcomingClassesAmount(classroomsResponse.data.length);
         }
-    }, [classroomsResponse, setLoading, setData]);
+    }, [classroomsResponse, setLoading, setData, setUpcomingClassesAmount]);
 
     return (
         <>
             <Row>
                 <Container className="classes-list">
                     {data.length === 0 ? (
-                        <p className="text-center m-0">
+                        <p className="text-center m-0 text-muted">
                             You have no upcoming classes, are you enrolled in
                             the right courses?
                         </p>
                     ) : (
                         data.map((session, i) => {
-                            return <UpcomingClass key={i} {...session} />;
+                            return (
+                                <ClassContainer
+                                    key={i}
+                                    {...session}
+                                    size="sm"
+                                    type={RoomType.CLASS}
+                                    currentUserId={props.userId}
+                                />
+                            );
                         })
                     )}
                 </Container>

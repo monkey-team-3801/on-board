@@ -3,6 +3,7 @@ import { Button, Modal } from "react-bootstrap";
 import { FileUploadType, RoomType } from "../../types";
 import { FileContainer } from "./FileContainer";
 import { UploadContainer } from "./UploadContainer";
+import { Loader } from "../components";
 
 type Props = {
     uploadType: FileUploadType;
@@ -10,10 +11,16 @@ type Props = {
     socket: SocketIOClient.Socket;
     userID: string;
     updateFiles: Function;
-    files: Array<Array<string>>;
+    files: Array<{
+        id: string;
+        name: string;
+        size: number;
+        time: string;
+        userId: string;
+        username: string;
+    }>;
     roomType: RoomType;
-    // showmodal
-    // modalbutton: Function;
+    isLoading?: boolean;
 };
 
 export const FileModal = (props: Props) => {
@@ -27,7 +34,7 @@ export const FileModal = (props: Props) => {
                     setShowModal(true);
                 }}
             >
-                Upload File(s)
+                Files
             </Button>
             <Modal
                 show={showModal}
@@ -35,29 +42,21 @@ export const FileModal = (props: Props) => {
                     setShowModal(false);
                 }}
                 size="xl"
-                className="d-flex justify-content-center"
+                scrollable={true}
+                centered={true}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>File Upload</Modal.Title>
+                    <Modal.Title>Files</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FileContainer
-                        socket={props.socket}
-                        sessionID={props.sessionID}
-                        userID={props.userID}
-                        updateFiles={props.updateFiles}
-                        files={props.files}
-                        roomType={props.roomType}
-                    />
-                    <hr></hr>
-                    <UploadContainer
-                        uploadType={FileUploadType.DOCUMENTS}
-                        socket={props.socket}
-                        sessionID={props.sessionID}
-                        userID={props.userID}
-                        updateFiles={props.updateFiles}
-                        roomType={props.roomType}
-                    />
+                    {props.isLoading ? (
+                        <Loader />
+                    ) : (
+                        <>
+                            <FileContainer {...props} id={props.sessionID} />
+                            <UploadContainer {...props} />
+                        </>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button

@@ -11,9 +11,12 @@ import {
     CourseListResponseType,
     GetAnnouncementsRequestType,
     GetAnnouncementsResponseType,
+    UserType,
+    UserDataResponseType,
 } from "../../types";
 import { addWeeks, setISODay } from "date-fns";
 import { User } from "../database/schema";
+import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -83,25 +86,6 @@ router.post(
 );
 
 router.post(
-    "/list",
-    asyncHandler<CourseListResponseType>(async (req, res, next) => {
-        try {
-            res.json(
-                (await findAllCourses()).map((course) => {
-                    return {
-                        code: course.code,
-                    };
-                })
-            );
-        } catch (e) {
-            console.log("error", e);
-            res.status(500);
-            next(new Error("Unexpected error has occured."));
-        }
-    })
-);
-
-router.post(
     "/announcements",
     asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
         async (req, res) => {
@@ -140,6 +124,30 @@ router.post(
                 });
             }
             res.end();
+        }
+    )
+);
+
+router.post(
+    "/announcements/delete",
+    asyncHandler<{}, {}, { id: string; courseCode: string }>(
+        async (req, res) => {
+            try {
+                await Course.findOneAndUpdate(
+                    { code: req.body.courseCode },
+                    {
+                        $pull: {
+                            announcements: {
+                                id: req.body.id,
+                            },
+                        },
+                    }
+                );
+            } catch (e) {
+                res.status(500);
+            } finally {
+                res.status(200).end();
+            }
         }
     )
 );
@@ -242,7 +250,7 @@ router.get(
                     if (weekOn === 0) return false;
                     const sessionDate: Date = setISODay(
                         addWeeks(activity.startDate, i),
-                        activity.day_of_week
+                        activity.dayOfWeek
                     );
                     return (
                         activity.code === codeFilter &&
@@ -253,5 +261,57 @@ router.get(
                 });
             })
         );
+    })
+);
+
+router.post(
+    "/details",
+    asyncHandler<
+        { [key: string]: Array<Omit<UserDataResponseType, "courses">> },
+        {},
+        { courses: Array<string> }
+    >(async (req, res) => {
+        try {
+            if (req.headers.authorization) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (user) {
+                    const courseUserMap = new Map<
+                        string,
+                        Array<Omit<UserDataResponseType, "courses">>
+                    >();
+
+                    await Promise.all(
+                        req.body.courses.map(async (course) => {
+                            const courseUsers = await User.find({
+                                $or: [
+                                    { userType: UserType.COORDINATOR },
+                                    { userType: UserType.TUTOR },
+                                ],
+                                courses: {
+                                    $in: req.body.courses,
+                                },
+                            });
+                            courseUserMap.set(
+                                course,
+                                courseUsers.map((user) => {
+                                    return {
+                                        id: user._id.toHexString(),
+                                        username: user.username,
+                                        userType: user.userType,
+                                    };
+                                })
+                            );
+                        })
+                    );
+                    res.status(200).json(Object.fromEntries(courseUserMap));
+                }
+            }
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
     })
 );

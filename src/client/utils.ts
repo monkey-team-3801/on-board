@@ -1,6 +1,12 @@
-import { BaseResponseType, RequestState, ErrorResponseType } from "./types";
+import {
+    BaseResponseType,
+    RequestState,
+    ErrorResponseType,
+    CourseOptionType,
+} from "./types";
 
 import { ResponseType } from "./types";
+import { UserType } from "../types";
 
 /**
  * Type guard to check if a request was loaded.
@@ -56,4 +62,42 @@ export const throttle = (callback: any, delay: number) => {
             callback.apply(null, arguments);
         }
     };
+};
+
+export const isOptionType = (option: any): option is CourseOptionType => {
+    return option?.value && option?.label;
+};
+
+export const baseRoomTypeOptions = [
+    {
+        value: "Lecture",
+        label: "Lecture",
+    },
+    {
+        value: "Tutorial",
+        label: "Tutorial",
+    },
+    {
+        value: "Practical",
+        label: "Practical",
+    },
+    {
+        value: "Studio",
+        label: "Studio",
+    },
+];
+
+export const userTypeToClass = (userType: UserType) => {
+    switch (userType) {
+        case UserType.STUDENT:
+            return "student";
+        case UserType.TUTOR:
+            return "tutor";
+        case UserType.COORDINATOR:
+            return "coordinator";
+    }
+};
+
+export const isStaff = (userType: UserType) => {
+    return userType !== UserType.STUDENT;
 };

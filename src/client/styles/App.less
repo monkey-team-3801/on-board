@@ -1,13 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Commissioner:wght@200;400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap");
 @import "./Colours.less";
 
 body,
 p {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Source Sans Pro",
-        "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-        "Droid Sans", "Helvetica Neue", sans-serif, "Raleway";
+    font-family: "Source Sans Pro", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+        "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -18,9 +17,8 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: -apple-system, BlinkMacSystemFont, "Raleway", "Segoe UI",
-        "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    font-family: "Commissioner", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+        "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
 h1 {
@@ -45,7 +43,7 @@ code {
 }
 
 #root {
-    background-color: #f1f1f1;
+    background-color: #fff;
     overflow-x: hidden;
     min-height: 100vh;
 }
@@ -53,9 +51,9 @@ code {
 #root,
 #root ~ .modal {
     .btn-primary {
-        background-color: @primary;
+        background-color: @primary !important;
         border-color: transparent;
-        min-height: 38px;
+        min-height: 46px;
         &:hover {
             background-color: darken(@primary, 10%);
         }
@@ -84,6 +82,45 @@ code {
 
     .btn-sm {
         min-height: 31px;
+    }
+
+    .purple-gradient {
+        background: linear-gradient(40deg, #986eff, #7873f5) !important;
+    }
+
+    .peach-gradient {
+        background: linear-gradient(40deg, #ff906f, #fc6262) !important;
+    }
+
+    .form-control {
+        &:focus {
+            border-color: #7973f6;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(121, 115, 246, 0.1);
+        }
+    }
+
+    .modal-title {
+        font-family: "Commissioner", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+            "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    }
+
+    .overlay .mask {
+        border-radius: 5px;
+        svg,
+        p {
+            color: white;
+        }
+
+        svg {
+            height: 50%;
+            width: 50%;
+        }
+    }
+
+    .light-outline {
+        color: white !important;
+        border: 1px solid white !important;
     }
 }
 

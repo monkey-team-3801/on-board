@@ -6,12 +6,13 @@ import { Participants } from "../components";
 type Props = {
     users: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
+    myUserId: string;
 };
 
 export const ParticipantsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { users } = props;
+    const { users, raisedHandUsers } = props;
 
     const [filterValue, setFilterValue] = React.useState<string>("");
 
@@ -23,6 +24,12 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
               });
     }, [filterValue, users]);
 
+    const sortedUsers = React.useMemo(() => {
+        return filteredUsers.sort((user) => {
+            return raisedHandUsers.includes(user.id) ? -1 : 1;
+        });
+    }, [filteredUsers, raisedHandUsers]);
+
     return (
         <Container>
             <Form.Control
@@ -32,8 +39,9 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
                 }}
             />
             <Participants
-                users={filteredUsers}
-                raisedHandUsers={props.raisedHandUsers}
+                users={sortedUsers}
+                raisedHandUsers={raisedHandUsers}
+                myUserId={props.myUserId}
             />
         </Container>
     );

@@ -1,7 +1,6 @@
 import express from "express";
 import { ExecutingEvent } from "../../events";
 import {
-    ClassOpenJob,
     ClassroomSessionData,
     GetCanvasRequestType,
     GetCanvasResponseType,
@@ -10,7 +9,6 @@ import {
     SessionData,
     SessionDeleteRequestType,
     SessionInfo,
-    UpcomingClassroomSessionData,
     UserData,
     UserDataResponseType,
 } from "../../types";
@@ -23,15 +21,21 @@ import {
     SessionUsers,
     User,
 } from "../database";
-import { File } from "../database/schema/File";
+import { File, FileResponse } from "../database/schema/File";
 import { Response } from "../database/schema/Response";
 import {
+    FileForm,
     MultipleChoiceResponseForm,
     ShortAnswerResponseForm,
 } from "../database/schema/ResponseForm";
 import { VideoSession } from "../database/schema/VideoSession";
-import { asyncHandler, createNewSession } from "../utils";
-import { getUserDataFromJWT } from "./utils";
+import { ScheduleHandler } from "../jobs";
+import {
+    asyncHandler,
+    classFormDataHasError,
+    createNewSession,
+} from "../utils";
+import { getAllClassroomSessions, getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
@@ -40,24 +44,34 @@ router.post(
     asyncHandler<
         { id: string; name: string } | { message?: string },
         {},
-        { name: string }
+        { name: string; description: string; courseCode?: string }
     >(async (req, res, next) => {
         try {
-            if (req.body.name && req.body.name !== "") {
-                const session = await createNewSession(req.body.name, "");
-                await SessionCanvas.create({
-                    sessionId: session._id,
-                    strokes: [],
-                });
-                await SessionUsers.create({
-                    sessionId: session._id,
-                    userReferenceMap: new Map(),
-                });
-                console.log("Session created:", session.name);
-                res.json({
-                    id: session._id,
-                    name: session.name,
-                });
+            if (req.body.name && req.headers.authorization) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (user) {
+                    const session = await createNewSession(
+                        req.body.name,
+                        req.body.description,
+                        user.id,
+                        req.body.courseCode
+                    );
+                    await SessionCanvas.create({
+                        sessionId: session._id,
+                        strokes: [],
+                    });
+                    await SessionUsers.create({
+                        sessionId: session._id,
+                        userReferenceMap: new Map(),
+                    });
+                    console.log("Session created:", session.name);
+                    res.json({
+                        id: session._id,
+                        name: session.name,
+                    });
+                }
             } else {
                 res.status(500).json({
                     message: "Room name should not be empty",
@@ -75,47 +89,34 @@ router.post(
 
 router.post(
     "/privateSessions",
-    asyncHandler<Array<SessionInfo>, {}, {}>(async (req, res, next) => {
-        try {
-            const sessions: Array<SessionInfo> = (await Session.find()).map(
-                (session) => {
-                    return {
-                        id: session._id,
-                        name: session.name,
-                        description: session.description,
-                        courseCode: session.courseCode,
-                    };
-                }
-            );
-            res.json(sessions);
-        } catch (e) {
-            console.log("error", e);
-            res.status(500);
-            next(new Error("Unexpected error has occured."));
-        }
-    })
-);
-
-router.post(
-    "/classroomSessions",
-    asyncHandler<Array<ClassroomSessionData>, {}, {}>(
+    asyncHandler<Array<SessionInfo & { createdByUsername?: string }>, {}, {}>(
         async (req, res, next) => {
             try {
-                const sessions = await ClassroomSession.find();
-                if (sessions) {
-                    res.json(
-                        sessions.map((session) => {
+                if (req.headers.authorization) {
+                    const currentUser = await getUserDataFromJWT(
+                        req.headers.authorization
+                    );
+                    const query: Array<SessionInfo> = await Promise.all(
+                        (await Session.find()).map(async (session) => {
+                            const user = await User.findById(session.createdBy);
                             return {
                                 id: session._id,
                                 name: session.name,
-                                roomType: session.roomType,
                                 description: session.description,
                                 courseCode: session.courseCode,
-                                messages: session.messages,
-                                startTime: session.startTime,
-                                endTime: session.endTime,
-                                colourCode: session.colourCode,
+                                createdBy: session.createdBy,
+                                createdByUsername: user?.username,
                             };
+                        })
+                    );
+                    res.json(
+                        query.filter((session) => {
+                            if (!session.courseCode) {
+                                return true;
+                            }
+                            return currentUser?.courses.includes(
+                                session.courseCode
+                            );
                         })
                     );
                 }
@@ -123,66 +124,79 @@ router.post(
                 console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
+            } finally {
+                res.status(200).end();
             }
-            res.end();
         }
     )
 );
 
 router.post(
-    "/upcomingClassroomSessions",
-    asyncHandler<Array<UpcomingClassroomSessionData>, {}, { limit?: number }>(
-        async (req, res, next) => {
+    "/classroomSessions",
+    asyncHandler<
+        Array<ClassroomSessionData & { createdByUsername?: string }>,
+        {},
+        {}
+    >(async (req, res, next) => {
+        try {
             if (req.headers.authorization) {
-                const user = await getUserDataFromJWT(
+                const currentUser = await getUserDataFromJWT(
                     req.headers.authorization
                 );
-                if (user) {
-                    try {
-                        const query: Array<ClassOpenJob> = (await Job.find({
-                            executingEvent: ExecutingEvent.CLASS_OPEN,
-                        })) as Array<ClassOpenJob>;
-
-                        const jobs = query
-                            .filter((job) => {
-                                return user.courses.includes(
-                                    job.data.courseCode
-                                );
-                            })
-                            .sort((a, b) => {
-                                return (
-                                    new Date(a.data.startTime).getTime() -
-                                    new Date(b.data.startTime).getTime()
-                                );
-                            });
-
-                        if (jobs) {
-                            res.json(
-                                jobs.map((job) => {
-                                    const session = job.data;
-                                    return {
-                                        name: session.roomName,
-                                        roomType: session.roomType,
-                                        description: session.description,
-                                        courseCode: session.courseCode,
-                                        startTime: session.startTime,
-                                        endTime: session.endTime,
-                                        colourCode: session.colourCode,
-                                    };
-                                })
-                            );
-                        }
-                    } catch (e) {
-                        console.log("error", e);
-                        res.status(500);
-                        next(new Error("Unexpected error has occured."));
-                    }
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(currentUser)
+                    );
+                } else {
+                    res.status(402);
                 }
             }
-
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
             res.end();
         }
-    )
+    })
+);
+
+router.post(
+    "/upcomingClassroomSessions",
+    asyncHandler<
+        Array<
+            Omit<ClassroomSessionData, "messages"> & {
+                createdByUsername?: string;
+            }
+        >,
+        {},
+        { limit?: number }
+    >(async (req, res, next) => {
+        try {
+            if (req.headers.authorization) {
+                const currentUser = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (currentUser) {
+                    res.status(200).json(
+                        await getAllClassroomSessions(
+                            currentUser,
+                            "upcoming",
+                            req.body.limit
+                        )
+                    );
+                } else {
+                    res.status(402);
+                }
+            }
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
 );
 
 router.post(
@@ -247,6 +261,7 @@ router.post(
                         startTime: session.startTime,
                         endTime: session.endTime,
                         colourCode: session.colourCode,
+                        open: session.open,
                     });
                 }
             } catch (e) {
@@ -257,6 +272,87 @@ router.post(
             res.end();
         }
     )
+);
+
+router.post(
+    "/edit/classroomSession",
+    asyncHandler<
+        { message?: string },
+        {},
+        { data: Omit<ClassroomSessionData, "messages">; type: RoomType }
+    >(async (req, res, next) => {
+        try {
+            const data = req.body.data;
+            const errorMessage = classFormDataHasError(data);
+            if (errorMessage) {
+                res.status(500)
+                    .json({
+                        message: errorMessage,
+                    })
+                    .end();
+                return;
+            }
+            console.log(req.body);
+            if (new Date(data.endTime).getTime() < new Date().getTime()) {
+                await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
+                    ...req.body.data,
+                });
+            } else {
+                const session = await ClassroomSession.findByIdAndUpdate(
+                    req.body.data.id,
+                    {
+                        ...req.body.data,
+                        open: false,
+                    }
+                );
+                if (session) {
+                    const schedulerHandler: ScheduleHandler<{
+                        id: string;
+                    }> = ScheduleHandler.getInstance();
+                    await schedulerHandler.removeQueuedJob(session._id);
+                    await schedulerHandler.addNewJob({
+                        jobId: session._id,
+                        jobDate: req.body.data.startTime,
+                        executingEvent: ExecutingEvent.CLASS_OPEN,
+                        data: {
+                            id: session._id,
+                        },
+                    });
+                }
+            }
+            res.status(200);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/edit/privateSession",
+    asyncHandler<
+        { message?: string },
+        {},
+        { id: string; name: string; description: string; courseCode?: string }
+    >(async (req, res, next) => {
+        try {
+            await Session.findByIdAndUpdate(req.body.id, {
+                name: req.body.name,
+                description: req.body.description,
+                courseCode: req.body.courseCode,
+            });
+            res.status(200);
+        } catch (e) {
+            console.log("error", e);
+            res.status(500);
+            next(new Error("Unexpected error has occured."));
+        } finally {
+            res.end();
+        }
+    })
 );
 
 router.post(
@@ -297,24 +393,30 @@ router.post(
     "/delete/classroom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
+            console.log(req.body);
             console.log("Deleting classroom:", req.body.id);
-            await File.deleteMany({ sessionID: req.body.id });
-
-            await MultipleChoiceResponseForm.deleteMany({
-                sessionID: req.body.id,
-            });
-            const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
-                sessionID: req.body.id,
-            });
-            for (let form of shortAnswerResponseIDs) {
-                await Response.deleteMany({ formID: form.id });
-            }
             try {
+                await File.deleteMany({ sessionID: req.body.id });
+                await FileForm.deleteMany({ sessionID: req.body.id });
+                await FileResponse.deleteMany({ sessionID: req.body.id });
+
+                await MultipleChoiceResponseForm.deleteMany({
+                    sessionID: req.body.id,
+                });
+                const shortAnswerResponseIDs = await ShortAnswerResponseForm.find(
+                    {
+                        sessionID: req.body.id,
+                    }
+                );
+                for (let form of shortAnswerResponseIDs) {
+                    await Response.deleteMany({ formID: form.id });
+                }
                 await ClassroomSession.findByIdAndDelete(req.body.id);
                 await VideoSession.findOneAndDelete({ sessionId: req.body.id });
                 await BreakoutSession.deleteMany({
                     parentSessionId: req.body.id,
                 });
+                await Job.findByIdAndDelete(req.body.id);
             } catch (e) {
                 res.status(500);
             } finally {
@@ -564,8 +666,30 @@ router.post(
 router.post(
     "/deleteBreakoutRoom",
     asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
-        await BreakoutSession.findByIdAndDelete(req.body.sessionId);
-        res.end();
+        try {
+            await BreakoutSession.findByIdAndDelete(req.body.sessionId);
+            res.status(200);
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);
+
+router.post(
+    "/deleteAllBreakoutRooms",
+    asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
+        try {
+            await BreakoutSession.deleteMany({
+                parentSessionId: req.body.sessionId,
+            });
+            res.status(200);
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
     })
 );
 

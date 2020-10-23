@@ -1,0 +1,35 @@
+@import "../styles/Colours.less";
+
+.class-container {
+    min-height: 200px;
+    border-radius: 5px;
+
+    .info-left {
+        border-right: 1px solid lighten(@primary, 10%);
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .info-container {
+        .row {
+            flex: 0;
+        }
+    }
+    .button-container {
+        button {
+            width: 100%;
+        }
+    }
+    .btn {
+        margin: 0;
+        height: 100%;
+    }
+    .orb {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        float: right;
+    }
+}

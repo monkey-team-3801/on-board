@@ -1,17 +1,18 @@
 import React from "react";
 import {
+    Alert,
     Container,
     Form,
     FormControl,
     FormGroup,
     InputGroup,
-    Alert,
 } from "react-bootstrap";
 import { ResponseFormEvent } from "../../events";
 import { ResponseFormType } from "../../types";
 import { ButtonWithLoadingProp } from "../components";
 import { useDynamicFetch } from "../hooks";
-import { requestIsLoading, requestIsLoaded } from "../utils";
+import { requestIsLoaded, requestIsLoading } from "../utils";
+import { FileResponseOptionsContainer } from "./FileResponseOptionsContainer";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
@@ -84,11 +85,24 @@ export const ResponseOptionsContainer = (props: Props) => {
                             }}
                             disabled={formSubmitting}
                         />
+                        <Form.Check
+                            type={"radio"}
+                            label={"Collect Files"}
+                            inline
+                            checked={checkedOption === ResponseFormType.FILE}
+                            onChange={() => {
+                                setOption(ResponseFormType.FILE);
+                            }}
+                        />
                     </Form.Row>
                 </FormGroup>
                 <InputGroup>
                     <FormControl
-                        placeholder="Question"
+                        placeholder={
+                            checkedOption === ResponseFormType.FILE
+                                ? "Title"
+                                : "Question"
+                        }
                         onChange={(e) => {
                             setQuestion(e.target.value);
                         }}
@@ -107,12 +121,12 @@ export const ResponseOptionsContainer = (props: Props) => {
                         Submit
                     </ButtonWithLoadingProp>
                 )}
+                {requestIsLoaded(uploadFormResponse) && (
+                    <Alert variant="success">
+                        Successfully created question form
+                    </Alert>
+                )}
             </Form>
-            {requestIsLoaded(uploadFormResponse) && (
-                <Alert variant="success">
-                    Successfully created question form
-                </Alert>
-            )}
             <div>
                 {checkedOption === ResponseFormType.MULTIPLE_CHOICE && (
                     <MultipleChoiceContainer
@@ -123,6 +137,15 @@ export const ResponseOptionsContainer = (props: Props) => {
                         sock={props.sock}
                         setFormSubmitting={setFormSubmitting}
                         formSubmitting={formSubmitting}
+                    />
+                )}
+                {checkedOption === ResponseFormType.FILE && (
+                    <FileResponseOptionsContainer
+                        question={question}
+                        sessionID={props.sid}
+                        closeModal={props.closeModal}
+                        uid={props.userid}
+                        sock={props.sock}
                     />
                 )}
             </div>

@@ -1,7 +1,9 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { UserEnrolledCoursesResponseType } from "../../types";
 import { ContainerWrapper } from "../components";
+import { useFetch } from "../hooks";
 import { TopLayerContainerProps } from "../types";
 import { ClassroomDisplayContainer } from "./ClassroomDisplayContainer";
 import { PrivateRoomDisplayContainer } from "./PrivateRoomDisplayContainer";
@@ -11,6 +13,10 @@ type Props = RouteComponentProps & TopLayerContainerProps & {};
 export const ClassesPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const [courseData] = useFetch<UserEnrolledCoursesResponseType>(
+        "/user/courses"
+    );
+
     return (
         <div className="classes-page">
             <Row>
@@ -22,6 +28,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                                     <ClassroomDisplayContainer
                                         {...props}
                                         setLoading={setLoading}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}
@@ -34,6 +41,7 @@ export const ClassesPageContainer: React.FunctionComponent<Props> = (
                                     <PrivateRoomDisplayContainer
                                         {...props}
                                         setLoading={setLoading}
+                                        courses={courseData.data?.courses || []}
                                     />
                                 );
                             }}

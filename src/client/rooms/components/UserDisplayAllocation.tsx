@@ -22,30 +22,37 @@ export const UserDisplayAllocation: React.FunctionComponent<Props> = (
                 <Dropdown.Toggle
                     variant="info"
                     size="sm"
+                    className="p-1"
                     disabled={props.allocated}
                 >
                     Allocate
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {props.otherRooms.map((key, i) => {
-                        if (props.currentRoomId !== key) {
-                            return (
-                                <Dropdown.Item
-                                    key={i}
-                                    onClick={() => {
-                                        props.allocateUser(
-                                            key,
-                                            props.currentRoomId,
-                                            props.id
-                                        );
-                                    }}
-                                >
-                                    {key === "main" ? "Main" : `Room ${i + 1}`}
-                                </Dropdown.Item>
-                            );
-                        }
-                        return <div key={key} />;
-                    })}
+                    {props.otherRooms.length > 0 ? (
+                        props.otherRooms.map((key, i) => {
+                            if (props.currentRoomId !== key) {
+                                return (
+                                    <Dropdown.Item
+                                        key={i}
+                                        onClick={() => {
+                                            props.allocateUser(
+                                                key,
+                                                props.currentRoomId,
+                                                props.id
+                                            );
+                                        }}
+                                    >
+                                        {key === "main"
+                                            ? "Main"
+                                            : `Room ${i + 1}`}
+                                    </Dropdown.Item>
+                                );
+                            }
+                            return <div key={key} />;
+                        })
+                    ) : (
+                        <p className="text-center">No rooms available</p>
+                    )}
                 </Dropdown.Menu>
             </Dropdown>
             <UserDisplay {...props} />

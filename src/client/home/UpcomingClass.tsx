@@ -24,70 +24,66 @@ export const UpcomingClass: React.FunctionComponent<Props> = (props: Props) => {
     }, [endTimeIso]);
 
     return (
-        <Container
-            className="class-container"
+        <Row
+            className="class-container my-3 mx-1 p-4"
             style={{
                 backgroundColor: props.colourCode || "lightgrey",
             }}
         >
-            <Row>
-                <Col xl="6" lg="6" md="12">
-                    <div className="content content-left">
-                        <Container className="course-code-container d-flex justify-content-center">
-                            <div>
-                                <Row>
-                                    <h1 className="text-center">
-                                        {props.courseCode}
-                                    </h1>
-                                </Row>
-                                <Row>
-                                    <p className="text-center">
-                                        {props.roomType}
-                                    </p>
-                                </Row>
-                            </div>
-                        </Container>
-                        <div className="info-container">
-                            <h2>{props.name}</h2>
+            <Col
+                xl="3"
+                lg="3"
+                md="12"
+                className="d-flex align-items-center course-column"
+            >
+                <Container className="d-flex justify-content-center course-container">
+                    <Row className="d-flex justify-content-center course-row">
+                        <h1>{props.courseCode}</h1>
+                        <p>{props.roomType}</p>
+                    </Row>
+                </Container>
+            </Col>
+            <Col xl="6" lg="6" md="12">
+                <Container>
+                    <Row>
+                        <Col>
+                            <h1>{props.name}</h1>
                             <p>
                                 {`${startTime} -
                                     ${endTime}`}
                             </p>
                             <p>{props.description}</p>
-                            <div className="download-container">
-                                <Button variant="light" size="sm">
-                                    Download Class Content
+                        </Col>
+                    </Row>
+                </Container>
+            </Col>
+            <Col xl="3" lg="3" md="12" className="d-flex align-items-center">
+                <Container className="button-container">
+                    <Row>
+                        <OverlayTrigger
+                            overlay={
+                                <Tooltip id="disabled-tooltip">
+                                    This room is not open!
+                                </Tooltip>
+                            }
+                        >
+                            <div style={{ width: "100%" }}>
+                                <Button
+                                    variant="light"
+                                    disabled
+                                    style={{
+                                        pointerEvents: "none",
+                                    }}
+                                >
+                                    Join
                                 </Button>
                             </div>
-                        </div>
-                    </div>
-                </Col>
-                <Col xl="6" lg="6" md="12">
-                    <div className="content content-right">
-                        <div className="connect">
-                            <OverlayTrigger
-                                overlay={
-                                    <Tooltip id="disabled-tooltip">
-                                        This room is not open!
-                                    </Tooltip>
-                                }
-                            >
-                                <div>
-                                    <Button
-                                        variant="light"
-                                        disabled
-                                        style={{
-                                            pointerEvents: "none",
-                                        }}
-                                    >
-                                        Join
-                                    </Button>
-                                </div>
-                            </OverlayTrigger>
-                        </div>
-                    </div>
-                </Col>
-            </Row>
-        </Container>
+                        </OverlayTrigger>
+                        <Button variant="light">Download Content</Button>
+                        <Button variant="light">Edit</Button>
+                    </Row>
+                </Container>
+            </Col>
+        </Row>
     );
 };

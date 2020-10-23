@@ -1,12 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
 
-declare global {
-    interface MediaDevices {
-        getDisplayMedia: (
-            constraints?: MediaStreamConstraints
-        ) => Promise<MediaStream>;
-    }
-}
 const defaultConstraints: MediaStreamConstraints = {
     video: {
         width: 480,
@@ -19,44 +12,85 @@ const defaultConstraints: MediaStreamConstraints = {
         echoCancellation: true,
     },
 };
-type MediaType = "camera" | "display" | "none";
+
+const streamSetAudioEnabled = (
+    enabled: boolean
+): ((stream: MediaStream) => void) => {
+    return (stream: MediaStream) => {
+        stream.getAudioTracks().forEach((track) => {
+            track.enabled = enabled;
+        });
+    };
+};
+
+export const turnAudioOff: (
+    stream: MediaStream
+) => void = streamSetAudioEnabled(false);
+export const turnAudioOn: (stream: MediaStream) => void = streamSetAudioEnabled(
+    true
+);
+
+const streamSetVideoEnabled = (
+    enabled: boolean
+): ((stream: MediaStream) => void) => {
+    return (stream: MediaStream) => {
+        stream.getVideoTracks().forEach((track) => {
+            track.enabled = enabled;
+        });
+    };
+};
+
+export const turnVideoOff: (
+    stream: MediaStream
+) => void = streamSetVideoEnabled(false);
+export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
+    true
+);
 
 export const useMediaStream: () => [
     MediaStream | undefined,
-    (type: MediaType, constraints?: MediaStreamConstraints) => Promise<void>
+    (constraints?: MediaStreamConstraints) => Promise<void>,
+    () => void
 ] = () => {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined);
-    const setMediaStream = useCallback(
-        async (
-            type: MediaType,
-            constraints: MediaStreamConstraints = defaultConstraints
-        ) => {
-            try {
-                if (type === "camera") {
-                    const stream = await navigator.mediaDevices.getUserMedia(
+    const enableMediaStream = useCallback(
+        async (constraints: MediaStreamConstraints = defaultConstraints) => {
+            if (!stream) {
+                try {
+                    const newStream = await navigator.mediaDevices.getUserMedia(
                         constraints
                     );
-                    setStream(stream);
-                } else if (type === "display") {
-                    const stream = await navigator.mediaDevices.getDisplayMedia(
-                        constraints
-                    );
-                    setStream(stream);
-                } else {
+                    setStream(newStream);
+                } catch (e) {
+                    console.log("error setting stream", e);
                     setStream(undefined);
                 }
-            } catch (e) {
-                setStream(undefined);
+            } else {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = true;
+                });
             }
         },
-        []
+        [stream]
     );
 
+    const disableMediaStream = useCallback(() => {
+        stream?.getTracks().forEach((track) => {
+            track.stop();
+            stream?.removeTrack(track);
+        });
+
+        console.log("Turning off stream", stream);
+        console.log("Turning off stream tracks", stream?.getTracks());
+        setStream(undefined);
+    }, [stream]);
+
     useEffect(() => {
-        setMediaStream("camera");
+        enableMediaStream();
         return () => {
-            setMediaStream("none");
+            disableMediaStream();
         };
-    }, [setMediaStream]);
-    return [stream, setMediaStream];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    return [stream, enableMediaStream, disableMediaStream];
 };

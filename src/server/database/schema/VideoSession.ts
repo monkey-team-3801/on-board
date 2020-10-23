@@ -5,7 +5,7 @@ interface IVideoSession extends mongoose.Document {
     userPeerMap: Map<string, string>;
     userReferenceMap: Map<string, number>;
     numScreensAllowed: number;
-    sharingUsers: Array<string>;
+    sharingUsers: Map<string, string>;
 }
 
 const VideoSessionSchema = new mongoose.Schema<IVideoSession>({
@@ -13,7 +13,7 @@ const VideoSessionSchema = new mongoose.Schema<IVideoSession>({
     userPeerMap: { type: Map, default: new Map() },
     userReferenceMap: { type: Map, default: new Map() },
     numScreensAllowed: { type: Number, default: 1 },
-    sharingUsers: { type: Array, default: [] },
+    sharingUsers: { type: Map, default: new Map() },
 });
 
 export const VideoSession = mongoose.model<IVideoSession>(

@@ -1,4 +1,4 @@
-import { UserType } from "../types";
+import { UserType, UserEnrolledCoursesResponseType } from "../types";
 
 export enum RequestState {
     LOADING,
@@ -33,9 +33,11 @@ export type TopLayerContainerProps = {
     userData: {
         username: string;
         id: string;
-        courses: Array<string>;
         userType: UserType;
     };
+    coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
+    refreshCourses?: () => Promise<void>;
+    refreshUserData?: () => Promise<void>;
 };
 
 export type CourseOptionType = {
@@ -57,3 +59,8 @@ export type BreakoutAllocationEventData =
           roomIndex: number;
       }
     | undefined;
+
+export type ChatModalStatusType = {
+    open: boolean;
+    selectedId?: string;
+};

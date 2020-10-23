@@ -1,18 +1,21 @@
 import React from "react";
-import { useFetch } from "../hooks";
+import { Col, Container, Form, Row } from "react-bootstrap";
+import Select from "react-select";
 import {
     GetAnnouncementsRequestType,
     GetAnnouncementsResponseType,
 } from "../../types";
+import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
-import { Row } from "react-bootstrap";
-
-import "./Announcements.less";
 import { AnnouncementEntry } from "./AnnouncementEntry";
+import "./Announcements.less";
+
 type Props = {
     userId: string;
     refreshKey: number;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    courses: Array<string>;
+    onlineUsers: Array<string>;
 };
 
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
@@ -29,7 +32,10 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     const [announcementsData, refresh] = useFetch<
         GetAnnouncementsResponseType,
         GetAnnouncementsRequestType
-    >("/courses/announcements", apiData);
+    >("/courses/announcements", apiData, false);
+
+    const [textFilter, setTextFilter] = React.useState<string>("");
+    const [courseFilter, setCourseFilter] = React.useState<Array<string>>([]);
 
     React.useEffect(() => {
         refresh();
@@ -41,23 +47,79 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
         }
     }, [announcementsData, setLoading]);
 
+    const filteredAnnouncements = React.useMemo(() => {
+        return (
+            announcementsData.data &&
+            announcementsData.data.announcements.filter((entry) => {
+                return (
+                    (entry.content.toLowerCase().includes(textFilter) ||
+                        entry.title.toLowerCase().includes(textFilter) ||
+                        entry.username.toLowerCase().includes(textFilter)) &&
+                    (courseFilter.length === 0 ||
+                        courseFilter.includes(entry.courseCode))
+                );
+            })
+        );
+    }, [announcementsData, textFilter, courseFilter]);
+
     return (
         <>
-            <div className="announcement-list">
-                {announcementsData.data &&
-                    announcementsData.data.announcements.map(
-                        (announcement, i) => {
-                            return (
-                                <Row className="announcement" key={i}>
+            <Container className="announcement-list">
+                <Row className="d-flex justify-content-center">
+                    <p className="text-muted">You have reached the top...</p>
+                </Row>
+                {filteredAnnouncements &&
+                    filteredAnnouncements.map((announcement, i) => {
+                        return (
+                            <React.Fragment key={i}>
+                                <Row className="announcement mt-5 mb-5">
                                     <AnnouncementEntry
                                         announcement={announcement}
+                                        currentUser={props.userId}
+                                        onDelete={async () => {
+                                            await refresh();
+                                        }}
+                                        isUserOnline={props.onlineUsers.includes(
+                                            announcement.userId
+                                        )}
                                     />
-                                    <hr />
                                 </Row>
-                            );
-                        }
-                    )}
-            </div>
+                            </React.Fragment>
+                        );
+                    })}
+            </Container>
+            <Row>
+                <Col xl={6}>
+                    <Form.Label>Filter text</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Search..."
+                        onChange={(e) => {
+                            setTextFilter(e.target.value.toLowerCase());
+                        }}
+                    />
+                </Col>
+                <Col xl={6}>
+                    <Form.Label>Filter courses</Form.Label>
+                    <Select
+                        placeholder="Filter course..."
+                        options={props.courses.map((code) => {
+                            return { value: code, label: code };
+                        })}
+                        isClearable
+                        isMulti
+                        onChange={(option) => {
+                            if (Array.isArray(option)) {
+                                setCourseFilter(
+                                    option.map((option) => {
+                                        return option.value;
+                                    })
+                                );
+                            }
+                        }}
+                    />
+                </Col>
+            </Row>
         </>
     );
 };

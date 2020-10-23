@@ -1,20 +1,25 @@
 import { List } from "immutable";
-import React from "react";
+import React, { useRef } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+// import { StreamSelectorWrapper } from "../video";
+import * as AiIcons from "react-icons/ai";
+import * as BiIcons from "react-icons/bi";
+import * as FaIcons from "react-icons/fa";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
-import { RoomEvent } from "../../events";
+import { ResponseFormEvent, RoomEvent } from "../../events";
 import {
     ClassroomSessionData,
     FileUploadType,
     RoomType,
     UserDataResponseType,
-    UserType,
+    UserType
 } from "../../types";
 import { Loader } from "../components";
 import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch, useFetch } from "../hooks";
+import { useMyPeer } from "../hooks/useMyPeer";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
@@ -23,10 +28,6 @@ import "./classroom.less";
 import { BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
-// import { StreamSelectorWrapper } from "../video";
-import * as AiIcons from "react-icons/ai";
-import * as FaIcons from "react-icons/fa";
-import * as BiIcons from "react-icons/bi";
 
 
 
@@ -38,11 +39,19 @@ const socket = socketIOClient("/");
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
+    const notification = useRef(new Audio("/public/notification.wav"));
+    const [soundEnabled, setSoundEnabled] = React.useState<boolean>(false);
     const { id: userId } = props.userData;
     const { classroomId: sessionId } = props.match.params;
+    const peerData = useMyPeer(socket, userId, sessionId);
     const [
         createBreakoutRoomModalVisible,
         setBreakoutRoomModalVisible,
+    ] = React.useState<boolean>(false);
+
+    const [
+        breakoutRoomListModalVisible,
+        setBreakoutRoomListModalVisible,
     ] = React.useState<boolean>(false);
     const [responsesModalStatus, setResponsesModalStatus] = React.useState<{
         visible: boolean;
@@ -142,6 +151,15 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         fetchRaisedHandUsers.callback();
     }, [fetchRaisedHandUsers]);
 
+    const onNewForm = React.useCallback(() => {
+        setSoundEnabled((prev) => {
+            if (prev) {
+                notification.current.play();
+            }
+            return prev;
+        });
+    }, [notification]);
+
     React.useEffect(() => {
         socket
             .connect()
@@ -149,6 +167,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
             .on(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
             .on(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
             .on(RoomEvent.USER_HAND_STATUS_CHANGED, onUserHandStatusChange)
+            .on(ResponseFormEvent.NEW_FORM, onNewForm)
             .emit(RoomEvent.SESSION_JOIN, {
                 userId,
                 sessionId,
@@ -160,6 +179,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 .off(RoomEvent.SESSION_JOIN, onUserJoinOrLeave)
                 .off(RoomEvent.SESSION_LEAVE, onUserJoinOrLeave)
                 .off(RoomEvent.BREAKOUT_ROOM_ALLOCATE, onBreakoutRoomAllocate)
+                .off(ResponseFormEvent.NEW_FORM, onNewForm)
                 .off(
                     RoomEvent.USER_HAND_STATUS_CHANGED,
                     onUserHandStatusChange
@@ -169,15 +189,35 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     }, []);
 
     const [fileData, getFileData] = useDynamicFetch<
-        Array<Array<string>>,
-        { sid: string; roomType: RoomType }
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>,
+        { id: string; roomType: RoomType; fileUploadType: FileUploadType }
     >(
         "/filehandler/getFiles",
-        { sid: sessionId, roomType: RoomType.CLASS },
+        {
+            id: sessionId,
+            roomType: RoomType.CLASS,
+            fileUploadType: FileUploadType.DOCUMENTS,
+        },
         true
     );
 
-    const [files, setFiles] = React.useState<Array<Array<string>>>([]);
+    const [files, setFiles] = React.useState<
+        Array<{
+            id: string;
+            name: string;
+            size: number;
+            time: string;
+            userId: string;
+            username: string;
+        }>
+    >([]);
 
     React.useEffect(() => {
         if (requestIsLoaded(fileData)) {
@@ -343,6 +383,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     raisedHandUsers={raisedHandUsers.toArray()}
                     roomType={RoomType.CLASS}
                     socket={socket}
+                    myUserId={props.userData.id}
                 />
             </Col>
             <BreakoutRoomModal
