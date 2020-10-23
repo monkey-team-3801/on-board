@@ -47,11 +47,6 @@ export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
                 </div>
             </div>
             <div className="nav-control right d-flex align-items-center">
-                <div className="welcome">
-                    <p>
-                        Welcome {props.username} ({props.userid})
-                    </p>
-                </div>
                 <Button
                     className="message-modal-button position-relative d-flex"
                     onClick={() => {

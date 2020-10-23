@@ -192,6 +192,9 @@ export const AppProtectedRoutes = (props: Props) => {
                                     coursesResponse={coursesResponse}
                                     refreshCourses={refreshCourseData}
                                     onlineUsers={onlineUserResponse?.data || []}
+                                    newMessages={
+                                        chatsWithNewMessageResponse.data?.length
+                                    }
                                 />
                             );
                         }}

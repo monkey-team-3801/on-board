@@ -1,6 +1,7 @@
 import { List } from "immutable";
 import React, { useRef } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
@@ -15,18 +16,17 @@ import {
 import { Loader } from "../components";
 import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch, useFetch } from "../hooks";
+import { useMyPeer } from "../hooks/useMyPeer";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
+import { PeerContext } from "../peer";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
+import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import "./classroom.less";
-import { BreakoutRoomModal, BreakoutRoomListModal } from "./components/";
+import { BreakoutRoomListModal, BreakoutRoomModal } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
-import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
-import { useMyPeer } from "../hooks/useMyPeer";
-import { PeerContext } from "../peer";
-import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
@@ -256,7 +256,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         <Button>Participants View</Button>
                                     </Container>
                                     <Container className="video-container mt-4">
-                                        {/*<StreamSelectorWrapper />*/}
+                                        {/* <StreamSelectorWrapper /> */}
                                         <ScreenSharingContainer
                                             userId={userId}
                                             sessionId={sessionId}
@@ -372,6 +372,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <SidePanelContainer
                         sessionId={sessionId}
                         username={props.userData.username}
+                        myUserId={props.userData.id}
                         initialChatLog={sessionResponse.data.messages}
                         users={sessionUsersResponse.data?.users}
                         raisedHandUsers={raisedHandUsers.toArray()}

@@ -4,9 +4,13 @@ import { PeerContext } from "../peer";
 
 type Props = {
     peerId: PeerId;
+    className?: string;
 };
 
-export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId }) => {
+export const RemotePeerVideo: React.FunctionComponent<Props> = ({
+    peerId,
+    className,
+}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const { peerId: myPeerId, addPeer, peerStreams } = useContext(PeerContext);
     const playVideo = () => {
@@ -29,5 +33,5 @@ export const RemotePeerVideo: React.FunctionComponent<Props> = ({ peerId }) => {
             currentRef?.removeEventListener("loadedmetadata", playVideo);
     }, [peerId, myPeerId, addPeer, peerStreams]);
 
-    return <video ref={videoRef} />;
+    return <video ref={videoRef} className={className} />;
 };

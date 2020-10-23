@@ -4,11 +4,13 @@ import "./StreamVideo.less";
 type Props = {
     muted: boolean;
     stream: MediaStream | undefined;
+    className?: string;
 };
 
 export const StreamVideo: React.FunctionComponent<Props> = ({
     muted,
     stream,
+    className,
 }) => {
     // My stream
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,5 +25,11 @@ export const StreamVideo: React.FunctionComponent<Props> = ({
         }
     }, [stream]);
 
-    return <video className="stream-video" ref={videoRef} muted={muted} />;
+    return (
+        <video
+            className={`${className ? className : undefined} stream-video`}
+            ref={videoRef}
+            muted={muted}
+        />
+    );
 };
