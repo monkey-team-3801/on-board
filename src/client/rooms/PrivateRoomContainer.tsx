@@ -6,7 +6,7 @@ import {
     FileUploadType,
     RoomType,
     SessionData,
-    UserDataResponseType
+    UserDataResponseType,
 } from "../../types";
 import { DrawingCanvas } from "../canvas";
 import { FileModal } from "../filehandler/FileModal";
