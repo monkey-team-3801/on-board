@@ -23,52 +23,27 @@
     color: black;
 }
 .session-name {
-    font-weight: 600;
-    width: 100%;
+    max-width: 100px;
 }
 
 .session-description {
     display: block;
-    width: 100%;
     margin: auto;
     opacity: 60%;
 }
-.progress-bar-container {
-    display: flex;
-    align-self: flex-end;
-    margin-left: 3%;
-    margin-bottom: 1%;
-}
-.start-time {
-    display: inline;
-    align-self: center;
-    font-weight: 600;
-}
 
-.end-time {
-    font-weight: 600;
-    display: relative;
-    float: right;
-    align-self: center;
-}
-
-.progress {
-    position: relative;
-    width: 400px;
-    overflow: hidden;
-    float: right;
-    vertical-align: top;
-    background: rgba(125, 114, 116, 30%);
+.progress-inner {
+    height: 100%;
+    background-color: #756a9f;
     border-radius: 7.5px;
-    margin-right: 5%;
-    margin-left: 5%;
-    align-self: center;
 }
 
 .progress-bar {
-    vertical-align: top;
-    background: #756a9f;
+    border: 1px solid #756a9f;
+    background-color: transparent;
     border-radius: 7.5px;
+    width: 200px;
+    height: 10px;
 }
 
 .file-modal {

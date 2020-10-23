@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import {
     FileUploadType,
     RoomType,
@@ -96,50 +96,46 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
-                                        <Container fluid className="d-flex">
-                                            <a
-                                                href="/home"
-                                                className="back-button-icon"
-                                            >
-                                                <AiIcons.AiOutlineArrowLeft />
-                                            </a>
-                                            <a
-                                                href="/home"
-                                                className="back-button"
-                                            >
-                                                Back{" "}
-                                            </a>
-                                            <span className="session-name">
-                                                <h1>{`${sessionData.name}`}</h1>
-                                                <span className="session-description">
-                                                    <p>
-                                                        {
-                                                            sessionData.description
-                                                        }
-                                                    </p>
-                                                </span>
-                                            </span>
-                                            <Container
-                                                fluid
-                                                className="progress-bar-container"
-                                            >
-                                                <span className="start-time">
-                                                    14:00
-                                                </span>
-                                                <div className="progress">
-                                                    <div
-                                                        className="progress-bar "
-                                                        role="progressbar"
-                                                        aria-valuenow={80}
-                                                        aria-valuemin={0}
-                                                        aria-valuemax={100}
-                                                        style={{ width: "70%" }}
-                                                    ></div>
-                                                </div>
-                                                <span className="end-time">
-                                                    16:00
-                                                </span>
-                                            </Container>
+                                        <Container fluid>
+                                            <Row>
+                                                <Col lg="4">
+                                                    <Row>
+                                                        <Link to="/classes">
+                                                            <Button
+                                                                variant="light"
+                                                                size="sm"
+                                                                className="d-flex align-items-center"
+                                                            >
+                                                                <AiIcons.AiOutlineArrowLeft className="mr-2" />
+                                                                Back
+                                                            </Button>
+                                                        </Link>
+                                                        <span className="session-name d-flex align-items-center ml-2">
+                                                            <h1 className="m-0 text-truncate">{`${sessionData.name}`}</h1>
+                                                        </span>
+                                                    </Row>
+                                                </Col>
+                                                <Col
+                                                    lg="8"
+                                                    className="d-flex align-items-center"
+                                                >
+                                                    <span className="start-time mr-2">
+                                                        14:00
+                                                    </span>
+                                                    <div className="progress-bar">
+                                                        <div
+                                                            className="progress-inner"
+                                                            style={{
+                                                                width: "70%",
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="end-time ml-2">
+                                                        16:00
+                                                    </span>
+                                                </Col>
+                                            </Row>
+                                            <Row></Row>
                                         </Container>
                                     </header>
                                     <Container fluid>
