@@ -1,10 +1,33 @@
 .chat-container {
     .chat-log-container {
-        height: 200px;
+        height: 300px;
         overflow-y: auto;
-        .self p {
-            text-align: right;
+        overflow-x: hidden;
+        .message-container {
+            color: white;
+            border-radius: 10px;
+            &.self {
+                background: linear-gradient(
+                    40deg,
+                    #8371cbc4,
+                    #aaa8dd
+                ) !important;
+            }
         }
+        .time {
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+    .log p {
+        border-radius: 18px;
+    }
+    .send-chat {
+        margin-top: 5%;
+        height: 30px;
+        width: 100%;
+        border-radius: 22px;
+        font-size: 13px;
     }
 }
 

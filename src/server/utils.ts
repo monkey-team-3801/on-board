@@ -72,7 +72,7 @@ export const createNewSession = async (
     createdBy: string,
     courseCode?: string
 ) => {
-    return Session.create({
+    const session = await Session.create({
         name,
         messages: [],
         description,
@@ -80,6 +80,14 @@ export const createNewSession = async (
         files: [],
         createdBy,
     });
+    await VideoSession.create({
+        sessionId: session._id,
+        userPeerMap: new Map(),
+        userReferenceMap: new Map(),
+        numScreensAllowed: 1,
+        sharingUsers: [],
+    });
+    return session;
 };
 
 export const createNewClassroomSession = async (

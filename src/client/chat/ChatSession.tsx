@@ -167,7 +167,7 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
                             currentUser={props.myUsername}
                         />
                     </Row>
-                    <Row className="d-flex justify-content-center">
+                    <Row className="d-flex justify-content-center align-items-center">
                         <Form onSubmit={onSubmit}>
                             <Form.Row>
                                 <Col xs="auto">
