@@ -1,4 +1,5 @@
 import React from "react";
+
 import { RGBColor, SketchPicker } from "react-color";
 
 type Props = {

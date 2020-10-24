@@ -11,6 +11,7 @@ import {
 import { ColourPicker } from "../colour";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded, throttle } from "../utils";
+import { AiFillEdit } from "react-icons/ai";
 import "./Canvas.less";
 
 type Props = {
@@ -33,6 +34,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     const isDrawing: React.MutableRefObject<boolean> = React.useRef<boolean>(
         false
     );
+    const [show, setShow] = React.useState<boolean>(false);
 
     const position: React.MutableRefObject<any> = React.useRef<{
         x?: number;
@@ -240,8 +242,36 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <Container className="drawing-canvas" fluid>
             <Row>
-                <Col lg={2}>
+                <Col className="colour-picker" lg={2}>
                     <Button
+                        onClick={() => {
+                            setShow((show) => {
+                                return !show;
+                            });
+                        }}
+                    >
+                        <AiFillEdit />
+                    </Button>
+                    {show ? (
+                        <Form.Control
+                            type="range"
+                            value={penSize}
+                            min={1}
+                            max={100}
+                            onChange={(e) => {
+                                setPenSize(Number(e.target.value));
+                            }}
+                        />
+                    ) : null}
+                    {show ? (
+                        <ColourPicker
+                            onChange={(colour) => {
+                                setPenColour(colour);
+                            }}
+                        />
+                    ) : null}
+                    <Button
+                        className="clear-button"
                         onClick={async () => {
                             const context =
                                 canvasRef.current?.getContext("2d") ||
@@ -262,20 +292,6 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                     >
                         Clear
                     </Button>
-                    <Form.Control
-                        type="range"
-                        value={penSize}
-                        min={1}
-                        max={100}
-                        onChange={(e) => {
-                            setPenSize(Number(e.target.value));
-                        }}
-                    />
-                    <ColourPicker
-                        onChange={(colour) => {
-                            setPenColour(colour);
-                        }}
-                    />
                 </Col>
                 <Col lg={10}>
                     <div className="canvas-container">

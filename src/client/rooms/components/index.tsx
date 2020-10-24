@@ -5,3 +5,4 @@ export * from "./UserDisplay";
 export * from "./Participants";
 export * from "./ScheduleRoomForm";
 export * from "./CreatePrivateRoomForm";
+export * from "./Progress";
