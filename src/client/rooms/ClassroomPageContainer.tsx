@@ -169,7 +169,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     );
 
     const participants = (
-        <Container className="alt-view-users">
+        <Container className="alt-view-users mt-4">
             <Participants
                 users={sessionUsersResponse.data?.users || []}
                 raisedHandUsers={raisedHandUsers.toArray()}

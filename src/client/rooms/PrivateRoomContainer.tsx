@@ -137,7 +137,12 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                             roomType={
                                                                 props.roomType
                                                             }
-                                                            size={"sm"}
+                                                            showModal={
+                                                                showFileModal
+                                                            }
+                                                            setShowModal={
+                                                                setShowFileModal
+                                                            }
                                                         />
                                                     </Row>
                                                 </Col>
