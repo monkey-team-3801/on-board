@@ -5,7 +5,7 @@ import {
     endOfMonth,
     endOfISOWeek,
     eachDayOfInterval,
-    startOfDay,
+    startOfDay, getISODay, differenceInCalendarISOWeeks
 } from "date-fns";
 import {
     CourseActivity, CourseActivityResponseType,
@@ -17,15 +17,14 @@ import { CalendarHeading } from "./CalendarHeading";
 import { Container, Row } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 import { useCachedFetch } from "../../hooks/useCachedFetch";
+import { requestIsLoaded } from "../../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
-    const [sessions, setSessions] = useState<CourseActivityResponseType>(
-        {}
-    );
+
     const today = new Date();
     const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
     const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
@@ -68,6 +67,22 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     useEffect(() => {
         setLoading(false);
     }, [setLoading]);
+    const getRelevantActivities = useCallback<(chosenDate: Date) => CourseActivityResponseType>((chosenDate) => {
+        if (!requestIsLoaded(activityResponse)) {
+            return {};
+        }
+        return Object.entries(activityResponse.data).reduce((courseActivitiesSoFar: CourseActivityResponseType, [courseCode, activities]) => {
+            return {
+                ...courseActivitiesSoFar,
+                [courseCode]: activities.filter(activity => {
+                    const day = getISODay(chosenDate);
+                    const startDate = new Date(activity.startDate);
+                    const numWeeksFromStartDate = differenceInCalendarISOWeeks(chosenDate, startDate);
+                    return day === activity.dayOfWeek && activity.weeks[numWeeksFromStartDate];
+                })
+            };
+        }, {});
+    }, [activityResponse]);
     return (
         <>
             <Row>
@@ -102,37 +117,36 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
                                 </div>
                             )
                         )}
-                        {/* TODO: fetch session data from server */}
                         {lastMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
                                 chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
                                 chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
                         {chosenMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
                                 chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
                                 chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
                         {nextMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
                                 chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
                                 chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
@@ -142,8 +156,8 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
             <Row>
                 <Container>
                     <UpcomingEventsContainer
+                        getRelevantActivities={getRelevantActivities}
                         chosenDate={chosenDate}
-                        activityResponse={activityResponse}
                     />
                 </Container>
             </Row>

@@ -1,37 +1,43 @@
-import React from "react";
-import { CourseActivity } from "../../../types";
+import React, { useMemo } from "react";
+import { CourseActivityResponseType } from "../../../types";
 import "./CalendarDay.less";
 import { startOfDay } from "date-fns";
+import {isEmpty} from "lodash";
 
 interface Props {
-    sessionsInDay: Array<CourseActivity>;
     date: Date;
     chosenDate: Date;
     chosenMonth: number;
     chosenYear: number;
     chooseDate: (date: number, month: number, year: number) => void;
+    getRelevantActivities: (chosenDate: Date) => CourseActivityResponseType
 }
 
 export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
-    const { date, chosenMonth, chosenYear, chosenDate, chooseDate } = props;
+    const { date, chosenMonth, chosenYear, chosenDate, chooseDate, getRelevantActivities } = props;
     const dateInChosenRange: boolean =
         date.getMonth() === chosenMonth && date.getFullYear() === chosenYear;
+    const relevantActivities = useMemo(() => getRelevantActivities(date), [getRelevantActivities, date]);
+    console.log(date, relevantActivities);
     return (
         <a
             href="#!"
-            className={`calendar-date
-            ${!dateInChosenRange ? "outside-range" : ""}
+            className={`calendar-date \
+            ${!dateInChosenRange ? "outside-range" : ""} \
             ${
                 startOfDay(date).getTime() === startOfDay(new Date()).getTime()
                     ? "today"
                     : ""
-            }
+            } \
             ${
                 date.getFullYear() === chosenDate.getFullYear() &&
                 date.getMonth() === chosenDate.getMonth() &&
                 date.getDate() === chosenDate.getDate()
                     ? "chosen-date"
                     : ""
+            } \
+            ${
+                Object.values(relevantActivities).some((arr) => arr.length !== 0) ? "busy" : ""
             }`}
             onClick={(e) => {
                 e.preventDefault();

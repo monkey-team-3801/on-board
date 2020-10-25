@@ -1,11 +1,51 @@
+@import "../../styles/Colours.less";
+
+
 .calendar-date {
     color: black;
+    margin: auto;
+    padding: 7% 5% 5% 5%;
+    line-height: 33px;
+    height: 50px;
+    width: 50px;
+    border: none;
+    background: white;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100% !important;
+    transition: all 0.3s ease;
 
-    &.outside-range {
-        color: gray;
+    &.busy {
+        background: lightyellow;
+    }
+
+    &.chosen-date {
+        background-color: @primary!important;
+        color: #fff !important;
+        font-weight: bold !important;
     }
 
     &.today {
-        background: red;
+        border: red dashed 1px;
+        background-color: white;
+        color: red;
+        font-weight: bold;
     }
+
+    &:hover {
+        border-radius: 100%;
+        background: #4aa1f3;
+        color: white;
+        text-decoration: none !important;
+        &.busy {
+            background: darken(#4aa1f3, 20%);
+        }
+    }
+    &.outside-range {
+        color: gray;
+        &.busy {
+            background: darken(white, 10%);
+        }
+    }
+
 }
