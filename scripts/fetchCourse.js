@@ -112,13 +112,17 @@ MongoClient.connect(
     },
     async (err, client) => {
         if (err) throw err;
+        const dbs = await client.db().admin().listDatabases({});
         let dbName;
-        // TODO: hardcoded db name
-        if (process.env.NODE_ENV === "production") {
+        if (dbs.databases.some(db => db.name === "monkprod")) {
             dbName = "monkprod";
-        } else {
+        } else if (dbs.databases.some(db => db.name === "test")) {
             dbName = "test";
+        } else {
+            console.error("Couldn't find suitable database");
+            return;
         }
+
         const db = client.db(dbName);
         const courses = parseCourse(await getCourses());
         const courseCollection = db.collection("courses", (error) => {
