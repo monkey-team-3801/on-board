@@ -5,7 +5,7 @@ import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import * as BiIcons from "react-icons/bi";
 import * as FaIcons from "react-icons/fa";
-import { RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
 import { ResponseFormEvent, RoomEvent } from "../../events";
@@ -262,10 +262,16 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 <Col>
                     <Row className="head-panel">
                         <Col xs={1.5}>
-                            <Button className="justify-content-center back-btn purple-gradient">
+                        <Link to="/classes">
+                            <Button 
+                            className="justify-content-center back-btn"
+                            variant="light"
+                            size="sm"                            
+                            >
                                 <AiIcons.AiOutlineArrowLeft className="icon" />
-                                back
+                                Back
                             </Button>
+                            </Link>
                         </Col>
                         <Col xs={3}>
                             <h1>
@@ -290,25 +296,33 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                         </Col>
                         <Col md={8}>
                             <ButtonGroup
-                                className="view-control mt-2 d-flex justify-content-center"
+                                className="view-control mt-2 d-flex justify-content-center toggle-container"
                                 size="sm"
                             >
-                                <Button
-                                    className="speaker-btn"
+                                <p
+                                    className={`pr-2 font-weight-bold ${
+                                        !altView
+                                            ? "active"
+                                            : ""
+                                    }`}
                                     onClick={() => {
                                         setAltView(false);
                                     }}
                                 >
                                     Speaker View
-                                </Button>
-                                <Button
-                                    className="participant-btn"
+                                </p>
+                                <p
+                                    className={`pl-2 font-weight-bold ${
+                                        altView
+                                            ? "active"
+                                            : ""
+                                    }`}
                                     onClick={() => {
                                         setAltView(true);
                                     }}
                                 >
                                     Participants View
-                                </Button>
+                                </p>
                             </ButtonGroup>
                             {altView ? participants : video}
 
@@ -317,7 +331,8 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                 className="classroom-btn-grp d-flex mt-4"
                             >
                                 <Button
-                                    className="purple-gradient"
+                                    className="first-btn"
+                                    id="settings-options"
                                     onClick={() => {
                                         setBreakoutRoomModalVisible(true);
                                     }}
@@ -326,7 +341,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     <p className="icon-label">Breakout Rooms</p>
                                 </Button>
                                 <Button
-                                    className="purple-gradient"
+                                    className="setting-btn"
                                     onClick={async () => {
                                         if (handRaisedRef.current) {
                                             setRaisedHandUsers(
@@ -352,16 +367,16 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
                                     <p className="icon-label">Raise Hand</p>
                                 </Button>
-                                <Button className="purple-gradient">
+                                <Button className="setting-btn">
                                     <BiIcons.BiVideoOff className="setting-icon" />
                                     <p className="icon-label">Camera off</p>
                                 </Button>
-                                <Button className="purple-gradient">
+                                <Button className="setting-btn">
                                     <BiIcons.BiMicrophoneOff className="setting-icon" />
                                     <p className="icon-label">Mic off</p>
                                 </Button>
                                 <Button
-                                    className="purple-gradient"
+                                    className="setting-btn"
                                     onClick={() => {
                                         setResponsesModalStatus({
                                             visible: true,
@@ -383,7 +398,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     onClick={() => {
                                         setShowFileModal(true);
                                     }}
-                                    className="purple-gradient"
+                                    className="setting-btn"
                                 >
                                     <AiIcons.AiOutlineUpload className="setting-icon" />
                                     <p className="icon-label">View Files</p>
@@ -397,7 +412,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                                 type: "ask",
                                             });
                                         }}
-                                        className="purple-gradient"
+                                        className="setting-btn"
                                     >
                                         <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
                                         <p className="icon-label">
@@ -406,7 +421,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     </Button>
                                 )}
                                 <Button
-                                    className="purple-gradient"
+                                    className="end-btn"
                                     onClick={() => {
                                         setSoundEnabled((prev) => {
                                             return !prev;

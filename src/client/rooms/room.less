@@ -49,17 +49,6 @@
     align-items: center;
 }
 
-.back-btn {
-    color: black;
-    &:hover {
-        color: white;
-    }
-}
-
-.room-control button {
-    background: transparent;
-}
-
 .view-control {
     padding-left: 25%;
     padding-right: 25%;
@@ -67,6 +56,99 @@
 }
 
 .setting-icon {
-    font-size: 20px;
+    font-size: 30px;
     margin: 10px 10px 0px 10px;
 }
+
+
+.classroom-btn-grp .back-btn {
+    background-color: @page-bg !important;
+    box-shadow: none;
+    color: grey;
+    font-weight: 600;
+    font-family: Raleway;
+    &:hover{
+        color: black !important;
+        box-shadow: none;
+        border: none !important;
+        
+    }
+    &:active{
+        background-color: @page-bg !important;
+        color: grey !important;
+        box-shadow: none;
+        border: none !important;
+    }
+}
+
+.first-btn {
+    border-radius: 15px 0px 0px 15px;    
+    font-family: Raleway !important;
+    width: 10%;
+}
+
+.setting-btn {
+    border-radius: 0px;
+    width: 10%;
+}
+
+.end-btn {
+    border-radius: 0px 15px 15px 0px;
+}
+
+.first-btn, .setting-btn, .end-btn, .file-btn {
+    color: white !important;
+    min-width: 14%;
+    max-width: 100px;
+    height: 90px;
+    font-size: 10px;
+    font-family: Raleway !important; 
+    font-weight: 600;
+    &:hover {
+        background-color: darken(grey, 10%) !important;
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
+        color: @primary-dark !important;
+    }
+    &:active {
+        color: @primary-dark !important;
+    }
+}
+
+.file-btn {
+    width:100px;
+    color: #4F4F4F;
+    font-size: 10px;
+    font-family: "Raleway";
+    font-weight: 600;
+    &:focus {
+        box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
+        color: #4F4F4F !important;
+    }
+}
+
+.speaker-btn, .participant-btn {
+    background-color: @page-bg !important;
+    color: #4F4F4F !important;
+    font-family: Raleway;
+    font-weight: 600;
+    align-content: center;
+    &:hover {
+        background-color: @content-bg !important;
+    }
+    &:focus {
+        background-color: @content-bg;
+        box-shadow: 0 0 0 0.2rem lighten(grey, 40%) !important;
+    }
+    &:active {
+        background-color: @content-bg !important;
+        color: #4F4F4F;
+        font-weight: 800;
+    }
+}
+
+.participant-btn {
+    font-weight: 400 !important;
+}
+
