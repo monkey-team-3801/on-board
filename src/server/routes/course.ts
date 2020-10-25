@@ -3,7 +3,7 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { Course } from "../database";
 import {
-    CourseActivityResponseType,
+    CourseActivity,
     CourseActivityUnique,
     CourseResponseType,
     CoursesResponseType,
@@ -11,6 +11,7 @@ import {
     CourseListResponseType,
     GetAnnouncementsRequestType,
     GetAnnouncementsResponseType,
+    CourseActivityResponseType,
     UserType,
     UserDataResponseType,
 } from "../../types";
@@ -26,32 +27,9 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
         code: course.code,
         description: course.description,
         activities: course.activities,
+        announcements: course.announcements,
     }));
 };
-
-router.get(
-    "/:course_code",
-    asyncHandler<CourseResponseType, { course_code: string }, {}>(
-        async (req, res, next) => {
-            try {
-                const course = await Course.findOne({
-                    code: req.params.course_code,
-                });
-                if (!course) {
-                    res.status(404).end();
-                    return;
-                }
-                res.json({
-                    code: course.code,
-                    description: course.description,
-                    activities: course.activities,
-                });
-            } catch (e) {
-                res.status(500).end();
-            }
-        }
-    )
-);
 
 router.get(
     "/",
@@ -85,6 +63,34 @@ router.post(
     })
 );
 
+router.get(
+    "/enrolled-activities",
+    asyncHandler<
+        CourseActivityResponseType,
+        {},
+        CourseActivityRequestFilterType
+    >(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            const courses = await Course.find({
+                code: {
+                    $in: user?.courses,
+                },
+            });
+            const activities = courses.reduce(
+                (currentActivities: CourseActivityResponseType, newCourse) => {
+                    return {
+                        ...currentActivities,
+                        [newCourse.code]: newCourse.activities,
+                    };
+                },
+                {}
+            );
+            res.json(activities);
+        }
+        res.end();
+    })
+);
 router.post(
     "/announcements",
     asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
@@ -182,29 +188,51 @@ router.patch(
     })
 );
 
+router.get(
+    "/:course_code",
+    asyncHandler<CourseResponseType, { course_code: string }, {}>(
+        async (req, res, next) => {
+            try {
+                const course = await Course.findOne({
+                    code: req.params.course_code,
+                });
+                if (!course) {
+                    res.status(404).end();
+                    return;
+                }
+                res.json({
+                    code: course.code,
+                    description: course.description,
+                    activities: course.activities,
+                    announcements: course.announcements,
+                });
+            } catch (e) {
+                res.status(500).end();
+            }
+        }
+    )
+);
 // TODO: Unique constraint
 router.post(
     "/:course_code/add-activity",
-    asyncHandler<
-        CourseActivityResponseType,
-        { course_code: string },
-        CourseActivityResponseType
-    >(async (req, res) => {
-        const course = await Course.findOne(req.params);
-        if (!course) {
-            res.status(404).end();
-            return;
+    asyncHandler<CourseActivity, { course_code: string }, CourseActivity>(
+        async (req, res) => {
+            const course = await Course.findOne(req.params);
+            if (!course) {
+                res.status(404).end();
+                return;
+            }
+            course.activities = [...course.activities, req.body];
+            await course.save();
+            res.status(200).json(req.body);
         }
-        course.activities = [...course.activities, req.body];
-        await course.save();
-        res.status(200).json(req.body);
-    })
+    )
 );
 
 router.delete(
     "/:course_code/delete-activity",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityUnique
     >(async (req, res) => {
@@ -231,7 +259,7 @@ router.delete(
 router.get(
     "/:course_code/activities",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityRequestFilterType
     >(async (req, res) => {

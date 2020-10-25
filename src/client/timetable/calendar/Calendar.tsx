@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     startOfMonth,
     startOfISOWeek,
@@ -6,6 +6,8 @@ import {
     endOfISOWeek,
     eachDayOfInterval,
     startOfDay,
+    getISODay,
+    differenceInCalendarISOWeeks,
 } from "date-fns";
 import { CourseActivityResponseType } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
@@ -13,25 +15,18 @@ import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
 import { Container, Row } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
+import { useCachedFetch } from "../../hooks/useCachedFetch";
+import { requestIsLoaded } from "../../utils";
 
 type Props = {
-    sessions: Array<CourseActivityResponseType>;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export type State = {
-    chosenMonth: number;
-    chosenYear: number;
-};
-
-export const Calendar: React.FunctionComponent<Props> = ({
-    sessions,
-    setLoading,
-}) => {
-    const [{ chosenMonth, chosenYear }, setTimeFrame] = React.useState<State>({
-        chosenMonth: new Date().getMonth(),
-        chosenYear: new Date().getFullYear(),
-    });
+export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
+    const today = new Date();
+    const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
+    const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
+    const [chosenDate, setDate] = React.useState<Date>(today);
     const firstDayOfMonth: Date = startOfMonth(
         new Date(chosenYear, chosenMonth)
     );
@@ -50,18 +45,88 @@ export const Calendar: React.FunctionComponent<Props> = ({
         start: lastDayOfMonth,
         end: lastDayShown,
     }).filter((date) => date.getTime() !== lastDayOfMonth.getTime());
-    React.useEffect(() => {
+
+    const setMonthRange = useCallback((month: number, year: number) => {
+        setMonth(month);
+        setYear(year);
+    }, []);
+
+    const chooseDate = useCallback(
+        (date: number, month: number, year: number) => {
+            setDate(new Date(year, month, date));
+            setMonthRange(month, year);
+        },
+        [setMonthRange]
+    );
+
+    // TODO: For now don't need to send filter.
+    const [activityResponse] = useCachedFetch<CourseActivityResponseType>(
+        "get",
+        "/courses/enrolled-activities"
+    );
+    console.log(activityResponse.data);
+    useEffect(() => {
         setLoading(false);
     }, [setLoading]);
+    const getRelevantActivities = useCallback<
+        (chosenDate: Date) => CourseActivityResponseType
+    >(
+        (chosenDate) => {
+            if (!requestIsLoaded(activityResponse)) {
+                return {};
+            }
+            return Object.entries(activityResponse.data).reduce(
+                (
+                    courseActivitiesSoFar: CourseActivityResponseType,
+                    [courseCode, activities]
+                ) => {
+                    return {
+                        ...courseActivitiesSoFar,
+                        [courseCode]: activities.filter((activity) => {
+                            const day = getISODay(chosenDate);
+                            const startDate = new Date(activity.startDate);
+                            const numWeeksFromStartDate = differenceInCalendarISOWeeks(
+                                chosenDate,
+                                startDate
+                            );
+                            return (
+                                day === activity.dayOfWeek &&
+                                activity.weeks[numWeeksFromStartDate]
+                            );
+                        }),
+                    };
+                },
+                {}
+            );
+        },
+        [activityResponse]
+    );
     return (
         <>
             <Row>
-                <Container>
+                <Container className="position-relative">
                     <CalendarHeading
                         month={chosenMonth}
                         year={chosenYear}
-                        setTimeFrame={setTimeFrame}
+                        setMonthRange={setMonthRange}
                     />
+                    <div className="calendar-today-button">
+                        <small>
+                            <a
+                                href="#!"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    chooseDate(
+                                        today.getDate(),
+                                        today.getMonth(),
+                                        today.getFullYear()
+                                    );
+                                }}
+                            >
+                                (go to today)
+                            </a>
+                        </small>
+                    </div>
                     <div className="calendar-container">
                         {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
                             (dayName: string) => (
@@ -70,31 +135,36 @@ export const Calendar: React.FunctionComponent<Props> = ({
                                 </div>
                             )
                         )}
-                        {/* TODO: fetch session data from server */}
                         {lastMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
                         {chosenMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
                         {nextMonthRange.map((date: Date, index: number) => (
                             <CalendarDay
-                                sessionsInDay={[]}
                                 date={date}
+                                chosenDate={chosenDate}
                                 chosenMonth={chosenMonth}
                                 chosenYear={chosenYear}
+                                chooseDate={chooseDate}
+                                getRelevantActivities={getRelevantActivities}
                                 key={index}
                             />
                         ))}
@@ -103,7 +173,10 @@ export const Calendar: React.FunctionComponent<Props> = ({
             </Row>
             <Row>
                 <Container>
-                    <UpcomingEventsContainer />
+                    <UpcomingEventsContainer
+                        getRelevantActivities={getRelevantActivities}
+                        chosenDate={chosenDate}
+                    />
                 </Container>
             </Row>
         </>

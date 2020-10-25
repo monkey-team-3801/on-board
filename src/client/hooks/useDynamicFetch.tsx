@@ -6,6 +6,7 @@ import {
     BaseResponseType,
     LocalStorageKey,
     ErrorResponseType,
+    HttpMethod,
 } from "../types";
 import { AnyObjectMap } from "../../types";
 import { HTTPStatusCodeToResponseState } from "./utils";
@@ -17,6 +18,7 @@ import { HTTPStatusCodeToResponseState } from "./utils";
  * @param invokeImmediately Should the fetch execute on first component render?
  * @param onFetchSuccess Callback for when the fetch was successful.
  * @param onFetchError Callback when the fetch failed.
+ * @param method Http method, either "get" or "post" or "delete" etc.
  * @returns ResponseType<T> object with the current state of the request: LOADED, LOADING, ERROR which is set accordingly.
  * ResponseType<T>.data contains the response data from the endpoint.
  * T: Response data type.
@@ -48,8 +50,13 @@ export const useDynamicFetch = <
     apiRequestData?: Partial<S>,
     invokeImmediately: boolean | undefined = true,
     onFetchSuccess?: (response: T) => void,
-    onFetchError?: (err: AxiosError<ErrorResponseType>) => void
-): [BaseResponseType<T>, (newRequestData: S | undefined) => Promise<void>] => {
+    onFetchError?: (err: AxiosError<ErrorResponseType>) => void,
+    method: HttpMethod = "post"
+): [
+    BaseResponseType<T>,
+    (newRequestData: S | undefined) => Promise<void>,
+    (responseType: BaseResponseType<T>) => void
+] => {
     const componentMounted: React.MutableRefObject<boolean> = React.useRef<
         boolean
     >(false);
@@ -70,13 +77,17 @@ export const useDynamicFetch = <
                         state: RequestState.LOADING,
                     };
                 });
-                const response = await axios.post<T>(endpoint, requestData, {
+                const response = await axios.request<T>({
+                    method,
+                    url: endpoint,
+                    data: requestData,
                     headers: {
                         Authorization:
                             localStorage.getItem(LocalStorageKey.JWT_TOKEN) ||
                             "",
                     },
                 });
+
                 setResponseType({
                     state: HTTPStatusCodeToResponseState(response.status),
                     data: response.data,
@@ -96,7 +107,7 @@ export const useDynamicFetch = <
                 }
             }
         },
-        [onFetchSuccess, onFetchError]
+        [onFetchSuccess, onFetchError, method]
     );
 
     const refetch = React.useCallback(
@@ -122,5 +133,5 @@ export const useDynamicFetch = <
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchData, apiEndpoint]);
 
-    return [responseType, refetch];
+    return [responseType, refetch, setResponseType];
 };

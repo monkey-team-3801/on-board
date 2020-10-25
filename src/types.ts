@@ -52,12 +52,16 @@ export type CourseActivityRequestFilterType = Partial<CourseActivityUnique> & {
     };
 };
 
-export type CourseActivityResponseType = CourseActivityUnique & {
+export type CourseActivity = CourseActivityUnique & {
     time: number;
     startDate: Date;
     duration: number;
     dayOfWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7; // Monday->Sunday in ISO week
     weeks: Array<1 | 0>;
+};
+
+export type CourseActivityResponseType = {
+    [courseCode: string]: Array<CourseActivity>;
 };
 
 export type CourseDataUnique = {
@@ -66,7 +70,8 @@ export type CourseDataUnique = {
 };
 
 export type CourseResponseType = CourseDataUnique & {
-    activities: Array<CourseActivityResponseType>;
+    activities: Array<CourseActivity>;
+    announcements: Array<CourseAnnouncementsType>;
 };
 
 export type CoursesType = Array<CourseResponseType>;

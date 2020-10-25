@@ -1,8 +1,8 @@
 import React from "react";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 
 type Props = {
-    activities: CourseActivityResponseType[];
+    activities: CourseActivity[];
 };
 
 export const DayActivities: React.FunctionComponent<Props> = (props: Props) => {
