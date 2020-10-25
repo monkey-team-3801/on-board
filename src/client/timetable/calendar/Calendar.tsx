@@ -9,9 +9,7 @@ import {
     getISODay,
     differenceInCalendarISOWeeks,
 } from "date-fns";
-import {
-    CourseActivityResponseType,
-} from "../../../types";
+import { CourseActivityResponseType } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
@@ -62,9 +60,10 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     );
 
     // TODO: For now don't need to send filter.
-    const [activityResponse] = useCachedFetch<
-        CourseActivityResponseType
-    >("get", "/courses/enrolled-activities");
+    const [activityResponse] = useCachedFetch<CourseActivityResponseType>(
+        "get",
+        "/courses/enrolled-activities"
+    );
     console.log(activityResponse.data);
     useEffect(() => {
         setLoading(false);
