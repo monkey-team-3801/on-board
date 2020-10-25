@@ -14,6 +14,7 @@ import { requestIsLoaded, requestIsLoading } from "../utils";
 type Props = {
     userId: string;
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
+    refreshCourseData?: () => Promise<void>;
 };
 
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
@@ -86,6 +87,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                         courses: enrolledCourse.map((course) => course.value),
                     };
                     await enrolInCourses(data);
+                    await props.refreshCourseData?.();
                 }}
             >
                 <Form.Group>

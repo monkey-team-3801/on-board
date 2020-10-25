@@ -30,6 +30,7 @@ export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
                 <EnrolFormContainer
                     coursesResponse={props.coursesResponse}
                     userId={props.userData.id}
+                    refreshCourseData={props.refreshCourses}
                 />
             </Row>
         </Container>
