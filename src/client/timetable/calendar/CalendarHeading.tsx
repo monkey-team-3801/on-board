@@ -26,7 +26,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
                         setMonthRange(newMonth, newYear);
                     }}
                 >
-                    <BiLeftArrow/>
+                    <BiLeftArrow />
                 </div>
                 <div className="heading">
                     <h1>
@@ -41,7 +41,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
                         setMonthRange(newMonth, newYear);
                     }}
                 >
-                    <BiRightArrow/>
+                    <BiRightArrow />
                 </div>
             </div>
         </div>

@@ -52,4 +52,3 @@ export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
         </Container>
     );
 };
-
