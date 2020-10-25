@@ -1,4 +1,3 @@
-import { useDynamicFetch2 } from "./useDynamicFetch2";
 import { AnyObjectMap } from "../../types";
 import {
     BaseResponseType,
@@ -8,6 +7,7 @@ import {
 } from "../types";
 import { differenceInSeconds, parseJSON } from "date-fns";
 import { useCallback, useEffect, useMemo } from "react";
+import { useDynamicFetch } from "./useDynamicFetch";
 
 /**
  * Fetch and check if entry exists in sessionStorage first. If it does and
@@ -43,12 +43,13 @@ export const useCachedFetch = <
         [itemKey]
     );
 
-    const [response, refetch, setResponseType] = useDynamicFetch2<T, S>(
-        method,
+    const [response, refetch, setResponseType] = useDynamicFetch<T, S>(
         apiEndpoint,
         apiRequestData,
         false,
-        onFetchSuccess
+        onFetchSuccess,
+        undefined,
+        method
     );
     useEffect(() => {
         const storageEntry = sessionStorage.getItem(itemKey);
