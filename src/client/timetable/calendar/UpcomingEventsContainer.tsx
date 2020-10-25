@@ -1,10 +1,9 @@
+import { format } from "date-fns";
 import React, { useMemo } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import { format } from "date-fns";
-import { CourseActivityResponseType } from "../../../types";
-import { Loader } from "../../components";
-import { Event } from "./Event";
 import FadeIn from "react-fade-in";
+import { CourseActivityResponseType } from "../../../types";
+import { Event } from "./Event";
 
 type Props = {
     chosenDate: Date;

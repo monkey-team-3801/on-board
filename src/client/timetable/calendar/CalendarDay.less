@@ -14,6 +14,10 @@
     border-radius: 100% !important;
     transition: all 0.3s ease;
 
+    #today-button {
+        background-color: transparent !important;
+    }
+
     &.busy {
         background: lightyellow;
     }
@@ -25,19 +29,19 @@
     }
 
     &.today {
-        border: red dashed 1px;
+        border: #fc6262 dashed 1px;
         background-color: white;
-        color: red;
+        color: #fc6262;
         font-weight: bold;
     }
 
     &:hover {
         border-radius: 100%;
-        background: #4aa1f3;
+        background: #d4c5fc;
         color: white;
         text-decoration: none !important;
         &.busy {
-            background: darken(#4aa1f3, 20%);
+            background: darken(#d4c5fc, 10%);
         }
     }
     &.outside-range {

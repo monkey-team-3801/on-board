@@ -2,6 +2,20 @@
 
 .calendar {
     background-color: @content-bg;
+    #today-button {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border: 1px solid transparent;
+        color: #ff906f;
+        border-radius: 4px;
+        padding: 0.2rem 1rem;
+        &:hover, &:focus {
+            border: 1px solid #ff906f;
+        }
+        &:focus {
+            background-color: lighten(#ff906f, 25%) !important;
+        }
+    }
 }
 
 .calendar-container {
@@ -35,8 +49,12 @@
 
     .left-chevron,
     .right-chevron {
-        color: #c38699;
+        color: #ff8f6f;
         cursor: pointer;
+        font-size: 24px;
+        &:hover {
+            color: darken(#ff8f6f, 10%);
+        }
     }
 }
 
