@@ -1,7 +1,7 @@
+import { format } from "date-fns";
 import React from "react";
 import { Card } from "react-bootstrap";
 import { CourseActivity } from "../../../types";
-import { format } from "date-fns";
 
 type Props = {
     courseCode: string;
@@ -10,10 +10,14 @@ type Props = {
 
 export const Event: React.FunctionComponent<Props> = (props: Props) => {
     const { activity, courseCode } = props;
-    const startTime = new Date(activity.startDate);
-    const endTime = new Date(
-        startTime.getTime() + activity.duration * 60 * 1000
-    );
+    const startTime = React.useMemo(() => {
+        return new Date(activity.startDate);
+    }, [activity.startDate]);
+
+    const endTime = React.useMemo(() => {
+        return new Date(startTime.getTime() + activity.duration * 60 * 1000);
+    }, [startTime, activity.duration]);
+
     const durationString = React.useMemo(() => {
         return `${format(startTime, "EEEE, dd MMMM yyyy hh:mm")} - ${format(
             endTime,
