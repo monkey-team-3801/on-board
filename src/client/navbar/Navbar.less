@@ -19,14 +19,6 @@ nav.on-board-nav {
                 font-size: 24px;
                 cursor: pointer;
             }
-            .welcome {
-                display: flex;
-                align-items: center;
-                padding-right: 10px;
-                p {
-                    margin: 0;
-                }
-            }
         }
         .logo-container {
             .logo {
@@ -92,6 +84,17 @@ nav.on-board-nav {
         & button {
             background-color: @primary-dark;
             border: none;
+        }
+    }
+    .message-modal-button {
+        .messages-count-orb {
+            position: absolute;
+            background: linear-gradient(120deg, #ff4df1 0%, #ff2542 100%);
+            right: -5px;
+            bottom: -5px;
+            height: 20px;
+            width: 20px;
+            border-radius: 20px;
         }
     }
 }

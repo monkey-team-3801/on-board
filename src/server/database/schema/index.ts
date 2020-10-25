@@ -4,3 +4,4 @@ export * from "./Course";
 export * from "./Job";
 export * from "./SessionCanvas";
 export * from "./SessionUsers";
+export * from "./UserToUserChat";

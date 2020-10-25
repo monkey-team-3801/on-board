@@ -1,9 +1,69 @@
 .chat-container {
     .chat-log-container {
-        height: 200px;
+        height: 300px;
         overflow-y: auto;
-        .self p {
-            text-align: right;
+        overflow-x: hidden;
+        .message-container {
+            color: white;
+            border-radius: 10px;
+            &.self {
+                background: linear-gradient(
+                    40deg,
+                    #8371cbc4,
+                    #aaa8dd
+                ) !important;
+            }
+        }
+        .time {
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+    .log p {
+        border-radius: 18px;
+    }
+    .send-chat {
+        margin-top: 5%;
+        height: 30px;
+        width: 100%;
+        border-radius: 22px;
+        font-size: 13px;
+    }
+}
+
+.private-chat {
+    .chat-log-container {
+        height: 600px;
+    }
+}
+
+.chat-modal {
+    .orb {
+        width: 12px;
+        height: 12px;
+        border-radius: 5px;
+        transform: translateY(2px);
+    }
+    .user-list-container {
+        height: 800px;
+        overflow-y: auto;
+    }
+    .user-select {
+        padding-bottom: 3px;
+        cursor: pointer;
+        &:hover {
+            background-color: #966fff11;
+        }
+        img {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+        .notification {
+            transform: translateY(2px);
+        }
+        &.selected {
+            background-color: #966fff11;
         }
     }
 }

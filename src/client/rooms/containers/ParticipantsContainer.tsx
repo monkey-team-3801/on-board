@@ -2,10 +2,12 @@ import React from "react";
 import { Container, Form } from "react-bootstrap";
 import { UserDataResponseType } from "../../../types";
 import { Participants } from "../components";
+import * as AiIcons from "react-icons/ai";
 
 type Props = {
     users: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
+    myUserId: string;
 };
 
 export const ParticipantsContainer: React.FunctionComponent<Props> = (
@@ -31,15 +33,20 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container>
-            <Form.Control
-                type="text"
-                onChange={(e) => {
-                    setFilterValue(e.target.value);
-                }}
-            />
+            <Container className="search-bar">
+                <Form.Control
+                    type="text"
+                    placeholder="Find a person..."
+                    onChange={(e) => {
+                        setFilterValue(e.target.value);
+                    }}
+                />
+                <AiIcons.AiOutlineSearch />
+            </Container>
             <Participants
                 users={sortedUsers}
                 raisedHandUsers={raisedHandUsers}
+                myUserId={props.myUserId}
             />
         </Container>
     );

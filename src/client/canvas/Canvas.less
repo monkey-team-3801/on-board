@@ -2,8 +2,10 @@
     .canvas-container {
         position: relative;
         overflow: hidden;
+
         canvas {
             background-color: white;
+            border: 1px solid #9265ff22;
         }
         .cursor {
             position: absolute;
@@ -14,5 +16,17 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
         }
+    }
+    .colour-picker {
+        margin-top: 5%;
+        overflow: visible;
+        z-index: 2;
+    }
+    .form-control-range {
+        margin-bottom: 10%;
+    }
+    .btn {
+        margin-top: 15% !important;
+        width: 100%;
     }
 }

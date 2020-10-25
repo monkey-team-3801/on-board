@@ -4,10 +4,12 @@ import { MessageData, RoomType, UserDataResponseType } from "../../../types";
 import { ChatContainer } from "../../chat";
 import { Loader } from "../../components";
 import { ParticipantsContainer } from "./ParticipantsContainer";
+import "./SidePanelContainer.less";
 
 type Props = {
     sessionId: string;
     username: string;
+    myUserId: string;
     initialChatLog: Array<Omit<MessageData, "sessionId">>;
     users?: Array<Omit<UserDataResponseType, "courses">>;
     raisedHandUsers: Array<string>;
@@ -20,34 +22,37 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
 ) => {
     return (
         <Container className="panel">
-            <Row className="mt-4">
+            <Row>
                 <div className="panel-container tutors-container">
-                    <Container>
-                        <h4>Tutors</h4>
+                    <Container className="section-header">
+                        <h6>Tutor Team</h6>
                     </Container>
                 </div>
             </Row>
-            <Row className="mt-4">
-                <Container className="panel-container students-container d-flex flex-column">
-                    <Container>
-                        <h4>Participants</h4>
+            <Row>
+                <Container className="panel-container students-container ">
+                    <Container className="section-header">
+                        <h6>Participants</h6>
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
                             users={props.users}
                             raisedHandUsers={props.raisedHandUsers}
+                            myUserId={props.myUserId}
                         />
                     ) : (
-                        <Loader />
+                        <Container className="loader-container">
+                            <Loader />
+                        </Container>
                     )}
                 </Container>
             </Row>
-            <Row className="mt-4">
+            <Row>
                 <div className="panel-container messages-container">
-                    <Container>
-                        <h4>Chat</h4>
+                    <Container className="section-header">
+                        <h6>Chat</h6>
                     </Container>
-                    <Container fluid>
+                    <Container fluid className="chat-outer-container">
                         <ChatContainer
                             roomId={props.sessionId}
                             username={props.username}

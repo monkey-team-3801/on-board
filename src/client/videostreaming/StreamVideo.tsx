@@ -1,32 +1,33 @@
 import React, { useEffect, useRef } from "react";
+import "./StreamVideo.less";
 
 type Props = {
-    videoStream: MediaStream | undefined;
     muted: boolean;
-    mine: boolean;
+    stream: MediaStream | undefined;
+    className?: string;
 };
 
-export const Video: React.FunctionComponent<Props> = ({
-    videoStream,
-    mine,
+export const StreamVideo: React.FunctionComponent<Props> = ({
     muted,
+    stream,
+    className,
 }) => {
     // My stream
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
-        if (videoStream) {
+        if (stream) {
             if (videoRef.current) {
-                videoRef.current.srcObject = videoStream;
+                videoRef.current.srcObject = stream;
                 videoRef.current.addEventListener("loadedmetadata", () => {
                     videoRef.current?.play();
                 });
             }
         }
-    }, [videoStream]);
+    }, [stream]);
 
     return (
         <video
-            className={mine ? "my-video" : "peers-video"}
+            className={`${className ? className : undefined} stream-video`}
             ref={videoRef}
             muted={muted}
         />

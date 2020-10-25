@@ -28,6 +28,7 @@ export type ClassroomSessionData = SessionData & {
     startTime: string;
     endTime: string;
     colourCode: string;
+    open: boolean;
 };
 
 export type UpcomingClassroomSessionData = Omit<
@@ -102,7 +103,6 @@ export enum RoomType {
     CLASS,
     PRIVATE,
     BREAKOUT,
-    UPCOMING,
 }
 
 export type SessionRequestType = {
@@ -140,21 +140,23 @@ export type UserDataResponseType = {
     courses: Array<string>;
 };
 
-export type ClassroomData = ClassroomSessionData;
+// export type ClassroomData = {
+//     id: string;
+// };
 
 export interface BaseJob<T = any> {
+    jobId: string;
     jobDate: string;
     executingEvent: ExecutingEvent;
     data: T;
-    createdBy: string;
 }
 
-export interface AnnouncementJob<T = Omit<CourseAnnouncementsType, "userId">>
+export interface AnnouncementJob<T = CourseAnnouncementsType>
     extends BaseJob<T> {
     executingEvent: ExecutingEvent.ANNOUNCEMENT;
 }
 
-export interface ClassOpenJob<T = ClassroomData> extends BaseJob<T> {
+export interface ClassOpenJob<T = { id: string }> extends BaseJob<T> {
     executingEvent: ExecutingEvent.CLASS_OPEN;
 }
 
@@ -184,9 +186,15 @@ export type GetAnnouncementsResponseType = {
 };
 
 export type CreateClassroomJobRequestType = Omit<
-    ClassOpenJob<Omit<ClassroomData, "messages" | "id">>,
-    "createdBy"
->;
+    ClassroomSessionData,
+    "messages" | "id" | "open"
+> & {
+    executingEvent: ExecutingEvent;
+};
+
+export type AnyJobRequestType =
+    | CreateAnnouncementJobRequestType
+    | CreateClassroomJobRequestType;
 
 export enum FileUploadType {
     PROFILE,
@@ -235,6 +243,8 @@ export type UserPeer = {
 export type VideoPeersResponseType = {
     peers: Array<UserPeer>;
 };
+
+export type VideoScreenSharingUsersType = Map<string, string>;
 
 export type BreakoutRoomData = {
     name: string;

@@ -10,7 +10,10 @@ import {
     CourseActivityRequestFilterType,
     CourseListResponseType,
     GetAnnouncementsRequestType,
-    GetAnnouncementsResponseType, CourseActivityResponseType
+    GetAnnouncementsResponseType,
+    CourseActivityResponseType,
+    UserType,
+    UserDataResponseType,
 } from "../../types";
 import { addWeeks, setISODay } from "date-fns";
 import { User } from "../database/schema";
@@ -295,3 +298,54 @@ router.get(
     })
 );
 
+router.post(
+    "/details",
+    asyncHandler<
+        { [key: string]: Array<Omit<UserDataResponseType, "courses">> },
+        {},
+        { courses: Array<string> }
+    >(async (req, res) => {
+        try {
+            if (req.headers.authorization) {
+                const user = await getUserDataFromJWT(
+                    req.headers.authorization
+                );
+                if (user) {
+                    const courseUserMap = new Map<
+                        string,
+                        Array<Omit<UserDataResponseType, "courses">>
+                    >();
+
+                    await Promise.all(
+                        req.body.courses.map(async (course) => {
+                            const courseUsers = await User.find({
+                                $or: [
+                                    { userType: UserType.COORDINATOR },
+                                    { userType: UserType.TUTOR },
+                                ],
+                                courses: {
+                                    $in: req.body.courses,
+                                },
+                            });
+                            courseUserMap.set(
+                                course,
+                                courseUsers.map((user) => {
+                                    return {
+                                        id: user._id.toHexString(),
+                                        username: user.username,
+                                        userType: user.userType,
+                                    };
+                                })
+                            );
+                        })
+                    );
+                    res.status(200).json(Object.fromEntries(courseUserMap));
+                }
+            }
+        } catch (e) {
+            res.status(500);
+        } finally {
+            res.end();
+        }
+    })
+);

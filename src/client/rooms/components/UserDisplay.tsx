@@ -1,20 +1,10 @@
 import React from "react";
 import { UserData } from "../types";
-import { UserType } from "../../../types";
+import { ProfilePicture } from "../../components";
+import { userTypeToClass } from "../../utils";
 
 type Props = Omit<UserData, "allocated"> & {
     children?: React.ReactNode;
-};
-
-const userTypeToClass = (userType: UserType) => {
-    switch (userType) {
-        case UserType.STUDENT:
-            return "student";
-        case UserType.TUTOR:
-            return "tutor";
-        case UserType.COORDINATOR:
-            return "coordinator";
-    }
 };
 
 export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
@@ -26,11 +16,7 @@ export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <div className="user-display">
-            <img
-                src={`/filehandler/getPfp/${id}`}
-                alt="profile"
-                className={additionalClass}
-            />
+            <ProfilePicture userId={id} className={additionalClass} />
             <div className="username">
                 <p className="text-truncate">{username}</p>
             </div>

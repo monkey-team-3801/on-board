@@ -1,18 +1,20 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { UpcomingClassroomSessionData, RoomType } from "../../types";
+import { RoomType, UpcomingClassroomSessionData } from "../../types";
 import { ClassContainer } from "../classes";
 import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setUpcomingClassesAmount: React.Dispatch<React.SetStateAction<number>>;
+    userId: string;
 };
 
 export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
-    const { setLoading } = props;
+    const { setLoading, setUpcomingClassesAmount } = props;
     const [classroomsResponse] = useFetch<
         Array<UpcomingClassroomSessionData>,
         {}
@@ -25,8 +27,9 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
         if (requestIsLoaded(classroomsResponse)) {
             setLoading(false);
             setData(classroomsResponse.data);
+            setUpcomingClassesAmount(classroomsResponse.data.length);
         }
-    }, [classroomsResponse, setLoading, setData]);
+    }, [classroomsResponse, setLoading, setData, setUpcomingClassesAmount]);
 
     return (
         <>
@@ -44,7 +47,8 @@ export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
                                     key={i}
                                     {...session}
                                     size="sm"
-                                    type={RoomType.UPCOMING}
+                                    type={RoomType.CLASS}
+                                    currentUserId={props.userId}
                                 />
                             );
                         })

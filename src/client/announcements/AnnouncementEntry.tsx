@@ -2,7 +2,7 @@ import { format } from "date-fns/esm";
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { CourseAnnouncementsType } from "../../types";
-import { ButtonWithLoadingProp } from "../components";
+import { ButtonWithLoadingProp, ProfilePicture } from "../components";
 import { useDynamicFetch } from "../hooks";
 import { requestIsLoading } from "../utils";
 
@@ -10,6 +10,7 @@ type Props = {
     announcement: CourseAnnouncementsType & { username: string };
     currentUser: string;
     onDelete?: () => Promise<void>;
+    isUserOnline: boolean;
 };
 
 export const AnnouncementEntry: React.FunctionComponent<Props> = (
@@ -86,12 +87,13 @@ export const AnnouncementEntry: React.FunctionComponent<Props> = (
                                 <Row className="mt-4">
                                     <Container fluid className="user-container">
                                         <div className="profile">
-                                            <img
-                                                src={`/filehandler/getPfp/${
-                                                    announcement.userId || ""
-                                                }`}
-                                                alt="profile"
+                                            <ProfilePicture
+                                                userId={announcement.userId}
                                                 className="profile-image"
+                                                imgClassName="profile-pic-with-orb"
+                                                openChatOnClick
+                                                showStatusOrb
+                                                online={props.isUserOnline}
                                             />
                                         </div>
                                         <div className="user">
