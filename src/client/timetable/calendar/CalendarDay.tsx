@@ -27,6 +27,13 @@ export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
         getRelevantActivities,
         date,
     ]);
+
+    const isBusy = React.useMemo(() => {
+        return Object.values(relevantActivities).some(
+            (arr) => arr.length !== 0
+        );
+    }, [relevantActivities]);
+
     return (
         <a
             href="#!"
@@ -44,19 +51,14 @@ export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
                     ? "chosen-date"
                     : ""
             } \
-            ${
-                Object.values(relevantActivities).some(
-                    (arr) => arr.length !== 0
-                )
-                    ? "busy"
-                    : ""
-            }`}
+            ${isBusy ? "busy" : ""}`}
             onClick={(e) => {
                 e.preventDefault();
                 chooseDate(date.getDate(), date.getMonth(), date.getFullYear());
             }}
         >
             {date.getDate()}
+            {isBusy && <div className="orb" />}
         </a>
     );
 };

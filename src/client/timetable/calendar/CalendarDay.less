@@ -13,26 +13,25 @@
     vertical-align: middle;
     border-radius: 100% !important;
     transition: all 0.3s ease;
-
-    #today-button {
-        background-color: transparent !important;
-    }
-
-    &.busy {
-        background: lightyellow;
-    }
+    position: relative;
 
     &.chosen-date {
         background-color: @primary!important;
         color: #fff !important;
         font-weight: bold !important;
+        &.today {
+            background-color: lighten(#fc6262, 10%) !important;
+        }
     }
 
     &.today {
-        border: #fc6262 dashed 1px;
+        border: #fc6262 solid 1px;
         background-color: white;
         color: #fc6262;
         font-weight: bold;
+        &:hover {
+            background-color: lighten(#fc6262, 10%);
+        }
     }
 
     &:hover {
@@ -45,9 +44,26 @@
         }
     }
     &.outside-range {
-        color: gray;
+        color: lightgrey;
         &.busy {
-            background: darken(white, 10%);
+            background: transparent;
+            &:hover {
+                background-color: #f8f8f8;
+            }
         }
+    }
+
+    &.busy {
+        background: #f8f8f8;
+    }
+
+    > .orb {
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        position: absolute;
+        background-color: #fd9494;
+        right: 3px;
+        bottom: 3px;
     }
 }

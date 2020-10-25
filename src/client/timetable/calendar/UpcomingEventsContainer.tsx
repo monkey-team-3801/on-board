@@ -22,7 +22,7 @@ export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
         <Container className="upcoming-events mt-4">
             <Row>
                 <header>
-                    <h1>Classes on {format(chosenDate, "d MMM yyyy")}</h1>
+                    <h1>Events on {format(chosenDate, "d MMM yyyy")}</h1>
                 </header>
                 <hr className="my-2 peach-gradient" />
             </Row>

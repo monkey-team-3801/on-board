@@ -11,19 +11,25 @@ type Props = {
 export const Event: React.FunctionComponent<Props> = (props: Props) => {
     const { activity, courseCode } = props;
     const startTime = new Date(activity.startDate);
-    const endTime = new Date(startTime.getTime() + activity.duration * 60 * 1000);
-    const durationString = `${format(startTime, "EEEE, dd MMMM yyyy hh:mm")} - ${format(endTime, "hh:mm")}`
+    const endTime = new Date(
+        startTime.getTime() + activity.duration * 60 * 1000
+    );
+    const durationString = React.useMemo(() => {
+        return `${format(startTime, "EEEE, dd MMMM yyyy hh:mm")} - ${format(
+            endTime,
+            "hh:mm"
+        )}`;
+    }, [startTime, endTime]);
+
     return (
         <Card className="event my-2">
             <Card.Header className="peach-gradient">{`${courseCode}`}</Card.Header>
             <Card.Body>
                 <Card.Title>{`${activity.type} ${activity.code}`}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
-                    { durationString }
+                    {durationString}
                 </Card.Subtitle>
-                <Card.Text>
-                    No description
-                </Card.Text>
+                <Card.Text>No description</Card.Text>
             </Card.Body>
         </Card>
     );
