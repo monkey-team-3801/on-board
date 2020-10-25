@@ -114,9 +114,9 @@ MongoClient.connect(
         if (err) throw err;
         const dbs = await client.db().admin().listDatabases({});
         let dbName;
-        if (dbs.databases.some(db => db.name === "monkprod")) {
+        if (dbs.databases.some((db) => db.name === "monkprod")) {
             dbName = "monkprod";
-        } else if (dbs.databases.some(db => db.name === "test")) {
+        } else if (dbs.databases.some((db) => db.name === "test")) {
             dbName = "test";
         } else {
             console.error("Couldn't find suitable database");
