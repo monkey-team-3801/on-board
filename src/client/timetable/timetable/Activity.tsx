@@ -1,10 +1,10 @@
 import React from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { sessionStyleFromProps } from "./util";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 
 type Props = {
-    details: CourseActivityResponseType;
+    details: CourseActivity;
     dayStartTime: number;
     dayEndTime: number;
     stacked: number;

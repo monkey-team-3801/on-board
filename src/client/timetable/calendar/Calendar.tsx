@@ -8,8 +8,8 @@ import {
     startOfDay,
 } from "date-fns";
 import {
-    CourseActivityResponseType,
-    UserEnrolledCoursesResponseType,
+    CourseActivity, CourseActivityResponseType,
+    UserEnrolledCoursesResponseType
 } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
@@ -17,16 +17,14 @@ import { CalendarHeading } from "./CalendarHeading";
 import { Container, Row } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 import { useCachedFetch } from "../../hooks/useCachedFetch";
-import Spinner from "react-bootstrap/Spinner";
-import { requestIsLoaded } from "../../utils";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
-    const [sessions, setSessions] = useState<Array<CourseActivityResponseType>>(
-        []
+    const [sessions, setSessions] = useState<CourseActivityResponseType>(
+        {}
     );
     const today = new Date();
     const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
@@ -64,7 +62,8 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
         [setMonthRange]
     );
 
-    const [activityResponse, refetch] = useCachedFetch<Array<CourseActivityResponseType>>("get", "/courses/enrolled-activities");
+    // TODO: For now don't need to send filter.
+    const [activityResponse, refetch] = useCachedFetch<CourseActivityResponseType>("get", "/courses/enrolled-activities");
     console.log(activityResponse.data);
     useEffect(() => {
         setLoading(false);
@@ -143,8 +142,8 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
             <Row>
                 <Container>
                     <UpcomingEventsContainer
-                        chosenMonth={chosenMonth}
-                        chosenYear={chosenYear}
+                        chosenDate={chosenDate}
+                        activityResponse={activityResponse}
                     />
                 </Container>
             </Row>

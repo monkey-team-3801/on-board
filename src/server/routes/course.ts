@@ -3,14 +3,14 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { Course } from "../database";
 import {
-    CourseActivityResponseType,
+    CourseActivity,
     CourseActivityUnique,
     CourseResponseType,
     CoursesResponseType,
     CourseActivityRequestFilterType,
     CourseListResponseType,
     GetAnnouncementsRequestType,
-    GetAnnouncementsResponseType,
+    GetAnnouncementsResponseType, CourseActivityResponseType
 } from "../../types";
 import { addWeeks, setISODay } from "date-fns";
 import { User } from "../database/schema";
@@ -64,11 +64,10 @@ router.post(
 router.get(
     "/enrolled-activities",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        CourseActivityResponseType,
         {},
         CourseActivityRequestFilterType
         >(async (req, res) => {
-        console.log("in route");
         if (req.headers.authorization) {
             const user = await getUserDataFromJWT(req.headers.authorization);
             const courses = await Course.find({
@@ -76,15 +75,16 @@ router.get(
                     $in: user?.courses,
                 },
             });
-            console.log(courses);
             const activities = courses.reduce(
                 (
-                    currentActivities: Array<CourseActivityResponseType>,
-                    newCourse
+                    currentActivities: CourseActivityResponseType,
+                    newCourse,
                 ) => {
-                    return [...newCourse.activities, ...currentActivities];
+                    return {
+                        ...currentActivities,
+                        [newCourse.code]: newCourse.activities};
                 },
-                []
+                {}
             );
             res.json(activities);
         }
@@ -216,9 +216,9 @@ router.get(
 router.post(
     "/:course_code/add-activity",
     asyncHandler<
-        CourseActivityResponseType,
+        CourseActivity,
         { course_code: string },
-        CourseActivityResponseType
+        CourseActivity
     >(async (req, res) => {
         const course = await Course.findOne(req.params);
         if (!course) {
@@ -234,7 +234,7 @@ router.post(
 router.delete(
     "/:course_code/delete-activity",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityUnique
     >(async (req, res) => {
@@ -262,7 +262,7 @@ router.delete(
 router.get(
     "/:course_code/activities",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityRequestFilterType
     >(async (req, res) => {

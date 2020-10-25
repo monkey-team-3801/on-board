@@ -1,10 +1,10 @@
 import React from "react";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 import "./CalendarDay.less";
 import { startOfDay } from "date-fns";
 
 interface Props {
-    sessionsInDay: Array<CourseActivityResponseType>;
+    sessionsInDay: Array<CourseActivity>;
     date: Date;
     chosenDate: Date;
     chosenMonth: number;

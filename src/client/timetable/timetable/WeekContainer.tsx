@@ -3,7 +3,7 @@ import range from "lodash/range";
 
 import "./WeekContainer.less";
 import { WeekDay } from "./WeekDay";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 import { addWeeks, differenceInCalendarISOWeeks } from "date-fns";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
     selectedWeek: number;
     dayStartTime: number;
     dayEndTime: number;
-    activities: CourseActivityResponseType[];
+    activities: CourseActivity[];
 };
 
 export const WeekContainer: React.FunctionComponent<Props> = ({
@@ -21,7 +21,7 @@ export const WeekContainer: React.FunctionComponent<Props> = ({
     dayEndTime,
     activities,
 }) => {
-    const dayActivities: CourseActivityResponseType[] = activities.filter(
+    const dayActivities: CourseActivity[] = activities.filter(
         (activity) => {
             const startOfChosenWeek = addWeeks(
                 new Date(selectedYear),

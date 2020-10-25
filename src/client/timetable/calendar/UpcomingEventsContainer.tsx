@@ -1,28 +1,64 @@
-import React from "react";
-import { Card, Container, Row } from "react-bootstrap";
+import React, { useCallback, useMemo } from "react";
+import { Card, Col, Container, Row } from "react-bootstrap";
+import { differenceInCalendarISOWeeks, format, getISODay } from "date-fns";
+import { BaseResponseType } from "../../types";
+import { CourseActivityResponseType } from "../../../types";
+import { requestIsLoaded } from "../../utils";
+import { Loader } from "../../components";
 
 type Props = {
-    chosenMonth: number;
-    chosenYear: number;
+    chosenDate: Date;
+    activityResponse: BaseResponseType<CourseActivityResponseType>
 };
 
 export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
-    chosenMonth,
-    chosenYear,
+    chosenDate,
+    activityResponse
 }) => {
+    const relevantActivities = useMemo<CourseActivityResponseType>(() => {
+        if (!requestIsLoaded(activityResponse)) {
+            return {};
+        }
+        return Object.entries(activityResponse.data).reduce((courseActivitiesSoFar: CourseActivityResponseType, [courseCode, activities]) => {
+            return {
+                ...courseActivitiesSoFar,
+                [courseCode]: activities.filter(activity => {
+                   const day = getISODay(chosenDate);
+                   const startDate = new Date(activity.startDate);
+                   const numWeeksFromStartDate = differenceInCalendarISOWeeks(chosenDate, startDate);
+                   return day === activity.dayOfWeek && activity.weeks[numWeeksFromStartDate];
+                })
+            };
+        }, {});
+    }, [activityResponse, chosenDate]);
+
     return (
         <Container className="upcoming-events mt-4">
             <Row>
                 <header>
-                    <h1>Upcoming Events</h1>
+                    <h1>Classes on {format(chosenDate, "d MMM yyyy")}</h1>
                 </header>
                 <hr className="my-2 peach-gradient" />
             </Row>
-            <Row className="events-container">
-                <Event />
-                <Event />
-                <Event />
-            </Row>
+            {requestIsLoaded(activityResponse) ?
+                <Row className="events-container">
+                    <Col>
+                    {Object.entries(relevantActivities).map(([courseCode, activities]) => (
+                        <Row key={courseCode}>
+                            <h2>{courseCode}</h2>
+                            <ul>
+                                {activities.map(activity => (
+                                    <li key={activity.type + activity.code}>
+                                        {activity.type + activity.code} from {activity.time} to {activity.time + activity.duration / 60}
+                                    </li>
+                                ))}
+                            </ul>
+                        </Row>
+                    ))}
+                    </Col>
+                </Row> :
+                <Loader full/>
+            }
         </Container>
     );
 };

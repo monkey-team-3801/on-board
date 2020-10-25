@@ -51,7 +51,7 @@ export type CourseActivityRequestFilterType = Partial<CourseActivityUnique> & {
     };
 };
 
-export type CourseActivityResponseType = CourseActivityUnique & {
+export type CourseActivity = CourseActivityUnique & {
     time: number;
     startDate: Date;
     duration: number;
@@ -59,13 +59,17 @@ export type CourseActivityResponseType = CourseActivityUnique & {
     weeks: Array<1 | 0>;
 };
 
+export type CourseActivityResponseType = {
+    [courseCode: string]: Array<CourseActivity>
+}
+
 export type CourseDataUnique = {
     code: string;
     description: string;
 };
 
 export type CourseResponseType = CourseDataUnique & {
-    activities: Array<CourseActivityResponseType>;
+    activities: Array<CourseActivity>;
     announcements: Array<CourseAnnouncementsType>;
 };
 
