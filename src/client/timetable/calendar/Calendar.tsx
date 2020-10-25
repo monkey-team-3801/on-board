@@ -5,11 +5,14 @@ import {
     endOfMonth,
     endOfISOWeek,
     eachDayOfInterval,
-    startOfDay, getISODay, differenceInCalendarISOWeeks
+    startOfDay,
+    getISODay,
+    differenceInCalendarISOWeeks,
 } from "date-fns";
 import {
-    CourseActivity, CourseActivityResponseType,
-    UserEnrolledCoursesResponseType
+    CourseActivity,
+    CourseActivityResponseType,
+    UserEnrolledCoursesResponseType,
 } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
@@ -24,7 +27,6 @@ type Props = {
 };
 
 export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
-
     const today = new Date();
     const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
     const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
@@ -62,27 +64,46 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     );
 
     // TODO: For now don't need to send filter.
-    const [activityResponse, refetch] = useCachedFetch<CourseActivityResponseType>("get", "/courses/enrolled-activities");
+    const [activityResponse, refetch] = useCachedFetch<
+        CourseActivityResponseType
+    >("get", "/courses/enrolled-activities");
     console.log(activityResponse.data);
     useEffect(() => {
         setLoading(false);
     }, [setLoading]);
-    const getRelevantActivities = useCallback<(chosenDate: Date) => CourseActivityResponseType>((chosenDate) => {
-        if (!requestIsLoaded(activityResponse)) {
-            return {};
-        }
-        return Object.entries(activityResponse.data).reduce((courseActivitiesSoFar: CourseActivityResponseType, [courseCode, activities]) => {
-            return {
-                ...courseActivitiesSoFar,
-                [courseCode]: activities.filter(activity => {
-                    const day = getISODay(chosenDate);
-                    const startDate = new Date(activity.startDate);
-                    const numWeeksFromStartDate = differenceInCalendarISOWeeks(chosenDate, startDate);
-                    return day === activity.dayOfWeek && activity.weeks[numWeeksFromStartDate];
-                })
-            };
-        }, {});
-    }, [activityResponse]);
+    const getRelevantActivities = useCallback<
+        (chosenDate: Date) => CourseActivityResponseType
+    >(
+        (chosenDate) => {
+            if (!requestIsLoaded(activityResponse)) {
+                return {};
+            }
+            return Object.entries(activityResponse.data).reduce(
+                (
+                    courseActivitiesSoFar: CourseActivityResponseType,
+                    [courseCode, activities]
+                ) => {
+                    return {
+                        ...courseActivitiesSoFar,
+                        [courseCode]: activities.filter((activity) => {
+                            const day = getISODay(chosenDate);
+                            const startDate = new Date(activity.startDate);
+                            const numWeeksFromStartDate = differenceInCalendarISOWeeks(
+                                chosenDate,
+                                startDate
+                            );
+                            return (
+                                day === activity.dayOfWeek &&
+                                activity.weeks[numWeeksFromStartDate]
+                            );
+                        }),
+                    };
+                },
+                {}
+            );
+        },
+        [activityResponse]
+    );
     return (
         <>
             <Row>

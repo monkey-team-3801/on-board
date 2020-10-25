@@ -3,18 +3,21 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 import { differenceInCalendarISOWeeks, format, getISODay } from "date-fns";
 import { CourseActivityResponseType } from "../../../types";
 import { Loader } from "../../components";
-import {isEmpty} from "lodash";
+import { isEmpty } from "lodash";
 
 type Props = {
     chosenDate: Date;
-    getRelevantActivities: (chosenDate: Date) => CourseActivityResponseType
+    getRelevantActivities: (chosenDate: Date) => CourseActivityResponseType;
 };
 
 export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
     chosenDate,
-	getRelevantActivities
+    getRelevantActivities,
 }) => {
-	const relevantActivities = useMemo(() => getRelevantActivities(chosenDate), [getRelevantActivities, chosenDate]);
+    const relevantActivities = useMemo(
+        () => getRelevantActivities(chosenDate),
+        [getRelevantActivities, chosenDate]
+    );
     return (
         <Container className="upcoming-events mt-4">
             <Row>
@@ -23,25 +26,38 @@ export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
                 </header>
                 <hr className="my-2 peach-gradient" />
             </Row>
-            {Object.values(relevantActivities).some((arr) => arr.length !== 0)  ?
+            {Object.values(relevantActivities).some(
+                (arr) => arr.length !== 0
+            ) ? (
                 <Row className="events-container">
                     <Col>
-                    {Object.entries(relevantActivities).map(([courseCode, activities]) => (
-                        <Row key={courseCode}>
-                            <h2>{courseCode}</h2>
-                            <ul>
-                                {activities.map(activity => (
-                                    <li key={activity.type + activity.code}>
-                                        {activity.type + activity.code} from {activity.time} to {activity.time + activity.duration / 60}
-                                    </li>
-                                ))}
-                            </ul>
-                        </Row>
-                    ))}
+                        {Object.entries(relevantActivities).map(
+                            ([courseCode, activities]) => (
+                                <Row key={courseCode}>
+                                    <h2>{courseCode}</h2>
+                                    <ul>
+                                        {activities.map((activity) => (
+                                            <li
+                                                key={
+                                                    activity.type +
+                                                    activity.code
+                                                }
+                                            >
+                                                {activity.type + activity.code}{" "}
+                                                from {activity.time} to{" "}
+                                                {activity.time +
+                                                    activity.duration / 60}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </Row>
+                            )
+                        )}
                     </Col>
-                </Row> :
-                <Loader full/>
-            }
+                </Row>
+            ) : (
+                <Loader full />
+            )}
         </Container>
     );
 };

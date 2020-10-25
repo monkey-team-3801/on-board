@@ -73,7 +73,6 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
             </Container>
             <Row>
                 <Col xl="6" lg="6" md="12">
-
                     <FadeIn delay={100}>
                         <Row>
                             <ContainerWrapper
@@ -81,11 +80,7 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 title="Calendar"
                             >
                                 {(setLoading) => {
-                                    return (
-                                        <Calendar
-                                            setLoading={setLoading}
-                                        />
-                                    );
+                                    return <Calendar setLoading={setLoading} />;
                                 }}
                             </ContainerWrapper>
                         </Row>

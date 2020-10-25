@@ -31,7 +31,6 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
     }));
 };
 
-
 router.get(
     "/",
     asyncHandler<CoursesResponseType, {}, {}>(async (req, res, next) => {
@@ -70,7 +69,7 @@ router.get(
         CourseActivityResponseType,
         {},
         CourseActivityRequestFilterType
-        >(async (req, res) => {
+    >(async (req, res) => {
         if (req.headers.authorization) {
             const user = await getUserDataFromJWT(req.headers.authorization);
             const courses = await Course.find({
@@ -79,13 +78,11 @@ router.get(
                 },
             });
             const activities = courses.reduce(
-                (
-                    currentActivities: CourseActivityResponseType,
-                    newCourse,
-                ) => {
+                (currentActivities: CourseActivityResponseType, newCourse) => {
                     return {
                         ...currentActivities,
-                        [newCourse.code]: newCourse.activities};
+                        [newCourse.code]: newCourse.activities,
+                    };
                 },
                 {}
             );
@@ -218,20 +215,18 @@ router.get(
 // TODO: Unique constraint
 router.post(
     "/:course_code/add-activity",
-    asyncHandler<
-        CourseActivity,
-        { course_code: string },
-        CourseActivity
-    >(async (req, res) => {
-        const course = await Course.findOne(req.params);
-        if (!course) {
-            res.status(404).end();
-            return;
+    asyncHandler<CourseActivity, { course_code: string }, CourseActivity>(
+        async (req, res) => {
+            const course = await Course.findOne(req.params);
+            if (!course) {
+                res.status(404).end();
+                return;
+            }
+            course.activities = [...course.activities, req.body];
+            await course.save();
+            res.status(200).json(req.body);
         }
-        course.activities = [...course.activities, req.body];
-        await course.save();
-        res.status(200).json(req.body);
-    })
+    )
 );
 
 router.delete(
@@ -260,7 +255,6 @@ router.delete(
         res.status(200).json(removed);
     })
 );
-
 
 router.get(
     "/:course_code/activities",

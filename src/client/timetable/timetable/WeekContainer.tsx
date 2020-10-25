@@ -21,24 +21,22 @@ export const WeekContainer: React.FunctionComponent<Props> = ({
     dayEndTime,
     activities,
 }) => {
-    const dayActivities: CourseActivity[] = activities.filter(
-        (activity) => {
-            const startOfChosenWeek = addWeeks(
-                new Date(selectedYear),
-                selectedWeek
-            );
-            const weekDifference = differenceInCalendarISOWeeks(
-                startOfChosenWeek,
-                activity.startDate
-            );
-            const endTime: number = activity.time + activity.duration;
-            return (
-                dayStartTime < endTime &&
-                dayEndTime > activity.time &&
-                activity.weeks[weekDifference]
-            );
-        }
-    );
+    const dayActivities: CourseActivity[] = activities.filter((activity) => {
+        const startOfChosenWeek = addWeeks(
+            new Date(selectedYear),
+            selectedWeek
+        );
+        const weekDifference = differenceInCalendarISOWeeks(
+            startOfChosenWeek,
+            activity.startDate
+        );
+        const endTime: number = activity.time + activity.duration;
+        return (
+            dayStartTime < endTime &&
+            dayEndTime > activity.time &&
+            activity.weeks[weekDifference]
+        );
+    });
     return (
         <div className="timetable-week-container">
             {range(1, 8).map((isoDay, i) => (

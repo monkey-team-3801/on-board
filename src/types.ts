@@ -61,8 +61,8 @@ export type CourseActivity = CourseActivityUnique & {
 };
 
 export type CourseActivityResponseType = {
-    [courseCode: string]: Array<CourseActivity>
-}
+    [courseCode: string]: Array<CourseActivity>;
+};
 
 export type CourseDataUnique = {
     code: string;

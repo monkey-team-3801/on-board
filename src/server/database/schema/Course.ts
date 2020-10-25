@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-import {
-    CourseActivity,
-    CourseAnnouncementsType,
-} from "../../../types";
+import { CourseActivity, CourseAnnouncementsType } from "../../../types";
 
 interface ICourse extends mongoose.Document {
     code: string;
