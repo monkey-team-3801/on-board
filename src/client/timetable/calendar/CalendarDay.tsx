@@ -27,7 +27,6 @@ export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
         getRelevantActivities,
         date,
     ]);
-    console.log(date, relevantActivities);
     return (
         <a
             href="#!"
