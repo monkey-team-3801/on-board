@@ -1,9 +1,8 @@
-import React, { useCallback, useMemo } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
-import { differenceInCalendarISOWeeks, format, getISODay } from "date-fns";
+import React, { useMemo } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { format } from "date-fns";
 import { CourseActivityResponseType } from "../../../types";
 import { Loader } from "../../components";
-import { isEmpty } from "lodash";
 
 type Props = {
     chosenDate: Date;
@@ -62,26 +61,27 @@ export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
     );
 };
 
-const Event = () => {
-    return (
-        <Card className="event my-2">
-            <Card.Header className="peach-gradient">Event</Card.Header>
-            <Card.Body>
-                <Card.Title>Assignment Due</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                    {new Date().toDateString()}
-                </Card.Subtitle>
-                <Card.Text>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
-                </Card.Text>
-            </Card.Body>
-        </Card>
-    );
-};
+//// Just comment here so it can be reused.
+// const Event = () => {
+//     return (
+//         <Card className="event my-2">
+//             <Card.Header className="peach-gradient">Event</Card.Header>
+//             <Card.Body>
+//                 <Card.Title>Assignment Due</Card.Title>
+//                 <Card.Subtitle className="mb-2 text-muted">
+//                     {new Date().toDateString()}
+//                 </Card.Subtitle>
+//                 <Card.Text>
+//                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+//                     do eiusmod tempor incididunt ut labore et dolore magna
+//                     aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+//                     ullamco laboris nisi ut aliquip ex ea commodo consequat.
+//                     Duis aute irure dolor in reprehenderit in voluptate velit
+//                     esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+//                     occaecat cupidatat non proident, sunt in culpa qui officia
+//                     deserunt mollit anim id est laborum.
+//                 </Card.Text>
+//             </Card.Body>
+//         </Card>
+//     );
+// };

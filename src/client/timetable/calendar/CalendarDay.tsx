@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { CourseActivityResponseType } from "../../../types";
 import "./CalendarDay.less";
 import { startOfDay } from "date-fns";
-import { isEmpty } from "lodash";
 
 interface Props {
     date: Date;

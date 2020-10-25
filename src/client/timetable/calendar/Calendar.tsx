@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     startOfMonth,
     startOfISOWeek,
@@ -10,9 +10,7 @@ import {
     differenceInCalendarISOWeeks,
 } from "date-fns";
 import {
-    CourseActivity,
     CourseActivityResponseType,
-    UserEnrolledCoursesResponseType,
 } from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
@@ -64,7 +62,7 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     );
 
     // TODO: For now don't need to send filter.
-    const [activityResponse, refetch] = useCachedFetch<
+    const [activityResponse] = useCachedFetch<
         CourseActivityResponseType
     >("get", "/courses/enrolled-activities");
     console.log(activityResponse.data);
@@ -107,7 +105,7 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     return (
         <>
             <Row>
-                <Container>
+                <Container className="position-relative">
                     <CalendarHeading
                         month={chosenMonth}
                         year={chosenYear}
