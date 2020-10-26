@@ -128,6 +128,7 @@ export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
                                 )}
                                 size="lg"
                                 type={RoomType.PRIVATE}
+                                open={true}
                                 setDeletedRooms={setDeletedRooms}
                                 currentUserId={props.userData.id}
                             />
