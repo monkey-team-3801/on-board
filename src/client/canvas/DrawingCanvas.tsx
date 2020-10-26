@@ -1,14 +1,14 @@
 import React from "react";
 import {
     Button,
-    Col,
     Container,
     Form,
-    Row,
-    Popover,
     OverlayTrigger,
+    Popover,
+    Row,
 } from "react-bootstrap";
 import { RGBColor } from "react-color";
+import { AiFillEdit } from "react-icons/ai";
 import { CanvasEvent } from "../../events";
 import {
     GetCanvasRequestType,
@@ -17,9 +17,9 @@ import {
     Stroke,
 } from "../../types";
 import { ColourPicker } from "../colour";
+import { Loader } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded, throttle } from "../utils";
-import { AiFillEdit } from "react-icons/ai";
 import "./Canvas.less";
 
 type Props = {
@@ -243,7 +243,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     }, [drawLine, canvasDataResponse]);
 
     if (!requestIsLoaded(canvasDataResponse)) {
-        return <div>loading</div>;
+        return <Loader className="p-4" />;
     }
 
     const popover = (
@@ -302,10 +302,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                         placement="bottom"
                         overlay={popover}
                     >
-                        <Button
-                            size="sm"
-                            id="penConfig"
-                        >
+                        <Button size="sm" id="penConfig">
                             <AiFillEdit />
                         </Button>
                     </OverlayTrigger>
