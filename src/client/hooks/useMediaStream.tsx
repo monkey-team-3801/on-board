@@ -61,6 +61,7 @@ export const useMediaStream: () => [
                         constraints
                     );
                     setStream(newStream);
+                    console.log("Setting new stream");
                 } catch (e) {
                     console.log("error setting stream", e);
                     setStream(undefined);
@@ -71,7 +72,7 @@ export const useMediaStream: () => [
                 });
             }
         },
-        [stream]
+        [stream, setStream]
     );
 
     const disableMediaStream = useCallback(() => {
@@ -82,7 +83,7 @@ export const useMediaStream: () => [
 
         console.log("Turning off stream", stream);
         console.log("Turning off stream tracks", stream?.getTracks());
-        setStream(undefined);
+        // setStream(undefined);
     }, [stream]);
 
     useEffect(() => {
@@ -91,6 +92,6 @@ export const useMediaStream: () => [
             disableMediaStream();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [disableMediaStream]);
     return [stream, enableMediaStream, disableMediaStream];
 };
