@@ -9,7 +9,10 @@ import {
     getISODay,
     differenceInCalendarISOWeeks,
 } from "date-fns";
-import { CourseActivityResponseType } from "../../../types";
+import {
+    CourseActivityResponseType,
+    UserEnrolledCoursesResponseType,
+} from "../../../types";
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
@@ -17,12 +20,17 @@ import { Container, Row } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 import { useCachedFetch } from "../../hooks/useCachedFetch";
 import { requestIsLoaded } from "../../utils";
+import { BaseResponseType } from "../../types";
 
 type Props = {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
 };
 
-export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
+export const Calendar: React.FunctionComponent<Props> = ({
+    setLoading,
+    coursesResponse,
+}) => {
     const today = new Date();
     const [chosenMonth, setMonth] = React.useState<number>(today.getMonth());
     const [chosenYear, setYear] = React.useState<number>(today.getFullYear());
@@ -60,11 +68,14 @@ export const Calendar: React.FunctionComponent<Props> = ({ setLoading }) => {
     );
 
     // TODO: For now don't need to send filter.
-    const [activityResponse] = useCachedFetch<CourseActivityResponseType>(
-        "get",
-        "/courses/enrolled-activities"
-    );
-    console.log(activityResponse.data);
+    const [activityResponse, refreshActivities] = useCachedFetch<
+        CourseActivityResponseType
+    >("get", "/courses/enrolled-activities");
+
+    React.useEffect(() => {
+        refreshActivities(undefined);
+    }, [coursesResponse, refreshActivities]);
+
     useEffect(() => {
         setLoading(false);
     }, [setLoading]);

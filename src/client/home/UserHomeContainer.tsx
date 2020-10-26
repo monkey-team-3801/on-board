@@ -80,7 +80,14 @@ export const UserHomeContainer: React.FunctionComponent<Props> = (
                                 title="Calendar"
                             >
                                 {(setLoading) => {
-                                    return <Calendar setLoading={setLoading} />;
+                                    return (
+                                        <Calendar
+                                            setLoading={setLoading}
+                                            coursesResponse={
+                                                props.coursesResponse
+                                            }
+                                        />
+                                    );
                                 }}
                             </ContainerWrapper>
                         </Row>
