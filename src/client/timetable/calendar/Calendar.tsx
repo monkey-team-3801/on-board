@@ -16,7 +16,7 @@ import {
 import { CalendarDay } from "./CalendarDay";
 import "./Calendar.less";
 import { CalendarHeading } from "./CalendarHeading";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Button } from "react-bootstrap";
 import { UpcomingEventsContainer } from "./UpcomingEventsContainer";
 import { useCachedFetch } from "../../hooks/useCachedFetch";
 import { requestIsLoaded } from "../../utils";
@@ -123,8 +123,7 @@ export const Calendar: React.FunctionComponent<Props> = ({
                     />
                     <div className="calendar-today-button">
                         <small>
-                            <a
-                                href="#!"
+                            <Button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     chooseDate(
@@ -133,9 +132,12 @@ export const Calendar: React.FunctionComponent<Props> = ({
                                         today.getFullYear()
                                     );
                                 }}
+                                variant="light"
+                                size="sm"
+                                id="today-button"
                             >
-                                (go to today)
-                            </a>
+                                Today
+                            </Button>
                         </small>
                     </div>
                     <div className="calendar-container">

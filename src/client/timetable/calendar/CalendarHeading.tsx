@@ -1,5 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 
 type Props = {
     month: number;
@@ -25,7 +26,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
                         setMonthRange(newMonth, newYear);
                     }}
                 >
-                    &lt;
+                    <BiLeftArrow />
                 </div>
                 <div className="heading">
                     <h1>
@@ -40,7 +41,7 @@ export const CalendarHeading: React.FunctionComponent<Props> = ({
                         setMonthRange(newMonth, newYear);
                     }}
                 >
-                    &gt;
+                    <BiRightArrow />
                 </div>
             </div>
         </div>
