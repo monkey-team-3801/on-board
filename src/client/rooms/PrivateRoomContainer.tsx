@@ -118,25 +118,6 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                                 <h1 className="m-0 text-truncate">{`${sessionData.name}`}</h1>
                                                             </span>
                                                         </div>
-                                                        <FileModal
-                                                            uploadType={
-                                                                FileUploadType.DOCUMENTS
-                                                            }
-                                                            socket={socket}
-                                                            sessionID={roomId}
-                                                            userID={
-                                                                props.userData
-                                                                    .id
-                                                            }
-                                                            updateFiles={
-                                                                getFileData
-                                                            }
-                                                            files={files}
-                                                            roomType={
-                                                                props.roomType
-                                                            }
-                                                            size={"sm"}
-                                                        />
                                                     </Row>
                                                 </Col>
                                             </Row>
@@ -185,6 +166,19 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             />
                                         )}
                                     </Container>
+                                    <Row className="d-flex justify-content-center">
+                                        <FileModal
+                                            uploadType={
+                                                FileUploadType.DOCUMENTS
+                                            }
+                                            socket={socket}
+                                            sessionID={roomId}
+                                            userID={props.userData.id}
+                                            updateFiles={getFileData}
+                                            files={files}
+                                            roomType={props.roomType}
+                                        />
+                                    </Row>
                                 </Col>
                                 <Col md={3} className="pr-0">
                                     <SidePanelContainer
