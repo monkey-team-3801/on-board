@@ -10,6 +10,23 @@ type Props = {
 export const Progress: React.FunctionComponent<Props> = (props: Props) => {
     const { startTime, endTime } = props;
 
+    const [progress, setProgress] = React.useState<number>(props.startTime.getTime());
+
+    React.useEffect(() => {
+        const timeoutRef = setTimeout(() => {
+            setProgress((prev) => {
+                return prev + 1;
+            })
+        }, 1000);
+        return () => {
+            clearTimeout(timeoutRef);
+        }
+    }, []);
+
+    const progressPercent = React.useMemo(() => {
+        return progress / endTime.getTime();
+    }, [progress])
+
     return (
         <Container className="d-flex align-items-center">
             <span className="start-time mr-2">
@@ -19,7 +36,7 @@ export const Progress: React.FunctionComponent<Props> = (props: Props) => {
                 <div
                     className="progress-inner"
                     style={{
-                        width: "70%",
+                        width: `${progressPercent}%`,
                     }}
                 ></div>
             </div>
