@@ -1,11 +1,11 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { MessageData, RoomType, UserDataResponseType, UserType } from "../../../types";
+import { MessageData, RoomType, UserDataResponseType } from "../../../types";
 import { ChatContainer } from "../../chat";
 import { Loader } from "../../components";
+import { isStaff } from "../../utils";
 import { ParticipantsContainer } from "./ParticipantsContainer";
 import "./SidePanelContainer.less";
-import { isStaff } from "../../utils";
 
 type Props = {
     sessionId: string;
@@ -33,7 +33,9 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
-                            users={props.users.filter((user) => isStaff(user.userType))}
+                            users={props.users.filter((user) =>
+                                isStaff(user.userType)
+                            )}
                             raisedHandUsers={props.raisedHandUsers}
                             myUserId={props.myUserId}
                         />
@@ -51,7 +53,9 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
-                            users={props.users.filter((user) => !isStaff(user.userType))}
+                            users={props.users.filter(
+                                (user) => !isStaff(user.userType)
+                            )}
                             raisedHandUsers={props.raisedHandUsers}
                             myUserId={props.myUserId}
                         />
