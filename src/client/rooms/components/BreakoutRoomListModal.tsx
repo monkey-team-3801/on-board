@@ -49,6 +49,7 @@ export const BreakoutRoomListModal: React.FunctionComponent<Props> = (
             <Modal.Body>
                 {requestIsLoaded(breakoutRoomResponse) ? (
                     <Container fluid>
+                        {breakoutRoomResponse.data.rooms.length === 0 && <p className="text-muted">There are no breakout rooms available</p>}
                         {breakoutRoomResponse.data.rooms.map((room, index) => {
                             return (
                                 <Container className="mt-4" key={room.roomId}>

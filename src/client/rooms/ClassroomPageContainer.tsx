@@ -24,7 +24,7 @@ import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { PeerContext } from "../peer";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
-import { requestIsLoaded } from "../utils";
+import { requestIsLoaded, isStaff } from "../utils";
 import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import "./classroom.less";
 import {
@@ -51,7 +51,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 ) => {
     const notification = useRef(new Audio("/public/notification.wav"));
     const [soundEnabled, setSoundEnabled] = React.useState<boolean>(false);
-    const { id: userId } = props.userData;
+    const { id: userId, userType } = props.userData;
     const { classroomId: sessionId } = props.match.params;
     const peerData = useMyPeer(socket, userId, sessionId);
     const [
@@ -371,22 +371,26 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     className="first-btn"
                                     id="settings-options"
                                     onClick={() => {
-                                        setBreakoutRoomModalVisible(true);
-                                    }}
-                                >
-                                    <AiIcons.AiOutlineCluster className="setting-icon" />
-                                    <p className="icon-label">Manage Rooms</p>
-                                </Button>
-                                <Button
-                                    className="setting-btn"
-                                    id="settings-options"
-                                    onClick={() => {
                                         setBreakoutRoomListModalVisible(true);
                                     }}
                                 >
                                     <AiIcons.AiOutlineTeam className="setting-icon" />
                                     <p className="icon-label">Breakout Rooms</p>
                                 </Button>
+                                {isStaff(userType) && (
+                                    <Button
+                                        className="setting-btn"
+                                        id="settings-options"
+                                        onClick={() => {
+                                            setBreakoutRoomModalVisible(true);
+                                        }}
+                                    >
+                                        <AiIcons.AiOutlineCluster className="setting-icon" />
+                                        <p className="icon-label">
+                                            Manage Rooms
+                                        </p>
+                                    </Button>
+                                )}
                                 <Button
                                     className="setting-btn"
                                     onClick={async () => {

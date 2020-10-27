@@ -21,10 +21,6 @@ export const Progress: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     React.useEffect(() => {
-        console.log(startTimeSeconds);
-    }, [startTimeSeconds]);
-
-    React.useEffect(() => {
         const intervalRef = setInterval(() => {
             setProgress((prev) => {
                 return prev + 1;

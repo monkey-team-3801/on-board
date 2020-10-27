@@ -31,7 +31,6 @@
     padding: 0;
     color: white;
     font-size: 1.5em;
-    margin-top: 5%;
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -46,10 +45,7 @@
 .search-bar input {
     background-color: #5d4f8f;
     border-radius: 22px;
-    padding: 5%;
-    width: 80%;
     margin: auto;
-    height: 30px;
     border-color: #5d4f8f;
     font-size: 13px;
 }
@@ -64,5 +60,17 @@
 }
 
 .chat-outer-container {
+    height: calc(100% - 50px);
     overflow-x: hidden;
+    .chat-container {
+        height: inherit;
+        &> .row:first-child {
+            height: inherit;
+        }
+    }
+
+}
+
+.messages-row {
+    height: calc(100% - 600px);
 }
