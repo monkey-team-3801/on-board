@@ -10,10 +10,12 @@ import { FileForm, IFileForm } from "../database/schema/ResponseForm";
 
 export const router = express.Router();
 
+export const noAuthRouter = express.Router();
+
 /**
  * Gets a single file by id.
  */
-router.get(
+noAuthRouter.get(
     "/file/:fileId",
     asyncHandler<{}, { fileId: string }>(async (req, res) => {
         const file = await File.findById(req.params.fileId);
@@ -192,7 +194,7 @@ router.post(
 );
 
 // Get the user profile picture.
-router.get(
+noAuthRouter.get(
     "/getPfp/:userId",
     asyncHandler<undefined, { userId: string }>(async (req, res) => {
         try {

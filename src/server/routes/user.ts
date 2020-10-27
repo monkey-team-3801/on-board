@@ -15,8 +15,10 @@ import { MongoError } from "mongodb";
 
 export const router = express.Router();
 
+export const noAuthRouter = express.Router();
+
 // Route to handle login requests.
-router.post(
+noAuthRouter.post(
     "/login",
     asyncHandler<LoginSuccessResponseType, {}, LoginUserRequestType>(
         async (req, res, next) => {
@@ -39,7 +41,7 @@ router.post(
 );
 
 // Route to handle registration requests.
-router.post(
+noAuthRouter.post(
     "/register",
     asyncHandler<LoginSuccessResponseType, {}, CreateUserRequestType>(
         async (req, res, next) => {
