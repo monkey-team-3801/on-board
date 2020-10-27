@@ -298,9 +298,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                         </Col>
                     </Row>
                     <Row>
-                        
                         <Col>
-                            
                             <Row>
                                 <ButtonGroup
                                     className="view-control mt-2 d-flex justify-content-center toggle-container"
@@ -332,9 +330,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     </p>
                                 </ButtonGroup>
                             </Row>
-                            
                             <Row className="classroom-row">
-                                
                                 <Col sm={4}>
                                 {altView ? null : presenter}
                                     <div className="video-alt">

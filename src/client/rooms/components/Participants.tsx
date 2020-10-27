@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Row } from "react-bootstrap";
-import { GiHand } from "react-icons/gi";
+import { FaHandPaper } from "react-icons/fa";
 import { UserDataResponseType } from "../../../types";
 import { PeerContext } from "../../peer";
 import { UserDisplay } from "../components";
@@ -22,7 +22,8 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     const handIcon = React.useCallback(
         (user: { id: string }) => {
             return raisedHandUsers.includes(user.id) ? (
-                <GiHand className="hand" />
+                <FaHandPaper className="hand" />
+                
             ) : (
                 <></>
             );
