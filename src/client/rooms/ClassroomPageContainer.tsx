@@ -277,7 +277,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <Row className="head-panel">
                         <Col xs={1.5}>
                             <Link to="/classes">
-                                <Button 
+                                <Button
                                 className="justify-content-center back-btn"
                                 variant="light"
                                 size="sm">
