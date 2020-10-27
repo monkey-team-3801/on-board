@@ -1,7 +1,11 @@
 import React from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 import * as BiIcons from "react-icons/bi";
-import { MdPhonelink, MdPhonelinkOff } from "react-icons/md";
+import {
+    MdPhonelink,
+    MdPhonelinkOff,
+    MdFiberSmartRecord,
+} from "react-icons/md";
 import { PeerContext } from "../../peer";
 import {
     turnVideoOff,
@@ -9,6 +13,8 @@ import {
     turnVideoOn,
     turnAudioOff,
 } from "../../hooks/useMediaStream";
+import { useScreenRecording } from "../../hooks/useScreenRecording";
+import { AiOutlineVideoCameraAdd } from "react-icons/ai";
 
 type Props = {
     setupScreenSharing: () => Promise<void>;
@@ -22,12 +28,14 @@ type Props = {
 export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
     const { setupScreenSharing, stopScreenSharing } = props;
     const { stream } = React.useContext(PeerContext);
+    const [beginRecording, stopAndSaveRecording] = useScreenRecording();
 
     const [cameraEnabled, setCameraEnabled] = React.useState<boolean>(false);
     const [cameraAudioEnabled, setCameraAudioEnabled] = React.useState<boolean>(
         false
     );
     const [screenEnabled, setScreenEnabled] = React.useState<boolean>(false);
+    const [isRecording, setIsRecording] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         if (stream) {
@@ -111,9 +119,26 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
                     {screenEnabled ? "Stop sharing" : "Share screen"}
                 </p>
             </Button>
-            <Button className="end-btn">
-                <BiIcons.BiMicrophoneOff className="setting-icon" />
-                <p className="icon-label">TODO</p>
+            <Button
+                className="end-btn"
+                onClick={async () => {
+                    if (!isRecording) {
+                        await beginRecording();
+                        setIsRecording(true);
+                    } else {
+                        stopAndSaveRecording();
+                        setIsRecording(false);
+                    }
+                }}
+            >
+                {isRecording ? (
+                    <MdFiberSmartRecord className="setting-icon" />
+                ) : (
+                    <AiOutlineVideoCameraAdd className="setting-icon" />
+                )}
+                <p className="icon-label">
+                    {isRecording ? "Save recording" : "Start recording"}
+                </p>
             </Button>
         </ButtonGroup>
     );
