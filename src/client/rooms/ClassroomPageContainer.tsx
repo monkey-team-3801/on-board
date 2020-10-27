@@ -299,7 +299,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     </Row>
                     <Row>
                         
-                        <Col md={8}>
+                        <Col>
                             
                             <Row>
                                 <ButtonGroup
@@ -334,12 +334,16 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             </Row>
                             
                             <Row className="classroom-row">
-                            
-                                {/* <Col xs={5}> */}
+                                
+                                <Col sm={4}>
                                 {altView ? null : presenter}
-                                {/* </Col> */}
+                                    <div className="video-alt">
+                                        {altView ? presenter : null}
+                                        {altView ? video : null}
+                                    </div>
+                                </Col>
 
-                                {/* <Col> */}
+                                <Col sm={8} className="video-column">
                                 {altView ? participants : video}
                                 <ButtonGroup
                                     size="sm"
@@ -453,20 +457,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         </p>
                                     </Button>
                                 </ButtonGroup>
-                                {/* </Col> */}
+                                </Col>
                             </Row>
                         </Col>
                     </Row>
-                    <Row className="video-alt">
-                        <Col className="video-alt">
-                        {altView ? presenter : null}
-                        </Col>
-                        <Col className="video-alt">
-                        {altView ? video : null}
-                        </Col>
-                        <Col className="video-alt">
-                        </Col>
-                    </Row>
+                    
                 </Col>
                 <Col md={3}>
                     <SidePanelContainer
