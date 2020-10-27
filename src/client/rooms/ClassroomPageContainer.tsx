@@ -276,15 +276,14 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 <Col>
                     <Row className="head-panel">
                         <Col xs={1.5}>
-                        <Link to="/classes">
-                            <Button 
-                            className="justify-content-center back-btn"
-                            variant="light"
-                            size="sm"                            
-                            >
+                            <Link to="/classes">
+                                <Button 
+                                className="justify-content-center back-btn"
+                                variant="light"
+                                size="sm">
                                 <AiIcons.AiOutlineArrowLeft className="icon" />
-                                Back
-                            </Button>
+                                    Back
+                                </Button>
                             </Link>
                         </Col>
                         <Col xs={3}>
@@ -338,7 +337,6 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         {altView ? video : null}
                                     </div>
                                 </Col>
-
                                 <Col sm={8} className="video-column">
                                 {altView ? participants : video}
                                 <ButtonGroup
@@ -379,7 +377,6 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         }}
                                     >
                                         <FaIcons.FaRegHandPaper className="setting-icon " />
-
                                         <p className="icon-label">Raise Hand</p>
                                     </Button>
                                     <Button className="setting-btn">
@@ -457,7 +454,6 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             </Row>
                         </Col>
                     </Row>
-                    
                 </Col>
                 <Col md={3}>
                     <SidePanelContainer

@@ -23,7 +23,6 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
         (user: { id: string }) => {
             return raisedHandUsers.includes(user.id) ? (
                 <FaHandPaper className="hand" />
-                
             ) : (
                 <></>
             );
