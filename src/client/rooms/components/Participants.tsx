@@ -40,7 +40,9 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
 
     return (
         <Row className="mt-3">
-            <div className={`user-display-container ${props.size || "sm"} px-2`}>
+            <div
+                className={`user-display-container ${props.size || "sm"} px-2`}
+            >
                 {props.users.map((user) => {
                     if (user.id === props.myUserId) {
                         if (myPeer && myStream) {

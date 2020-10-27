@@ -29,11 +29,7 @@ export const StreamVideo: React.FunctionComponent<Props> = ({
 
     return (
         <div className={`${className ? className : ""} stream-video-wrapper`}>
-            <video
-                className="stream-video"
-                ref={videoRef}
-                muted={muted}
-            />
+            <video className="stream-video" ref={videoRef} muted={muted} />
         </div>
     );
 };
