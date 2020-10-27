@@ -359,6 +359,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                 <StreamControl
                                     setupScreenSharing={setupScreenSharing}
                                     stopScreenSharing={stopScreenSharing}
+                                    disableStaffControl={isStaff(userType)}
                                 />
                             </Row>
                             <Row className="d-flex justify-content-center">

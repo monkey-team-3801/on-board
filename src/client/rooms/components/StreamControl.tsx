@@ -13,6 +13,7 @@ import {
 type Props = {
     setupScreenSharing: () => Promise<void>;
     stopScreenSharing: () => void;
+    disableStaffControl?: boolean;
 };
 
 /**
@@ -52,6 +53,7 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
         <ButtonGroup className="classroom-btn-grp d-flex mt-4">
             <Button
                 className="first-btn"
+                disabled={props.disableStaffControl}
                 onClick={() => {
                     setCameraEnabled((enabled) => {
                         return !enabled;
@@ -69,6 +71,7 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
             </Button>
             <Button
                 className="setting-btn"
+                disabled={props.disableStaffControl}
                 onClick={() => {
                     setCameraAudioEnabled((enabled) => {
                         return !enabled;
@@ -86,6 +89,7 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
             </Button>
             <Button
                 className="setting-btn"
+                disabled={props.disableStaffControl}
                 onClick={async () => {
                     if (!screenEnabled) {
                         await setupScreenSharing().catch(() => {
