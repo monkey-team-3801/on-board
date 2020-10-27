@@ -5,14 +5,21 @@ import { AiOutlineClose } from "react-icons/ai";
 import { Loader } from "./Loader";
 
 type Props = {
+    // Title of the card container.
     title?: string;
+    // Additional classnames to inject.
     className?: string;
+    // Additional children of this wrapper.
     children: (
         setLoading: React.Dispatch<React.SetStateAction<boolean>>
     ) => React.ReactNode;
+    // Disable shadow.
     noShadow?: boolean;
 };
 
+/**
+ * Top level route component wrapper to display grids of content on the different pages.
+ */
 export const ContainerWrapper: React.FunctionComponent<Props> = (
     props: Props
 ) => {

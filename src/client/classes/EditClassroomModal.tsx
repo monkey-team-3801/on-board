@@ -12,6 +12,7 @@ import {
 } from "../utils";
 
 type Props = {
+    // Currently selected room.
     roomSelection:
         | {
               data: Omit<ClassroomSessionData, "messages">;
@@ -19,11 +20,17 @@ type Props = {
               message?: string;
           }
         | undefined;
+    // List of courses the user is enrolled in.
     courses: Array<string>;
+    // On modal close callback.
     onClose: () => void;
+    // Refresh callback.
     refresh: () => void;
 };
 
+/**
+ * Modal for handling the editing of a single classroom.
+ */
 export const EditClassroomModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {

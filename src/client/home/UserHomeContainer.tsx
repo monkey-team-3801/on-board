@@ -19,10 +19,15 @@ import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps &
     TopLayerContainerProps & {
+        // List of online users.
         onlineUsers: Array<string>;
+        // Amount of unread messages.
         newMessages?: number;
     };
 
+/**
+ * User home page container for the /home route.
+ */
 export const UserHomeContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

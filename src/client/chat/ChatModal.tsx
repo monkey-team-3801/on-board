@@ -9,14 +9,24 @@ import { ChatSession } from "./ChatSession";
 import { UserList } from "./components";
 
 type Props = ChatModalStatusType & {
+    // Current user id.
     myUserId: string;
+    // Current username.
     myUsername: string;
+    // List of chat with new messages.
     chatWithNewMessages: Array<string>;
+    // List of courses the user is enrolled in.
     courses: Array<string>;
+    // User id which the current user has selected to toggle this modal.
+    // Used to initialise the modal with a target user.
     selectedId?: string;
+    // Response of data containing the list of online users.
     onlineUserResponse: BaseResponseType<Array<string>>;
 };
 
+/**
+ * Modal for handle direct messaging chat between users.
+ */
 export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
     const { open: modalOpen, selectedId, myUserId, onlineUserResponse } = props;
     const modalContext = React.useContext(ChatModalStatusContext);

@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 
+// Default video contraints.
 const defaultConstraints: MediaStreamConstraints = {
     video: {
         width: 480,
@@ -13,6 +14,7 @@ const defaultConstraints: MediaStreamConstraints = {
     },
 };
 
+// Enables the audio of a stream.
 const streamSetAudioEnabled = (
     enabled: boolean
 ): ((stream: MediaStream) => void) => {
@@ -23,6 +25,7 @@ const streamSetAudioEnabled = (
     };
 };
 
+// Disabled the audio of a stream.
 export const turnAudioOff: (
     stream: MediaStream
 ) => void = streamSetAudioEnabled(false);
@@ -30,6 +33,7 @@ export const turnAudioOn: (stream: MediaStream) => void = streamSetAudioEnabled(
     true
 );
 
+// Sets the stream video to be enabled or disabled.
 const streamSetVideoEnabled = (
     enabled: boolean
 ): ((stream: MediaStream) => void) => {
@@ -40,6 +44,7 @@ const streamSetVideoEnabled = (
     };
 };
 
+// Disables video of a particular stream.
 export const turnVideoOff: (
     stream: MediaStream
 ) => void = streamSetVideoEnabled(false);
@@ -47,6 +52,7 @@ export const turnVideoOn: (stream: MediaStream) => void = streamSetVideoEnabled(
     true
 );
 
+// Custom hook for handling the media stream.
 export const useMediaStream: () => [
     MediaStream | undefined,
     (constraints?: MediaStreamConstraints) => Promise<void>,

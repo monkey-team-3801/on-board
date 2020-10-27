@@ -6,17 +6,24 @@ import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Current private room selection.
     roomSelection?: {
         id?: string;
         name: string;
         description: string;
         courseCode?: string;
     };
+    // List of enrolled courses.
     courses: Array<string>;
+    // On modal close callback.
     onClose: () => void;
+    // Refresh callback.
     refresh: () => void;
 };
 
+ /**
+  * Modal for handling editing a single private room.
+  */
 export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {

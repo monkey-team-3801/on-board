@@ -4,11 +4,17 @@ import { UserDataResponseType } from "../../../types";
 import { ProfilePicture } from "../../components";
 
 type Props = {
+    // Header string.
     header?: string;
+    // List of users to render.
     users: Array<Omit<UserDataResponseType, "courses">>;
+    // List of online users.
     onlineUsers: Array<string>;
 };
 
+/**
+ * Component to render a list of staff users.
+ */
 export const CourseStaffList: React.FunctionComponent<Props> = (
     props: Props
 ) => {

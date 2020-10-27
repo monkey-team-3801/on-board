@@ -7,12 +7,19 @@ import { useDynamicFetch } from "../hooks";
 import { requestIsLoading } from "../utils";
 
 type Props = {
+    // Announcement data.
     announcement: CourseAnnouncementsType & { username: string };
+    // Current username of the user.
     currentUser: string;
+    // Announcement delete callback.
     onDelete?: () => Promise<void>;
+    // User online status.
     isUserOnline: boolean;
 };
 
+/**
+ * Simple component for a announcement information display.
+ */
 export const AnnouncementEntry: React.FunctionComponent<Props> = (
     props: Props
 ) => {

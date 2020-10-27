@@ -3,10 +3,15 @@ import { Button } from "react-bootstrap";
 import { Loader } from "./Loader";
 
 type Props = React.ComponentProps<typeof Button> & {
+    // Invert the colour on the loader.
     invertLoader?: boolean;
+    // Loading state.
     loading?: boolean;
 };
 
+/**
+ * Simple button which accepts a loading prop.
+ */
 export const ButtonWithLoadingProp: React.FunctionComponent<Props> = (
     props: Props
 ) => {

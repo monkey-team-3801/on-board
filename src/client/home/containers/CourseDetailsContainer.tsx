@@ -4,12 +4,20 @@ import { UserDataResponseType, UserType } from "../../../types";
 import { CourseStaffList } from "./CourseStaffList";
 
 type Props = {
+    // Course code of this container.
     courseCode: string;
+    // Current user data.
     userData: Array<Omit<UserDataResponseType, "courses">>;
+    // List of online users.
     onlineUsers: Array<string>;
+    // Show a horizontal line below this container?
     showHr?: boolean;
 };
 
+/**
+ * 
+ * @param props 
+ */
 export const CourseDetailsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

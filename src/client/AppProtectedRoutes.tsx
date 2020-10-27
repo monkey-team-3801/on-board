@@ -22,7 +22,7 @@ import { Loader } from "./components";
 import { ChatModalStatusContext } from "./context";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
-import { ClassOpenIndicator } from "./Indicators";
+import { ClassOpenIndicator } from "./indicators";
 import { socket } from "./io";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";

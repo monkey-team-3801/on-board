@@ -8,9 +8,13 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import "./FileContainer.less";
 
 type Props = {
+    // Current session id.
     id: string;
+    // Socket relevant to the session.
     socket: SocketIOClient.Socket;
+    // Current user id.
     userID: string;
+    // Array of files to render.
     files: Array<{
         id: string;
         name: string;
@@ -19,11 +23,17 @@ type Props = {
         userId: string;
         username: string;
     }>;
+    // Function to refresh the files.
     updateFiles: Function;
+    // The room this container is in.
     roomType: RoomType;
+    // Which files is the container rendering.
     containerType?: FileUploadType;
 };
 
+/**
+ * Container to render a list of files.
+ */
 export const FileContainer: React.FunctionComponent<Props> = (props: Props) => {
     const { id, roomType, updateFiles } = props;
     const [, deleteFile] = useDynamicFetch<

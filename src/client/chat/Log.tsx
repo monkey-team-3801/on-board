@@ -4,9 +4,15 @@ import { Col, Row } from "react-bootstrap";
 import { MessageData } from "../../types";
 
 type Props = {
+    // Data regarding the chat entry.
     data: Omit<MessageData, "sessionId">;
+    // Current user id.
     currentUser: string;
 };
+
+/**
+ * Single chat entry in an chatbox.
+ */
 export const Log: React.FunctionComponent<Props> = (props: Props) => {
     const { data, currentUser } = props;
 

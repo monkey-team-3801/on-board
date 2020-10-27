@@ -11,12 +11,19 @@ import { CourseOptionType } from "../types";
 import { requestHasError, requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Current user id.
     userId: string;
+    // Setter for the loading state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Refresh key
     refreshKey: number;
+    // Array of user enrolled courses.
     courses: Array<string>;
 };
 
+/**
+ * Form which initialises an announcement job to the server.
+ */
 export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {

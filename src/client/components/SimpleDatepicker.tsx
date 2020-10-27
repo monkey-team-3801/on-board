@@ -4,8 +4,11 @@ import format from "date-fns/format";
 import parse from "date-fns/parse";
 
 type Props = {
+    // Current time.
     time: Date;
+    // On change callback with the new Date object.
     onChange: (time: Date) => void;
+    // Is the picker disabled.
     disabled?: boolean;
 };
 
