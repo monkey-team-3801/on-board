@@ -29,7 +29,7 @@ const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
 
 /**
  * Executes the class open job when the specified time is reached.
- * @param job Class open job data. 
+ * @param job Class open job data.
  */
 const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
     console.log("Running class job", job);

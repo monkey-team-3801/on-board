@@ -20,7 +20,7 @@ type Props = {
 
 /**
  * Container for creating a form which collects file responses.
- * @param props 
+ * @param props
  */
 export const FileResponseOptionsContainer = (props: Props) => {
     const [uploadFormResponse, submitForm] = useDynamicFetch<

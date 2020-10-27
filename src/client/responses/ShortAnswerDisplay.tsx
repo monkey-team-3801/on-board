@@ -24,7 +24,7 @@ type Props = {
 };
 
 /**
- * Component to display the short answered question. 
+ * Component to display the short answered question.
  */
 export const ShortAnswerDisplay = (props: Props) => {
     const { formID } = props;

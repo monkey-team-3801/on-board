@@ -21,9 +21,9 @@ type Props = {
     refresh: () => void;
 };
 
- /**
-  * Modal for handling editing a single private room.
-  */
+/**
+ * Modal for handling editing a single private room.
+ */
 export const EditPrivateRoomModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {

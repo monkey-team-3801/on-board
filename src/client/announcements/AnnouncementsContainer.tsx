@@ -22,9 +22,9 @@ type Props = {
     // Array of online users.
     onlineUsers: Array<string>;
 };
- /**
-  * Container containing a list of all announcements.
-  */
+/**
+ * Container containing a list of all announcements.
+ */
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

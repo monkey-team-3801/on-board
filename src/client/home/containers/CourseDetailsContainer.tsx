@@ -15,8 +15,8 @@ type Props = {
 };
 
 /**
- * 
- * @param props 
+ *
+ * @param props
  */
 export const CourseDetailsContainer: React.FunctionComponent<Props> = (
     props: Props

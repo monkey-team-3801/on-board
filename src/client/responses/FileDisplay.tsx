@@ -24,7 +24,7 @@ type Props = {
 };
 
 /**
- * Component displaying a list of file responses. 
+ * Component displaying a list of file responses.
  */
 export const FileDisplay = (props: Props) => {
     const [form] = useDynamicFetch<{ description: string }, { formID: string }>(
