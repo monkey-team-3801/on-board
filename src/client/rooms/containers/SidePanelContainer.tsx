@@ -17,6 +17,9 @@ type Props = {
     socket: SocketIOClient.Socket;
 };
 
+/**
+ * Container for rendering the side panel displayed in all rooms.
+ */
 export const SidePanelContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

@@ -1,10 +1,13 @@
 import React from "react";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 
 type Props = {
-    activities: CourseActivityResponseType[];
+    activities: CourseActivity[];
 };
 
+/**
+ * Component representing a list of all activities in a day.
+ */
 export const DayActivities: React.FunctionComponent<Props> = (props: Props) => {
     return <div className="day-activities"></div>;
 };

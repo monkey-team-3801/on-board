@@ -3,10 +3,15 @@ import { PeerId } from "../hooks/useMyPeer";
 import { PeerContext } from "../peer";
 
 type Props = {
+    // User peer id.
     peerId: PeerId;
+    // Additional classes to inject in to the video HTML tag.
     className?: string;
 };
 
+/**
+ * Component for displaying a remote user stream.
+ */
 export const RemotePeerVideo: React.FunctionComponent<Props> = ({
     peerId,
     className,

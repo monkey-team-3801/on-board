@@ -8,11 +8,17 @@ import { SelfStreamDisplay } from "./SelfStreamDisplay";
 import { UserStreamDisplay } from "./UserStreamDisplay";
 
 type Props = {
+    // Array of users in the session.
     users: Array<Omit<UserDataResponseType, "courses">>;
+    // Array of users which have their hands raised.
     raisedHandUsers: Array<string>;
+    // Current user id.
     myUserId: string;
 };
 
+/**
+ * Component for displaying the currently users in a session.
+ */
 export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     const { raisedHandUsers } = props;
     const { peer: myPeer, stream: myStream, userIdToPeerIdMap } = useContext(

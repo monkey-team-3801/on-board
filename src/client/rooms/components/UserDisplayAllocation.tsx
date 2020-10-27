@@ -4,15 +4,21 @@ import { UserData } from "../types";
 import { UserDisplay } from "./UserDisplay";
 
 type Props = UserData & {
+    // Method which allocates a user to a room.
     allocateUser: (
         roomId: string | "main",
         currentRoomId: string | "main",
         userId: string
     ) => void;
+    // List of rooms besides this current room.
     otherRooms: Array<string>;
+    // The id of the current room.
     currentRoomId: string;
 };
 
+/**
+ * Component which displays users for allocation in to breakout rooms.
+ */
 export const UserDisplayAllocation: React.FunctionComponent<Props> = (
     props: Props
 ) => {

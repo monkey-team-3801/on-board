@@ -16,12 +16,19 @@ import { FileResponseOptionsContainer } from "./FileResponseOptionsContainer";
 import { MultipleChoiceContainer } from "./MultipleChoiceContainer";
 
 type Props = {
+    // Current session id.
     sid: string;
+    // Current user id.
     userid: string;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
+    // Method to close the opened modal.
     closeModal: () => void;
 };
 
+/**
+ * Top level form for generating a responses form.
+ */
 export const ResponseOptionsContainer = (props: Props) => {
     const [checkedOption, setOption] = React.useState<ResponseFormType>(
         ResponseFormType.MULTIPLE_CHOICE

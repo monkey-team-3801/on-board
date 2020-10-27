@@ -3,11 +3,17 @@ import { Button, Row } from "react-bootstrap";
 import { UserType } from "../../types";
 
 type Props = {
+    // Array of key value form pairs.
     data: Array<[string, string]>;
+    // Current user type.
     userType: UserType;
+    // Display the result of a specific form.
     setFormDisplay: (key: string, value: string) => void;
 };
 
+/**
+ * Container rendering a list of forms created.
+ */
 export const FormListContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

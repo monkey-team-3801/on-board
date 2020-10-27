@@ -4,10 +4,15 @@ import { AiOutlineClose } from "react-icons/ai";
 import "./Indicator.less";
 
 type Props = {
+    // On close callback.
     onClose: () => void;
+    // Additional injected children.
     children: React.ReactNode;
 };
 
+/**
+ * Base indicator component.
+ */
 export const Indicator: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <Container className="indicator">

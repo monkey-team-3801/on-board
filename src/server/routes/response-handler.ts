@@ -15,6 +15,9 @@ import { asyncHandler } from "../utils";
 
 export const router = express.Router();
 
+/**
+ * Route to submit a multiple choice form.
+ */
 router.post(
     "/submitMcForm",
     asyncHandler<
@@ -69,6 +72,9 @@ router.post(
     })
 );
 
+/**
+ * Route to submit a short answer form.
+ */
 router.post(
     "/submitSaForm",
     asyncHandler<{}, {}, { sessionID: string; question: string; uid: string }>(
@@ -99,6 +105,9 @@ router.post(
     )
 );
 
+/**
+ * Route to submit a file submission form.
+ */
 router.post(
     "/submitFileForm",
     asyncHandler<
@@ -126,6 +135,9 @@ router.post(
     })
 );
 
+/**
+ * Gets all form associated with a session.
+ */
 router.post(
     "/getFormsBySession",
     asyncHandler<
@@ -185,6 +197,9 @@ router.post(
     })
 );
 
+/**
+ * Gets a single multiple choice form by id.
+ */
 router.post(
     "/getMCFormByID",
     asyncHandler<{ [optionID: string]: string }, {}, { formID: string }>(
@@ -201,6 +216,9 @@ router.post(
     )
 );
 
+/**
+ * Gets a single file submission form by id.
+ */
 router.post(
     "/getFileFormByID",
     asyncHandler<{ description: string }, {}, { formID: string }>(
@@ -217,6 +235,9 @@ router.post(
     )
 );
 
+/**
+ * Check if a given user has answered the form.
+ */
 router.post(
     "/checkAnswered",
     asyncHandler<
@@ -248,6 +269,9 @@ router.post(
     })
 );
 
+/**
+ * Route for submitting an answer to a multiple choice form.
+ */
 router.post(
     "/answerMultipleChoice",
     asyncHandler<
@@ -280,6 +304,9 @@ router.post(
     })
 );
 
+/**
+ * Route for submitting an answer to a short answer form.
+ */
 router.post(
     "/answerShortAnswer",
     asyncHandler<
@@ -315,6 +342,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get the results of a multiple choice form.
+ */
 router.post(
     "/getMCResults",
     asyncHandler<Array<Array<string>>, {}, { formID: string }>(
@@ -342,6 +372,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get the results of a short answer form.
+ */
 router.post(
     "/getSAResults",
     asyncHandler<Array<Array<string>>, {}, { formID: string }>(
@@ -377,6 +410,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get only the description of a file submission form..
+ */
 router.post(
     "/getFileFormDesc",
     asyncHandler<{ desc: string }, {}, { formID: string }>(async (req, res) => {

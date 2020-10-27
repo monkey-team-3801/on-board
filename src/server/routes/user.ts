@@ -73,6 +73,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get basic user data such as their id, name, type and courses they are enrolled in.
+ */
 router.post(
     "/data",
     asyncHandler<UserDataResponseType | undefined>(async (req, res) => {
@@ -91,6 +94,9 @@ router.post(
     })
 );
 
+/**
+ * Enrols a user in to the specified courses.
+ */
 router.post(
     "/enrol",
     asyncHandler<{}, {}, EnrolCourseRequestType>(async (req, res, next) => {
@@ -108,6 +114,9 @@ router.post(
     })
 );
 
+/**
+ * Gets the only courses a user is enrolled in.
+ */
 router.post(
     "/courses",
     asyncHandler<UserEnrolledCoursesResponseType>(async (req, res) => {
@@ -123,6 +132,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get user data by id.
+ */
 router.post(
     "/getUserById",
     asyncHandler<UserDataResponseType | undefined, {}, { userID: string }>(
@@ -142,6 +154,9 @@ router.post(
     )
 );
 
+/**
+ * Route to find all users associated with a course.
+ */
 router.post(
     "/getAllUserInCourse",
     asyncHandler<Array<UserDataResponseType>, {}, { userID: string }>(
@@ -181,6 +196,9 @@ router.post(
     )
 );
 
+/**
+ * Route to find users which are online.
+ */
 router.post(
     "/online",
     asyncHandler<Array<string>>(async (req, res) => {
@@ -197,6 +215,9 @@ router.post(
     })
 );
 
+/**
+ * Route to change the username of a user.
+ */
 router.post(
     "/changeUsername",
     asyncHandler<undefined, {}, { userID: string; newName: string }>(
@@ -223,6 +244,9 @@ router.post(
     )
 );
 
+/**
+ * Route to change the password of a user.
+ */
 router.post(
     "/changePassword",
     asyncHandler<undefined, {}, { userID: string; password: string }>(

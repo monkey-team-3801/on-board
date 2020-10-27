@@ -25,6 +25,9 @@ type Props = {
     showModal: boolean;
 };
 
+/**
+ * Similar to the file container but is rendered in an file modal.
+ */
 export const FileModal = (props: Props) => {
     return (
         <div>

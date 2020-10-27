@@ -1,6 +1,9 @@
 import React from "react";
 import Particles from "react-particles-js";
 
+/**
+ * Container for particles.js.
+ */
 export const ParticlesContainer: React.FunctionComponent = () => {
     return (
         <Particles

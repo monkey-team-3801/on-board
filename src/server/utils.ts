@@ -46,26 +46,49 @@ export const asyncHandler = <
     };
 };
 
+/**
+ * Type guard to check if a job is a announcement job.
+ * @param job Base job.
+ */
 export const isAnnouncementJob = (job: BaseJob): job is AnnouncementJob => {
     return job.executingEvent === ExecutingEvent.ANNOUNCEMENT;
 };
 
+/**
+ * Type guard to check if a job is a class open job.
+ * @param job Base job.
+ */
 export const isClassOpenJob = (job: BaseJob): job is ClassOpenJob => {
     return job.executingEvent === ExecutingEvent.CLASS_OPEN;
 };
 
+/**
+ * Type guard to check if a request is a class open request.
+ * @param type Base request type.
+ */
 export const isCreateClassroomRequestType = (
     type: AnyJobRequestType
 ): type is CreateClassroomJobRequestType => {
     return type.executingEvent === ExecutingEvent.CLASS_OPEN;
 };
 
+/**
+ * Type guard to check if a request is a create announcement request.
+ * @param type Base request type.
+ */
 export const isCreateAnnouncementRequestType = (
     type: AnyJobRequestType
 ): type is CreateAnnouncementJobRequestType => {
     return type.executingEvent === ExecutingEvent.ANNOUNCEMENT;
 };
 
+/**
+ * Helper to create a single session.
+ * @param name Name of the room.
+ * @param description Description of the room.
+ * @param createdBy User that created the room.
+ * @param courseCode Course assocaited with the room.
+ */
 export const createNewSession = async (
     name: string,
     description: string,
@@ -90,6 +113,11 @@ export const createNewSession = async (
     return session;
 };
 
+/**
+ * Helper to create a single classroom.
+ * @param data Classroom data.
+ * @param createdBy User that created the room.
+ */
 export const createNewClassroomSession = async (
     data: CreateClassroomJobRequestType,
     createdBy: string
@@ -123,6 +151,10 @@ export const createNewClassroomSession = async (
     return session;
 };
 
+/**
+ * Checks if the creation of a classroom has a error
+ * @param data Classroom form data.
+ */
 export const classFormDataHasError = (
     data:
         | Omit<ClassroomSessionData, "open" | "messages" | "id">

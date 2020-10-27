@@ -24,6 +24,12 @@ export type ScreenSharingData = {
 
 const socket = socketIOClient("/");
 
+/**
+ * Custom hook for handling screen sharing events.
+ * @param userId Current user id.
+ * @param sessionId Current session id the hook is used on.
+ * @param onDenied Callback for if the user media is rejected.
+ */
 export const useScreenSharing = (
     userId: string,
     sessionId: string,

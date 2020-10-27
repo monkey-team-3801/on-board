@@ -3,7 +3,7 @@ import express from "express";
 import { asyncHandler } from "../utils";
 import { Course } from "../database";
 import {
-    CourseActivityResponseType,
+    CourseActivity,
     CourseActivityUnique,
     CourseResponseType,
     CoursesResponseType,
@@ -11,6 +11,7 @@ import {
     CourseListResponseType,
     GetAnnouncementsRequestType,
     GetAnnouncementsResponseType,
+    CourseActivityResponseType,
     UserType,
     UserDataResponseType,
 } from "../../types";
@@ -20,39 +21,22 @@ import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+/**
+ * Finds all courses stored in the collection.
+ */
 const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
     const query = await Course.find();
     return query.map((course) => ({
         code: course.code,
         description: course.description,
         activities: course.activities,
+        announcements: course.announcements,
     }));
 };
 
-router.get(
-    "/:course_code",
-    asyncHandler<CourseResponseType, { course_code: string }, {}>(
-        async (req, res, next) => {
-            try {
-                const course = await Course.findOne({
-                    code: req.params.course_code,
-                });
-                if (!course) {
-                    res.status(404).end();
-                    return;
-                }
-                res.json({
-                    code: course.code,
-                    description: course.description,
-                    activities: course.activities,
-                });
-            } catch (e) {
-                res.status(500).end();
-            }
-        }
-    )
-);
-
+/**
+ * Base route to get all courses data.
+ */
 router.get(
     "/",
     asyncHandler<CoursesResponseType, {}, {}>(async (req, res, next) => {
@@ -66,6 +50,9 @@ router.get(
     })
 );
 
+/**
+ * Gets a list of available course codes.
+ */
 router.post(
     "/list",
     asyncHandler<CourseListResponseType>(async (req, res, next) => {
@@ -85,6 +72,41 @@ router.post(
     })
 );
 
+/**
+ * Gets the activities associated with the courses a user is enrolled in.
+ */
+router.get(
+    "/enrolled-activities",
+    asyncHandler<
+        CourseActivityResponseType,
+        {},
+        CourseActivityRequestFilterType
+    >(async (req, res) => {
+        if (req.headers.authorization) {
+            const user = await getUserDataFromJWT(req.headers.authorization);
+            const courses = await Course.find({
+                code: {
+                    $in: user?.courses,
+                },
+            });
+            const activities = courses.reduce(
+                (currentActivities: CourseActivityResponseType, newCourse) => {
+                    return {
+                        ...currentActivities,
+                        [newCourse.code]: newCourse.activities,
+                    };
+                },
+                {}
+            );
+            res.json(activities);
+        }
+        res.end();
+    })
+);
+
+/**
+ * Gets the announcements associated with a course.
+ */
 router.post(
     "/announcements",
     asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
@@ -128,6 +150,9 @@ router.post(
     )
 );
 
+/**
+ * Deletes a single announcement in a course.
+ */
 router.post(
     "/announcements/delete",
     asyncHandler<{}, {}, { id: string; courseCode: string }>(
@@ -152,6 +177,9 @@ router.post(
     )
 );
 
+/**
+ * Deletes a course from the collection.
+ */
 router.delete(
     "/delete/:course_code",
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
@@ -166,6 +194,9 @@ router.delete(
     )
 );
 
+/**
+ * Updates a course from the collection.
+ */
 router.patch(
     "/update/:course_code",
     asyncHandler<
@@ -182,29 +213,60 @@ router.patch(
     })
 );
 
+/**
+ * Gets information associated with a course code.
+ */
+router.get(
+    "/:course_code",
+    asyncHandler<CourseResponseType, { course_code: string }, {}>(
+        async (req, res, next) => {
+            try {
+                const course = await Course.findOne({
+                    code: req.params.course_code,
+                });
+                if (!course) {
+                    res.status(404).end();
+                    return;
+                }
+                res.json({
+                    code: course.code,
+                    description: course.description,
+                    activities: course.activities,
+                    announcements: course.announcements,
+                });
+            } catch (e) {
+                res.status(500).end();
+            }
+        }
+    )
+);
 // TODO: Unique constraint
+/**
+ * Adds an activity to a course.
+ */
 router.post(
     "/:course_code/add-activity",
-    asyncHandler<
-        CourseActivityResponseType,
-        { course_code: string },
-        CourseActivityResponseType
-    >(async (req, res) => {
-        const course = await Course.findOne(req.params);
-        if (!course) {
-            res.status(404).end();
-            return;
+    asyncHandler<CourseActivity, { course_code: string }, CourseActivity>(
+        async (req, res) => {
+            const course = await Course.findOne(req.params);
+            if (!course) {
+                res.status(404).end();
+                return;
+            }
+            course.activities = [...course.activities, req.body];
+            await course.save();
+            res.status(200).json(req.body);
         }
-        course.activities = [...course.activities, req.body];
-        await course.save();
-        res.status(200).json(req.body);
-    })
+    )
 );
 
+/**
+ * Deletes an activity from a course.
+ */
 router.delete(
     "/:course_code/delete-activity",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityUnique
     >(async (req, res) => {
@@ -228,10 +290,13 @@ router.delete(
     })
 );
 
+/**
+ * Gets activities associated with a course.
+ */
 router.get(
     "/:course_code/activities",
     asyncHandler<
-        Array<CourseActivityResponseType>,
+        Array<CourseActivity>,
         { course_code: string },
         CourseActivityRequestFilterType
     >(async (req, res) => {
@@ -264,6 +329,9 @@ router.get(
     })
 );
 
+/**
+ * Retrieves details associated with the course, incorporating other schemas.
+ */
 router.post(
     "/details",
     asyncHandler<

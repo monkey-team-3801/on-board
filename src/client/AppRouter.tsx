@@ -6,6 +6,9 @@ import { ChatModalStatusContext } from "./context";
 import { AppProtectedRoutes } from "./AppProtectedRoutes";
 import { ChatModalStatusType } from "./types";
 
+/**
+ * Top level app router component.
+ */
 export const AppRouter: React.FunctionComponent<{}> = () => {
     const [chatModalStatus, setChatModalStatus] = React.useState<
         ChatModalStatusType

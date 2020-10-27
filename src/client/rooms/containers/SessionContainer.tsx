@@ -12,18 +12,25 @@ import { PeerContext } from "../../peer";
 import { useMyPeer } from "../../hooks/useMyPeer";
 
 type Props = {
+    // Current session/room id.
     roomId: string;
+    // Current user id.
     userId: string;
+    // Forwarded children callback passing though the required data.
     children: (
         sessionData: SessionData,
         users: Array<Omit<UserDataResponseType, "courses">> | undefined,
         socket: SocketIOClient.Socket
     ) => React.ReactNode;
+    // Room type.
     roomType: RoomType;
 };
 
 const socket = socketIOClient("/");
 
+/**
+ * Container wrapper for a single session.
+ */
 export const SessionContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

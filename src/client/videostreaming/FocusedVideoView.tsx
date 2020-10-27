@@ -6,6 +6,9 @@ import "./VideoContainer.less";
 import { RemotePeerVideo } from "./RemotePeerVideo";
 import { PeerContext } from "../peer";
 
+/**
+ * Video conponent which renders a list of connected peer streams.
+ */
 export const FocusedVideoView: React.FunctionComponent<{}> = () => {
     const { peer: myPeer, stream: myStream, peerStreams } = useContext(
         PeerContext

@@ -2,9 +2,13 @@ import React from "react";
 import { Table } from "react-bootstrap";
 
 type Props = {
+    // Username to responses tuple.
     data: Array<[string, string]>;
 };
 
+/**
+ * Simple table component to display short answer responses.
+ */
 export const ShortAnswerResultsTable: React.FunctionComponent<Props> = (
     props: Props
 ) => {

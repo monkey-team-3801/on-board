@@ -34,6 +34,9 @@ import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
 
+/**
+ * Protected routes which require user authencation before being able to access.
+ */
 export const AppProtectedRoutes = (props: Props) => {
     const [eventData, setEventData] = React.useState<
         ClassOpenEventData | undefined

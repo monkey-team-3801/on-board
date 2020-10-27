@@ -15,6 +15,9 @@ type Props = {
     refreshUserData: () => Promise<void>;
 };
 
+/**
+ * User settings configuration.
+ */
 export const GeneralOptionsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

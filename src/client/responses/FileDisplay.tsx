@@ -7,15 +7,25 @@ import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
 type Props = {
+    // Current form id.
     formID: string;
+    // Title of the question.
     question: string;
+    // Method to go back to the previous view.
     back: () => void;
+    // Current user id;
     userID: string;
+    // Session socket instance.
     socket: SocketIOClient.Socket;
+    // Current session id.
     sessionID: string;
+    // Form response type.
     formType: ResponseFormType;
 };
 
+/**
+ * Component displaying a list of file responses.
+ */
 export const FileDisplay = (props: Props) => {
     const [form] = useDynamicFetch<{ description: string }, { formID: string }>(
         "/response-handler/getFileFormByID",

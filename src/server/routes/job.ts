@@ -14,6 +14,9 @@ import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+/**
+ * Route to create a single job.
+ */
 router.post(
     "/create",
     asyncHandler<{ message?: string }, {}, AnyJobRequestType>(
@@ -94,6 +97,9 @@ router.post(
     )
 );
 
+/**
+ * Route to delete a single job.
+ */
 router.post(
     "/delete",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(

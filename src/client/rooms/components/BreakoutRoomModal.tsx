@@ -12,9 +12,13 @@ import { BreakoutRoomAllocationContainer } from "../containers/";
 import { UserData } from "../types";
 
 type Props = {
+    // Modal visiblity status.
     visible: boolean;
+    // Current session id.
     sessionId: string;
+    // Method to close the modal.
     handleClose: () => void;
+    // Array of users currently in the session.
     userData: Array<Omit<UserDataResponseType, "courses">>;
 };
 

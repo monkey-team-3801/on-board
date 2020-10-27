@@ -5,16 +5,25 @@ import { DisplayContainer } from "./DisplayContainer";
 import { ResponseOptionsContainer } from "./ResponseOptionsContainer";
 
 type Props = {
+    // Current session id.
     sid: string;
+    // Current user id.
     userid: string;
+    // The type of the current user.
     userType: UserType;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
+    // Modal visibility state.
     modalVisible: boolean;
+    // Method to close the modal.
     closeModal: () => void;
+    // Which title to render the modal with.
     modalType: "ask" | "result";
 };
 
-// Test modal, remove this file when no longer needed.
+/**
+ * Modal for creating and answering responses.
+ */
 export const ResponsesModal = (props: Props) => {
     return (
         <>

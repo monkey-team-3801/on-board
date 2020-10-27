@@ -7,6 +7,9 @@ type Props = {
     className?: string;
 };
 
+/**
+ * Component displaying the current user's stream.
+ */
 export const MyVideo: React.FunctionComponent<Props> = ({
     muted,
     className,

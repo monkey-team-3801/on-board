@@ -4,10 +4,15 @@ import { RemotePeerVideo } from "../../videostreaming";
 import { UserData } from "../types";
 
 type Props = Omit<UserData, "allocated"> & {
+    // Additional children to forward.
     children?: React.ReactNode;
+    // The peerid of the user for streaming.
     theirPeerId: string;
 };
 
+/**
+ * Component to display the stream of a user which has webcam enabled.
+ */
 export const UserStreamDisplay: React.FunctionComponent<Props> = (
     props: Props
 ) => {

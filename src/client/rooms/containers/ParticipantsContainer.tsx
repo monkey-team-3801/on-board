@@ -5,11 +5,17 @@ import { Participants } from "../components";
 import * as AiIcons from "react-icons/ai";
 
 type Props = {
+    // List of users in the current session.
     users: Array<Omit<UserDataResponseType, "courses">>;
+    // List of users which have their hande raised.
     raisedHandUsers: Array<string>;
+    // Current user id.
     myUserId: string;
 };
 
+/**
+ * Container for displaying the list of participants in a room/
+ */
 export const ParticipantsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

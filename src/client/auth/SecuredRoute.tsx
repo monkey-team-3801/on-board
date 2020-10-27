@@ -9,6 +9,9 @@ import {
 import { RequestState, BaseResponseType } from "../types";
 import { Loader } from "../components";
 
+/**
+ * React Router Route which requires an authorisation to connect.
+ */
 export const SecuredRoute: React.FunctionComponent<
     RouteProps & {
         authData: BaseResponseType<never>;

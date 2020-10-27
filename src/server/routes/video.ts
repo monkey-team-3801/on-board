@@ -9,6 +9,9 @@ import {
 import { v4 as uuid } from "uuid";
 export const router = express.Router();
 
+/**
+ * Creates a single video session for streaming.
+ */
 router.post(
     "/create",
     asyncHandler<VideoSessionResponseType, {}>(async (req, res) => {
@@ -32,6 +35,9 @@ router.post(
     })
 );
 
+/**
+ * Route to handle user joining a video session.
+ */
 router.post(
     "/userJoin",
     asyncHandler<{}, {}, { sessionId: string; peerId: string }>(
@@ -56,6 +62,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get all users who are sharing a stream.
+ */
 router.post(
     "/:sessionId/sharing",
     asyncHandler<VideoScreenSharingUsersType, { sessionId: string }, {}>(
@@ -77,6 +86,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get all video sessions.
+ */
 router.post(
     "/",
     asyncHandler<Array<VideoSessionResponseType>, {}, {}>(
@@ -96,6 +108,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get all peers associated with a session and a user.
+ */
 router.post(
     "/peers",
     asyncHandler<

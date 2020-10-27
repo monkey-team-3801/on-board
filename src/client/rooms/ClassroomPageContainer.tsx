@@ -5,6 +5,7 @@ import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import * as BiIcons from "react-icons/bi";
 import * as FaIcons from "react-icons/fa";
+import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { Link, RouteComponentProps } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import { useDebouncedCallback } from "use-debounce";
@@ -21,25 +22,28 @@ import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { useMyPeer } from "../hooks/useMyPeer";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
+import { PeerContext } from "../peer";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import "./classroom.less";
 import {
-    BreakoutRoomModal,
     BreakoutRoomListModal,
+    BreakoutRoomModal,
     Participants,
+    Progress,
 } from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
-import { PeerContext } from "../peer";
-import { MdNotificationsOff, MdNotificationsActive } from "react-icons/md";
 
 type Props = RouteComponentProps<{ classroomId: string }> &
     TopLayerContainerProps & {};
 
 const socket = socketIOClient("/");
 
+/**
+ * Container for handling the rendering of a single classroom page.
+ */
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
@@ -169,18 +173,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     );
 
     const presenter = (
-            <div className="presenter-container">
-                <div className="presenter-picture">
-                    {/* Picture */}
-                </div>
-                <div className="presenter-name">
-                    Richard Thomas
-                </div>
-                <div className="presenter-role">
-                    Course Coordinator
-                </div>
-            </div>
-    )
+        <div className="presenter-container">
+            <div className="presenter-picture">{/* Picture */}</div>
+            <div className="presenter-name">Richard Thomas</div>
+            <div className="presenter-role">Course Coordinator</div>
+        </div>
+    );
 
     const participants = (
         <Container className="alt-view-users mt-4">
@@ -277,11 +275,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <Row className="head-panel">
                         <Col xs={1.5}>
                             <Link to="/classes">
-                                <Button 
-                                className="justify-content-center back-btn"
-                                variant="light"
-                                size="sm">
-                                <AiIcons.AiOutlineArrowLeft className="icon" />
+                                <Button
+                                    className="justify-content-center back-btn"
+                                    variant="light"
+                                    size="sm"
+                                >
+                                    <AiIcons.AiOutlineArrowLeft className="icon" />
                                     Back
                                 </Button>
                             </Link>
@@ -292,8 +291,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             </h1>
                         </Col>
                         <Col>
-                            <p>{`Start time: ${sessionResponse.data.startTime}`}</p>
-                            <p>{`end time: ${sessionResponse.data.endTime}`}</p>
+                            <Progress
+                                startTime={
+                                    new Date(sessionResponse.data.startTime)
+                                }
+                                endTime={new Date(sessionResponse.data.endTime)}
+                            />
                         </Col>
                     </Row>
                     <Row>
@@ -305,9 +308,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                 >
                                     <p
                                         className={`pr-2 font-weight-bold ${
-                                            !altView
-                                                ? "active"
-                                                : ""
+                                            !altView ? "active" : ""
                                         }`}
                                         onClick={() => {
                                             setAltView(false);
@@ -317,9 +318,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                     </p>
                                     <p
                                         className={`pl-2 font-weight-bold ${
-                                            altView
-                                                ? "active"
-                                                : ""
+                                            altView ? "active" : ""
                                         }`}
                                         onClick={() => {
                                             setAltView(true);
@@ -331,125 +330,139 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             </Row>
                             <Row className="classroom-row">
                                 <Col sm={4}>
-                                {altView ? null : presenter}
+                                    {altView ? null : presenter}
                                     <div className="video-alt">
                                         {altView ? presenter : null}
                                         {altView ? video : null}
                                     </div>
                                 </Col>
                                 <Col sm={8} className="video-column">
-                                {altView ? participants : video}
-                                <ButtonGroup
-                                    size="sm"
-                                    className="classroom-btn-grp d-flex mt-4"
-                                >
-                                    <Button
-                                        className="first-btn"
-                                        id="settings-options"
-                                        onClick={() => {
-                                            setBreakoutRoomModalVisible(true);
-                                        }}
+                                    {altView ? participants : video}
+                                    <ButtonGroup
+                                        size="sm"
+                                        className="classroom-btn-grp d-flex mt-4"
                                     >
-                                        <AiIcons.AiOutlineTeam className="setting-icon" />
-                                        <p className="icon-label">Breakout Rooms</p>
-                                    </Button>
-                                    <Button
-                                        className="setting-btn"
-                                        onClick={async () => {
-                                            if (handRaisedRef.current) {
-                                                setRaisedHandUsers(
-                                                    raisedHandUsers.splice(
-                                                        raisedHandUsers.indexOf(
-                                                            userId
-                                                        ),
-                                                        1
-                                                    )
-                                                );
-                                            } else {
-                                                setRaisedHandUsers(
-                                                    raisedHandUsers.concat([userId])
-                                                );
-                                            }
-                                            setRaisedHandStatus.callback(
-                                                handRaisedRef.current
-                                            );
-                                            handRaisedRef.current = !handRaisedRef.current;
-                                        }}
-                                    >
-                                        <FaIcons.FaRegHandPaper className="setting-icon " />
-                                        <p className="icon-label">Raise Hand</p>
-                                    </Button>
-                                    <Button className="setting-btn">
-                                        <BiIcons.BiVideoOff className="setting-icon" />
-                                        <p className="icon-label">Camera off</p>
-                                    </Button>
-                                    <Button className="setting-btn">
-                                        <BiIcons.BiMicrophoneOff className="setting-icon" />
-                                        <p className="icon-label">Mic off</p>
-                                    </Button>
-                                    <Button
-                                        className="setting-btn"
-                                        onClick={() => {
-                                            setResponsesModalStatus({
-                                                visible: true,
-                                                type: "result",
-                                            });
-                                        }}
-                                    >
-                                        <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
-                                        {props.userData.userType ===
-                                        UserType.STUDENT ? (
-                                            <p className="icon-label">
-                                                View Questions
-                                            </p>
-                                        ) : (
-                                            <p>View Results</p>
-                                        )}
-                                    </Button>
-                                    <Button
-                                        onClick={() => {
-                                            setShowFileModal(true);
-                                        }}
-                                        className="setting-btn"
-                                    >
-                                        <AiIcons.AiOutlineUpload className="setting-icon" />
-                                        <p className="icon-label">View Files</p>
-                                    </Button>
-                                    {props.userData.userType ===
-                                        UserType.COORDINATOR && (
                                         <Button
+                                            className="first-btn"
+                                            id="settings-options"
+                                            onClick={() => {
+                                                setBreakoutRoomModalVisible(
+                                                    true
+                                                );
+                                            }}
+                                        >
+                                            <AiIcons.AiOutlineTeam className="setting-icon" />
+                                            <p className="icon-label">
+                                                Breakout Rooms
+                                            </p>
+                                        </Button>
+                                        <Button
+                                            className="setting-btn"
+                                            onClick={async () => {
+                                                if (handRaisedRef.current) {
+                                                    setRaisedHandUsers(
+                                                        raisedHandUsers.splice(
+                                                            raisedHandUsers.indexOf(
+                                                                userId
+                                                            ),
+                                                            1
+                                                        )
+                                                    );
+                                                } else {
+                                                    setRaisedHandUsers(
+                                                        raisedHandUsers.concat([
+                                                            userId,
+                                                        ])
+                                                    );
+                                                }
+                                                setRaisedHandStatus.callback(
+                                                    handRaisedRef.current
+                                                );
+                                                handRaisedRef.current = !handRaisedRef.current;
+                                            }}
+                                        >
+                                            <FaIcons.FaRegHandPaper className="setting-icon " />
+                                            <p className="icon-label">
+                                                Raise Hand
+                                            </p>
+                                        </Button>
+                                        <Button className="setting-btn">
+                                            <BiIcons.BiVideoOff className="setting-icon" />
+                                            <p className="icon-label">
+                                                Camera off
+                                            </p>
+                                        </Button>
+                                        <Button className="setting-btn">
+                                            <BiIcons.BiMicrophoneOff className="setting-icon" />
+                                            <p className="icon-label">
+                                                Mic off
+                                            </p>
+                                        </Button>
+                                        <Button
+                                            className="setting-btn"
                                             onClick={() => {
                                                 setResponsesModalStatus({
                                                     visible: true,
-                                                    type: "ask",
+                                                    type: "result",
                                                 });
+                                            }}
+                                        >
+                                            <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
+                                            {props.userData.userType ===
+                                            UserType.STUDENT ? (
+                                                <p className="icon-label">
+                                                    View Questions
+                                                </p>
+                                            ) : (
+                                                <p>View Results</p>
+                                            )}
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setShowFileModal(true);
                                             }}
                                             className="setting-btn"
                                         >
-                                            <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
+                                            <AiIcons.AiOutlineUpload className="setting-icon" />
                                             <p className="icon-label">
-                                                Ask Questions
+                                                View Files
                                             </p>
                                         </Button>
-                                    )}
-                                    <Button
-                                        className="end-btn"
-                                        onClick={() => {
-                                            setSoundEnabled((prev) => {
-                                                return !prev;
-                                            });
-                                        }}
-                                    >
-                                        {soundEnabled ? (
-                                            <MdNotificationsActive className="setting-icon" />
-                                        ) : (
-                                            <MdNotificationsOff className="setting-icon" />
+                                        {props.userData.userType ===
+                                            UserType.COORDINATOR && (
+                                            <Button
+                                                onClick={() => {
+                                                    setResponsesModalStatus({
+                                                        visible: true,
+                                                        type: "ask",
+                                                    });
+                                                }}
+                                                className="setting-btn"
+                                            >
+                                                <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
+                                                <p className="icon-label">
+                                                    Ask Questions
+                                                </p>
+                                            </Button>
                                         )}
-                                        <p className="icon-label">
-                                            Toggle Notifications
-                                        </p>
-                                    </Button>
-                                </ButtonGroup>
+                                        <Button
+                                            className="end-btn"
+                                            onClick={() => {
+                                                setSoundEnabled((prev) => {
+                                                    return !prev;
+                                                });
+                                            }}
+                                        >
+                                            {soundEnabled ? (
+                                                <MdNotificationsActive className="setting-icon" />
+                                            ) : (
+                                                <MdNotificationsOff className="setting-icon" />
+                                            )}
+                                            <p className="icon-label">
+                                                Toggle Notifications
+                                            </p>
+                                        </Button>
+                                    </ButtonGroup>
                                 </Col>
                             </Row>
                         </Col>

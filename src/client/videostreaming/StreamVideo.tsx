@@ -7,6 +7,9 @@ type Props = {
     className?: string;
 };
 
+/**
+ * Component which displays the screen of a sharing user.
+ */
 export const StreamVideo: React.FunctionComponent<Props> = ({
     muted,
     stream,

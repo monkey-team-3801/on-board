@@ -43,7 +43,8 @@ export const useFetch = <
 ): [BaseResponseType<T>, () => Promise<void>] => {
     const [responseType, refresh]: [
         BaseResponseType<T>,
-        (newRequestData?: S) => Promise<void>
+        (newRequestData?: S) => Promise<void>,
+        (responseType: BaseResponseType<T>) => void
     ] = useDynamicFetch<T, AnyObjectMap<any>>(
         apiEndpoint,
         apiRequestData,
