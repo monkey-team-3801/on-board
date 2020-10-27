@@ -1,4 +1,5 @@
 import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import express, { Express, NextFunction, Request, Response } from "express";
 import fileUpload from "express-fileupload";
@@ -34,10 +35,11 @@ import {
     sessionRoute,
     userRoute,
     videoRoute,
+    userNoAuthRoute,
+    fileNoAuthRoute,
 } from "./routes";
 import { asyncHandler } from "./utils";
 import { UserType } from "../types";
-
 // Environment environment variables.
 dotenv.config();
 
@@ -374,6 +376,22 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
+const preAuthCheck = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        if (req.headers.authorization) {
+            const id = jwt.verify(
+                req.headers.authorization,
+                process.env.JWT_SECRET || "monkey_default_jwt"
+            ) as string;
+            if ((await User.count({ _id: id })) > 0) {
+                next();
+                return;
+            }
+        }
+        res.status(401).end();
+    }
+);
+
 // Base route
 app.get(
     "/",
@@ -387,39 +405,46 @@ app.use("/", express.static("build"));
 
 app.use("/public", express.static("public"));
 
+// Login and Registration routes.
+app.use("/user", userNoAuthRoute);
+
+// File routes.
+app.use("/filehandler", fileNoAuthRoute);
+
 // Health check route.
 app.use("/health", healthCheckRoute);
-
-// Session routes.
-app.use("/session", sessionRoute);
-
-// Chat routes.
-app.use("/chat", chatRoute);
-
-// Login and Registration routes.
-app.use("/user", userRoute);
-
-// Course routes.
-app.use("/courses", courseRoute);
-
-// Video routes.
-app.use("/videos", videoRoute);
 
 // Authorisation routes.
 app.use("/auth", authRoute);
 
+// Login and Registration routes.
+app.use("/user", preAuthCheck, userRoute);
+
+// Session routes.
+app.use("/session", preAuthCheck, sessionRoute);
+
+// Chat routes.
+app.use("/chat", preAuthCheck, chatRoute);
+
+// Course routes.
+app.use("/courses", preAuthCheck, courseRoute);
+
+// Video routes.
+app.use("/videos", preAuthCheck, videoRoute);
+
 // Job routes.
-app.use("/job", jobRoute);
+app.use("/job", preAuthCheck, jobRoute);
 
 // File routes.
-app.use("/filehandler", fileRoute);
+app.use("/filehandler", preAuthCheck, fileRoute);
 
 // Response collection routes.
-app.use("/response-handler", responseRoute);
+app.use("/response-handler", preAuthCheck, responseRoute);
 
 // TODO API Routes
 app.use(
     "/api",
+    preAuthCheck,
     asyncHandler(async (req, res, next) => {})
 );
 

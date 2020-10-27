@@ -283,6 +283,7 @@ router.post(
                         endTime: session.endTime,
                         colourCode: session.colourCode,
                         open: session.open,
+                        createdBy: session.createdBy,
                     });
                 }
             } catch (e) {

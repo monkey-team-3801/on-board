@@ -99,9 +99,9 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
             <Row>
                 <ChatLog messages={data || []} currentUser={props.username} />
             </Row>
-            <Row className="d-flex m-1 p-1 ">
+            <Row className="d-flex m-1 p-1 justify-content-center">
                 <Form onSubmit={onSubmit}>
-                    <Form.Row className="d-flex justify-content-center flex-nowrap align-content-start ">
+                    <Form.Row className="d-flex justify-content-center flex-nowrap align-content-start">
                         <Col>
                             <Form.Control
                                 className="send-chat"
@@ -113,7 +113,7 @@ export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
                             />
                         </Col>
                         <Col xs="auto">
-                            <Button type="submit" className="mr-2 ">
+                            <Button type="submit" className="mr-2" size="sm">
                                 Send
                             </Button>
                         </Col>

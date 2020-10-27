@@ -91,7 +91,7 @@ export const SessionContainer: React.FunctionComponent<Props> = (
 
     return (
         <PeerContext.Provider value={peerData}>
-            <Container fluid>
+            <Container fluid className="p-0">
                 {children(
                     sessionResponse.data,
                     sessionUsersResponse.data?.users,

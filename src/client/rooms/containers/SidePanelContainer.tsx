@@ -3,6 +3,7 @@ import { Container, Row } from "react-bootstrap";
 import { MessageData, RoomType, UserDataResponseType } from "../../../types";
 import { ChatContainer } from "../../chat";
 import { Loader } from "../../components";
+import { isStaff } from "../../utils";
 import { ParticipantsContainer } from "./ParticipantsContainer";
 import "./SidePanelContainer.less";
 
@@ -28,18 +29,33 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
             <Row>
                 <div className="panel-container tutors-container">
                     <Container className="section-header">
-                        <h6>Tutor Team</h6>
+                        <h6>Staff</h6>
                     </Container>
+                    {props.users ? (
+                        <ParticipantsContainer
+                            users={props.users.filter((user) =>
+                                isStaff(user.userType)
+                            )}
+                            raisedHandUsers={props.raisedHandUsers}
+                            myUserId={props.myUserId}
+                        />
+                    ) : (
+                        <Container className="loader-container">
+                            <Loader />
+                        </Container>
+                    )}
                 </div>
             </Row>
             <Row>
-                <Container className="panel-container students-container ">
+                <Container className="panel-container students-container">
                     <Container className="section-header">
                         <h6>Participants</h6>
                     </Container>
                     {props.users ? (
                         <ParticipantsContainer
-                            users={props.users}
+                            users={props.users.filter(
+                                (user) => !isStaff(user.userType)
+                            )}
                             raisedHandUsers={props.raisedHandUsers}
                             myUserId={props.myUserId}
                         />
@@ -50,7 +66,7 @@ export const SidePanelContainer: React.FunctionComponent<Props> = (
                     )}
                 </Container>
             </Row>
-            <Row>
+            <Row className="messages-row">
                 <div className="panel-container messages-container">
                     <Container className="section-header">
                         <h6>Chat</h6>

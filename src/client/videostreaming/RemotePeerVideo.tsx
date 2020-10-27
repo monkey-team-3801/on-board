@@ -38,5 +38,12 @@ export const RemotePeerVideo: React.FunctionComponent<Props> = ({
             currentRef?.removeEventListener("loadedmetadata", playVideo);
     }, [peerId, myPeerId, addPeer, peerStreams]);
 
-    return <video ref={videoRef} className={className} />;
+    return (
+        <div className="stream-video-wrapper">
+            <video
+                ref={videoRef}
+                className={`${className ? className : ""} stream-video`}
+            />
+        </div>
+    );
 };
