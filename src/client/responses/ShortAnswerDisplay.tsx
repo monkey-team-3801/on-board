@@ -7,15 +7,25 @@ import { requestIsLoaded, requestIsLoading } from "../utils";
 import { Loader, ButtonWithLoadingProp } from "../components";
 
 type Props = {
+    // Form id of the response.
     formID: string;
+    // Question title.
     question: string;
+    // Current user id.
     uid: string;
+    // Method to go back to the previous view.
     back: Function;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
+    // Current session id.
     sid: string;
+    // Type of the reponse form.
     formType: ResponseFormType;
 };
 
+/**
+ * Component to display the short answered question. 
+ */
 export const ShortAnswerDisplay = (props: Props) => {
     const { formID } = props;
     const [userResponse, setUserResponse] = React.useState<string>("");

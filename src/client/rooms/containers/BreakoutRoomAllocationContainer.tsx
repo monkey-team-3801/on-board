@@ -9,14 +9,21 @@ import { ButtonWithLoadingProp } from "../../components";
 import { requestIsLoading } from "../../utils";
 
 type Props = {
+    // Current session id.
     sessionId: string;
+    // List of users in session.
     users: Array<UserData>;
+    // Current breakout rooms.
     rooms: OrderedMap<string, OrderedMap<string, UserData>>;
+    // Setter for the internal state of rooms.
     setRooms: React.Dispatch<
         React.SetStateAction<OrderedMap<string, OrderedMap<string, UserData>>>
     >;
 };
 
+/**
+ * Container for the creation and allocation of users to breakout rooms.
+ */
 export const BreakoutRoomAllocationContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

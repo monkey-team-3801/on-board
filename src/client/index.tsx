@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { App } from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+// App entry point. Strict mode disabled.
 ReactDOM.render(
     // <React.StrictMode>
     <App />,

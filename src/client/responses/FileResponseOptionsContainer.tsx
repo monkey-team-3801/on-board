@@ -6,13 +6,22 @@ import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Question title.
     question: string;
+    // Current session id.
     sessionID: string;
+    // Closes the current modal.
     closeModal: () => void;
+    // Current user id.
     uid: string;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
 };
 
+/**
+ * Container for creating a form which collects file responses.
+ * @param props 
+ */
 export const FileResponseOptionsContainer = (props: Props) => {
     const [uploadFormResponse, submitForm] = useDynamicFetch<
         undefined,

@@ -21,6 +21,9 @@ type Props = {
     refreshKey?: number;
 };
 
+/**
+ * Container for a form which schedules a room.
+ */
 export const ScheduleRoomFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

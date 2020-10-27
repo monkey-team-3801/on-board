@@ -12,6 +12,9 @@ import { Loader } from "../components";
 
 type Props = RouteComponentProps;
 
+/**
+ * Login page component.
+ */
 export const LoginPage: React.FunctionComponent<Props> = (props: Props) => {
     const { history } = props;
     const [authResponse] = useFetch("/auth");

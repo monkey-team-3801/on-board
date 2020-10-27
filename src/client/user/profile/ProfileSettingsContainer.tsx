@@ -6,6 +6,9 @@ import { GeneralOptionsContainer } from "./GeneralOptionsContainer";
 
 type Props = TopLayerContainerProps;
 
+/**
+ * Profile page for configuring settings.
+ */
 export const ProfileSettingsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

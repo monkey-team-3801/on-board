@@ -11,6 +11,9 @@ type Props = {
     stackIndex: number;
 };
 
+/**
+ * Component representing a single activity.
+ */
 export const Activity: React.FunctionComponent<Props> = ({
     details,
     dayStartTime,

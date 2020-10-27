@@ -8,6 +8,9 @@ type Props = {
     activity: CourseActivity;
 };
 
+/**
+ * Event component displaying the details of a single event.
+ */
 export const Event: React.FunctionComponent<Props> = (props: Props) => {
     const { activity, courseCode } = props;
     const startTime = React.useMemo(() => {

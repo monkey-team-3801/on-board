@@ -12,6 +12,9 @@ interface Props {
     getRelevantActivities: (chosenDate: Date) => CourseActivityResponseType;
 }
 
+/**
+ * Component representing a single day in the calendar.
+ */
 export const CalendarDay: React.FunctionComponent<Props> = (props: Props) => {
     const {
         date,

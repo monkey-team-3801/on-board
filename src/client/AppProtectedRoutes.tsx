@@ -22,7 +22,7 @@ import { Loader } from "./components";
 import { ChatModalStatusContext } from "./context";
 import { UserHomeContainer } from "./home/UserHomeContainer";
 import { useFetch, useSocket } from "./hooks";
-import { ClassOpenIndicator } from "./indicators";
+import { ClassOpenIndicator } from "./Indicators";
 import { socket } from "./io";
 import { Navbar } from "./navbar";
 import { ClassroomPageContainer } from "./rooms/ClassroomPageContainer";
@@ -34,6 +34,9 @@ import { requestIsLoaded } from "./utils";
 
 type Props = RouteComponentProps;
 
+/**
+ * Protected routes which require user authencation before being able to access.
+ */
 export const AppProtectedRoutes = (props: Props) => {
     const [eventData, setEventData] = React.useState<
         ClassOpenEventData | undefined

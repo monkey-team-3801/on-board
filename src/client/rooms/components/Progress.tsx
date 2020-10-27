@@ -3,29 +3,36 @@ import { Container } from "react-bootstrap";
 import format from "date-fns/format";
 
 type Props = {
+    // Start time of the session.
     startTime: Date;
+    // End time of the session.
     endTime: Date;
 };
 
+/**
+ * Component which ticks time remaining in a session.
+ */
 export const Progress: React.FunctionComponent<Props> = (props: Props) => {
     const { startTime, endTime } = props;
 
-    const [progress, setProgress] = React.useState<number>(props.startTime.getTime());
+    const [progress, setProgress] = React.useState<number>(
+        props.startTime.getTime()
+    );
 
     React.useEffect(() => {
         const timeoutRef = setTimeout(() => {
             setProgress((prev) => {
                 return prev + 1;
-            })
+            });
         }, 1000);
         return () => {
             clearTimeout(timeoutRef);
-        }
+        };
     }, []);
 
     const progressPercent = React.useMemo(() => {
         return progress / endTime.getTime();
-    }, [progress])
+    }, [progress, endTime]);
 
     return (
         <Container className="d-flex align-items-center">

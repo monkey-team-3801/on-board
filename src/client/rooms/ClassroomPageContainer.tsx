@@ -33,6 +33,9 @@ type Props = RouteComponentProps<{ classroomId: string }> &
 
 const socket = socketIOClient("/");
 
+/**
+ * Container for handling the rendering of a single classroom page.
+ */
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

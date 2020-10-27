@@ -11,16 +11,23 @@ import { MultipleChoiceResultsChart } from "./MultipleChoiceResultsChart";
 import { ShortAnswerResultsTable } from "./ShortAnswerResultsTable";
 
 type Props = {
+    // Responses form data.
     formData: {
         formID: string;
         question: string;
         formType: ResponseFormType;
     };
+    // Current user id.
     userID: string;
+    // Return to previous view.
     back: () => void;
+    // Socket instance.
     sock: SocketIOClient.Socket;
 };
 
+/**
+ * Container for displaying the result of one form.
+ */
 export const DisplayResultsContainer = (props: Props) => {
     const fileContainerData = {
         id: props.formData.formID,

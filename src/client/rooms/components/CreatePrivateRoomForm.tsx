@@ -28,6 +28,9 @@ type Props = {
     children?: React.ReactNode;
 };
 
+/**
+ * Form for creating a private room.
+ */
 export const CreatePrivateRoomForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {

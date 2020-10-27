@@ -27,6 +27,9 @@ type Props = {
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
 };
 
+/**
+ * Calendar component to display events and classes on a particular day.
+ */
 export const Calendar: React.FunctionComponent<Props> = ({
     setLoading,
     coursesResponse,
