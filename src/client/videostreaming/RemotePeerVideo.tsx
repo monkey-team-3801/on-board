@@ -40,7 +40,10 @@ export const RemotePeerVideo: React.FunctionComponent<Props> = ({
 
     return (
         <div className="stream-video-wrapper">
-            <video ref={videoRef} className={`${className ? className : ""} stream-video`}/>
+            <video
+                ref={videoRef}
+                className={`${className ? className : ""} stream-video`}
+            />
         </div>
     );
 };
