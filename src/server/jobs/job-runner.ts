@@ -5,6 +5,10 @@ import { ClassroomSession, User } from "../database/schema";
 import { io } from "../server";
 import { isAnnouncementJob, isClassOpenJob } from "../utils";
 
+/**
+ * Executes the announcement job when the specified time is reached.
+ * @param job Announcement job data.
+ */
 const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
     console.log("Running announcement job", job);
     const user = await User.findById(job.data.userId);
@@ -23,6 +27,10 @@ const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
     }
 };
 
+/**
+ * Executes the class open job when the specified time is reached.
+ * @param job Class open job data. 
+ */
 const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
     console.log("Running class job", job);
     const session = await ClassroomSession.findByIdAndUpdate(job.data.id, {
@@ -37,6 +45,10 @@ const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
     }
 };
 
+/**
+ * Simple switcher depending on the job being ran.
+ * @param job Base job being executed.
+ */
 export const jobRunner = (job: BaseJob): void => {
     if (isAnnouncementJob(job)) {
         runAnnouncementJob(job);

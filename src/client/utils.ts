@@ -64,6 +64,10 @@ export const throttle = (callback: any, delay: number) => {
     };
 };
 
+/**
+ * Option type guard for react-select.
+ * @param option Any object.
+ */
 export const isOptionType = (option: any): option is CourseOptionType => {
     return option?.value && option?.label;
 };
@@ -87,6 +91,10 @@ export const baseRoomTypeOptions = [
     },
 ];
 
+/**
+ * Returns class string based on the user type.
+ * @param userType user type enum.
+ */
 export const userTypeToClass = (userType: UserType) => {
     switch (userType) {
         case UserType.STUDENT:
@@ -98,6 +106,10 @@ export const userTypeToClass = (userType: UserType) => {
     }
 };
 
+/**
+ * Simple function to check if the user is a staff member.
+ * @param userType user type enum.
+ */
 export const isStaff = (userType: UserType) => {
     return userType !== UserType.STUDENT;
 };

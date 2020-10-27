@@ -2,6 +2,9 @@ import * as MongoDb from "mongodb";
 import * as Mongoose from "mongoose";
 import mongoose from "mongoose";
 
+/**
+ * Basic database class, handles the connection and getter of the db instance.
+ */
 export class Database {
     private static connection: Mongoose.Connection;
     private uri: string = "";

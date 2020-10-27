@@ -25,6 +25,9 @@ const roomTypeToSession = async (id: string, roomType: RoomType) => {
     }
 };
 
+/**
+ * Route for handling new session chat messages.
+ */
 router.post(
     "/newMessage",
     asyncHandler<undefined, {}, NewMessageRequestType>(
@@ -51,6 +54,9 @@ router.post(
     )
 );
 
+/**
+ * Route for getting private chat logs.
+ */
 router.post(
     "/privateChat",
     asyncHandler<
@@ -105,6 +111,9 @@ router.post(
     })
 );
 
+/**
+ * Route for handling new messages in private chat sessions.
+ */
 router.post(
     "/privateChat/newMessage",
     asyncHandler<
@@ -142,6 +151,9 @@ router.post(
     })
 );
 
+/**
+ * Route to check if a user has a unread message.
+ */
 router.post(
     "/hasNewMessage",
     asyncHandler<Array<string>>(async (req, res, next) => {
@@ -177,7 +189,9 @@ router.post(
         }
     })
 );
-
+/**
+ * Clears the unread message status of a private chat session.
+ */
 router.post(
     "/clearNewMessage",
     asyncHandler<
