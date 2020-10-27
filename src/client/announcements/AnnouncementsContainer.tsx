@@ -11,13 +11,20 @@ import { AnnouncementEntry } from "./AnnouncementEntry";
 import "./Announcements.less";
 
 type Props = {
+    // Current user id.
     userId: string;
+    // Refresh key for automatically refeshing the container.
     refreshKey: number;
+    // Setter for the loading state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Array of enrolled courses.
     courses: Array<string>;
+    // Array of online users.
     onlineUsers: Array<string>;
 };
-
+/**
+ * Container containing a list of all announcements.
+ */
 export const AnnouncementsContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

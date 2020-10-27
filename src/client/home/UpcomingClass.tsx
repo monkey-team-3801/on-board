@@ -12,6 +12,9 @@ import { UpcomingClassroomSessionData } from "../../types";
 
 type Props = UpcomingClassroomSessionData;
 
+/**
+ * Component to display a single upcoming class.
+ */
 export const UpcomingClass: React.FunctionComponent<Props> = (props: Props) => {
     const { startTime: startTimeIso, endTime: endTimeIso } = props;
 

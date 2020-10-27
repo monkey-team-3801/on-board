@@ -4,9 +4,13 @@ import { ProfilePicture } from "../../components";
 import { userTypeToClass } from "../../utils";
 
 type Props = Omit<UserData, "allocated"> & {
+    // Additional children to forward.
     children?: React.ReactNode;
 };
 
+/**
+ * Component for displaying a single user in a breakout room allocation component.
+ */
 export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
     const { userType, id, username } = props;
 

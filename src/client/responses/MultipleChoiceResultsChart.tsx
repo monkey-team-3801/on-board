@@ -7,10 +7,15 @@ import {
     YAxis,
     Label,
 } from "recharts";
+
 type Props = {
+    // Key value pair for graphing the data.
     data: Array<{ name: string; value: number }>;
 };
 
+/**
+ * Simple bar chart component for displaying results.
+ */
 export const MultipleChoiceResultsChart: React.FunctionComponent<Props> = (
     props: Props
 ) => {

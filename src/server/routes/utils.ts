@@ -4,10 +4,18 @@ import SHA3 from "sha3";
 import { User, IUser, ClassroomSession } from "../database/schema";
 import { ClassroomSessionData } from "../../types";
 
+/**
+ * Generates a signed JWT for a user.
+ * @param userId user id to sign.
+ */
 export const generateJWT = (userId: string): string => {
     return jwt.sign(userId, process.env.JWT_SECRET || "monkey_default_jwt");
 };
 
+/**
+ * Gets the user data from a signed JWT.
+ * @param token JWT token.
+ */
 export const getUserDataFromJWT = async (
     token: string
 ): Promise<IUser | null> => {
@@ -18,12 +26,22 @@ export const getUserDataFromJWT = async (
     return await User.findById(userId);
 };
 
+/**
+ * Hashes a plain text password with SHA3.
+ * @param password plain text password to hash.
+ */
 export const hashPassword = (password: string): string => {
     const hash = new SHA3();
     hash.update(password);
     return hash.digest("hex");
 };
 
+/**
+ * Helper to get all classrooms a user can see.
+ * @param currentUser Current user id.
+ * @param status Status of the room.
+ * @param limit Limit to query.
+ */
 export const getAllClassroomSessions = async (
     currentUser: IUser,
     status?: "open" | "upcoming",

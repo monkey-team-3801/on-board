@@ -1,6 +1,14 @@
 import React from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import {
+    Button,
+    Container,
+    Form,
+    OverlayTrigger,
+    Popover,
+    Row,
+} from "react-bootstrap";
 import { RGBColor } from "react-color";
+import { AiFillEdit } from "react-icons/ai";
 import { CanvasEvent } from "../../events";
 import {
     GetCanvasRequestType,
@@ -9,16 +17,21 @@ import {
     Stroke,
 } from "../../types";
 import { ColourPicker } from "../colour";
+import { Loader } from "../components";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { requestIsLoaded, throttle } from "../utils";
-import { AiFillEdit } from "react-icons/ai";
 import "./Canvas.less";
 
 type Props = {
+    // Session Id the canvas is rendered in.
     sessionId: string;
+    // Relevant socket to the session.
     socket: SocketIOClient.Socket;
 };
 
+/**
+ * Component which handles the canvas for drawing.
+ */
 export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     const { sessionId, socket } = props;
     const canvasRef: React.MutableRefObject<
@@ -34,7 +47,6 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     const isDrawing: React.MutableRefObject<boolean> = React.useRef<boolean>(
         false
     );
-    const [show, setShow] = React.useState<boolean>(false);
 
     const position: React.MutableRefObject<any> = React.useRef<{
         x?: number;
@@ -236,40 +248,37 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     }, [drawLine, canvasDataResponse]);
 
     if (!requestIsLoaded(canvasDataResponse)) {
-        return <div>loading</div>;
+        return <Loader className="p-4" />;
     }
 
+    const popover = (
+        <Popover id="penConfigPopover">
+            <Container className="p-2">
+                <p>Size {penSize}px</p>
+                <Form.Control
+                    type="range"
+                    value={penSize}
+                    min={1}
+                    max={100}
+                    onChange={(e) => {
+                        setPenSize(Number(e.target.value));
+                    }}
+                />
+                <p className="mt-2">Colour</p>
+                <ColourPicker
+                    onChange={(colour) => {
+                        setPenColour(colour);
+                    }}
+                />
+            </Container>
+        </Popover>
+    );
+
     return (
-        <Container className="drawing-canvas" fluid>
-            <Row>
-                <Col className="colour-picker" lg={2}>
-                    <Button
-                        onClick={() => {
-                            setShow((show) => {
-                                return !show;
-                            });
-                        }}
-                    >
-                        <AiFillEdit />
-                    </Button>
-                    {show ? (
-                        <Form.Control
-                            type="range"
-                            value={penSize}
-                            min={1}
-                            max={100}
-                            onChange={(e) => {
-                                setPenSize(Number(e.target.value));
-                            }}
-                        />
-                    ) : null}
-                    {show ? (
-                        <ColourPicker
-                            onChange={(colour) => {
-                                setPenColour(colour);
-                            }}
-                        />
-                    ) : null}
+        <Row>
+            <Container className="drawing-canvas" fluid>
+                <Row>
+                    {" "}
                     <Button
                         className="clear-button"
                         onClick={async () => {
@@ -289,11 +298,21 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                                 sessionId,
                             });
                         }}
+                        size="sm"
                     >
                         Clear
                     </Button>
-                </Col>
-                <Col lg={10}>
+                    <OverlayTrigger
+                        trigger="click"
+                        placement="bottom"
+                        overlay={popover}
+                    >
+                        <Button size="sm" id="penConfig">
+                            <AiFillEdit />
+                        </Button>
+                    </OverlayTrigger>
+                </Row>
+                <Row>
                     <div className="canvas-container">
                         <canvas
                             ref={canvasRefCallback}
@@ -316,8 +335,8 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                             }}
                         />
                     </div>
-                </Col>
-            </Row>
-        </Container>
+                </Row>
+            </Container>
+        </Row>
     );
 };

@@ -11,14 +11,21 @@ import { useDebouncedCallback } from "use-debounce/lib";
 import { Loader } from "../components";
 
 type Props = {
+    // Data regarding the target user.
     targetUserData: UserDataResponseType & {
         shouldClearNewMessage: boolean;
     };
+    // Current user id.
     myUserId: string;
+    // Current user name.
     myUsername: string;
+    // Callback for clearing an message.
     onNewMessageClear?: () => void;
 };
 
+/**
+ * Session initialisation component for single chat sessions.
+ */
 export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
     const { myUserId, myUsername, onNewMessageClear } = props;
     const { id: theirUserId } = props.targetUserData;

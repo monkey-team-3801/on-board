@@ -24,7 +24,11 @@ import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import "./classroom.less";
-import { BreakoutRoomListModal, BreakoutRoomModal } from "./components/";
+import {
+    BreakoutRoomListModal,
+    BreakoutRoomModal,
+    Progress,
+} from "./components/";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 
@@ -33,6 +37,9 @@ type Props = RouteComponentProps<{ classroomId: string }> &
 
 const socket = socketIOClient("/");
 
+/**
+ * Container for handling the rendering of a single classroom page.
+ */
 export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
@@ -239,7 +246,12 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             <p>{sessionResponse.data.description}</p>
                         </Container>
                         <Container fluid>
-                            <p>{`Start time: ${sessionResponse.data.startTime}, end time: ${sessionResponse.data.endTime}`}</p>
+                            <Progress
+                                startTime={
+                                    new Date(sessionResponse.data.startTime)
+                                }
+                                endTime={new Date(sessionResponse.data.endTime)}
+                            />
                         </Container>
                     </header>
                     <Container fluid>

@@ -6,10 +6,15 @@ import { RouteComponentProps } from "react-router-dom";
 import { Indicator } from "./Indicator";
 
 type Props = RouteComponentProps & {
+    // Event indicator on breakout room allocation.
     event: BreakoutAllocationEventData;
+    // On close callback.
     onClose: () => void;
 };
 
+/**
+ * Indicator for breakout room allocation event.
+ */
 export const BreakoutRoomAllocateIndicator: React.FunctionComponent<Props> = (
     props: Props
 ) => {

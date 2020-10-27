@@ -9,11 +9,17 @@ import { UserData } from "../types";
 import { UserDisplay } from "./UserDisplay";
 
 type Props = RouteComponentProps & {
+    // Visibility status of the modal.
     visible: boolean;
+    // Current session id.
     sessionId: string;
+    // Method to close the modal.
     handleClose: () => void;
 };
 
+/**
+ * Modal rendering a list of all breakout rooms in a session.
+ */
 export const BreakoutRoomListModal: React.FunctionComponent<Props> = (
     props: Props
 ) => {

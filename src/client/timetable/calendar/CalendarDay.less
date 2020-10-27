@@ -1,11 +1,69 @@
+@import "../../styles/Colours.less";
+
 .calendar-date {
     color: black;
+    margin: auto;
+    padding: 7% 5% 5%;
+    line-height: 33px;
+    height: 50px;
+    width: 50px;
+    border: none;
+    background: white;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100% !important;
+    transition: all 0.3s ease;
+    position: relative;
 
-    &.outside-range {
-        color: gray;
+    &.chosen-date {
+        background-color: @primary!important;
+        color: #fff !important;
+        font-weight: bold !important;
+        &.today {
+            background-color: lighten(#fc6262, 10%) !important;
+        }
     }
 
     &.today {
-        background: red;
+        border: #fc6262 solid 1px;
+        background-color: white;
+        color: #fc6262;
+        font-weight: bold;
+        &:hover {
+            background-color: lighten(#fc6262, 10%);
+        }
+    }
+
+    &:hover {
+        border-radius: 100%;
+        background: #d4c5fc;
+        color: white;
+        text-decoration: none !important;
+        &.busy {
+            background: darken(#d4c5fc, 10%);
+        }
+    }
+    &.outside-range {
+        color: lightgrey;
+        &.busy {
+            background: transparent;
+            &:hover {
+                background-color: #f8f8f8;
+            }
+        }
+    }
+
+    &.busy {
+        background: #f8f8f8;
+    }
+
+    > .orb {
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        position: absolute;
+        background-color: #fd9494;
+        right: 3px;
+        bottom: 3px;
     }
 }

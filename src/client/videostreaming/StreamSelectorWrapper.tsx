@@ -9,6 +9,9 @@ import {
     turnVideoOn,
 } from "../hooks/useMediaStream";
 
+/**
+ * Wrapper for selecting and configuring stream settings.
+ */
 export const StreamSelectorWrapper: React.FunctionComponent<{}> = () => {
     const { stream: myStream, enableStream } = useContext(PeerContext);
     return (

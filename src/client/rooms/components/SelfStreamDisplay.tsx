@@ -4,9 +4,13 @@ import { MyVideo } from "../../videostreaming";
 import { UserData } from "../types";
 
 type Props = Omit<UserData, "allocated"> & {
+    // Additional children to forward.
     children?: React.ReactNode;
 };
 
+/**
+ * Component for displaying the current user's video stream.
+ */
 export const SelfStreamDisplay: React.FunctionComponent<Props> = (
     props: Props
 ) => {

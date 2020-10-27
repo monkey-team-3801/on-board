@@ -12,10 +12,17 @@ import { BaseResponseType, CourseOptionType } from "../types";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Current user id.
     userId: string;
+    // Response for the course enrolment request.
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
+    // Refreshes the current course data.
+    refreshCourseData?: () => Promise<void>;
 };
 
+/**
+ * Container wrapper for the course enrolment form.
+ */
 export const EnrolFormContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {
@@ -86,6 +93,7 @@ export const EnrolFormContainer: React.FunctionComponent<Props> = (
                         courses: enrolledCourse.map((course) => course.value),
                     };
                     await enrolInCourses(data);
+                    await props.refreshCourseData?.();
                 }}
             >
                 <Form.Group>

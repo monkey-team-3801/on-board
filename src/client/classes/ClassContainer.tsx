@@ -19,18 +19,31 @@ import { requestIsLoading } from "../utils";
 import "./Classes.less";
 
 type Props = Partial<UpcomingClassroomSessionData> & {
+    // Id of the classroom.
     id?: string;
+    // Size of this container (For large or smaller columns).
     size: "sm" | "lg";
+    // Can the current user edit this modal.
     canEdit?: boolean;
+    // Callback when join is clicked.
     onJoinClick?: () => void;
+    // Callback when edit is clicked.
     onEditClick?: () => void;
+    // Callback when delete is clicked.
     onDeleteClick?: () => void;
+    // Is the parent being refreshed.
     isRefreshing?: boolean;
+    // Type of the room this is.
     type: RoomType;
+    // Setter for a list of deleted rooms, so that the same room cannot be deleted twice.
     setDeletedRooms?: React.Dispatch<React.SetStateAction<Array<string>>>;
+    // The current user id.
     currentUserId: string;
 };
 
+/**
+ * Single container wrapper for a class information display on the classes page.
+ */
 export const ClassContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

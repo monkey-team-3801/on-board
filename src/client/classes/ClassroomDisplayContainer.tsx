@@ -11,11 +11,17 @@ import { EditClassroomModal } from "./EditClassroomModal";
 import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps & {
+    // Setter for the loaidng state
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Current user data.
     userData: UserData;
+    // List of courses the user is enrolled in.
     courses?: Array<string>;
 };
 
+/**
+ * Component on the classroom page displaying a list of available classes.
+ */
 export const ClassroomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

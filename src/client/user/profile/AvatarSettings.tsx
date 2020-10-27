@@ -6,10 +6,15 @@ import { MdEdit } from "react-icons/md";
 import "./Settings.less";
 
 type Props = {
+    // Current user id.
     userID: string;
+    // Current user name.
     username: string;
 };
 
+/**
+ * Component which allows the configuration of a user's profile picture.
+ */
 export const AvatarSettings: React.FunctionComponent<Props> = (
     props: Props
 ) => {

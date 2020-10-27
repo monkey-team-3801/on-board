@@ -9,11 +9,17 @@ import { LocalStorageKey } from "../types";
 import "./Navbar.less";
 
 type Props = RouteComponentProps & {
+    // Current username.
     username?: string;
+    // Current user id.
     userid?: string;
+    // Amount of new messages.
     newMessages?: number;
 };
 
+/**
+ * Global navigation component.
+ */
 export const Navbar: React.FunctionComponent<Props> = (props: Props) => {
     const modalContext = React.useContext(ChatModalStatusContext);
 

@@ -11,6 +11,9 @@ type Props = RouteComponentProps & {
     toggleRegisterForm: (value: boolean) => void;
 };
 
+/**
+ * Form container for the login view.
+ */
 export const LoginContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

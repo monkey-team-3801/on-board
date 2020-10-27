@@ -38,10 +38,14 @@ import {
 import { asyncHandler } from "./utils";
 import { UserType } from "../types";
 
+// Environment environment variables.
 dotenv.config();
 
+// Initialisation.
 const app: Express = express();
 const server: Server = createServer(app);
+
+// Connect socketIO and PeerJs to the express server.
 export const io: socketIO.Server = socketIO(server, {
     serveClient: false,
     upgradeTimeout: 30000,
@@ -52,10 +56,8 @@ const peerServer = ExpressPeerServer(server, {
 
 app.use("/peerServer", peerServer);
 
+// SocketIO events.
 io.on("connect", (socket: SocketIO.Socket) => {
-    // socket.on(RoomEvent.PRIVATE_ROOM_JOIN, (data: PrivateRoomJoinData) => {
-    //     socket.join(data.sessionId);
-    // });
     socket.on(ChatEvent.CHAT_MESSAGE_SEND, (data: ChatMessageSendType) => {
         // Emit ONLY to others
         socket.in(data.sessionId).emit(ChatEvent.CHAT_MESSAGE_RECEIVE, data);
@@ -454,15 +456,6 @@ database.connect().then(() => {
                 setDefaultsOnInsert: true,
             }
         );
-        // await VideoSession.updateMany(
-        //     {},
-        //     {
-        //         $set: {
-        //             userPeerMap: new Map(),
-        //             userReferenceMap: new Map(),
-        //         },
-        //     }
-        // );
         console.log("Server is listening on", process.env.PORT || 5000);
     });
 });

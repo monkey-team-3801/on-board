@@ -1,15 +1,18 @@
 import React from "react";
 import range from "lodash/range";
 import { TimeSlot } from "./TimeSlot";
-import { CourseActivityResponseType } from "../../../types";
+import { CourseActivity } from "../../../types";
 import { Activity } from "./Activity";
 
 type Props = {
     dayStartTime: number;
     dayEndTime: number;
-    activities: CourseActivityResponseType[];
+    activities: CourseActivity[];
 };
 
+/**
+ * Single week day component.
+ */
 export const WeekDay: React.FunctionComponent<Props> = ({
     dayStartTime,
     dayEndTime,

@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
-import {
-    CourseActivityResponseType,
-    CourseAnnouncementsType,
-} from "../../../types";
+import { CourseActivity, CourseAnnouncementsType } from "../../../types";
 
 interface ICourse extends mongoose.Document {
     code: string;
     description: string;
-    activities: Array<CourseActivityResponseType>;
+    activities: Array<CourseActivity>;
     announcements: Array<CourseAnnouncementsType & { username: string }>;
 }
 
