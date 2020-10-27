@@ -374,6 +374,16 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         setBreakoutRoomModalVisible(true);
                                     }}
                                 >
+                                    <AiIcons.AiOutlineCluster className="setting-icon" />
+                                    <p className="icon-label">Manage Rooms</p>
+                                </Button>
+                                <Button
+                                    className="setting-btn"
+                                    id="settings-options"
+                                    onClick={() => {
+                                        setBreakoutRoomListModalVisible(true);
+                                    }}
+                                >
                                     <AiIcons.AiOutlineTeam className="setting-icon" />
                                     <p className="icon-label">Breakout Rooms</p>
                                 </Button>
@@ -469,7 +479,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                         </Col>
                     </Row>
                 </Col>
-                <Col md={3}>
+                <Col md={3} className="p-0">
                     <SidePanelContainer
                         sessionId={sessionId}
                         username={props.userData.username}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row, ButtonGroup } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
@@ -16,6 +16,8 @@ import { requestIsLoaded } from "../utils";
 import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import { SessionContainer, SidePanelContainer } from "./containers";
 import "./PrivateRoom.less";
+import { StreamControl } from "./components";
+import { useScreenSharing } from "../hooks/useScreenSharing";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {
@@ -52,6 +54,11 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
         true
     );
 
+    const { setupScreenSharing, stopScreenSharing } = useScreenSharing(
+        props.userData.id,
+        roomId
+    );
+
     const [showFileModal, setShowFileModal] = React.useState<boolean>(false);
 
     const [files, setFiles] = React.useState<
@@ -84,23 +91,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
             ) => {
                 return (
                     <>
-                        {props.roomType === RoomType.BREAKOUT && (
-                            <Row>
-                                <Button
-                                    onClick={() => {
-                                        props.history.push(
-                                            `/classroom/${sessionData.parentSessionId}`
-                                        );
-                                    }}
-                                >
-                                    Main Room
-                                </Button>
-                            </Row>
-                        )}
-                        <Container
-                            fluid
-                            className="private-room-container pr-0"
-                        >
+                        <Container fluid className="private-room-container p-0">
                             <Row>
                                 <Col md={9}>
                                     <header className="d-flex info-header">
@@ -117,6 +108,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                                 >
                                                                     <AiIcons.AiOutlineArrowLeft className="mr-2" />
                                                                     Back
+                                                                </Button>
+                                                            </Link>
+                                                            <Link
+                                                                to={`/classroom/${sessionData.parentSessionId}`}
+                                                            >
+                                                                <Button
+                                                                    variant="light"
+                                                                    size="sm"
+                                                                    className="d-flex align-items-center"
+                                                                >
+                                                                    Main Room
                                                                 </Button>
                                                             </Link>
                                                             <span className="session-name d-flex align-items-center ml-2">
@@ -158,45 +160,45 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             </Row>
                                         </Container>
                                     </header>
-                                    <Container fluid>
-                                        {/* {showCanvas ? (
+                                    <Container
+                                        fluid
+                                        className="room-content-container d-flex align-items-center justify-content-center"
+                                    >
+                                        {showCanvas ? (
                                             <DrawingCanvas
                                                 sessionId={sessionData.id}
                                                 socket={socket}
                                             />
                                         ) : (
-                                            <ScreenSharingContainer
-                                                userId={props.userData.id}
-                                                sessionId={sessionData.id}
-                                            />
-                                        )} */}
-                                        <Row>
+                                            <ScreenSharingContainer />
+                                        )}
+                                    </Container>
+                                    <Row className="d-flex justify-content-center">
+                                        <StreamControl
+                                            setupScreenSharing={
+                                                setupScreenSharing
+                                            }
+                                            stopScreenSharing={
+                                                stopScreenSharing
+                                            }
+                                        />
+                                        <ButtonGroup className="classroom-btn-grp d-flex mt-4">
                                             <Button
+                                                className="first-btn"
+                                                id="settings-options"
                                                 onClick={() => {
                                                     setShowFileModal(true);
                                                 }}
                                             >
-                                                Files
+                                                <AiIcons.AiOutlineUpload className="setting-icon" />
+                                                <p className="icon-label">
+                                                    View Files
+                                                </p>
                                             </Button>
-                                        </Row>
-                                    </Container>
-                                    <Row className="d-flex justify-content-center">
-                                        <FileModal
-                                            uploadType={
-                                                FileUploadType.DOCUMENTS
-                                            }
-                                            socket={socket}
-                                            sessionID={roomId}
-                                            userID={props.userData.id}
-                                            updateFiles={getFileData}
-                                            files={files}
-                                            roomType={props.roomType}
-                                            showModal={showFileModal}
-                                            setShowModal={setShowFileModal}
-                                        />
+                                        </ButtonGroup>
                                     </Row>
                                 </Col>
-                                <Col md={3} className="pr-0">
+                                <Col md={3} className="p-0">
                                     <SidePanelContainer
                                         sessionId={roomId}
                                         username={props.userData.username}
@@ -210,6 +212,17 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                 </Col>
                             </Row>
                         </Container>
+                        <FileModal
+                            uploadType={FileUploadType.DOCUMENTS}
+                            socket={socket}
+                            sessionID={roomId}
+                            userID={props.userData.id}
+                            updateFiles={getFileData}
+                            files={files}
+                            roomType={props.roomType}
+                            showModal={showFileModal}
+                            setShowModal={setShowFileModal}
+                        />
                     </>
                 );
             }}
