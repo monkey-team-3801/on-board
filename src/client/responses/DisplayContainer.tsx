@@ -12,12 +12,19 @@ import { MultipleChoiceDisplay } from "./MultipleChoiceDisplay";
 import { ShortAnswerDisplay } from "./ShortAnswerDisplay";
 
 type Props = {
+    // Current session id.
     sessionID: string;
+    // Current user id.
     uid: string;
+    // Current user type.
     userType: UserType;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
 };
 
+/**
+ * Container for displaying the results, responses and questions.
+ */
 export const DisplayContainer = (props: Props) => {
     const [forms, getForms] = useDynamicFetch<
         {

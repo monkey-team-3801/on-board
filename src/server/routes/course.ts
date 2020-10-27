@@ -21,6 +21,9 @@ import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+/**
+ * Finds all courses stored in the collection.
+ */
 const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
     const query = await Course.find();
     return query.map((course) => ({
@@ -31,6 +34,9 @@ const findAllCourses = async (): Promise<Array<CourseResponseType>> => {
     }));
 };
 
+/**
+ * Base route to get all courses data.
+ */
 router.get(
     "/",
     asyncHandler<CoursesResponseType, {}, {}>(async (req, res, next) => {
@@ -44,6 +50,9 @@ router.get(
     })
 );
 
+/**
+ * Gets a list of available course codes.
+ */
 router.post(
     "/list",
     asyncHandler<CourseListResponseType>(async (req, res, next) => {
@@ -63,6 +72,9 @@ router.post(
     })
 );
 
+/**
+ * Gets the activities associated with the courses a user is enrolled in.
+ */
 router.get(
     "/enrolled-activities",
     asyncHandler<
@@ -91,6 +103,10 @@ router.get(
         res.end();
     })
 );
+
+/**
+ * Gets the announcements associated with a course.
+ */
 router.post(
     "/announcements",
     asyncHandler<GetAnnouncementsResponseType, {}, GetAnnouncementsRequestType>(
@@ -134,6 +150,9 @@ router.post(
     )
 );
 
+/**
+ * Deletes a single announcement in a course.
+ */
 router.post(
     "/announcements/delete",
     asyncHandler<{}, {}, { id: string; courseCode: string }>(
@@ -158,6 +177,9 @@ router.post(
     )
 );
 
+/**
+ * Deletes a course from the collection.
+ */
 router.delete(
     "/delete/:course_code",
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
@@ -172,6 +194,9 @@ router.delete(
     )
 );
 
+/**
+ * Updates a course from the collection.
+ */
 router.patch(
     "/update/:course_code",
     asyncHandler<
@@ -188,6 +213,9 @@ router.patch(
     })
 );
 
+/**
+ * Gets information associated with a course code.
+ */
 router.get(
     "/:course_code",
     asyncHandler<CourseResponseType, { course_code: string }, {}>(
@@ -213,6 +241,9 @@ router.get(
     )
 );
 // TODO: Unique constraint
+/**
+ * Adds an activity to a course.
+ */
 router.post(
     "/:course_code/add-activity",
     asyncHandler<CourseActivity, { course_code: string }, CourseActivity>(
@@ -229,6 +260,9 @@ router.post(
     )
 );
 
+/**
+ * Deletes an activity from a course.
+ */
 router.delete(
     "/:course_code/delete-activity",
     asyncHandler<
@@ -256,6 +290,9 @@ router.delete(
     })
 );
 
+/**
+ * Gets activities associated with a course.
+ */
 router.get(
     "/:course_code/activities",
     asyncHandler<
@@ -292,6 +329,9 @@ router.get(
     })
 );
 
+/**
+ * Retrieves details associated with the course, incorporating other schemas.
+ */
 router.post(
     "/details",
     asyncHandler<

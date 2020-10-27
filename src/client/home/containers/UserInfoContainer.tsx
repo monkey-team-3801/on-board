@@ -13,14 +13,23 @@ import { requestIsLoaded, userTypeToClass } from "../../utils";
 import { CourseDetailsContainer } from "./CourseDetailsContainer";
 
 type Props = RouteComponentProps & {
+    // Setter for the loading state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Response for the course data request.
     coursesResponse: BaseResponseType<UserEnrolledCoursesResponseType>;
+    // Current user id.
     id: string;
+    // Current user name.
     username: string;
+    // Current user type.
     userType: UserType;
+    // List of online users.
     onlineUsers: Array<string>;
 };
 
+/**
+ * Home page component displaying the info about the current user.
+ */
 export const UserInfoContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

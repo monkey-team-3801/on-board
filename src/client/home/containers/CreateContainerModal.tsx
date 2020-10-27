@@ -10,14 +10,23 @@ import {
 import { HomeModalType } from "../types";
 
 type Props = RouteComponentProps & {
+    // Callback to close the modal.
     closeModal: Function;
+    // Refresh key for forcing refreshing components.
     refreshKey: number;
+    // Modal visible flag.
     showModal: boolean;
+    // Content inside the modal.
     modalContent: HomeModalType;
+    // List of courses the user is enrolled in.
     courses: Array<string>;
+    // Current user id.
     userId: string;
 };
 
+/**
+ * Modal containing tools to create classes or announcements.
+ */
 export const CreateContainerModal = (props: Props) => {
     const { closeModal, showModal, modalContent } = props;
 

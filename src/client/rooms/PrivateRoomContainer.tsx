@@ -22,6 +22,9 @@ type Props = RouteComponentProps<{ roomId: string }> &
         roomType: RoomType;
     };
 
+/**
+ * Container for displaying a single private room page.
+ */
 export const PrivateRoomContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

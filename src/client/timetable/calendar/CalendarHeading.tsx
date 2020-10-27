@@ -8,6 +8,9 @@ type Props = {
     setMonthRange: (month: number, year: number) => void;
 };
 
+/**
+ * Calendar header component, allows months to be cycled.
+ */
 export const CalendarHeading: React.FunctionComponent<Props> = ({
     month,
     year,

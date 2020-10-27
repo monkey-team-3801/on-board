@@ -23,10 +23,15 @@ import { requestIsLoaded, throttle } from "../utils";
 import "./Canvas.less";
 
 type Props = {
+    // Session Id the canvas is rendered in.
     sessionId: string;
+    // Relevant socket to the session.
     socket: SocketIOClient.Socket;
 };
 
+/**
+ * Component which handles the canvas for drawing.
+ */
 export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
     const { sessionId, socket } = props;
     const canvasRef: React.MutableRefObject<

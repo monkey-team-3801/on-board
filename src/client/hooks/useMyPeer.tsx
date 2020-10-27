@@ -19,6 +19,12 @@ declare var process: any;
 export type PeerId = string;
 export type Peers = Map<PeerId, Peer.MediaConnection>;
 
+/**
+ * Custom hook for handling peer connections and setup.
+ * @param socket Current session socket.
+ * @param userId Current user id.
+ * @param sessionId Current session id the hook us used in.
+ */
 export const useMyPeer = (
     socket: SocketIOClient.Socket,
     userId: string,

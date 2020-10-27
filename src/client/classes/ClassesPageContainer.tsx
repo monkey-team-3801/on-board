@@ -10,6 +10,9 @@ import { PrivateRoomDisplayContainer } from "./PrivateRoomDisplayContainer";
 
 type Props = RouteComponentProps & TopLayerContainerProps & {};
 
+/**
+ * Top level for the container on the classes page.
+ */
 export const ClassesPageContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

@@ -9,13 +9,21 @@ import "./Chat.less";
 import { ChatLog } from "./ChatLog";
 
 type Props = {
+    // Current user name.
     username: string;
+    // Current room id the chat container is in.
     roomId: string;
+    // Initial chat logs for this chat session.
     initialChatLog: Array<Omit<MessageData, "sessionId">>;
+    // The type of room the chat is in.
     roomType: RoomType;
+    // Relevant socket to the session.
     socket: SocketIOClient.Socket;
 };
 
+/**
+ * Container wrapper for initialising chat boxes and handling the passing of messages.
+ */
 export const ChatContainer: React.FunctionComponent<Props> = (props: Props) => {
     const { roomId, username, roomType } = props;
 

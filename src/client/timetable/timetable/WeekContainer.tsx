@@ -14,6 +14,9 @@ type Props = {
     activities: CourseActivity[];
 };
 
+/**
+ * Calendar weeks container which renders a list of days.
+ */
 export const WeekContainer: React.FunctionComponent<Props> = ({
     selectedYear,
     selectedWeek,

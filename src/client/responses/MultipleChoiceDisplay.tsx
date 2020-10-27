@@ -7,15 +7,25 @@ import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Current form id.
     formID: string;
+    // Title of the question.
     question: string;
+    // Go back to the previous view.
     back: () => void;
+    // Current user id.
     uid: string;
+    // Session socket instance.
     sock: SocketIOClient.Socket;
+    // Current session id.
     sid: string;
+    // The type of the form.
     formType: ResponseFormType;
 };
 
+/**
+ * Component used to answer multiple choice questions.
+ */
 export const MultipleChoiceDisplay = (props: Props) => {
     const { formID } = props;
     const [form] = useDynamicFetch<

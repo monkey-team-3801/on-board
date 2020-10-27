@@ -6,10 +6,15 @@ import { CourseActivityResponseType } from "../../../types";
 import { Event } from "./Event";
 
 type Props = {
+    // Selected date.
     chosenDate: Date;
+    // Activities assocaited with the date.
     getRelevantActivities: (chosenDate: Date) => CourseActivityResponseType;
 };
 
+/**
+ * Component for displaying a list of upcoming events of a day.
+ */
 export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
     chosenDate,
     getRelevantActivities,

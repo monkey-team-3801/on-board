@@ -4,6 +4,9 @@ import { getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+/**
+ * Authorisation route.
+ */
 router.use("/", async (req, res) => {
     if (req.headers.authorization) {
         try {

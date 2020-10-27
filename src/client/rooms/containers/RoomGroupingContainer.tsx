@@ -4,19 +4,29 @@ import { Col, Container, Row, Button } from "react-bootstrap";
 import { UserDisplayAllocation } from "../components";
 
 type Props = {
+    // Breakout room id.
     roomId: string | "main";
+    // List of rooms except this current one.
     otherRooms: Array<string>;
+    // Index of the room.
     roomIndex: number;
+    // List of users in the room.
     users: Array<UserData>;
+    // Method to allocate a user to a room.
     allocateUser: (
         roomId: string | "main",
         currentRoomId: string | "main",
         userId: string
     ) => void;
+    // Method to delete a single room.
     deleteRoom?: (roomId: string) => void;
+    // Minimum bootstrap column size.
     minColSize?: number;
 };
 
+/**
+ * Container displaying breakout rooms and the users associated with it.
+ */
 export const RoomGroupingContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

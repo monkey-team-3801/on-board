@@ -16,6 +16,9 @@ type Props = {
     back?: Function;
 };
 
+/**
+ * Container wrapper to upload files.
+ */
 export const UploadContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

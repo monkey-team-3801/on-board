@@ -11,11 +11,17 @@ import { EditPrivateRoomModal } from "./EditPrivateRoomModal";
 import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps & {
+    // Setter for the loading state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Current user data.
     userData: UserData;
+    // List of courses the user is enrolled in.
     courses?: Array<string>;
 };
 
+/**
+ * Single container wrapper for displaying a list of private rooms.
+ */
 export const PrivateRoomDisplayContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

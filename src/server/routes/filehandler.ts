@@ -10,6 +10,9 @@ import { FileForm, IFileForm } from "../database/schema/ResponseForm";
 
 export const router = express.Router();
 
+/**
+ * Gets a single file by id.
+ */
 router.get(
     "/file/:fileId",
     asyncHandler<{}, { fileId: string }>(async (req, res) => {
@@ -36,7 +39,9 @@ router.get(
     })
 );
 
-// Upload documents
+/**
+ * Route to upload a set of files.
+ */
 router.post(
     "/uploadFiles",
     asyncHandler<undefined, {}, FormData>(async (req, res) => {
@@ -123,7 +128,9 @@ router.post(
     })
 );
 
-// Gets the files for a session
+/**
+ * Gets files associated with a session.
+ */
 router.post(
     "/getFiles",
     asyncHandler<
@@ -248,6 +255,9 @@ router.post(
     })
 );
 
+/**
+ * Deletes a single file from a session.
+ */
 router.post(
     "/deleteFile",
     asyncHandler<undefined, {}, { sid: string; fileId: string; uid: string }>(

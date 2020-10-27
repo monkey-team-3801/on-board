@@ -14,11 +14,17 @@ import { isStaff } from "../../utils";
 import { UserType } from "../../../types";
 
 type Props = {
+    // Function to show the modal.
     showModal: Function;
+    // Setter for the loader state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // The type of the user invoking actions on the container.
     userType: UserType;
 };
 
+/**
+ * Container for users to create rooms or announcements.
+ */
 export const CreateContainer = (props: Props) => {
     const { setLoading } = props;
 

@@ -24,6 +24,9 @@ type Props = {
     size?: "sm" | "lg";
 };
 
+/**
+ * Similar to the file container but is rendered in an file modal.
+ */
 export const FileModal = (props: Props) => {
     const [showModal, setShowModal] = React.useState<boolean>(false);
 

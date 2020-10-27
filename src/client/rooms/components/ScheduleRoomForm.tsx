@@ -41,6 +41,9 @@ type Props = {
     submitText?: string;
 };
 
+/**
+ * Form for scheduling a classroom.
+ */
 export const ScheduleRoomForm: React.FunctionComponent<Props> = (
     props: Props
 ) => {

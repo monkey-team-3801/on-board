@@ -5,10 +5,15 @@ import { ClassOpenEventData } from "../types";
 import { Indicator } from "./Indicator";
 
 type Props = RouteComponentProps & {
+    // Classroom open event data.
     event: ClassOpenEventData;
+    // On close callback.
     onClose: () => void;
 };
 
+/**
+ * Indicator for when class has opened.
+ */
 export const ClassOpenIndicator: React.FunctionComponent<Props> = (
     props: Props
 ) => {

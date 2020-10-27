@@ -39,6 +39,9 @@ import { getAllClassroomSessions, getUserDataFromJWT } from "./utils";
 
 export const router = express.Router();
 
+/**
+ * Creates a single private session.
+ */
 router.post(
     "/create",
     asyncHandler<
@@ -87,6 +90,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get all private sessions the user can access.
+ */
 router.post(
     "/privateSessions",
     asyncHandler<Array<SessionInfo & { createdByUsername?: string }>, {}, {}>(
@@ -131,6 +137,9 @@ router.post(
     )
 );
 
+/**
+ * Route to get all classroom sessions the user can access.
+ */
 router.post(
     "/classroomSessions",
     asyncHandler<
@@ -161,6 +170,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get all upcoming sessions.
+ */
 router.post(
     "/upcomingClassroomSessions",
     asyncHandler<
@@ -199,6 +211,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get data associated with a single session.
+ */
 router.post(
     "/getPrivateSession",
     asyncHandler<SessionData, {}, { id: string }>(async (req, res, next) => {
@@ -221,6 +236,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get data associated with a single breakout room session.
+ */
 router.post(
     "/getBreakoutSession",
     asyncHandler<SessionData, {}, { id: string }>(async (req, res, next) => {
@@ -244,6 +262,9 @@ router.post(
     })
 );
 
+/**
+ * Route to get data associated with a single classroom session.
+ */
 router.post(
     "/getClassroomSession",
     asyncHandler<ClassroomSessionData, {}, { id: string }>(
@@ -274,6 +295,9 @@ router.post(
     )
 );
 
+/**
+ * Route to edit a classroom session.
+ */
 router.post(
     "/edit/classroomSession",
     asyncHandler<
@@ -331,6 +355,9 @@ router.post(
     })
 );
 
+/**
+ * Route to edit a private room session.
+ */
 router.post(
     "/edit/privateSession",
     asyncHandler<
@@ -355,6 +382,9 @@ router.post(
     })
 );
 
+/**
+ * Route to delete a private session.
+ */
 router.post(
     "/delete/privateRoom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
@@ -389,6 +419,9 @@ router.post(
     )
 );
 
+/**
+ * Route to delete a classroom session.
+ */
 router.post(
     "/delete/classroom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
@@ -427,6 +460,9 @@ router.post(
     )
 );
 
+/**
+ * Route for deleting any sessions, used to remove shared information between session types.
+ */
 router.post(
     "/delete/*",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
@@ -457,6 +493,9 @@ router.post(
     )
 );
 
+/**
+ * Saves the state of the canvas in a private room.
+ */
 router.post(
     "/saveCanvas",
     asyncHandler<undefined, {}, SaveCanvasRequestType>(async (req, res) => {
@@ -480,6 +519,9 @@ router.post(
     })
 );
 
+/**
+ * Gets the state of the canvas in a private room.
+ */
 router.post(
     "/getCanvas",
     asyncHandler<GetCanvasResponseType, {}, GetCanvasRequestType>(
@@ -497,6 +539,9 @@ router.post(
     )
 );
 
+/**
+ * Clears all strokes on a canvas.
+ */
 router.post(
     "/clearCanvas",
     asyncHandler<undefined, {}, GetCanvasRequestType>(async (req, res) => {
@@ -512,6 +557,9 @@ router.post(
     })
 );
 
+/**
+ * Gets the users in a session.
+ */
 router.post(
     "/getSessionUsers",
     asyncHandler<
@@ -542,6 +590,9 @@ router.post(
     })
 );
 
+/**
+ * Creates a set of breakout rooms associated with a classroom.
+ */
 router.post(
     "/createBreakoutRooms",
     asyncHandler<
@@ -623,6 +674,9 @@ router.post(
     })
 );
 
+/**
+ * Gets all breakout rooms associated with a classroom.
+ */
 router.post(
     "/getBreakoutRooms",
     asyncHandler<
@@ -663,6 +717,9 @@ router.post(
     })
 );
 
+/**
+ * Deletes a single breakout room.
+ */
 router.post(
     "/deleteBreakoutRoom",
     asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
@@ -677,6 +734,9 @@ router.post(
     })
 );
 
+/**
+ * Deletes all breakout rooms associated with a classroom.
+ */
 router.post(
     "/deleteAllBreakoutRooms",
     asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
@@ -693,6 +753,9 @@ router.post(
     })
 );
 
+/**
+ * Adds a single user to the list of users who have their hands raised.
+ */
 router.post(
     "/addRaisedHandUser",
     asyncHandler<undefined, {}, { sessionId: string; userId: string }>(
@@ -713,6 +776,9 @@ router.post(
     )
 );
 
+/**
+ * Removes a single user to the list of users who have their hands raised.
+ */
 router.post(
     "/removeRaisedHandUser",
     asyncHandler<undefined, {}, { sessionId: string; userId: string }>(
@@ -733,6 +799,9 @@ router.post(
     )
 );
 
+/**
+ * Gets the list of users who have their hands raised.
+ */
 router.post(
     "/getRaisedHandUsers",
     asyncHandler<{ raisedHandUsers: Array<string> }, {}, { sessionId: string }>(

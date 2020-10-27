@@ -10,6 +10,9 @@ type Props = {
     activities: CourseActivity[];
 };
 
+/**
+ * Single week day component.
+ */
 export const WeekDay: React.FunctionComponent<Props> = ({
     dayStartTime,
     dayEndTime,

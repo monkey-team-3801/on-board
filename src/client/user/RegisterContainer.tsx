@@ -15,6 +15,9 @@ type Props = RouteComponentProps & {
     toggleRegisterForm: (value: boolean) => void;
 };
 
+/**
+ * Form container for the register view.
+ */
 export const RegisterContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

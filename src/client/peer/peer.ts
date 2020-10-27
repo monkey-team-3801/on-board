@@ -38,6 +38,9 @@ export type PeerData = {
     cleanUp: () => void;
 };
 
+/**
+ * React context for user peer connections and streams.
+ */
 export const PeerContext = createContext<PeerData>({
     peer: undefined,
     peerId: "",

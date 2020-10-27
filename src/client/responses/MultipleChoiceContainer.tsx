@@ -8,15 +8,25 @@ import { useDynamicFetch } from "../hooks";
 import { requestIsLoaded, requestIsLoading } from "../utils";
 
 type Props = {
+    // Question title.
     question: string;
+    // Current session id.
     sessionID: string;
+    // Closes the current modal.
     closeModal: () => void;
+    // Current user id.
     uid: string;
+    // Current socket instance.
     sock: SocketIOClient.Socket;
+    // Setter for form submitting status.
     setFormSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+    // State to check if the form is being submitted.
     formSubmitting: boolean;
 };
 
+/**
+ * Form for creating a multiple choice question.
+ */
 export const MultipleChoiceContainer = (props: Props) => {
     const initialValues: [string, string][] = [[uuidv4(), ""]];
     const initialMap = OrderedMap<string, string>(initialValues);

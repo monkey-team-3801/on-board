@@ -5,19 +5,29 @@ import { FiAlertOctagon } from "react-icons/fi";
 import { ProfilePicture } from "../../components";
 
 type Props = {
+    // List of users to render.
     users: Array<UserDataResponseType>;
+    // My current user id.
     myUserId: string;
+    // Selected chat session target user id.
     targetUserId?: string;
+    // List of online sers.
     onlineUsers: Array<string>;
+    // Setter for the target user to chat with.
     setTargetUser: (
         user: UserDataResponseType & {
             shouldClearNewMessage: boolean;
         }
     ) => void;
+    // List of chat sessions with a new messages.
     chatWithNewMessages: Array<string>;
+    // Header for this user list. (coordinator/student etc)
     headerText?: string;
 };
 
+/**
+ * List of users rendered by the chat modal.
+ */
 export const UserList: React.FunctionComponent<Props> = (props: Props) => {
     if (props.users.length === 0) {
         return <></>;

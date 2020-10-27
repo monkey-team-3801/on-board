@@ -4,10 +4,15 @@ import { MessageData } from "../../types";
 import { Log } from "./Log";
 
 type Props = {
+    // List of messages to render.
     messages: Array<Omit<MessageData, "sessionId">>;
+    // Username of the current user.
     currentUser: string;
 };
 
+/**
+ * Component for rendering an list of chat log entries.
+ */
 export const ChatLog: React.FunctionComponent<Props> = (props: Props) => {
     const { messages } = props;
     const scrollAnchorRef = React.useRef<HTMLDivElement | null>(null);

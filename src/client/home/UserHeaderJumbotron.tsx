@@ -16,9 +16,13 @@ import { RouteComponentProps } from "react-router-dom";
 import FadeIn from "react-fade-in";
 
 type Props = RouteComponentProps & {
+    // Current username
     username: string;
+    // Amount of unread messages.
     newMessagesAmount: number;
+    // Amount of upcoming classes.
     upcomingClassesAmount: number;
+    // Amount of events on the current day.
     eventsAmount: number;
 };
 

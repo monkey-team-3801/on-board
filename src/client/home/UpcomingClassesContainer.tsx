@@ -6,11 +6,17 @@ import { useFetch } from "../hooks";
 import { requestIsLoaded } from "../utils";
 
 type Props = {
+    // Setter for the loading state.
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    // Sets the amount of upcoming classes, used for the notifications list.
     setUpcomingClassesAmount: React.Dispatch<React.SetStateAction<number>>;
+    // Current user id.
     userId: string;
 };
 
+/**
+ * Container rendering an list of upcoming classes.
+ */
 export const UpcomingClassesContainer: React.FunctionComponent<Props> = (
     props: Props
 ) => {

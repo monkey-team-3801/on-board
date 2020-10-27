@@ -9,6 +9,9 @@ type Prop = {
     sessionId: string;
 };
 
+/**
+ * Component handling the sharing of screens.
+ */
 export const ScreenSharingContainer: React.FunctionComponent<Prop> = (
     props
 ) => {
