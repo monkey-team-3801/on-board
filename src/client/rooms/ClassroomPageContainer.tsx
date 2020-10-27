@@ -277,10 +277,10 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                     <Row className="head-panel">
                         <Col xs={1.5}>
                         <Link to="/classes">
-                            <Button 
+                            <Button
                             className="justify-content-center back-btn"
                             variant="light"
-                            size="sm"                            
+                            size="sm"
                             >
                                 <AiIcons.AiOutlineArrowLeft className="icon" />
                                 Back
@@ -457,7 +457,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                             </Row>
                         </Col>
                     </Row>
-                    
+
                 </Col>
                 <Col md={3}>
                     <SidePanelContainer
