@@ -18,7 +18,11 @@ export const ChatLog: React.FunctionComponent<Props> = (props: Props) => {
     const scrollAnchorRef = React.useRef<HTMLDivElement | null>(null);
 
     React.useEffect(() => {
-        scrollAnchorRef.current?.scrollIntoView({ behavior: "smooth" });
+        scrollAnchorRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "start",
+        });
     }, [messages]);
 
     return (

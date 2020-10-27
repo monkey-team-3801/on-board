@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Row } from "react-bootstrap";
-import { GiHand } from "react-icons/gi";
+import { FaHandPaper } from "react-icons/fa";
 import { UserDataResponseType } from "../../../types";
 import { PeerContext } from "../../peer";
 import { UserDisplay } from "../components";
@@ -14,6 +14,8 @@ type Props = {
     raisedHandUsers: Array<string>;
     // Current user id.
     myUserId: string;
+    // Large or small user profiles?
+    size?: "lg" | "sm";
 };
 
 /**
@@ -28,7 +30,7 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     const handIcon = React.useCallback(
         (user: { id: string }) => {
             return raisedHandUsers.includes(user.id) ? (
-                <GiHand className="hand" />
+                <FaHandPaper className="hand" />
             ) : (
                 <></>
             );
@@ -37,8 +39,10 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     return (
-        <Row className="mt-2">
-            <div className="user-display-container">
+        <Row className="mt-3">
+            <div
+                className={`user-display-container ${props.size || "sm"} px-2`}
+            >
                 {props.users.map((user) => {
                     if (user.id === props.myUserId) {
                         if (myPeer && myStream) {

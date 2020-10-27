@@ -39,9 +39,10 @@ export const ParticipantsContainer: React.FunctionComponent<Props> = (
 
     return (
         <Container>
-            <Container className="search-bar">
+            <Container className="search-bar mt-2">
                 <Form.Control
                     type="text"
+                    className="mr-2"
                     placeholder="Find a person..."
                     onChange={(e) => {
                         setFilterValue(e.target.value);

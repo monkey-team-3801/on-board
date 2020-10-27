@@ -317,7 +317,7 @@ export const DrawingCanvas: React.FunctionComponent<Props> = (props: Props) => {
                         <canvas
                             ref={canvasRefCallback}
                             width={1000}
-                            height={800}
+                            height={700}
                             onMouseDown={onMouseDown}
                             onMouseUp={onMouseUp}
                             onMouseMove={(e) => {
