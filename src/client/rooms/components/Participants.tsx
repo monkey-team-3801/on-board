@@ -14,6 +14,8 @@ type Props = {
     raisedHandUsers: Array<string>;
     // Current user id.
     myUserId: string;
+    // Large or small user profiles?
+    size?: "lg" | "sm";
 };
 
 /**
@@ -37,8 +39,8 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     );
 
     return (
-        <Row className="mt-2">
-            <div className="user-display-container">
+        <Row className="mt-3">
+            <div className={`user-display-container ${props.size || "sm"} px-2`}>
                 {props.users.map((user) => {
                     if (user.id === props.myUserId) {
                         if (myPeer && myStream) {

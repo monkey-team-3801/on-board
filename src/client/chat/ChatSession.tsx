@@ -187,7 +187,7 @@ export const ChatSession: React.FunctionComponent<Props> = (props: Props) => {
                                     />
                                 </Col>
                                 <Col xs="auto">
-                                    <Button type="submit" className="mb-2">
+                                    <Button type="submit" className="mb-2" size="sm">
                                         Send
                                     </Button>
                                 </Col>

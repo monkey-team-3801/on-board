@@ -159,7 +159,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                         </Container>
                                     </header>
                                     <Container fluid>
-                                        {showCanvas ? (
+                                        {/* {showCanvas ? (
                                             <DrawingCanvas
                                                 sessionId={sessionData.id}
                                                 socket={socket}
@@ -169,7 +169,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                 userId={props.userData.id}
                                                 sessionId={sessionData.id}
                                             />
-                                        )}
+                                        )} */}
                                         <Row>
                                             <Button
                                                 onClick={() => {

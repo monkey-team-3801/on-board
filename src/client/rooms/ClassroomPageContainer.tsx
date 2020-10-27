@@ -1,9 +1,7 @@
 import { List } from "immutable";
 import React, { useRef } from "react";
 import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
-// import { StreamSelectorWrapper } from "../video";
 import * as AiIcons from "react-icons/ai";
-import * as BiIcons from "react-icons/bi";
 import * as FaIcons from "react-icons/fa";
 import { MdNotificationsActive, MdNotificationsOff } from "react-icons/md";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -21,18 +19,22 @@ import { Loader } from "../components";
 import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch, useFetch } from "../hooks";
 import { useMyPeer } from "../hooks/useMyPeer";
+import { useScreenSharing } from "../hooks/useScreenSharing";
 import { BreakoutRoomAllocateIndicator } from "../Indicators";
 import { PeerContext } from "../peer";
 import { ResponsesModal } from "../responses";
 import { BreakoutAllocationEventData, TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
+import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
 import "./classroom.less";
 import {
+    StreamControl,
+    HostDisplay,
+    Progress,
     BreakoutRoomListModal,
     BreakoutRoomModal,
     Participants,
-    Progress,
-} from "./components/";
+} from "./components";
 import { SidePanelContainer } from "./containers";
 import "./room.less";
 
@@ -92,6 +94,11 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
 
     const [raisedHandUsers, setRaisedHandUsers] = React.useState<List<string>>(
         List([])
+    );
+
+    const { setupScreenSharing, stopScreenSharing } = useScreenSharing(
+        userId,
+        sessionId
     );
 
     const [, addRaisedHand] = useDynamicFetch<
@@ -164,20 +171,9 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     const [altView, setAltView] = React.useState<boolean>(false);
 
     const video = (
-        <Container className="video-container mt-4">
-            {/* <StreamSelectorWrapper
-            sessionId={props.match.params.classroomId}
-            userId={props.userData.id}
-        /> */}
-        </Container>
-    );
-
-    const presenter = (
-        <div className="presenter-container">
-            <div className="presenter-picture">{/* Picture */}</div>
-            <div className="presenter-name">Richard Thomas</div>
-            <div className="presenter-role">Course Coordinator</div>
-        </div>
+        <Row className="video-container">
+            <ScreenSharingContainer />
+        </Row>
     );
 
     const participants = (
@@ -186,6 +182,7 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                 users={sessionUsersResponse.data?.users || []}
                 raisedHandUsers={raisedHandUsers.toArray()}
                 myUserId={props.userData.id}
+                size="lg"
             ></Participants>
         </Container>
     );
@@ -264,6 +261,15 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
         }
     }, [fileData]);
 
+    const presenterView = React.useMemo(() => {
+        return (
+            <HostDisplay
+                hostId={sessionResponse.data?.createdBy}
+                myUserId={userId}
+            />
+        );
+    }, [sessionResponse, userId]);
+
     if (!requestIsLoaded(sessionResponse)) {
         return <Loader full />;
     }
@@ -271,37 +277,35 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     return (
         <PeerContext.Provider value={peerData}>
             <Row>
-                <Col>
-                    <Row className="head-panel">
-                        <Col xs={1.5}>
-                            <Link to="/classes">
-                                <Button
-                                    className="justify-content-center back-btn"
-                                    variant="light"
-                                    size="sm"
-                                >
-                                    <AiIcons.AiOutlineArrowLeft className="icon" />
-                                    Back
-                                </Button>
-                            </Link>
+                <Col className="mr-4">
+                    <Row className="head-panel mt-4 mb-4">
+                        <Col xs={4}>
+                            <Container className="d-flex align-items-center">
+                                <Link to="/classes">
+                                    <Button
+                                        className="justify-content-center back-btn"
+                                        variant="light"
+                                        size="sm"
+                                    >
+                                        <AiIcons.AiOutlineArrowLeft className="icon" />
+                                        Back
+                                    </Button>
+                                </Link>
+                                <h1 className="ml-2 m-0 text-truncate">
+                                    {`${sessionResponse.data.courseCode} - ${sessionResponse.data.roomType}`}
+                                </h1>
+                            </Container>
                         </Col>
-                        <Col xs={3}>
-                            <h1>
-                                {`${sessionResponse.data.courseCode} - ${sessionResponse.data.roomType}`}
-                            </h1>
-                        </Col>
-                        <Col>
-                            <Progress
-                                startTime={
-                                    new Date(sessionResponse.data.startTime)
-                                }
-                                endTime={new Date(sessionResponse.data.endTime)}
-                            />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Row>
+                        <Col xs={8}>
+                            <div>
+                                <Progress
+                                    startTime={
+                                        new Date(sessionResponse.data.startTime)
+                                    }
+                                    endTime={
+                                        new Date(sessionResponse.data.endTime)
+                                    }
+                                />
                                 <ButtonGroup
                                     className="view-control mt-2 d-flex justify-content-center toggle-container"
                                     size="sm"
@@ -327,144 +331,141 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
                                         Participants View
                                     </p>
                                 </ButtonGroup>
-                            </Row>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
                             <Row className="classroom-row">
-                                <Col sm={4}>
-                                    {altView ? null : presenter}
+                                <Col
+                                    sm={4}
+                                    className="d-flex align-items-center justify-content-center"
+                                >
+                                    {altView ? null : presenterView}
                                     <div className="video-alt">
-                                        {altView ? presenter : null}
+                                        {altView ? presenterView : null}
                                         {altView ? video : null}
                                     </div>
                                 </Col>
                                 <Col sm={8} className="video-column">
                                     {altView ? participants : video}
-                                    <ButtonGroup
-                                        size="sm"
-                                        className="classroom-btn-grp d-flex mt-4"
-                                    >
-                                        <Button
-                                            className="first-btn"
-                                            id="settings-options"
-                                            onClick={() => {
-                                                setBreakoutRoomModalVisible(
-                                                    true
-                                                );
-                                            }}
-                                        >
-                                            <AiIcons.AiOutlineTeam className="setting-icon" />
-                                            <p className="icon-label">
-                                                Breakout Rooms
-                                            </p>
-                                        </Button>
-                                        <Button
-                                            className="setting-btn"
-                                            onClick={async () => {
-                                                if (handRaisedRef.current) {
-                                                    setRaisedHandUsers(
-                                                        raisedHandUsers.splice(
-                                                            raisedHandUsers.indexOf(
-                                                                userId
-                                                            ),
-                                                            1
-                                                        )
-                                                    );
-                                                } else {
-                                                    setRaisedHandUsers(
-                                                        raisedHandUsers.concat([
-                                                            userId,
-                                                        ])
-                                                    );
-                                                }
-                                                setRaisedHandStatus.callback(
-                                                    handRaisedRef.current
-                                                );
-                                                handRaisedRef.current = !handRaisedRef.current;
-                                            }}
-                                        >
-                                            <FaIcons.FaRegHandPaper className="setting-icon " />
-                                            <p className="icon-label">
-                                                Raise Hand
-                                            </p>
-                                        </Button>
-                                        <Button className="setting-btn">
-                                            <BiIcons.BiVideoOff className="setting-icon" />
-                                            <p className="icon-label">
-                                                Camera off
-                                            </p>
-                                        </Button>
-                                        <Button className="setting-btn">
-                                            <BiIcons.BiMicrophoneOff className="setting-icon" />
-                                            <p className="icon-label">
-                                                Mic off
-                                            </p>
-                                        </Button>
-                                        <Button
-                                            className="setting-btn"
-                                            onClick={() => {
-                                                setResponsesModalStatus({
-                                                    visible: true,
-                                                    type: "result",
-                                                });
-                                            }}
-                                        >
-                                            <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
-                                            {props.userData.userType ===
-                                            UserType.STUDENT ? (
-                                                <p className="icon-label">
-                                                    View Questions
-                                                </p>
-                                            ) : (
-                                                <p>View Results</p>
-                                            )}
-                                        </Button>
-                                        <Button
-                                            onClick={() => {
-                                                setShowFileModal(true);
-                                            }}
-                                            className="setting-btn"
-                                        >
-                                            <AiIcons.AiOutlineUpload className="setting-icon" />
-                                            <p className="icon-label">
-                                                View Files
-                                            </p>
-                                        </Button>
-                                        {props.userData.userType ===
-                                            UserType.COORDINATOR && (
-                                            <Button
-                                                onClick={() => {
-                                                    setResponsesModalStatus({
-                                                        visible: true,
-                                                        type: "ask",
-                                                    });
-                                                }}
-                                                className="setting-btn"
-                                            >
-                                                <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
-                                                <p className="icon-label">
-                                                    Ask Questions
-                                                </p>
-                                            </Button>
-                                        )}
-                                        <Button
-                                            className="end-btn"
-                                            onClick={() => {
-                                                setSoundEnabled((prev) => {
-                                                    return !prev;
-                                                });
-                                            }}
-                                        >
-                                            {soundEnabled ? (
-                                                <MdNotificationsActive className="setting-icon" />
-                                            ) : (
-                                                <MdNotificationsOff className="setting-icon" />
-                                            )}
-                                            <p className="icon-label">
-                                                Toggle Notifications
-                                            </p>
-                                        </Button>
-                                    </ButtonGroup>
                                 </Col>
                             </Row>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col sm={4}>
+                            <Row className="d-flex justify-content-center">
+                                <StreamControl
+                                    setupScreenSharing={setupScreenSharing}
+                                    stopScreenSharing={stopScreenSharing}
+                                />
+                            </Row>
+                            <Row className="d-flex justify-content-center">
+                                <ButtonGroup className="classroom-btn-grp d-flex mt-4"></ButtonGroup>
+                            </Row>
+                        </Col>
+                        <Col sm={8} className="d-flex justify-content-center">
+                            <ButtonGroup className="classroom-btn-grp d-flex mt-4">
+                                <Button
+                                    className="first-btn"
+                                    id="settings-options"
+                                    onClick={() => {
+                                        setBreakoutRoomModalVisible(true);
+                                    }}
+                                >
+                                    <AiIcons.AiOutlineTeam className="setting-icon" />
+                                    <p className="icon-label">Breakout Rooms</p>
+                                </Button>
+                                <Button
+                                    className="setting-btn"
+                                    onClick={async () => {
+                                        if (handRaisedRef.current) {
+                                            setRaisedHandUsers(
+                                                raisedHandUsers.splice(
+                                                    raisedHandUsers.indexOf(
+                                                        userId
+                                                    ),
+                                                    1
+                                                )
+                                            );
+                                        } else {
+                                            setRaisedHandUsers(
+                                                raisedHandUsers.concat([userId])
+                                            );
+                                        }
+                                        setRaisedHandStatus.callback(
+                                            handRaisedRef.current
+                                        );
+                                        handRaisedRef.current = !handRaisedRef.current;
+                                    }}
+                                >
+                                    <FaIcons.FaRegHandPaper className="setting-icon " />
+                                    <p className="icon-label">Raise Hand</p>
+                                </Button>
+                                <Button
+                                    className="setting-btn"
+                                    onClick={() => {
+                                        setResponsesModalStatus({
+                                            visible: true,
+                                            type: "result",
+                                        });
+                                    }}
+                                >
+                                    <AiIcons.AiOutlineProfile className="setting-icon"></AiIcons.AiOutlineProfile>
+                                    {props.userData.userType ===
+                                    UserType.STUDENT ? (
+                                        <p className="icon-label">
+                                            View Questions
+                                        </p>
+                                    ) : (
+                                        <p>View Results</p>
+                                    )}
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setShowFileModal(true);
+                                    }}
+                                    className="setting-btn"
+                                >
+                                    <AiIcons.AiOutlineUpload className="setting-icon" />
+                                    <p className="icon-label">View Files</p>
+                                </Button>
+                                {props.userData.userType ===
+                                    UserType.COORDINATOR && (
+                                    <Button
+                                        onClick={() => {
+                                            setResponsesModalStatus({
+                                                visible: true,
+                                                type: "ask",
+                                            });
+                                        }}
+                                        className="setting-btn"
+                                    >
+                                        <AiIcons.AiOutlineQuestionCircle className="setting-icon" />
+                                        <p className="icon-label">
+                                            Ask Questions
+                                        </p>
+                                    </Button>
+                                )}
+                                <Button
+                                    className="end-btn"
+                                    onClick={() => {
+                                        setSoundEnabled((prev) => {
+                                            return !prev;
+                                        });
+                                    }}
+                                >
+                                    {soundEnabled ? (
+                                        <MdNotificationsActive className="setting-icon" />
+                                    ) : (
+                                        <MdNotificationsOff className="setting-icon" />
+                                    )}
+                                    <p className="icon-label">
+                                        Toggle Notifications
+                                    </p>
+                                </Button>
+                            </ButtonGroup>
                         </Col>
                     </Row>
                 </Col>

@@ -6,3 +6,5 @@ export * from "./Participants";
 export * from "./ScheduleRoomForm";
 export * from "./CreatePrivateRoomForm";
 export * from "./Progress";
+export * from "./StreamControl";
+export * from "./HostDisplay";

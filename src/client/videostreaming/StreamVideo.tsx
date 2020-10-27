@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import "./StreamVideo.less";
 
 type Props = {
     muted: boolean;
@@ -29,10 +28,12 @@ export const StreamVideo: React.FunctionComponent<Props> = ({
     }, [stream]);
 
     return (
-        <video
-            className={`${className ? className : undefined} stream-video`}
-            ref={videoRef}
-            muted={muted}
-        />
+        <div className={`${className ? className : ""} stream-video-wrapper`}>
+            <video
+                className="stream-video"
+                ref={videoRef}
+                muted={muted}
+            />
+        </div>
     );
 };
