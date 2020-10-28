@@ -31,7 +31,7 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
     const { open: modalOpen, selectedId, myUserId, onlineUserResponse } = props;
     const modalContext = React.useContext(ChatModalStatusContext);
 
-    const [userResponse] = useFetch<Array<UserDataResponseType>>(
+    const [userResponse, refreshUsers] = useFetch<Array<UserDataResponseType>>(
         "/user/getAllUserInCourse"
     );
 
@@ -71,6 +71,10 @@ export const ChatModal: React.FunctionComponent<Props> = (props: Props) => {
             return user.userType === UserType.STUDENT;
         });
     }, [filteredUsers]);
+
+    React.useEffect(() => {
+        refreshUsers();
+    }, [props.courses, refreshUsers]);
 
     React.useEffect(() => {
         if (modalOpen) {
