@@ -52,7 +52,7 @@ export const UpcomingEventsContainer: React.FunctionComponent<Props> = ({
                     </Col>
                 </Row>
             ) : (
-                <p className="text-muted text-center p-3">No events today</p>
+                <p className="text-muted text-center p-3">No events today.</p>
             )}
         </Container>
     );

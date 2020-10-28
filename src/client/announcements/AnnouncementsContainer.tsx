@@ -75,6 +75,13 @@ export const AnnouncementsContainer: React.FunctionComponent<Props> = (
                 <Row className="d-flex justify-content-center">
                     <p className="text-muted">You have reached the top...</p>
                 </Row>
+                {filteredAnnouncements?.length === 0 && (
+                    <Row className="d-flex justify-content-center py-4">
+                        <p className="text-muted">
+                            No announcements has been made.
+                        </p>
+                    </Row>
+                )}
                 {filteredAnnouncements &&
                     filteredAnnouncements.map((announcement, i) => {
                         return (

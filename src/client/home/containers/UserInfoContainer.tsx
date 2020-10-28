@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import {
     UserDataResponseType,
     UserEnrolledCoursesResponseType,
@@ -94,30 +94,51 @@ export const UserInfoContainer: React.FunctionComponent<Props> = (
             </Row>
             <Row>
                 <Col>
-                    {requestIsLoaded(courseDetailsResponse) &&
-                        Object.keys(courseDetailsResponse.data).map(
-                            (courseCode, index) => {
-                                return (
-                                    <CourseDetailsContainer
-                                        key={courseCode}
-                                        courseCode={courseCode}
-                                        onlineUsers={props.onlineUsers}
-                                        userData={
-                                            courseDetailsResponse.data[
-                                                courseCode
-                                            ]
-                                        }
-                                        showHr={
-                                            index !==
-                                            Object.keys(
-                                                courseDetailsResponse.data
-                                            ).length -
-                                                1
-                                        }
-                                    />
-                                );
-                            }
-                        )}
+                    {requestIsLoaded(courseDetailsResponse) && (
+                        <>
+                            {Object.keys(courseDetailsResponse.data).length ===
+                                0 && (
+                                <Container>
+                                    <Row className="d-flex justify-content-center">
+                                        <p className="text-muted">
+                                            Looks like your not enrolled in any
+                                            courses.
+                                        </p>
+                                    </Row>
+                                    <Row className="d-flex justify-content-center">
+                                        <Link to="/profile">
+                                            <Button size="sm" variant="light">
+                                                Enrol
+                                            </Button>
+                                        </Link>
+                                    </Row>
+                                </Container>
+                            )}
+                            {Object.keys(courseDetailsResponse.data).map(
+                                (courseCode, index) => {
+                                    return (
+                                        <CourseDetailsContainer
+                                            key={courseCode}
+                                            courseCode={courseCode}
+                                            onlineUsers={props.onlineUsers}
+                                            userData={
+                                                courseDetailsResponse.data[
+                                                    courseCode
+                                                ]
+                                            }
+                                            showHr={
+                                                index !==
+                                                Object.keys(
+                                                    courseDetailsResponse.data
+                                                ).length -
+                                                    1
+                                            }
+                                        />
+                                    );
+                                }
+                            )}
+                        </>
+                    )}
                 </Col>
             </Row>
         </Container>
