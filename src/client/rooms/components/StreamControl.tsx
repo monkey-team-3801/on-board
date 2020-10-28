@@ -20,6 +20,7 @@ type Props = {
     setupScreenSharing: () => Promise<void>;
     stopScreenSharing: () => void;
     disableStaffControl?: boolean;
+    children?: React.ReactNode;
 };
 
 /**
@@ -120,7 +121,7 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
                 </p>
             </Button>
             <Button
-                className="end-btn"
+                className={props.children ? "setting-btn" : "end-btn"}
                 onClick={async () => {
                     if (!isRecording) {
                         await beginRecording();
@@ -140,6 +141,7 @@ export const StreamControl: React.FunctionComponent<Props> = (props: Props) => {
                     {isRecording ? "Save recording" : "Start recording"}
                 </p>
             </Button>
+            {props.children}
         </ButtonGroup>
     );
 };

@@ -181,10 +181,9 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                             stopScreenSharing={
                                                 stopScreenSharing
                                             }
-                                        />
-                                        <ButtonGroup className="classroom-btn-grp d-flex mt-4">
+                                        >
                                             <Button
-                                                className="first-btn"
+                                                className="end-btn"
                                                 id="settings-options"
                                                 onClick={() => {
                                                     setShowFileModal(true);
@@ -195,7 +194,7 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                     View Files
                                                 </p>
                                             </Button>
-                                        </ButtonGroup>
+                                        </StreamControl>
                                     </Row>
                                 </Col>
                                 <Col md={3} className="p-0">
