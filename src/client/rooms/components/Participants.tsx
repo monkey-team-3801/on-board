@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
-import { Row } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { FaHandPaper } from "react-icons/fa";
 import { UserDataResponseType } from "../../../types";
 import { PeerContext } from "../../peer";
 import { UserDisplay } from "../components";
 import { SelfStreamDisplay } from "./SelfStreamDisplay";
 import { UserStreamDisplay } from "./UserStreamDisplay";
+import Peer from "peerjs";
 
 type Props = {
     // Array of users in the session.
@@ -18,11 +19,11 @@ type Props = {
     size?: "lg" | "sm";
 };
 
-/**
- * Component for displaying the currently users in a session.
- */
-export const Participants: React.FunctionComponent<Props> = (props: Props) => {
-    const { raisedHandUsers } = props;
+const UserDisplayWrapper: React.FunctionComponent<
+    Omit<Props, "users"> & {
+        user: Omit<UserDataResponseType, "courses">;
+    }
+> = ({ user, myUserId, raisedHandUsers }) => {
     const { peer: myPeer, stream: myStream, userIdToPeerIdMap } = useContext(
         PeerContext
     );
@@ -38,44 +39,55 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
         [raisedHandUsers]
     );
 
+    if (user.id === myUserId) {
+        if (myPeer && myStream) {
+            return (
+                <SelfStreamDisplay {...user} key={user.id}>
+                    {handIcon(user)}
+                </SelfStreamDisplay>
+            );
+        }
+        return (
+            <UserDisplay {...user} key={user.id}>
+                {handIcon(user)}
+            </UserDisplay>
+        );
+    } else {
+        const userPeerId = userIdToPeerIdMap.get(user.id);
+        if (userPeerId) {
+            return (
+                <UserStreamDisplay
+                    {...user}
+                    theirPeerId={userPeerId}
+                    key={user.id}
+                >
+                    {handIcon(user)}
+                </UserStreamDisplay>
+            );
+        }
+        return (
+            <UserDisplay {...user} key={user.id}>
+                {handIcon(user)}
+            </UserDisplay>
+        );
+    }
+};
+
+/**
+ * Component for displaying the currently users in a session.
+ */
+export const Participants: React.FunctionComponent<Props> = (props: Props) => {
     return (
         <Row className="mt-3">
             <div
                 className={`user-display-container ${props.size || "sm"} px-2`}
             >
                 {props.users.map((user) => {
-                    if (user.id === props.myUserId) {
-                        if (myPeer && myStream) {
-                            return (
-                                <SelfStreamDisplay {...user} key={user.id}>
-                                    {handIcon(user)}
-                                </SelfStreamDisplay>
-                            );
-                        }
-                        return (
-                            <UserDisplay {...user} key={user.id}>
-                                {handIcon(user)}
-                            </UserDisplay>
-                        );
-                    } else {
-                        const userPeerId = userIdToPeerIdMap.get(user.id);
-                        if (userPeerId) {
-                            return (
-                                <UserStreamDisplay
-                                    {...user}
-                                    theirPeerId={userPeerId}
-                                    key={user.id}
-                                >
-                                    {handIcon(user)}
-                                </UserStreamDisplay>
-                            );
-                        }
-                        return (
-                            <UserDisplay {...user} key={user.id}>
-                                {handIcon(user)}
-                            </UserDisplay>
-                        );
-                    }
+                    return (
+                        <Col md="3">
+                            <UserDisplayWrapper user={user} {...props} />
+                        </Col>
+                    );
                 })}
             </div>
         </Row>
