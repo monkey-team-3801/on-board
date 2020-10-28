@@ -180,7 +180,11 @@ export const ScheduleRoomForm: React.FunctionComponent<Props> = (
                 variant="primary"
                 type="submit"
                 loading={props.requestIsLoading}
-                disabled={props.submitting || props.requestIsLoading || !props.selectedCourse}
+                disabled={
+                    props.submitting ||
+                    props.requestIsLoading ||
+                    !props.selectedCourse
+                }
                 invertLoader
             >
                 {props.submitText ? props.submitText : "Create"}
