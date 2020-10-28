@@ -149,7 +149,7 @@ export const CreateAnnouncementsForm: React.FunctionComponent<Props> = (
                     variant="primary"
                     type="submit"
                     loading={isSubmitting}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || courses.length === 0}
                     invertLoader
                 >
                     Create
