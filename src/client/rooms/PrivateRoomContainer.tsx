@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Container, Row, ButtonGroup } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import * as AiIcons from "react-icons/ai";
 import { Link, RouteComponentProps } from "react-router-dom";
 import {
@@ -11,13 +11,13 @@ import {
 import { DrawingCanvas } from "../canvas";
 import { FileModal } from "../filehandler/FileModal";
 import { useDynamicFetch } from "../hooks";
+import { useScreenSharing } from "../hooks/useScreenSharing";
 import { TopLayerContainerProps } from "../types";
 import { requestIsLoaded } from "../utils";
 import { ScreenSharingContainer } from "../videostreaming/ScreenSharingContainer";
+import { StreamControl } from "./components";
 import { SessionContainer, SidePanelContainer } from "./containers";
 import "./PrivateRoom.less";
-import { StreamControl } from "./components";
-import { useScreenSharing } from "../hooks/useScreenSharing";
 
 type Props = RouteComponentProps<{ roomId: string }> &
     TopLayerContainerProps & {

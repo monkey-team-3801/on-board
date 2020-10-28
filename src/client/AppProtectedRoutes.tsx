@@ -30,7 +30,7 @@ import { PrivateRoomContainer } from "./rooms/PrivateRoomContainer";
 import { Timetable } from "./timetable/timetable/Timetable";
 import { ClassOpenEventData } from "./types";
 import { ProfileSettingsContainer } from "./user/profile/ProfileSettingsContainer";
-import { requestIsLoaded } from "./utils";
+import { requestIsLoaded, requestIsLoading } from "./utils";
 
 type Props = RouteComponentProps;
 
@@ -138,7 +138,7 @@ export const AppProtectedRoutes = (props: Props) => {
         };
     }, [userData]);
 
-    if (!requestIsLoaded(userDataResponse)) {
+    if (requestIsLoading(userDataResponse)) {
         return <Loader full />;
     }
 
