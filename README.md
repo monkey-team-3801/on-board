@@ -68,5 +68,3 @@ For manual deployment setup your container to run `npm start` (after building).
 🟣 [spaceytato](https://github.com/spaceytato) 🟣
 
 Happy swinging!
-
-ðŸ™ˆðŸµðŸ™ˆðŸµ
