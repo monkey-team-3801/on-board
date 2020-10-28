@@ -1,12 +1,11 @@
 import React, { useContext } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { FaHandPaper } from "react-icons/fa";
 import { UserDataResponseType } from "../../../types";
 import { PeerContext } from "../../peer";
 import { UserDisplay } from "../components";
 import { SelfStreamDisplay } from "./SelfStreamDisplay";
 import { UserStreamDisplay } from "./UserStreamDisplay";
-import Peer from "peerjs";
 
 type Props = {
     // Array of users in the session.
