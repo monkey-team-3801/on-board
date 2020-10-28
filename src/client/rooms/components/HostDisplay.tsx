@@ -4,7 +4,7 @@ import { Loader, ProfilePicture } from "../../components";
 import { useFetch } from "../../hooks";
 import { requestIsLoaded, userTypeToClass } from "../../utils";
 import { PeerContext } from "../../peer";
-import { MyVideo } from "../../videostreaming";
+import { MyVideo, RemotePeerVideo } from "../../videostreaming";
 
 type Props = {
     hostId?: string;
@@ -12,7 +12,11 @@ type Props = {
 };
 
 export const HostDisplay: React.FunctionComponent<Props> = (props: Props) => {
-    const { peer: myPeer, stream: myStream } = React.useContext(PeerContext);
+    const {
+        peer: myPeer,
+        stream: myStream,
+        userIdToPeerIdMap,
+    } = React.useContext(PeerContext);
     const [userResponse] = useFetch<UserData, { userID?: string }>(
         "/user/getUserById",
         { userID: props.hostId }
@@ -22,11 +26,20 @@ export const HostDisplay: React.FunctionComponent<Props> = (props: Props) => {
         return <Loader />;
     }
 
+    const peerId = props.hostId && userIdToPeerIdMap.get(props.hostId);
+
     return (
         <div className="presenter-container text-center">
             <div className="presenter-picture peach-gradient d-flex align-items-center">
                 {myPeer && myStream ? (
-                    <MyVideo muted />
+                    <>
+                        {props.myUserId === props.hostId ? (
+                            <MyVideo muted />
+                        ) : (
+                            <>{peerId && <RemotePeerVideo peerId={peerId} />}</>
+                        )}
+                        {}
+                    </>
                 ) : (
                     props.hostId && (
                         <ProfilePicture

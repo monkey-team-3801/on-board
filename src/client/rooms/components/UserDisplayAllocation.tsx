@@ -61,7 +61,7 @@ export const UserDisplayAllocation: React.FunctionComponent<Props> = (
                     )}
                 </Dropdown.Menu>
             </Dropdown>
-            <UserDisplay {...props} />
+            <UserDisplay {...props} darkText />
         </div>
     );
 };

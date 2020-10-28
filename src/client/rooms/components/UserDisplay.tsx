@@ -6,6 +6,8 @@ import { userTypeToClass } from "../../utils";
 type Props = Omit<UserData, "allocated"> & {
     // Additional children to forward.
     children?: React.ReactNode;
+    // Text colour.
+    darkText?: boolean;
 };
 
 /**
@@ -22,7 +24,13 @@ export const UserDisplay: React.FunctionComponent<Props> = (props: Props) => {
         <div className="user-display">
             <ProfilePicture userId={id} className={additionalClass} />
             <div className="username">
-                <p className="text-truncate">{username}</p>
+                <p
+                    className={`text-truncate ${
+                        props.darkText ? "text-dark" : ""
+                    }`}
+                >
+                    {username}
+                </p>
             </div>
             {props.children}
         </div>
