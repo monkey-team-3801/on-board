@@ -19,6 +19,9 @@ type Props = {
     size?: "lg" | "sm";
 };
 
+/**
+ * Wrapper for user display items.
+ */
 const UserDisplayWrapper: React.FunctionComponent<
     Omit<Props, "users"> & {
         user: Omit<UserDataResponseType, "courses">;
