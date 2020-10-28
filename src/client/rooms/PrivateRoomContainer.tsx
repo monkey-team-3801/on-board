@@ -110,17 +110,21 @@ export const PrivateRoomContainer: React.FunctionComponent<Props> = (
                                                                     Back
                                                                 </Button>
                                                             </Link>
-                                                            <Link
-                                                                to={`/classroom/${sessionData.parentSessionId}`}
-                                                            >
-                                                                <Button
-                                                                    variant="light"
-                                                                    size="sm"
-                                                                    className="d-flex align-items-center"
+                                                            {sessionData.parentSessionId && (
+                                                                <Link
+                                                                    to={`/classroom/${sessionData.parentSessionId}`}
                                                                 >
-                                                                    Main Room
-                                                                </Button>
-                                                            </Link>
+                                                                    <Button
+                                                                        variant="light"
+                                                                        size="sm"
+                                                                        className="d-flex align-items-center"
+                                                                    >
+                                                                        Main
+                                                                        Room
+                                                                    </Button>
+                                                                </Link>
+                                                            )}
+
                                                             <span className="session-name d-flex align-items-center ml-2">
                                                                 <h1 className="m-0 text-truncate">{`${sessionData.name}`}</h1>
                                                             </span>

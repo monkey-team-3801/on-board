@@ -630,6 +630,13 @@ router.post(
                                 setDefaultsOnInsert: true,
                             }
                         );
+                        await VideoSession.create({
+                            sessionId: breakoutSession._id,
+                            userPeerMap: new Map(),
+                            userReferenceMap: new Map(),
+                            numScreensAllowed: 1,
+                            sharingUsers: [],
+                        });
                         await SessionUsers.findOneAndUpdate(
                             {
                                 sessionId: breakoutSession._id,
@@ -725,7 +732,18 @@ router.post(
     "/deleteBreakoutRoom",
     asyncHandler<undefined, {}, { sessionId: string }>(async (req, res) => {
         try {
-            await BreakoutSession.findByIdAndDelete(req.body.sessionId);
+            const breakoutRoom = await BreakoutSession.findByIdAndDelete(
+                req.body.sessionId
+            );
+            await VideoSession.findOneAndDelete({
+                sessionId: breakoutRoom?._id,
+            });
+            await SessionUsers.findOneAndDelete({
+                sessionId: breakoutRoom?._id,
+            });
+            await SessionCanvas.findOneAndDelete({
+                sessionId: breakoutRoom?._id,
+            });
             res.status(200);
         } catch (e) {
             res.status(500);

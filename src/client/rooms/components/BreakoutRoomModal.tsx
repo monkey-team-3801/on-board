@@ -72,10 +72,7 @@ export const BreakoutRoomModal: React.FunctionComponent<Props> = (
         if (requestIsLoaded(breakoutRoomResponse)) {
             breakoutRoomResponse.data.rooms.forEach((room) => {
                 setRooms((prev) => {
-                    let currentRoom = rooms.get(room.roomId);
-                    if (!currentRoom) {
-                        return prev;
-                    }
+                    let currentRoom = rooms.get(room.roomId) || OrderedMap();
                     room.users.forEach((user) => {
                         currentRoom = currentRoom?.set(user.id, {
                             ...user,
