@@ -91,7 +91,6 @@ export const useScreenSharing = (
             });
             setScreenStream(stream);
         } catch (e) {
-            console.log("Error getting screen from user", e);
             return Promise.reject(e);
         }
 

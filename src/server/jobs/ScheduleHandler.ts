@@ -25,7 +25,6 @@ export class ScheduleHandler<T = any> {
                 this.removeJobReference(job.jobId);
             } else {
                 // Queue new jobs for exexution.
-                console.log("Job queued", job.jobDate);
                 this.queueNewJob(job);
             }
         });

@@ -81,17 +81,6 @@ router.post(
                     },
                 });
             }
-            // console.log(
-            //     "Job scheduled",
-            //     new Date(req.body.jobDate).toISOString()
-            // );
-            // console.log("Current time is", new Date().toISOString());
-            // console.log(
-            //     "Executing in",
-            //     new Date(req.body.jobDate).getTime() - new Date().getTime()
-            // );
-            // const schedulerHandler: ScheduleHandler = ScheduleHandler.getInstance();
-            // console.log("adding", user.id);
             res.status(200).end();
         }
     )
@@ -104,8 +93,6 @@ router.post(
     "/delete",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
-            console.log(req.body);
-            console.log("Deleting job:", req.body.id);
             try {
                 await ClassroomSession.findByIdAndDelete(req.body.id);
                 const job = await Job.findByIdAndDelete(req.body.id);

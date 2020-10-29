@@ -23,13 +23,11 @@ router.post(
                 numScreensAllowed: 1,
                 sharingUsers: [],
             });
-            console.log("Video Session created:", session.sessionId);
 
             res.status(200).json({
                 sessionId: session.sessionId,
             });
         } catch (e) {
-            console.log("error", e);
             res.status(500).end();
         }
     })
@@ -43,21 +41,6 @@ router.post(
     asyncHandler<{}, {}, { sessionId: string; peerId: string }>(
         async (req, res) => {
             res.end();
-            // try {
-            //     const session = await VideoSession.findOne({
-            //         sessionId: req.body.sessionId,
-            //     });
-            //     if (!session) {
-            //         res.status(404).end();
-            //         return;
-            //     }
-            //     session.peers.push(req.body.peerId);
-            //     await session.save();
-            //     res.status(200).end();
-            // } catch (e) {
-            //     console.log("error", e);
-            //     res.status(500).end();
-            // }
         }
     )
 );
@@ -79,7 +62,6 @@ router.post(
                 }
                 res.json(session.sharingUsers);
             } catch (e) {
-                console.log("error", e);
                 res.status(500).end();
             }
         }
@@ -101,7 +83,6 @@ router.post(
                     }))
                 );
             } catch (e) {
-                console.log("error", e);
                 res.status(500).end();
             }
         }
@@ -139,7 +120,6 @@ router.post(
                 peers,
             });
         } catch (e) {
-            console.log("error", e);
             res.status(500).end();
         }
     })

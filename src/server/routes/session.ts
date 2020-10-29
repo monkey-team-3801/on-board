@@ -69,7 +69,6 @@ router.post(
                         sessionId: session._id,
                         userReferenceMap: new Map(),
                     });
-                    console.log("Session created:", session.name);
                     res.json({
                         id: session._id,
                         name: session.name,
@@ -127,7 +126,6 @@ router.post(
                     );
                 }
             } catch (e) {
-                console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
             } finally {
@@ -161,7 +159,6 @@ router.post(
                 }
             }
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         } finally {
@@ -202,7 +199,6 @@ router.post(
                 }
             }
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         } finally {
@@ -229,7 +225,6 @@ router.post(
                 });
             }
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         }
@@ -255,7 +250,6 @@ router.post(
                 });
             }
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         }
@@ -287,7 +281,6 @@ router.post(
                     });
                 }
             } catch (e) {
-                console.log("error", e);
                 res.status(500);
                 next(new Error("Unexpected error has occured."));
             }
@@ -317,7 +310,6 @@ router.post(
                     .end();
                 return;
             }
-            console.log(req.body);
             if (new Date(data.endTime).getTime() < new Date().getTime()) {
                 await ClassroomSession.findByIdAndUpdate(req.body.data.id, {
                     ...req.body.data,
@@ -347,7 +339,6 @@ router.post(
             }
             res.status(200);
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         } finally {
@@ -374,7 +365,6 @@ router.post(
             });
             res.status(200);
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         } finally {
@@ -390,21 +380,6 @@ router.post(
     "/delete/privateRoom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
-            console.log("Deleting private room:", req.body.id);
-
-            // These are for deleting forms and answers for privaterooms.
-            // Remove or uncomment when we decide if we want responses in private rooms.
-
-            // await MultipleChoiceResponseForm.deleteMany({
-            //     sessionID: req.body.id,
-            // });
-            // const shortAnswerResponseIDs = await ShortAnswerResponseForm.find({
-            //     sessionID: req.body.id,
-            // });
-            // for (let form of shortAnswerResponseIDs) {
-            //     await Response.deleteMany({ formID: form.id });
-            // }
-
             try {
                 await File.deleteMany({ sessionID: req.body.id });
                 await Session.findByIdAndDelete(req.body.id);
@@ -427,8 +402,6 @@ router.post(
     "/delete/classroom",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
-            console.log(req.body);
-            console.log("Deleting classroom:", req.body.id);
             try {
                 await File.deleteMany({ sessionID: req.body.id });
                 await FileForm.deleteMany({ sessionID: req.body.id });
@@ -468,7 +441,6 @@ router.post(
     "/delete/*",
     asyncHandler<undefined, {}, SessionDeleteRequestType>(
         async (req, res, next) => {
-            console.log("Deleting room:", req.body.id);
             try {
                 await MultipleChoiceResponseForm.deleteMany({
                     sessionID: req.body.id,
@@ -515,7 +487,7 @@ router.post(
             ).lean();
             res.end();
         } catch (e) {
-            console.log("err", e);
+            res.status(500).end();
         }
     })
 );

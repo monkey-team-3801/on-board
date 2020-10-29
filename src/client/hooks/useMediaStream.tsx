@@ -67,9 +67,7 @@ export const useMediaStream: () => [
                         constraints
                     );
                     setStream(newStream);
-                    console.log("Setting new stream");
                 } catch (e) {
-                    console.log("error setting stream", e);
                     setStream(undefined);
                 }
             } else {
@@ -86,10 +84,6 @@ export const useMediaStream: () => [
             track.stop();
             stream?.removeTrack(track);
         });
-
-        console.log("Turning off stream", stream);
-        console.log("Turning off stream tracks", stream?.getTracks());
-        // setStream(undefined);
     }, [stream]);
 
     useEffect(() => {

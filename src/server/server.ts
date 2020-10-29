@@ -88,18 +88,15 @@ io.on("connect", (socket: SocketIO.Socket) => {
                 io.in(sessionId).emit(RoomEvent.SESSION_JOIN);
                 io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
             }
-            console.log("User", userId, "joining", sessionId);
             socket.on("disconnect", async () => {
                 const currentReference =
                     session.userReferenceMap.get(userId) ?? 1;
-                console.log("User disconnect", userId);
                 if (currentReference - 1 === 0) {
                     session.userReferenceMap.delete(userId);
                     await session.save();
                     socket.leave(sessionId);
                     io.in(sessionId).emit(RoomEvent.SESSION_LEAVE);
                     io.emit(GlobalEvent.USER_ONLINE_STATUS_CHANGE);
-                    console.log("User", userId, "leaving", sessionId);
                 } else {
                     session.userReferenceMap.set(
                         userId,
@@ -138,20 +135,7 @@ io.on("connect", (socket: SocketIO.Socket) => {
                     peerId,
                 });
             }
-            console.log(
-                "User",
-                userId,
-                "joining video",
-                sessionId,
-                "with peer id",
-                peerId
-            );
-            // socket.on(VideoEvent.USER_STOP_STREAMING, (peerId) => {
-            //     console.log("user", peerId, "turned of camera.");
-            //     socket
-            //         .in(sessionId)
-            //         .emit(VideoEvent.USER_STOP_STREAMING, peerId);
-            // });
+
             socket.on("disconnect", async () => {
                 const currentReference =
                     session.userReferenceMap.get(userId) ?? 1;
@@ -163,7 +147,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
                         userId,
                         peerId,
                     });
-                    console.log("User", userId, "leaving", sessionId);
                 } else {
                     session.userReferenceMap.set(
                         userId,
@@ -223,7 +206,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
             }
             session.sharingUsers.delete(userId);
             await session.save();
-            console.log("User", userId, "stops sharing");
             socket.in(sessionId).emit(VideoEvent.USER_STOP_STREAMING, userData);
         }
     );
@@ -232,7 +214,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
         VideoEvent.FORCE_STOP_SCREEN_SHARING,
         async (userData: PrivateVideoRoomForceStopSharingData) => {
             const { senderId, targetId, sessionId } = userData;
-            console.log("Force stop event emitted");
             const videoSession = await VideoSession.findOne({
                 sessionId,
             });
@@ -261,13 +242,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
             socket
                 .in(sessionId)
                 .emit(VideoEvent.FORCE_STOP_SCREEN_SHARING, userData);
-            console.log(
-                "User",
-                senderId,
-                "forces user",
-                targetId,
-                "to stop sharing"
-            );
         }
     );
 
@@ -293,24 +267,6 @@ io.on("connect", (socket: SocketIO.Socket) => {
     socket.on(RoomEvent.USER_HAND_STATUS_CHANGED, (sessionId) => {
         socket.to(sessionId).emit(RoomEvent.USER_HAND_STATUS_CHANGED);
     });
-
-    // socket.on(
-    //     VideoEvent.USER_LEAVE_ROOM,
-    //     async ({ sessionId, peerId, userId }) => {
-    //         if (peerId) {
-    //             const session = await VideoSession.findOne({
-    //                 sessionId,
-    //             });
-    //             if (!session) {
-    //                 return;
-    //             }
-    //             session.userPeerMap.delete(userId);
-    //             await session.save();
-    //             io.in(sessionId).emit(VideoEvent.USER_LEAVE_ROOM, peerId);
-    //             console.log("Peer", peerId, "disconnected", sessionId);
-    //         }
-    //     }
-    // );
 
     socket.on(
         AnnouncementEvent.COURSE_ANNOUNCEMENTS_SUBSCRIBE,

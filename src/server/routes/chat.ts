@@ -45,7 +45,6 @@ router.post(
                 await session?.save();
                 res.status(200);
             } catch (e) {
-                console.log("error", e);
                 res.status(500);
             } finally {
                 res.end();

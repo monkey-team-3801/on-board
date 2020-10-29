@@ -17,7 +17,6 @@ export const useScreenRecording: () => [() => Promise<void>, () => void] = (
             });
             setScreenStream(stream);
         } catch (e) {
-            console.log("Error getting screen from user", e);
             return;
         }
     }, []);

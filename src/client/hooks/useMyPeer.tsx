@@ -74,17 +74,8 @@ export const useMyPeer = (
             setPeerCalls(peerCalls.clear());
             myPeer.destroy();
             disableStream();
-            console.log("Cleaning up");
         }
     }, [disableStream, myPeer, peerCalls, peerStreams]);
-
-    // const setupPeer = useCallback(() => {
-    //     console.log("Setup peer");
-    //     if (!myPeer) {
-    //         setMyPeer(new Peer(options));
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
 
     useEffect(() => {
         if (myPeer) {
@@ -97,7 +88,6 @@ export const useMyPeer = (
             });
 
             myPeer.on("error", (error) => {
-                console.log("error:", error);
                 //cleanUp();
             });
             myPeer.on("open", (id) => {
@@ -108,7 +98,6 @@ export const useMyPeer = (
     }, [myPeer]);
     useEffect(() => {
         if (myStream && myPeerId) {
-            console.log("emitting");
             socket.emit(VideoEvent.USER_JOIN_ROOM, {
                 sessionId,
                 userId,
@@ -164,7 +153,6 @@ export const useMyPeer = (
                     setPeerStreams((prev) => prev.delete(peerId));
                 });
                 call.on("error", (error) => {
-                    console.log("Call error", error);
                     setPeerCalls((prev) => prev.delete(peerId));
                     setPeerStreams((prev) => prev.delete(peerId));
                 });
@@ -220,7 +208,6 @@ export const useMyPeer = (
                 setSharingStreams(sharingStreams.delete(userId));
             });
             call.on("error", (error) => {
-                console.log("streaming peer call error", error);
                 setSharingStreams(sharingStreams.delete(userId));
                 setSharingCalls(sharingCalls.delete(userId));
             });
@@ -273,28 +260,6 @@ export const useMyPeer = (
         [removeSharingPeer]
     );
 
-    // const onUserStopSharing = useCallback(
-    //     (peerId: PeerId) => {
-    //         console.log("received user", peerId, "turned of camera");
-    //         const peerStream = peerStreams.get(peerId);
-    //         if (peerStream) {
-    //             pauseStream(peerStream);
-    //         }
-    //     },
-    //     [peerStreams]
-    // );
-    //
-    // const onUserStartSharing = useCallback(
-    //     (peerId: PeerId) => {
-    //         console.log("received user", peerId, "turn on camera");
-    //
-    //         const peerStream = peerStreams.get(peerId);
-    //         if (peerStream) {
-    //             resumeStream(peerStream);
-    //         }
-    //     },
-    //     [peerStreams]
-    // );
     useEffect(() => {
         if (requestIsLoaded(peerResponse) && myPeerId && myStream) {
             for (const userPeer of peerResponse.data.peers) {
@@ -324,8 +289,6 @@ export const useMyPeer = (
             VideoEvent.FORCE_STOP_SCREEN_SHARING,
             onSocketUserForceStopScreenShare
         );
-        // socket.on(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
-        // socket.on(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         return () => {
             socket.off(VideoEvent.USER_JOIN_ROOM, onSocketAddPeer);
             socket.off(VideoEvent.USER_LEAVE_ROOM, onSocketRemovePeer);
@@ -341,8 +304,6 @@ export const useMyPeer = (
                 VideoEvent.FORCE_STOP_SCREEN_SHARING,
                 onSocketUserForceStopScreenShare
             );
-            // socket.off(VideoEvent.USER_STOP_STREAMING, onUserStopSharing);
-            // socket.off(VideoEvent.USER_START_STREAMING, onUserStartSharing);
         };
     }, [
         socket,

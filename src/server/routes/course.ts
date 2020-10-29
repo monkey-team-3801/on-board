@@ -43,7 +43,6 @@ router.get(
         try {
             res.json(await findAllCourses());
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         }
@@ -65,7 +64,6 @@ router.post(
                 })
             );
         } catch (e) {
-            console.log("error", e);
             res.status(500);
             next(new Error("Unexpected error has occured."));
         }

@@ -10,7 +10,6 @@ import { isAnnouncementJob, isClassOpenJob } from "../utils";
  * @param job Announcement job data.
  */
 const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
-    console.log("Running announcement job", job);
     const user = await User.findById(job.data.userId);
     const course = await Course.findOne({ code: job.data.courseCode });
     if (user && course) {
@@ -32,7 +31,6 @@ const runAnnouncementJob = async (job: AnnouncementJob): Promise<void> => {
  * @param job Class open job data.
  */
 const runClassOpenJob = async (job: ClassOpenJob): Promise<void> => {
-    console.log("Running class job", job);
     const session = await ClassroomSession.findByIdAndUpdate(job.data.id, {
         open: true,
     });
