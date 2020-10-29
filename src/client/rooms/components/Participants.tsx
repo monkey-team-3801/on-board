@@ -32,6 +32,7 @@ const UserDisplayWrapper: React.FunctionComponent<
 
     const handIcon = React.useCallback(
         (user: { id: string }) => {
+            console.log(raisedHandUsers, user.id);
             return raisedHandUsers.includes(user.id) ? (
                 <FaHandPaper className="hand" />
             ) : (
@@ -86,7 +87,7 @@ export const Participants: React.FunctionComponent<Props> = (props: Props) => {
             >
                 {props.users.map((user) => {
                     return (
-                        <Col md="3">
+                        <Col md="3" key={user.id}>
                             <UserDisplayWrapper user={user} {...props} />
                         </Col>
                     );

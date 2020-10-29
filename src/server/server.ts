@@ -335,13 +335,17 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 const preAuthCheck = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         if (req.headers.authorization) {
-            const id = jwt.verify(
-                req.headers.authorization,
-                process.env.JWT_SECRET || "monkey_default_jwt"
-            ) as string;
-            if ((await User.count({ _id: id })) > 0) {
-                next();
-                return;
+            try {
+                const id = jwt.verify(
+                    req.headers.authorization,
+                    process.env.JWT_SECRET || "monkey_default_jwt"
+                ) as string;
+                if ((await User.count({ _id: id })) > 0) {
+                    next();
+                    return;
+                }
+            } catch (e) {
+                res.status(401).end();
             }
         }
         res.status(401).end();

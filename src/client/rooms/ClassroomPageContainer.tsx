@@ -114,7 +114,9 @@ export const ClassroomPageContainer: React.FunctionComponent<Props> = (
     const [raisedHandUsersResponse, getRaisedHandUsers] = useFetch<
         { raisedHandUsers: Array<string> },
         { sessionId: string }
-    >("/session/getRaisedHandUsers");
+    >("/session/getRaisedHandUsers", {
+        sessionId: props.match.params.classroomId,
+    });
 
     const setRaisedHandStatus = useDebouncedCallback(
         async (remove: boolean) => {

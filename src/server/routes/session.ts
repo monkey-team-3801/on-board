@@ -798,9 +798,9 @@ router.post(
     asyncHandler<{ raisedHandUsers: Array<string> }, {}, { sessionId: string }>(
         async (req, res) => {
             try {
-                const session = await ClassroomSession.findOne({
-                    sessionId: req.body.sessionId,
-                }).lean();
+                const session = await ClassroomSession.findById(
+                    req.body.sessionId
+                ).lean();
                 res.json({
                     raisedHandUsers: session?.raisedHandUsers || [],
                 });
