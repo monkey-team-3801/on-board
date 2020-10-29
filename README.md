@@ -52,7 +52,10 @@ On Board aims to resolve the issue of the online teaching environment. The syste
 1. Run `npm install`
 2. Run `npm build`
 
-Your output(s) will be in the `/build` folder. You can then run `npm start` to start the app.
+Your output(s) will be in the `/build` folder.
+
+3. Configure your [environment variables](https://github.com/monkey-team-3801/on-board#environment-variables-important).
+4. You can then run `npm start` to start the app.
 
 ### Deploying
 
@@ -64,9 +67,9 @@ For manual deployment setup your container to run `npm start` (after building).
 
 Environment variables must be configured in a `.env` or in your environment before the app can function normally.
 
-MONGODB_URI: MongoDB URI.
+MONGODB_URI: MongoDB URI. (Required)
 
-JWT_SECRET: Custom JWT signature.
+JWT_SECRET: Custom JWT signature. (Optional)
 
 ### Other
 
