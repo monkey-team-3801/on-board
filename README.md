@@ -26,9 +26,11 @@
 
 ## About
 
-DECO3801 Project: **On Board**.
+DECO3801 2020 Project: **On Board**.
 
 Online collaboration and learning environment powered by SocketIO.
+
+On Board aims to resolve the issue of the online teaching environment. The system will make online learning more engaging by providing and promoting collaboration tools all in one place.
 
 ## Contributing
 
@@ -43,15 +45,17 @@ Online collaboration and learning environment powered by SocketIO.
 2. Run `npm run start-client-dev` to initialise the client or
    `npm run start-server-dev` to initialise the server.
 
+    Note in most cases both client and server will need to be running for auth checks to complete.
+
 ### Building
 
 1. Run `npm build`
 
-Your output(s) will be in the `/build` folder.
+Your output(s) will be in the `/build` folder. You can then run `npm start` to start the app.
 
 ### Deploying
 
-Latest `master` is always deployed to https://on-board-prod.herokuapp.com/
+Latest `master` is always deployed to https://on-board-prod.herokuapp.com/ and https://on-board.xyz/
 
 For manual deployment setup your container to run `npm start` (after building).
 
