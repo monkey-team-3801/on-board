@@ -57,6 +57,8 @@ Your output(s) will be in the `/build` folder.
 3. Configure your [environment variables](https://github.com/monkey-team-3801/on-board#environment-variables-important).
 4. You can then run `npm start` to start the app.
 
+Your app will be running on [http://localhost:5000/](http://localhost:5000/).
+
 ### Deploying
 
 Latest `master` is always deployed to https://on-board-prod.herokuapp.com/ and https://on-board.xyz/
