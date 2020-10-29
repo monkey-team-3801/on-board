@@ -50,7 +50,7 @@ On Board aims to resolve the issue of the online teaching environment. The syste
 ### Building
 
 1. Run `npm install`
-2. Run `npm build`
+2. Run `npm run build`
 
 Your output(s) will be in the `/build` folder.
 
