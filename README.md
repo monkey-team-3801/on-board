@@ -49,7 +49,8 @@ On Board aims to resolve the issue of the online teaching environment. The syste
 
 ### Building
 
-1. Run `npm build`
+1. Run `npm install`
+2. Run `npm build`
 
 Your output(s) will be in the `/build` folder. You can then run `npm start` to start the app.
 
@@ -58,6 +59,18 @@ Your output(s) will be in the `/build` folder. You can then run `npm start` to s
 Latest `master` is always deployed to https://on-board-prod.herokuapp.com/ and https://on-board.xyz/
 
 For manual deployment setup your container to run `npm start` (after building).
+
+### Environment Variables (**Important**)
+
+Environment variables must be configured in a `.env` or in your environment before the app can function normally.
+
+MONGODB_URI: MongoDB URI.
+
+JWT_SECRET: Custom JWT signature.
+
+### Other
+
+After the app is running, you may wish to retrieve some sample courses. Simply use `npm run fetch-course` to populate some sample data in to your database.
 
 ## The Team
 
