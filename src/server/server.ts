@@ -419,24 +419,31 @@ app.use("*", (req: Request, res: Response, next: NextFunction) => {
 });
 
 const database: Database = new Database(process.env.MONGODB_URI);
-database.connect().then(() => {
-    server.listen(process.env.PORT || 5000, async () => {
-        const scheduleHandler = ScheduleHandler.getInstance();
-        // Queue all existing jobs.
-        await scheduleHandler.queueExistingJobs();
+database
+    .connect()
+    .then(() => {
+        server.listen(process.env.PORT || 5000, async () => {
+            const scheduleHandler = ScheduleHandler.getInstance();
+            // Queue all existing jobs.
+            await scheduleHandler.queueExistingJobs();
 
-        await SessionUsers.findOneAndUpdate(
-            { sessionId: "global" },
-            {
-                sessionId: "global",
-                userReferenceMap: new Map(),
-            },
-            {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true,
-            }
+            await SessionUsers.findOneAndUpdate(
+                { sessionId: "global" },
+                {
+                    sessionId: "global",
+                    userReferenceMap: new Map(),
+                },
+                {
+                    upsert: true,
+                    new: true,
+                    setDefaultsOnInsert: true,
+                }
+            );
+            console.log("Server is listening on", process.env.PORT || 5000);
+        });
+    })
+    .catch(() => {
+        console.log(
+            "Failed to connect to MongoDB, check your environment variables has been set correctly."
         );
-        console.log("Server is listening on", process.env.PORT || 5000);
     });
-});

@@ -19,6 +19,8 @@ export class Database {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
                 useFindAndModify: false,
+            }).catch((error) => {
+                reject(error);
             });
 
             const connection = mongoose.connection;
